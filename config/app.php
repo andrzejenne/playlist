@@ -154,11 +154,16 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
+        BBIT\Playlist\Providers\AppServiceProvider::class,
+        BBIT\Playlist\Providers\AuthServiceProvider::class,
+        BBIT\Playlist\Providers\BroadcastServiceProvider::class,
+        BBIT\Playlist\Providers\EventServiceProvider::class,
+        BBIT\Playlist\Providers\RouteServiceProvider::class,
+
+        // foreign
+        Alaouy\Youtube\YoutubeServiceProvider::class,
+
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
     ],
 
@@ -209,6 +214,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+        'Youtube' => Alaouy\Youtube\Facades\Youtube::class,
     ],
 
 ];

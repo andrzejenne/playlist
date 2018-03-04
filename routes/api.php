@@ -16,3 +16,14 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::namespace('API')->group(function(){
+    Route::get('/alive', 'AliveController@alive');
+    Route::get('/info', function(){
+        phpinfo();
+    });
+
+//    Route::namespace('youtube')
+
+    Route::get('/youtube', 'YouTube\\Controller@search');
+});

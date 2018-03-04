@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace BBIT\Playlist\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
