@@ -25,5 +25,5 @@ Route::namespace('API')->group(function(){
 
 //    Route::namespace('youtube')
 
-    Route::get('/youtube', 'YouTube\\Controller@search');
+    Route::get('/search', 'SearchController@search');
 });

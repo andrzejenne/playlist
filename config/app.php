@@ -160,6 +160,8 @@ return [
         BBIT\Playlist\Providers\EventServiceProvider::class,
         BBIT\Playlist\Providers\RouteServiceProvider::class,
 
+        BBIT\Playlist\Providers\MediaLibraryProvider::class,
+
         // foreign
         Alaouy\Youtube\YoutubeServiceProvider::class,
 
