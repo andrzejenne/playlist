@@ -13,15 +13,34 @@ class CreateMedia extends Migration
      */
     public function up()
     {
+        Schema::create('media_types', function(Blueprint $table){
+            $table->increments('id');
+            $table->string('name')->unique();
+            $table->string('slug')->unique();
+        });
+
+        Schema::create('genres', function(Blueprint $table) {
+            $table->increments('id');
+            $table->string('name')->unique();
+        });
+
         Schema::create('artists', function(Blueprint $table){
             $table->increments('id');
             $table->string('name')->index();
+
+            $table->timestamps();
         });
 
         Schema::create('albums', function(Blueprint $table){
             $table->increments('id');
             $table->string('name')->index();
             $table->date('released')->nullable();
+            $table->integer('genre_id')->unsigned();
+
+            $table->foreign('genre_id')->references('id')->on('genres')
+                ->onDelete('cascade');
+
+            $table->timestamps();
         });
 
         Schema::create('media', function(Blueprint $table){
@@ -29,16 +48,21 @@ class CreateMedia extends Migration
             $table->string('name')->index();
             $table->integer('artist_id')->unsigned()->nullable();
             $table->integer('album_id')->unsigned()->nullable();
+            $table->integer('genre_id')->unsigned()->nullable();
             $table->date('released')->nullable();
 
             $table->foreign('artist_id')
                 ->references('id')->on('artists')->onDelete('cascade');
             $table->foreign('album_id')
                 ->references('id')->on('albums')->onDelete('cascade');
+            $table->foreign('genre_id')
+                ->references('id')->on('genres')->onDelete('cascade');
+
+            $table->timestamps();
 
         });
 
-        Schema::create('media_playlists', function(Blueprint $table) {
+        Schema::create('media_playlist', function(Blueprint $table) {
             $table->integer('media_id')->unsigned();
             $table->integer('playlist_id')->unsigned();
 
@@ -57,9 +81,11 @@ class CreateMedia extends Migration
      */
     public function down()
     {
-        Schema::drop('media_playlists');
+        Schema::drop('media_playlist');
         Schema::drop('media');
         Schema::drop('artists');
         Schema::drop('albums');
+        Schema::drop('genres');
+        Schema::drop('media_types');
     }
 }
