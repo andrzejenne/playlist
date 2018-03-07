@@ -8,8 +8,9 @@
 
 namespace BBIT\Playlist\Http\Controllers\API;
 
-use BBIT\Playlist\Providers\MediaLibraryProvider;
 use Illuminate\Http\Request;
+use BBIT\Playlist\Providers\MediaLibraryProvider;
+use BBIT\Playlist\Search;
 
 /**
  * Class Controller
@@ -36,5 +37,12 @@ class SearchController extends Controller
         }
 
         return response()->json($results);
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function list() {
+        return response()->json(Search::whereUserId(1)->get());
     }
 }

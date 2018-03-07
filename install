@@ -1,0 +1,7 @@
+#!/bin/sh
+composer install
+./artisan migrate
+cd client
+sudo npm install -g cordova
+sudo npm install -g ionic
+npm i
