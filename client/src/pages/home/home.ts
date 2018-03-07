@@ -11,4 +11,8 @@ export class HomePage {
 
   }
 
+  public getItems() {
+    console.info('getItems');
+    return [];
+  }
 }
