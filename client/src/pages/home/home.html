@@ -3,7 +3,7 @@
         <button ion-button menuToggle="menu">
             <ion-icon name="menu"></ion-icon>
         </button>
-        <ion-searchbar (ionInput)="getItems($event)" [debounce]="500"></ion-searchbar>
+        <search-bar (search)="onSearchChange"></search-bar>
     </ion-navbar>
 </ion-header>
 
