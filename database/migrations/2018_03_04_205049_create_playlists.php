@@ -36,6 +36,6 @@ class CreatePlaylists extends Migration
      */
     public function down()
     {
-        Schema::drop('playlists');
+        Schema::dropIfExists('playlists');
     }
 }

@@ -13,7 +13,7 @@ class CreateSearch extends Migration
      */
     public function up()
     {
-        Schema::create('search', function(Blueprint $table){
+        Schema::create('searches', function(Blueprint $table){
             $table->increments('id');
             $table->string('query')->index();
             $table->integer('user_id')->unsigned();
@@ -31,7 +31,7 @@ class CreateSearch extends Migration
             $table->foreign('media_id')
                 ->references('id')->on('media')->onDelete('cascade');
             $table->foreign('search_id')
-                ->references('id')->on('search')->onDelete('cascade');
+                ->references('id')->on('searches')->onDelete('cascade');
         });
     }
 
@@ -42,7 +42,7 @@ class CreateSearch extends Migration
      */
     public function down()
     {
-        Schema::drop('media_search');
-        Schema::drop('search');
+        Schema::dropIfExists('media_search');
+        Schema::dropIfExists('searches');
     }
 }

@@ -1,9 +1,7 @@
 <div>
-    <ion-searchbar (ionInput)="getItems($event)" [debounce]="500"></ion-searchbar>
+    <ion-searchbar [(ngModel)]="search" (ionFocus)="getSearchList($event)" (ionInput)="getItems($event)" [debounce]="500"></ion-searchbar>
+
     <ion-list *ngIf="history" class="history">
         <ion-item *ngFor="let item of history">{{ item.name }}</ion-item>
-    </ion-list>
-    <ion-list *ngIf="items" class="items">
-        <ion-item *ngFor="let item of items">{{ item.title }}</ion-item>
     </ion-list>
 </div>

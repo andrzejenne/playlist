@@ -13,36 +13,6 @@ class CreateMedia extends Migration
      */
     public function up()
     {
-        Schema::create('media_types', function(Blueprint $table){
-            $table->increments('id');
-            $table->string('name')->unique();
-            $table->string('slug')->unique();
-        });
-
-        Schema::create('genres', function(Blueprint $table) {
-            $table->increments('id');
-            $table->string('name')->unique();
-        });
-
-        Schema::create('artists', function(Blueprint $table){
-            $table->increments('id');
-            $table->string('name')->index();
-
-            $table->timestamps();
-        });
-
-        Schema::create('albums', function(Blueprint $table){
-            $table->increments('id');
-            $table->string('name')->index();
-            $table->date('released')->nullable();
-            $table->integer('genre_id')->unsigned();
-
-            $table->foreign('genre_id')->references('id')->on('genres')
-                ->onDelete('cascade');
-
-            $table->timestamps();
-        });
-
         Schema::create('media', function(Blueprint $table){
             $table->increments('id');
             $table->string('name')->index();
@@ -81,11 +51,7 @@ class CreateMedia extends Migration
      */
     public function down()
     {
-        Schema::drop('media_playlist');
-        Schema::drop('media');
-        Schema::drop('artists');
-        Schema::drop('albums');
-        Schema::drop('genres');
-        Schema::drop('media_types');
+        Schema::dropIfExists('media_playlist');
+        Schema::dropIfExists('media');
     }
 }
