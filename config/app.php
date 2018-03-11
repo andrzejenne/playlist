@@ -219,4 +219,8 @@ return [
         'Youtube' => Alaouy\Youtube\Facades\Youtube::class,
     ],
 
+    'models' => [
+        'location' => [app_path('Models')]
+    ]
+
 ];

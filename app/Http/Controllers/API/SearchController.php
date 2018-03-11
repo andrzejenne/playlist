@@ -10,7 +10,7 @@ namespace BBIT\Playlist\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use BBIT\Playlist\Providers\MediaLibraryProvider;
-use BBIT\Playlist\Search;
+use BBIT\Playlist\Models\Search;
 
 /**
  * Class Controller
@@ -34,6 +34,18 @@ class SearchController extends Controller
 
         if (!empty($query)) {
             $results = $service->search($query);
+
+            // @todo - repository
+            $search = Search::whereQuery($query)->first();
+            if (!$search) {
+                $search = new Search();
+                $search->fill(['query' => $query]);
+                $search->user_id = 1;
+                $search->save();
+            }
+            else {
+                $search->save(); // updates updated at
+            }
         }
 
         return response()->json($results);
@@ -42,7 +54,25 @@ class SearchController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function list() {
-        return response()->json(Search::whereUserId(1)->get());
+    public function list()
+    {
+        // @todo - implement authentication, id should be authenticated user id
+        // @todo - repository
+        return response()->json(
+            Search::whereUserId(1)
+                ->orderBy(Search::COL_UPDATED_AT, 'DESC')
+                ->get()
+        );
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete($id)
+    {
+        $result = Search::whereId($id)->delete();
+
+        return response()->json($result);
     }
 }

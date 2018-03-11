@@ -6,6 +6,7 @@ import config from '../config';
 @Injectable()
 export class Repository {
     protected get = this.http.get;
+    protected delete = this.http.delete;
 
     constructor(protected http: HttpClient) { 
         this.boot();
@@ -19,6 +20,7 @@ export class Repository {
 
     private boot() {
         this.get = this.get.bind(this.http);
+        this.delete = this.delete.bind(this.http);
     }
 
     // protected post = this.http.post.bind(this.http);

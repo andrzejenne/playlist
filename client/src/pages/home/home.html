@@ -3,12 +3,33 @@
         <button ion-button menuToggle="menu">
             <ion-icon name="menu"></ion-icon>
         </button>
-        <search-bar (search)="onSearchChange"></search-bar>
+        <ion-searchbar [(ngModel)]="search" (ionFocus)="getSearchHistory(); focused = true;" (ionBlur)="focused = false" (ionInput)="searchItems()" [debounce]="500"></ion-searchbar>
+        <ion-buttons end right>
+            <button ion-button *ngIf="search && search.length > 1" (click)="onSearchClick">Search</button>
+        </ion-buttons>
+        <!--<search-bar (search)="onSearchChange"></search-bar>-->
     </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-    <ion-list *ngIf="items" class="items">
-        <ion-item *ngFor="let item of items">{{ item.title }}</ion-item>
+    <ion-list *ngIf="!list.length && history.length > 1" class="history">
+        <ion-item *ngFor="let item of history" (click)="searchItems(item.query)">
+            {{ item.query }}
+            <button ion-button icon-only clear item-end (click)="removeSearchHistory($event, item)">
+                <ion-icon name="trash" color="danger"></ion-icon>
+            </button>
+        </ion-item>
+    </ion-list>
+
+    <ion-list *ngIf="list && list.length" class="items">
+        <ion-item *ngFor="let item of list">
+            <!--<ion-thumbnail item-start>-->
+            <div item-start style="width:80px; height: 80px; background-position: center center" [style.backgroundImage]="'url('+item.thumbnail+')'"></div>
+                <!--<ion-img item-start [src]="item.thumbnail" [width]="200"></ion-img>-->
+            <!--</ion-thumbnail>-->
+            <h2>{{ item.title }}</h2>
+            <p>{{ item.description }}</p>
+            <button ion-button clear item-end>Play</button>
+        </ion-item>
     </ion-list>
 </ion-content>

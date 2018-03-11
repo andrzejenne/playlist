@@ -1,5 +1,6 @@
 <?php
 
+use BBIT\Playlist\Models\User;
 use Illuminate\Database\Seeder;
 
 class UsersTableSeeder extends Seeder
@@ -11,6 +12,15 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        $root = User::whereId(1)->first();
+        if (!$root) {
+            $root = new User();
+            $root->id = 1;
+            $root->name = 'root';
+            $root->email = 'andrzej.heczko@gmail.com';
+            $root->password = 'test';
+
+            $root->save();
+        }
     }
 }

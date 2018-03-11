@@ -14,5 +14,6 @@ namespace BBIT\Playlist\Contracts;
  */
 interface MediaProviderContract
 {
+    public function getName();
     public function search($q);
 }

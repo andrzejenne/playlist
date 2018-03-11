@@ -1,0 +1,29 @@
+<?php
+
+namespace DummyNamespace;
+
+/**
+ * Class DummyClass
+ * @package DummyNamespace
+ */
+class DummyClass extends BaseModel
+{
+    %TRAITS
+    %TABLE
+
+    %COLS
+
+    %RELATIONS
+
+    protected $table = self::TABLE;
+    %TIMESTAMPS
+    %FILLABLES
+
+    %CASTS
+
+    %MODEL_RELATIONS
+
+    %FIELDS
+
+    %RELATION_IMPLEMENTATIONS
+}
