@@ -28,4 +28,8 @@ Route::namespace('API')->group(function(){
     Route::get('/search', 'SearchController@search');
     Route::get('/search/list', 'SearchController@list');
     Route::delete('/search/list/{id}', 'SearchController@delete');
+
+    Route::get('/info/{sid}', 'InfoController@info');
+
+    Route::get('/download/{sid}', 'YoutubeDownloadController@download');
 });

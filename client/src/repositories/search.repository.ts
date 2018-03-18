@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import {Repository} from "./repository";
 import {RestUrl} from '../models/rest-url.model';
 import config from '../config';
-import {SearchItem} from "../models/search-item";
+// import {SearchItem} from "../models/search-item";
 import {Search} from "../models/search";
 import {SearchItemCollection} from "../models/search-item-collection";
 
@@ -21,5 +21,13 @@ export class SearchRepository extends Repository {
 
   public removeSearchHistory(id: number) {
     return this.delete(RestUrl.buildUrl(config.serverHost + 'api/search/list/' + id));
+  }
+
+  public getInfo(sid: string) {
+    return this.get(RestUrl.buildUrl(config.serverHost + 'api/info/' + sid));
+  }
+
+  public download(sid: string) {
+    return this.get(RestUrl.buildUrl(config.serverHost + 'api/download/' + sid));
   }
 }

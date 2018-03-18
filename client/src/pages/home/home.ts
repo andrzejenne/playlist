@@ -7,7 +7,7 @@ import {Search} from "../../models/search";
 
 @Component({
   selector: 'page-home',
-  templateUrl: 'home.html',
+  templateUrl: 'home.html'
 })
 export class HomePage implements OnDestroy {
 
@@ -51,6 +51,20 @@ export class HomePage implements OnDestroy {
     this.subs.push(
       this.repo.removeSearchHistory(item.id)
         .subscribe(response => this.removeSearchHistoryItem(item))
+    );
+  }
+
+  public getInfo(event: MouseEvent, item: SearchItem) {
+    this.subs.push(
+      this.repo.getInfo(item.sid)
+        .subscribe(response => console.info(response))
+    );
+  }
+
+  public download(event: MouseEvent, item: SearchItem) {
+    this.subs.push(
+      this.repo.download(item.sid)
+        .subscribe(response => console.info(response))
     );
   }
 
