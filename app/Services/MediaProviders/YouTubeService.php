@@ -79,7 +79,7 @@ class YouTubeService implements MediaProviderContract
                             $result->id,
                             $result->snippet->title,
                             $result->snippet->description,
-                            $result->snippet->thumbnails->default->url,
+                            $result->snippet->thumbnails->medium->url, // @todo configurable size
                             $duration
                         )
                     );

@@ -28,44 +28,13 @@ class YoutubeDownloadController
      */
     public function download($sid)
     {
-        $info = InfoController::getInfo($sid);
-        if ($info) {
-            $collection = collect($info['formats']);
+        try {
+            $response = $this->call('service:download', ['sid' => $sid]);
 
-            $videos = $collection->filter(function ($item) {
-                if (in_array($item['ext'], static::$possibleVideos)) {
-                    return $item;
-                }
-
-                return false;
-            })->sortByDesc(function ($item) {
-                return $item['width'];
-            });
-
-            $audios = $collection->filter(function ($item) {
-                if (in_array($item['ext'], static::$possibleAudios)) {
-                    return $item;
-                }
-
-                return false;
-            })->sortByDesc(function ($item) {
-                return $item['abr'];
-            }, SORT_NUMERIC);
-
-            if ($videos->count() && $audios->count()) {
-                $vcode = $videos->first()['format_id'];
-                $acode = $audios->first()['format_id'];
-                $cmd = Process::prepare('youtube-dl')
-                    ->enableErrorOutput()
-                    ->enableOutput()
-                    ->setWorkingDir(storage_path('temp'))
-                    ->execute('-f', "$vcode+$acode", $sid);
-
-                return response()->json(['message' => 'downloaded', 'report' => $cmd->report()]);
-            }
-            else {
-                return response()->json(['message' => 'cannot download']);
-            }
+            return response()->json(['message' => 'downloaded', 'report' => $response]);
+        }
+        catch (\Throwable $t) {
+            return response()->json(['error' => true, 'message' => $t->getMessage()]);
         }
     }
 }

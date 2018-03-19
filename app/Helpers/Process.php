@@ -69,7 +69,7 @@ class Process
      * @param $cmdWithArgs
      * @return bool|Process
      */
-    public static function run($cmdWithArgs)
+    public static function run($cmdWithArgs, $cwd = null)
     {
         $args = explode(' ', $cmdWithArgs);
         $cmd = array_shift($args);
@@ -78,6 +78,7 @@ class Process
             return static::prepare($cmd)
                 ->enableOutput()
                 ->enableErrorOutput()
+                ->setCurrentWorkingDir($cwd)
                 ->execute($args);
         } catch (\Exception $e) {
             return false;
@@ -94,7 +95,7 @@ class Process
         if (!$this->executed) {
             $argStr = count($args) ? ' ' . implode(' ', $args) : null;
 
-            $this->resource = proc_open($this->cmd . $argStr, $this->fifo, $pipes, $this->cwd, $this->env);
+            $this->resource = proc_open($this->cmd . $argStr, $this->fifo, $pipes, $this->cwd, getenv() + $this->env);
 
             if (isset($this->fifo[1])) {
                 $this->info = stream_get_contents($pipes[1]);
