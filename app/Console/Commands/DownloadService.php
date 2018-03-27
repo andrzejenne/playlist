@@ -1,19 +1,25 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: andrzej
- * Date: 18.3.18
- * Time: 17:24
- */
 
-namespace BBIT\Playlist\Http\Controllers\API;
+namespace BBIT\Playlist\Console\Commands;
 
+use Illuminate\Console\Command;
 
-use BBIT\Playlist\Helpers\Process;
-use Illuminate\Support\Collection;
-
-class YoutubeDownloadController
+class DownloadService extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'service:download {sid}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Download service';
+
     public static $possibleAudios = [
         'm4a'
     ];
@@ -23,22 +29,22 @@ class YoutubeDownloadController
     ];
 
     /**
-     * @param $sid
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
+     * Create a new command instance.
+     *
+     * @return void
      */
-    public function download($sid)
+    public function __construct()
     {
-        // @todo - to command
-//        try {
-//            $response = $this->call('service:download', ['sid' => $sid]);
-//
-//            return response()->json(['message' => 'downloaded', 'report' => $response]);
-//        }
-//        catch (\Throwable $t) {
-//            return response()->json(['error' => true, 'message' => $t->getMessage()]);
-//        }
-//
+        parent::__construct();
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function handle()
+    {
         $info = InfoController::getInfo($sid);
         if ($info) {
             $collection = collect($info['formats']);
@@ -66,21 +72,21 @@ class YoutubeDownloadController
             if ($videos->count() && $audios->count()) {
                 $vcode = $videos->first()['format_id'];
                 $acode = $audios->first()['format_id'];
-                $arg = "--newline -f $vcode+$acode $sid";
-
-                $lines = [];
                 $cmd = Process::prepare('youtube-dl')
                     ->enableErrorOutput()
-                    ->enableOutput(null, function($line) use (&$lines) {
-                        $lines[] = $line;
-                    })
+                    ->enableOutput()
                     ->setWorkingDir(storage_path('temp'))
-                    ->execute($arg);
+                    ->execute('-f', "$vcode+$acode", $sid);
 
-                return response()->json(['message' => 'downloaded', 'report' => $lines]);
+                if ($cmd->success()) {
+                    return $cmd->report();
+                }
+                else {
+                    throw new \Exception('Error downloading: ' . $cmd->error());
+                }
             }
             else {
-                return response()->json(['message' => 'cannot download']);
+                throw new \Exception('cannot download');
             }
         }
     }
