@@ -24,6 +24,7 @@ class YoutubeDownloadController
 
     /**
      * @param $sid
+     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
     public function download($sid)
@@ -55,13 +56,18 @@ class YoutubeDownloadController
             if ($videos->count() && $audios->count()) {
                 $vcode = $videos->first()['format_id'];
                 $acode = $audios->first()['format_id'];
+                $arg = "--newline -f $vcode+$acode $sid";
+
+                $lines = [];
                 $cmd = Process::prepare('youtube-dl')
                     ->enableErrorOutput()
-                    ->enableOutput()
+                    ->enableOutput(null, function($line) use (&$lines) {
+                        $lines[] = $line;
+                    })
                     ->setWorkingDir(storage_path('temp'))
-                    ->execute('-f', "$vcode+$acode", $sid);
+                    ->execute($arg);
 
-                return response()->json(['message' => 'downloaded', 'report' => $cmd->report()]);
+                return response()->json(['message' => 'downloaded', 'report' => $lines]);
             }
             else {
                 return response()->json(['message' => 'cannot download']);

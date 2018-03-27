@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "bbit/playlist",
+    "description": "The caching playlist.",
+    "keywords": ["playlist", "youtube", "cache"],
     "license": "MIT",
     "type": "project",
     "require": {

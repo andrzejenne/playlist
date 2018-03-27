@@ -47,6 +47,12 @@ class Process
     /** @var int */
     private $status = -1;
 
+    /** @var  */
+    private $stdOutReader;
+
+    /** @var  */
+    private $stdErrReader;
+
     /**
      * Process constructor.
      * @param $cmd
@@ -96,11 +102,35 @@ class Process
 
             $this->resource = proc_open($this->cmd . $argStr, $this->fifo, $pipes, $this->cwd, $this->env);
 
-            if (isset($this->fifo[1])) {
-                $this->info = stream_get_contents($pipes[1]);
+            $stdOutEnabled = isset($this->fifo[1]);
+            $stdErrEnabled = isset($this->fifo[2]);
+
+            if (!$this->stdOutReader && !$this->stdErrReader) {
+                if ($stdOutEnabled) {
+                    $this->info = stream_get_contents($pipes[1]);
+                }
+                if ($stdErrEnabled) {
+                    $this->error = stream_get_contents($pipes[2]);
+                }
             }
-            if (isset($this->fifo[2])) {
-                $this->error = stream_get_contents($pipes[2]);
+            else {
+                $iCallback = $this->stdOutReader;
+                $eCallback = $this->stdErrReader;
+                while (
+                    ($stdOutEnabled && $this->stdOutReader && !feof($pipes[1]))
+                    || ($stdErrEnabled && $this->stdErrReader && !feof($pipes[2]))
+                ) {
+                    $iLine = fgets($pipes[1]);
+                    $eLine = fgets($pipes[2]);
+                    if (!empty($iLine) && $this->stdOutReader) {
+                        $this->info .= $iLine . "\n";
+                        $iCallback($iLine);
+                    }
+                    if (!empty($eLine) && $this->stdErrReader) {
+                        $this->error .= $eLine . "\n";
+                        $eCallback($eLine);
+                    }
+                }
             }
 
             $this->executed = true;
@@ -131,23 +161,27 @@ class Process
 
     /**
      * @param $path
+     * @param null $reader
      * @return $this
      */
-    public function enableOutput($path = null)
+    public function enableOutput($path = null, $reader = null)
     {
         $this->fifo[1] = static::createDescriptor($path, self::WRITE_MODE);
+        $this->stdOutReader = $reader;
 
         return $this;
     }
 
     /**
      * @param $path
+     * @param null $reader
      * @param string $mode
      * @return $this
      */
-    public function enableErrorOutput($path = null, $mode = self::WRITE_MODE)
+    public function enableErrorOutput($path = null, $reader = null, $mode = self::WRITE_MODE)
     {
         $this->fifo[2] = static::createDescriptor($path, $mode);
+        $this->stdErrReader = $reader;
 
         return $this;
     }
