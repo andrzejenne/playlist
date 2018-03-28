@@ -1,6 +1,6 @@
 <?php
 
-namespace BBIT\Playlist\Console;
+namespace BBIT\Playlist\Console\Commands;
 
 use BBIT\Playlist\Helpers\Str;
 use Illuminate\Console\Command;

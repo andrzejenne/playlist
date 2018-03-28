@@ -14,6 +14,7 @@ use BBIT\Playlist\Helpers\Process;
 /**
  * Class InfoController
  * @package BBIT\Playlist\Http\Controllers
+ * @deprecated
  */
 class InfoController
 {

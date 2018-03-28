@@ -4,6 +4,11 @@ namespace BBIT\Playlist\Console\Commands;
 
 use Illuminate\Console\Command;
 
+/**
+ * Class DownloadService
+ * @package BBIT\Playlist\Console\Commands
+ * @deprecated
+ */
 class DownloadService extends Command
 {
     /**

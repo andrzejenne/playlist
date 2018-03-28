@@ -8,6 +8,8 @@
 
 namespace BBIT\Playlist\Helpers;
 
+use BBIT\Playlist\Contracts\ProcessReporterContract;
+
 /**
  * Class Process
  * @package App\Service
@@ -19,6 +21,10 @@ class Process
     const READ_MODE = 'r',
         WRITE_MODE = 'w',
         APPEND_MODE = 'a';
+
+    const INPUT = 0,
+        OUTPUT = 1,
+        ERROR_OUTPUT = 2;
 
     /** @var string */
     private $cmd;
@@ -47,11 +53,8 @@ class Process
     /** @var int */
     private $status = -1;
 
-    /** @var  */
-    private $stdOutReader;
-
-    /** @var  */
-    private $stdErrReader;
+    /** @var ProcessReporterContract */
+    private $reporter;
 
     /**
      * Process constructor.
@@ -73,6 +76,7 @@ class Process
 
     /**
      * @param $cmdWithArgs
+     * @param null $cwd
      * @return bool|Process
      */
     public static function run($cmdWithArgs, $cwd = null)
@@ -84,7 +88,7 @@ class Process
             return static::prepare($cmd)
                 ->enableOutput()
                 ->enableErrorOutput()
-                ->setCurrentWorkingDir($cwd)
+                ->setWorkingDir($cwd)
                 ->execute($args);
         } catch (\Exception $e) {
             return false;
@@ -103,34 +107,20 @@ class Process
 
             $this->resource = proc_open($this->cmd . $argStr, $this->fifo, $pipes, $this->cwd, getenv() + $this->env);
 
-            $stdOutEnabled = isset($this->fifo[1]);
-            $stdErrEnabled = isset($this->fifo[2]);
+            $stdOutEnabled = isset($this->fifo[static::OUTPUT]);
+            $stdErrEnabled = isset($this->fifo[static::ERROR_OUTPUT]);
 
-            if (!$this->stdOutReader && !$this->stdErrReader) {
+            if ($this->reporter) {
+                $this->reporter->report($pipes);
+                $this->info = $this->reporter->info();
+                $this->error = $this->reporter->error();
+            }
+            else {
                 if ($stdOutEnabled) {
                     $this->info = stream_get_contents($pipes[1]);
                 }
                 if ($stdErrEnabled) {
                     $this->error = stream_get_contents($pipes[2]);
-                }
-            }
-            else {
-                $iCallback = $this->stdOutReader;
-                $eCallback = $this->stdErrReader;
-                while (
-                    ($stdOutEnabled && $this->stdOutReader && !feof($pipes[1]))
-                    || ($stdErrEnabled && $this->stdErrReader && !feof($pipes[2]))
-                ) {
-                    $iLine = fgets($pipes[1]);
-                    $eLine = fgets($pipes[2]);
-                    if (!empty($iLine) && $this->stdOutReader) {
-                        $this->info .= $iLine . "\n";
-                        $iCallback($iLine);
-                    }
-                    if (!empty($eLine) && $this->stdErrReader) {
-                        $this->error .= $eLine . "\n";
-                        $eCallback($eLine);
-                    }
                 }
             }
 
@@ -155,34 +145,30 @@ class Process
      */
     public function enableInput($path = null)
     {
-        $this->fifo[0] = static::createDescriptor($path, self::READ_MODE);
+        $this->fifo[static::INPUT] = static::createDescriptor($path, self::READ_MODE);
 
         return $this;
     }
 
     /**
      * @param $path
-     * @param null $reader
      * @return $this
      */
-    public function enableOutput($path = null, $reader = null)
+    public function enableOutput($path = null)
     {
-        $this->fifo[1] = static::createDescriptor($path, self::WRITE_MODE);
-        $this->stdOutReader = $reader;
+        $this->fifo[static::OUTPUT] = static::createDescriptor($path, self::WRITE_MODE);
 
         return $this;
     }
 
     /**
      * @param $path
-     * @param null $reader
      * @param string $mode
      * @return $this
      */
-    public function enableErrorOutput($path = null, $reader = null, $mode = self::WRITE_MODE)
+    public function enableErrorOutput($path = null, $mode = self::WRITE_MODE)
     {
-        $this->fifo[2] = static::createDescriptor($path, $mode);
-        $this->stdErrReader = $reader;
+        $this->fifo[static::ERROR_OUTPUT] = static::createDescriptor($path, $mode);
 
         return $this;
     }

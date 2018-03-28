@@ -2,6 +2,8 @@
 
 namespace BBIT\Playlist\Console;
 
+use BBIT\Playlist\Console\Commands\ModelMakeCommand;
+use BBIT\Playlist\Console\Commands\ScaffoldModelsCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 

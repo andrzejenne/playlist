@@ -12,6 +12,11 @@ namespace BBIT\Playlist\Http\Controllers\API;
 use BBIT\Playlist\Helpers\Process;
 use Illuminate\Support\Collection;
 
+/**
+ * Class YoutubeDownloadController
+ * @package BBIT\Playlist\Http\Controllers\API
+ * @deprecated
+ */
 class YoutubeDownloadController
 {
     public static $possibleAudios = [
