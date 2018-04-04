@@ -9,14 +9,13 @@
         "alaouy/youtube": "^2.1",
         "barryvdh/laravel-cors": "^0.11.0",
         "barryvdh/laravel-ide-helper": "^2.4",
-        "cboden/ratchet": "^0.4.1",
         "doctrine/dbal": "^2.6",
         "fideloper/proxy": "~4.0",
         "laravel/framework": "5.6.*",
         "laravel/tinker": "~1.0",
         "pelim/laravel-zmq": "^1.0",
         "symfony/process": "^4.0",
-        "askedio/laravel-ratchet": "dev-master"
+        "voryx/thruway": "^0.5.2"
     },
     "require-dev": {
         "filp/whoops": "~2.0",

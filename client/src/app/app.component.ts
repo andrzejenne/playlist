@@ -24,10 +24,24 @@ export class MyApp {
 
       // alert('conn');
 
-      let conn = new autobahn.Connection({url: 'ws://localhost:3000', realm: 'playlist' });
+      let conn = new autobahn.Connection({url: 'ws://localhost:9090', realm: 'playlist' });
 
       conn.onopen = (session => {
         this.session = session;
+
+        this.session.subscribe('playlist.hi', (...args) => {
+          console.info('callback', ...args);
+        }).then((...args) => {
+            console.info(...args);
+        }).catch(error => {
+          console.error(error);
+        });
+
+        // this.session.register('playlist.hi', () => {
+        //   console.info('hi');
+        // });
+
+        this.session.call('playlist.hello');
       });
 
       conn.open();
