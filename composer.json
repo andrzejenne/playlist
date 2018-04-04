@@ -14,7 +14,9 @@
         "fideloper/proxy": "~4.0",
         "laravel/framework": "5.6.*",
         "laravel/tinker": "~1.0",
-        "symfony/process": "^4.0"
+        "pelim/laravel-zmq": "^1.0",
+        "symfony/process": "^4.0",
+        "askedio/laravel-ratchet": "dev-master"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
@@ -24,6 +26,12 @@
         "phpunit/phpunit": "~7.0",
         "symfony/thanks": "^1.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/andrzejenne/laravel-ratchet"
+        }
+    ],
     "autoload": {
         "classmap": [
             "database/seeds",

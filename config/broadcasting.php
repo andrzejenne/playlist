@@ -50,6 +50,10 @@ return [
             'driver' => 'log',
         ],
 
+        'zmq' => [
+            'driver' => 'zmq',
+        ],
+
         'null' => [
             'driver' => 'null',
         ],
