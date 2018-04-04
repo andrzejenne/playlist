@@ -48,6 +48,17 @@ abstract class ProcessReporterContract
         $this->finish();
     }
 
+    /**
+     * @return string
+     */
+    final public function info() {
+        return $this->info;
+    }
+
+    final public function error() {
+        return $this->error;
+    }
+
     abstract function readOutput($line);
 
     abstract function readErrorOutput($line);

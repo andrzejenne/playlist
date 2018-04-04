@@ -13,6 +13,7 @@ use BBIT\Playlist\Contracts\ProcessReporterContract;
 /**
  * Class Process
  * @package App\Service
+ * @deprecated
  */
 class Process
 {
