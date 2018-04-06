@@ -1,12 +1,13 @@
 import {Component, OnDestroy} from '@angular/core';
-import {NavController} from 'ionic-angular';
-import {GooglePlus} from 'ionic-native';
+import {Backdrop, NavController} from 'ionic-angular';
+import {GooglePlus} from '@ionic-native/google-plus';
 
 import {Subscription} from "rxjs/Subscription";
 import {SearchRepository} from "../../repositories/search.repository";
 import {SearchItem} from "../../models/search-item";
 import {Search} from "../../models/search";
 import {WampService} from "../../services/WampService";
+import {BackgroundMode} from "@ionic-native/background-mode";
 
 @Component({
     selector: 'page-home',
@@ -30,8 +31,16 @@ export class HomePage implements OnDestroy {
 
     private iwamp: number;
 
-    constructor(public navCtrl: NavController, private repo: SearchRepository, private wamp: WampService) {
+    constructor(
+        public navCtrl: NavController,
+        private repo: SearchRepository,
+        private wamp: WampService,
+        private googlePlus: GooglePlus,
+        private backgroundMode: BackgroundMode
+    ) {
         this.subs.push(this.wamp.subscribe(session => this.subscribeWamp()));
+
+        this.backgroundMode.enable();
     }
 
     public onSearchClick() {
@@ -91,7 +100,7 @@ export class HomePage implements OnDestroy {
     }
 
     public loginUser() {
-        GooglePlus.login({})
+        this.googlePlus.login({})
             .then(
                 (res) => {
                     console.info('good', res);
@@ -103,7 +112,7 @@ export class HomePage implements OnDestroy {
     }
 
     public logoutUser() {
-        GooglePlus.logout().then(() => this.userData = null);
+        this.googlePlus.logout().then(() => this.userData = null);
     }
 
     public ngOnDestroy(): void {

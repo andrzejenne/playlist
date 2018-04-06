@@ -84,4 +84,5 @@
     <plugin name="cordova-plugin-googleplus" spec="https://github.com/EddyVerbruggen/cordova-plugin-googleplus">
         <variable name="REVERSED_CLIENT_ID" value="com.googleusercontent.apps.744265825715-4qemakkaiodqunirslls04hbl7p0l6j0" />
     </plugin>
+    <plugin name="cordova-plugin-background-mode" spec="^0.7.2" />
 </widget>

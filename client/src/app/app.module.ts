@@ -4,6 +4,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {StatusBar} from '@ionic-native/status-bar';
+import {GooglePlus} from "@ionic-native/google-plus";
 
 import {MyApp} from './app.component';
 import {HomePage} from '../pages/home/home';
@@ -13,6 +14,7 @@ import {DurationPipe} from "../pipes/duration";
 
 import {ConfigService} from "../services/ConfigService";
 import {WampService} from "../services/WampService";
+import {BackgroundMode} from "@ionic-native/background-mode";
 
 @NgModule({
     declarations: [
@@ -41,7 +43,10 @@ import {WampService} from "../services/WampService";
         SearchRepository,
 
         ConfigService,
-        WampService
+        WampService,
+
+        GooglePlus,
+        BackgroundMode,
     ]
 })
 export class AppModule {
