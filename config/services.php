@@ -30,9 +30,15 @@ return [
     ],
 
     'stripe' => [
-        'model' => BBIT\Playlist\User::class,
+        'model' => BBIT\Playlist\Models\User::class,
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
+    ],
+
+    'google' => [
+        'client_id'     => env('GOOGLE_ID'),
+        'client_secret' => env('GOOGLE_SECRET'),
+        'redirect'      => env('APP_URL') . '/oauth/google/callback',
     ],
 
 ];

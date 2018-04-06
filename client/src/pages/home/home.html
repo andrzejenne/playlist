@@ -12,6 +12,17 @@
 </ion-header>
 
 <ion-content padding>
+    <ion-card *ngIf="userData">
+        <ion-card-content>
+            <img class="profile-img" [hidden]="!userData" [src]="userData.imageUrl" />
+            <h1>{{userData.displayName}}</h1>
+            <p>{{userData.email}}</p>
+        </ion-card-content>
+    </ion-card>
+    <button (click)="loginUser()">Login</button>
+    <button (click)="logoutUser()">Logout</button>
+
+
     <ion-list *ngIf="!list.length && history.length > 1" class="history">
         <ion-item *ngFor="let item of history" (click)="searchItems(item.query)">
             {{ item.query }}

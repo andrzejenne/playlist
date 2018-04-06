@@ -1,5 +1,7 @@
 import {Component, OnDestroy} from '@angular/core';
 import {NavController} from 'ionic-angular';
+import {GooglePlus} from 'ionic-native';
+
 import {Subscription} from "rxjs/Subscription";
 import {SearchRepository} from "../../repositories/search.repository";
 import {SearchItem} from "../../models/search-item";
@@ -19,6 +21,8 @@ export class HomePage implements OnDestroy {
     public list: SearchItem[] = [];
 
     public focused = false;
+
+    public userData;
 
     private allHistory: Search[];
 
@@ -86,20 +90,20 @@ export class HomePage implements OnDestroy {
         );
     }
 
-    click1() {
-        this.wamp.call('com.hello.world.cli');
+    public loginUser() {
+        GooglePlus.login({})
+            .then(
+                (res) => {
+                    console.info('good', res);
+                    this.userData = res;
+                },
+                (err) => {
+                    console.error('error', err);
+                });
     }
 
-    click2() {
-        this.wamp.call('com.hello.world').then(result => console.info('call result', result));
-    }
-
-    click3() {
-        this.wamp.publish('sub.say.hi.cli', [{message: 'hihi'}]);
-    }
-
-    click4() {
-        this.wamp.publish('sub.say.hi', [{message: 'hi backend'}]);
+    public logoutUser() {
+        GooglePlus.logout().then(() => this.userData = null);
     }
 
     public ngOnDestroy(): void {

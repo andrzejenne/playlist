@@ -67,7 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => BBIT\Playlist\User::class,
+            'model' => BBIT\Playlist\Models\User::class,
         ],
 
         // 'users' => [

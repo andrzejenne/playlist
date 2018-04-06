@@ -169,6 +169,8 @@ return [
 
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
+        Laravel\Socialite\SocialiteServiceProvider::class,
+
     ],
 
     /*
@@ -221,6 +223,8 @@ return [
         'Youtube' => Alaouy\Youtube\Facades\Youtube::class,
 
         'WampRoute' => BBIT\Playlist\Facades\WampRoute::class,
+
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
     ],
 
     'models' => [
