@@ -161,6 +161,8 @@ return [
         BBIT\Playlist\Providers\RouteServiceProvider::class,
 
         BBIT\Playlist\Providers\MediaLibraryProvider::class,
+        BBIT\Playlist\Providers\WampServiceProvider::class,
+
 
         // foreign
         Alaouy\Youtube\YoutubeServiceProvider::class,
@@ -217,6 +219,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'Youtube' => Alaouy\Youtube\Facades\Youtube::class,
+
+        'WampRoute' => BBIT\Playlist\Facades\WampRoute::class,
     ],
 
     'models' => [

@@ -6,8 +6,10 @@
  * Time: 21:05
  */
 
-/** @var \BBIT\Playlist\Providers\WampRouter $this */
-
 WampRoute::namespace('com')->group(function(){
     WampRoute::command('hello.world', 'HelloController@sayHello');
+});
+
+WampRoute::namespace('sub')->group(function(){
+    WampRoute::subscribe('say.hi', 'HelloController@salute');
 });

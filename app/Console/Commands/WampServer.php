@@ -2,10 +2,14 @@
 
 namespace BBIT\Playlist\Console\Commands;
 
-use BBIT\Playlist\Providers\WampRouter;
 use BBIT\Playlist\Services\WampServerService;
 use Illuminate\Console\Command;
+use Illuminate\Foundation\Application;
 
+/**
+ * Class WampServer
+ * @package BBIT\Playlist\Console\Commands
+ */
 class WampServer extends Command
 {
     /**
@@ -13,7 +17,7 @@ class WampServer extends Command
      *
      * @var string
      */
-    protected $signature = 'wamp:server';
+    protected $signature = 'wamp:serve';
 
     /**
      * The console command description.
@@ -26,18 +30,21 @@ class WampServer extends Command
      * @var WampServerService
      */
     private $service;
+    /**
+     * @var Application
+     */
+    private $app;
 
     /**
      * Create a new command instance.
      *
-     * @param WampServerService $service
-     * @param WampRouter $routes
+     * @param Application $app
      */
-    public function __construct(WampServerService $service)
+    public function __construct(Application $app)
     {
         parent::__construct();
 
-        $this->service = $service;
+        $this->app = $app;
     }
 
     /**
@@ -48,6 +55,8 @@ class WampServer extends Command
      */
     public function handle()
     {
+        $this->service = $this->app->make(WampServerService::class);
+
         $this->service->run();
     }
 }

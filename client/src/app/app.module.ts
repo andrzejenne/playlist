@@ -11,32 +11,38 @@ import {SearchRepository} from '../repositories/search.repository';
 import {SearchBarComponent} from "../pages/home/search-bar.component";
 import {DurationPipe} from "../pipes/duration";
 
+import {ConfigService} from "../services/ConfigService";
+import {WampService} from "../services/WampService";
+
 @NgModule({
-  declarations: [
-    MyApp,
-    HomePage,
+    declarations: [
+        MyApp,
+        HomePage,
 
-    SearchBarComponent,
+        SearchBarComponent,
 
-    DurationPipe
-  ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    IonicModule.forRoot(MyApp),
-  ],
-  bootstrap: [IonicApp],
-  entryComponents: [
-    MyApp,
-    HomePage
-  ],
-  providers: [
-    StatusBar,
-    SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler},
+        DurationPipe
+    ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        IonicModule.forRoot(MyApp),
+    ],
+    bootstrap: [IonicApp],
+    entryComponents: [
+        MyApp,
+        HomePage
+    ],
+    providers: [
+        StatusBar,
+        SplashScreen,
+        {provide: ErrorHandler, useClass: IonicErrorHandler},
 
-    SearchRepository,
-  ]
+        SearchRepository,
+
+        ConfigService,
+        WampService
+    ]
 })
 export class AppModule {
 }

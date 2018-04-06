@@ -8,7 +8,7 @@
 
 namespace BBIT\Playlist\Services;
 
-use BBIT\Playlist\Providers\WampRouter;
+use BBIT\Playlist\Wamp\WampRouter;
 use Thruway\Peer\ClientInterface;
 use Thruway\Peer\Router;
 use Thruway\Transport\RatchetTransportProvider;
@@ -25,14 +25,17 @@ class WampServerService
 
     /**
      * WampServer constructor.
+     * @param WampRouter $router
      */
-    public function __construct()
+    public function __construct(WampRouter $router)
     {
         $host = config('ratchet.host', 'localhost');
         $port = config('ratchet.port', 8080);
 
         $this->router = new Router();
         $this->router->addTransportProvider(new RatchetTransportProvider($host, $port));
+
+        $this->addClient($router);
     }
 
     /**

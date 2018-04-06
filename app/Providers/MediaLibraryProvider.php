@@ -27,16 +27,6 @@ class MediaLibraryProvider extends ServiceProvider
     ];
 
     /**
-     * MediaLibraryProvider constructor.
-     * @param Application $app
-     */
-    public function __construct(Application $app)
-    {
-        parent::__construct($app);
-    }
-
-
-    /**
      * @return void
      */
     public function register()
