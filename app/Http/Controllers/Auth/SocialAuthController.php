@@ -5,6 +5,7 @@ namespace BBIT\Playlist\Http\Controllers\Auth;
 use BBIT\Playlist\Http\Controllers\Controller;
 use BBIT\Playlist\Models\User;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -30,19 +31,29 @@ class SocialAuthController extends Controller
      * @var array
      */
     protected $providers = [
-//        'github',
-//        'facebook',
+        'github',
+        'facebook',
         'google',
-//        'twitter'
+        'twitter'
     ];
 
     /**
      * Show the social login page
      *
+     * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function show()
+    public function show(Request $request)
     {
+        $requestToken = $request->get('token');
+        $redirectUrl = $request->get('redirect');
+        if ($requestToken) {
+            session(['requestToken' => $requestToken]);
+        }
+        if ($redirectUrl) {
+            session(['redirectUrl' => $redirectUrl]);
+        }
+
         return view('auth.social');
     }
 
@@ -54,7 +65,7 @@ class SocialAuthController extends Controller
      */
     public function redirectToProvider($driver)
     {
-        if( ! $this->isProviderAllowed($driver) ) {
+        if (!$this->isProviderAllowed($driver)) {
             return $this->sendFailedResponse("{$driver} is not currently supported");
         }
 
@@ -72,7 +83,7 @@ class SocialAuthController extends Controller
      * @param $driver
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function handleProviderCallback( $driver )
+    public function handleProviderCallback($driver)
     {
         try {
             $user = Socialite::driver($driver)->user();
@@ -81,7 +92,7 @@ class SocialAuthController extends Controller
         }
 
         // check for email in returned user
-        return empty( $user->email )
+        return empty($user->email)
             ? $this->sendFailedResponse("No email id returned from {$driver} provider.")
             : $this->loginOrCreateAccount($user, $driver);
     }
@@ -120,7 +131,7 @@ class SocialAuthController extends Controller
         $user = User::where('email', $providerUser->getEmail())->first();
 
         // if user already found
-        if( $user ) {
+        if ($user) {
             // update the avatar and provider that might have changed
             $user->update([
                 'avatar' => $providerUser->avatar,
@@ -130,6 +141,7 @@ class SocialAuthController extends Controller
             ]);
         } else {
             // create a new user
+            /** @var User $user */
             $user = User::create([
                 'name' => $providerUser->getName(),
                 'email' => $providerUser->getEmail(),
@@ -145,7 +157,33 @@ class SocialAuthController extends Controller
         // login the user
         Auth::login($user, true);
 
+        if (session('requestToken')) {
+            $_SESSION[$_SESSION['requestToken']] = $user->getId();
+            unset($_SESSION['requestToken']);
+        }
+        if (isset($_SESSION['redirectUrl'])) {
+            $redirectUrl = $_SESSION['redirectUrl'];
+            unset($_SESSION['redirectUrl']);
+
+            return redirect($redirectUrl);
+        }
+
         return $this->sendSuccessResponse();
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAuthenticatedUser(Request $request) {
+        $requestToken = $request->get('token');
+        if (isset($_SESSION[$requestToken])) {
+            $user = User::whereId($_SESSION[$requestToken])->first();
+
+            return response()->json($user);
+        }
+
+        return response()->json(null);
     }
 
     /**

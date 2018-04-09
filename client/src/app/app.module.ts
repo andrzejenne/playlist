@@ -15,6 +15,7 @@ import {DurationPipe} from "../pipes/duration";
 import {ConfigService} from "../services/ConfigService";
 import {WampService} from "../services/WampService";
 import {BackgroundMode} from "@ionic-native/background-mode";
+import {AuthService} from "../services/AuthService";
 
 @NgModule({
     declarations: [
@@ -47,6 +48,10 @@ import {BackgroundMode} from "@ionic-native/background-mode";
 
         GooglePlus,
         BackgroundMode,
+
+        // services
+            // auth
+        AuthService
     ]
 })
 export class AppModule {

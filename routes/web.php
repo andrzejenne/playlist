@@ -23,3 +23,4 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('auth/social', 'Auth\SocialAuthController@show')->name('social.login');
 Route::get('oauth/{driver}', 'Auth\SocialAuthController@redirectToProvider')->name('social.oauth');
 Route::get('oauth/{driver}/callback', 'Auth\SocialAuthController@handleProviderCallback')->name('social.callback');
+Route::get('auth/user', 'Auth\SocialAuthController@getAuthenticatedUser');
