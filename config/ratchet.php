@@ -14,6 +14,7 @@ return [
     'class'           => \BBIT\Playlist\Services\WampServerService::class,
     'host'            => '0.0.0.0',
     'port'            => '9090',
+    'proto' => 'ws://',
     'connectionLimit' => false,
     'throttle'        => [
         'onOpen'    => '5:1',

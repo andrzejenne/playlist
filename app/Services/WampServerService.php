@@ -20,7 +20,7 @@ use Thruway\Transport\RatchetTransportProvider;
  */
 class WampServerService
 {
-    /** @var ROuter */
+    /** @var Router */
     private $router;
 
     /**

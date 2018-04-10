@@ -27,6 +27,7 @@ export class WebAuthenticator extends Authenticator {
                 }
             )
                 .subscribe((response:any) => { // @todo - contract
+                  debugger;
                         if (response !== null && response.id) {
                             this.setUser(response);
                             resolve(response);
@@ -37,6 +38,7 @@ export class WebAuthenticator extends Authenticator {
                         }
                     },
                     error => {
+                  debugger;
                         console.info('ERROR:', error);
                         reject(error);
                     });

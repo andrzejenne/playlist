@@ -8,11 +8,38 @@
 
 namespace BBIT\Playlist\Contracts;
 
+use Illuminate\Support\Collection;
+
 /**
  * Class DownloaderContract
  * @package BBIT\Playlist\Contracts
  */
 abstract class DownloaderContract
 {
+    /**
+     * @param $sid
+     * @return string
+     * @throws \Exception
+     */
+    abstract public function download($sid);
 
+    /**
+     * @param $sid
+     * @param string $format
+     * @return string
+     * @throws \Exception
+     */
+    abstract public function downloadAudio($sid, $format = 'mp3');
+
+    /**
+     * @param $sid
+     * @return Collection
+     */
+    abstract public function getVideos($sid);
+
+    /**
+     * @param $sid
+     * @return Collection
+     */
+    abstract public function getAudios($sid);
 }

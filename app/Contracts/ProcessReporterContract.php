@@ -9,6 +9,7 @@
 namespace BBIT\Playlist\Contracts;
 
 use BBIT\Playlist\Helpers\Process;
+use Thruway\ClientSession;
 
 /**
  * Class ProcessReporterContract
@@ -21,6 +22,9 @@ abstract class ProcessReporterContract
 
     /** @var string */
     private $error;
+
+    /** @var ClientSession */
+    private $session;
 
     /**
      * @param $pipes
@@ -57,6 +61,15 @@ abstract class ProcessReporterContract
 
     final public function error() {
         return $this->error;
+    }
+
+    /**
+     * @param ClientSession $session
+     * // @todo - to specific only YouTubeDownloadProgressReporter
+     */
+    final public function setSession(ClientSession $session)
+    {
+        $this->session = $session;
     }
 
     abstract function readOutput($line);

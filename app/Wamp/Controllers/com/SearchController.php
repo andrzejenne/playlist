@@ -47,7 +47,7 @@ class SearchController extends Controller
 
         $query = $args[0]->q;
         $pageToken = getValue($args[0]->pageToken);
-        $perPage = getValue($args[0]->perPage, 24);
+        $perPage = getValue($args[0]->perPage, 8);
 
         $results = [];
 

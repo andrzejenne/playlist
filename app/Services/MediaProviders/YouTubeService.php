@@ -27,7 +27,7 @@ class YouTubeService implements MediaProviderContract
      * @return MediaItemCollection
      * @throws \Exception
      */
-    public function search($q, $perPage = 24, $pageToken = null)
+    public function search($q, $perPage = 16, $pageToken = null)
     {
         $args = ['q' => $q, 'part' => 'id', 'maxResults' => $perPage];
         if ($pageToken) {
@@ -58,13 +58,28 @@ class YouTubeService implements MediaProviderContract
     private function getDetails($results)
     {
         $ids = [];
+        $cached = [];
+        $retrieved = [];
         foreach ($results as $result) {
             if (isset($result->id->videoId)) {
-                $ids[] = $result->id->videoId;
+                $sid = $result->id->videoId;
+                $info = \Cache::get('info.youtube.' . $sid);
+                if ($info) {
+                    $cached[] = $info;
+                } else {
+                    $ids[] = $sid;
+                }
             }
         }
 
-        return \Youtube::getVideoInfo($ids);
+        if (count($ids)) {
+            $retrieved = \Youtube::getVideoInfo($ids);
+            foreach ($retrieved as $item) {
+                \Cache::forever('info.youtube.' . $item->id, $item);
+            }
+        }
+
+        return array_merge($cached, $retrieved);
     }
 
     /**

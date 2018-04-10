@@ -9,6 +9,7 @@
 namespace BBIT\Playlist\Services\Downloader\Progress;
 
 use BBIT\Playlist\Contracts\ProcessReporterContract;
+use Thruway\ClientSession;
 
 /**
  * Class ProgressReporter
