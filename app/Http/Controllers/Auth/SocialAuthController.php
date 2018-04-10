@@ -7,7 +7,9 @@ use BBIT\Playlist\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\AbstractProvider;
 
 /**
  * Class SocialAuthController
@@ -70,7 +72,16 @@ class SocialAuthController extends Controller
         }
 
         try {
-            return Socialite::driver($driver)->redirect();
+            /** @var AbstractProvider $driver */
+            $driver = Socialite::driver($driver);
+            // @todo - cannot use, google has redirect url white list
+//            if ($driver instanceof GoogleProvider) {
+//                $session = session();
+//                $driver->redirectUrl(config('services.google.redirect')
+//                    . '?' . $session->getName() . '=' . $session->getId());
+//            }
+
+            return $driver->redirect();
         } catch (Exception $e) {
             // You should show something simple fail message
             return $this->sendFailedResponse($e->getMessage());
@@ -104,7 +115,7 @@ class SocialAuthController extends Controller
      */
     protected function sendSuccessResponse()
     {
-        return redirect()->intended('home');
+        return redirect()->intended(config('auth.redirectTo', 'home'));
     }
 
     /**
@@ -157,33 +168,19 @@ class SocialAuthController extends Controller
         // login the user
         Auth::login($user, true);
 
-        if (session('requestToken')) {
-            $_SESSION[$_SESSION['requestToken']] = $user->getId();
-            unset($_SESSION['requestToken']);
+        if (($requestToken = session('requestToken'))) {
+//            $data = [$requestToken => $user];
+//            session($data);
+            Storage::put($requestToken . '.json', $user->toJson());
+            session()->forget('requestToken');
         }
-        if (isset($_SESSION['redirectUrl'])) {
-            $redirectUrl = $_SESSION['redirectUrl'];
-            unset($_SESSION['redirectUrl']);
+        if (($redirectUrl = session('redirectUrl'))) {
+            session()->forget('redirectUrl');
 
             return redirect($redirectUrl);
         }
 
         return $this->sendSuccessResponse();
-    }
-
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getAuthenticatedUser(Request $request) {
-        $requestToken = $request->get('token');
-        if (isset($_SESSION[$requestToken])) {
-            $user = User::whereId($_SESSION[$requestToken])->first();
-
-            return response()->json($user);
-        }
-
-        return response()->json(null);
     }
 
     /**

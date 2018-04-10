@@ -5,15 +5,20 @@ export abstract class Authenticator {
 
     private user;
 
-    abstract authenticate();
+    abstract authenticate(): Promise<any>;
 
     isAuthenticated() {
-        return this.currentUser() !== null;
+        let user;
+        return (user = this.currentUser()) !== null && user.id;
     }
 
-    logout() {
-        localStorage.removeItem('user');
-        this.user = null;
+    logout(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            localStorage.removeItem('user');
+            this.user = null;
+
+            resolve(true);
+        });
     }
 
     currentUser(): any{ // @todo - user interface

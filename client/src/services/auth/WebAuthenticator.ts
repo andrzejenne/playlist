@@ -1,6 +1,5 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {UUID} from 'angular2-uuid';
 
 import {Authenticator} from "./Authenticator";
 import {ConfigService} from "../ConfigService";
@@ -13,50 +12,46 @@ export class WebAuthenticator extends Authenticator {
     }
 
     authenticate() {
-        if (this.hasRequestToken()) {
-            // return false;
-            this.http.get(this.config.get('auth.userUrl') + '?token=' + this.getRequestToken())
-                .subscribe(response => {
-                        if (response !== null) {
+        return new Promise(this.authenticationCallback);
+    }
+
+    logout() {
+        return new Promise(this.logoutCallback);
+    }
+
+    private authenticationCallback = (resolve, reject) => {
+        this.http.get(
+                this.config.get('auth.userUrl'),
+                {
+                    withCredentials: true
+                }
+            )
+                .subscribe((response:any) => { // @todo - contract
+                        if (response !== null && response.id) {
                             this.setUser(response);
+                            resolve(response);
                         }
                         else {
-                            this.clearRequestToken();
+                            reject('not authenticated');
                             this.authenticateMe();
                         }
                     },
                     error => {
-                        console.error('no user');
-                        this.clearRequestToken();
-                        this.authenticateMe();
+                        console.info('ERROR:', error);
+                        reject(error);
                     });
-        }
-        else {
-            this.authenticateMe();
-        }
-    }
+    };
+
+    private logoutCallback = (resolve, reject) => {
+        super.logout();
+
+        return this.http.delete(this.config.get('auth.userUrl'))
+            .subscribe(response => resolve(response), error => reject(error));
+    };
 
     private authenticateMe() {
-        let token = UUID.UUID();
-        this.setRequestToken(token);
         window.location.href = this.config.get('auth.requestUrl')
-            + '?token=' + token
+            // + '?token=' + token
             + '&redirect=' + this.config.get('auth.redirectUrl')
-    }
-
-    private hasRequestToken() {
-        return this.getRequestToken() !== null;
-    }
-
-    private getRequestToken() {
-        return localStorage.getItem('requestToken') || null;
-    }
-
-    private setRequestToken(uid: string) {
-        localStorage.setItem('requestToken', uid);
-    }
-
-    private clearRequestToken() {
-        localStorage.removeItem('requestToken');
     }
 }

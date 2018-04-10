@@ -1,12 +1,11 @@
 import {Component, OnDestroy} from '@angular/core';
 import {NavController} from 'ionic-angular';
-import {GooglePlus} from '@ionic-native/google-plus';
-
 import {Subscription} from "rxjs/Subscription";
 import {SearchRepository} from "../../repositories/search.repository";
 import {SearchItem} from "../../models/search-item";
 import {Search} from "../../models/search";
 import {WampService} from "../../services/WampService";
+import {AuthService} from "../../services/AuthService";
 
 @Component({
     selector: 'page-home',
@@ -34,14 +33,20 @@ export class HomePage implements OnDestroy {
         public navCtrl: NavController,
         private repo: SearchRepository,
         private wamp: WampService,
-        private googlePlus: GooglePlus
+        private auth: AuthService
     ) {
         this.subs.push(this.wamp.subscribe(session => this.subscribeWamp()));
+
+        this.userData = this.auth.getUser();
     }
 
     public onSearchClick() {
         console.info('onSearchClick');
         this.searchItems();
+    }
+
+    public onLogoutClick() {
+        this.auth.logout();
     }
 
     public getSearchHistory() {
@@ -93,22 +98,6 @@ export class HomePage implements OnDestroy {
             this.repo.search(this.search)
                 .subscribe(response => this.list = response.items)
         );
-    }
-
-    public loginUser() {
-        this.googlePlus.login({})
-            .then(
-                (res) => {
-                    console.info('good', res);
-                    this.userData = res;
-                },
-                (err) => {
-                    console.error('error', err);
-                });
-    }
-
-    public logoutUser() {
-        this.googlePlus.logout().then(() => this.userData = null);
     }
 
     public ngOnDestroy(): void {

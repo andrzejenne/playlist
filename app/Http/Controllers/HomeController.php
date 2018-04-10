@@ -25,6 +25,9 @@ class HomeController extends Controller
      */
     public function index()
     {
+//        $redirectTo = config('auth.redirectTo');
+//        return response()->redirectTo($redirectTo);
+
         return view('home');
     }
 }

@@ -6,22 +6,24 @@
         <ion-searchbar [(ngModel)]="search" (ionFocus)="getSearchHistory(); focused = true;" (ionBlur)="focused = false" (ionInput)="searchItems()" [debounce]="500"></ion-searchbar>
         <ion-buttons end right>
             <button ion-button *ngIf="search && search.length > 1" (click)="onSearchClick">Search</button>
+            <button ion-button (click)="onLogoutClick" color="danger" round icon-start>
+                <ion-icon name="log-out"></ion-icon>
+                Logout
+            </button>
         </ion-buttons>
         <!--<search-bar (search)="onSearchChange"></search-bar>-->
     </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-    <ion-card *ngIf="userData">
-        <ion-card-content>
-            <img class="profile-img" [hidden]="!userData" [src]="userData.imageUrl" />
-            <h1>{{userData.displayName}}</h1>
-            <p>{{userData.email}}</p>
-        </ion-card-content>
-    </ion-card>
-    <button (click)="loginUser()">Login</button>
-    <button (click)="logoutUser()">Logout</button>
-
+    <!--<ion-card *ngIf="userData">-->
+        <!--<ion-card-content>-->
+            <!--&lt;!&ndash;<pre>{{userData|json}}</pre>&ndash;&gt;-->
+            <!--<img class="profile-img" [hidden]="!userData" [src]="userData.avatar" />-->
+            <!--<h1>{{userData.name}}</h1>-->
+            <!--<p>{{userData.email}}</p>-->
+        <!--</ion-card-content>-->
+    <!--</ion-card>-->
 
     <ion-list *ngIf="!list.length && history.length > 1" class="history">
         <ion-item *ngFor="let item of history" (click)="searchItems(item.query)">
@@ -56,14 +58,4 @@
             <!--<button ion-button clear item-end>Play</button>-->
         <!--</ion-item>-->
     </ion-list>
-
-    <ion-card>
-        <ion-card-content>
-            <button class="btn btn-primary" (click)="click1()">1</button>
-            <button class="btn btn-primary" (click)="click2()">2</button>
-            <button class="btn btn-primary" (click)="click3()">3</button>
-            <button class="btn btn-primary" (click)="click4()">4</button>
-        </ion-card-content>
-    </ion-card>
-
 </ion-content>

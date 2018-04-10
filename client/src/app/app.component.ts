@@ -6,12 +6,16 @@ import {SplashScreen} from '@ionic-native/splash-screen';
 import {HomePage} from '../pages/home/home';
 import {BackgroundMode} from "@ionic-native/background-mode";
 import {AuthService} from "../services/AuthService";
+import {AuthError} from "../pages/auth/error";
+import {WelcomePage} from "../pages/welcome/welcome";
 
 @Component({
     templateUrl: 'app.html'
 })
-export class MyApp {
-    rootPage: any = HomePage;
+export class ThePlaylist {
+    rootPage: any = WelcomePage;
+
+    authenticated: boolean = false;
 
     constructor(platform: Platform,
                 statusBar: StatusBar,
@@ -28,10 +32,27 @@ export class MyApp {
             // @todo - enable background mode only when playing something
             backgroundMode.enable();
 
+            auth.logout$.subscribe(result => this.authenticated = !result);
+
             if (!auth.isAuthenticated()) {
-                auth.authenticate();
+                auth.authenticate()
+                    .then(response => this.onAuthenticated())
+                    .catch(error => this.onAuthenticationError());
+            }
+            else {
+                this.onAuthenticated();
             }
         });
+    }
+
+    onAuthenticated() {
+        this.authenticated = true;
+        this.rootPage = HomePage;
+    }
+
+    onAuthenticationError() {
+        this.authenticated = false;
+        this.rootPage = AuthError;
     }
 }
 

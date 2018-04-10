@@ -97,6 +97,12 @@ class User extends BaseModel implements
 		self::COL_UPDATED_AT,
 	];
 
+    protected $hidden = [
+        self::COL_PASSWORD,
+        self::COL_ACCESS_TOKEN,
+        self::COL_REMEMBER_TOKEN
+    ];
+
     	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */

@@ -2,6 +2,7 @@
 
 namespace BBIT\Playlist\Providers;
 
+use Barryvdh\Cors\HandleCors;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -66,7 +67,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapApiRoutes()
     {
         Route::prefix('api')
-             ->middleware('api')
+             ->middleware(['api', HandleCors::class])
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
     }

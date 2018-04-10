@@ -99,4 +99,6 @@ return [
         ],
     ],
 
+    'redirectTo' => env('FRONTEND_URL', 'http://localhost:8100/')
+
 ];

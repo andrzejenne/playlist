@@ -6,7 +6,7 @@ import {SplashScreen} from '@ionic-native/splash-screen';
 import {StatusBar} from '@ionic-native/status-bar';
 import {GooglePlus} from "@ionic-native/google-plus";
 
-import {MyApp} from './app.component';
+import {ThePlaylist} from './app.component';
 import {HomePage} from '../pages/home/home';
 import {SearchRepository} from '../repositories/search.repository';
 import {SearchBarComponent} from "../pages/home/search-bar.component";
@@ -16,11 +16,15 @@ import {ConfigService} from "../services/ConfigService";
 import {WampService} from "../services/WampService";
 import {BackgroundMode} from "@ionic-native/background-mode";
 import {AuthService} from "../services/AuthService";
+import {AuthError} from "../pages/auth/error";
+import {WelcomePage} from "../pages/welcome/welcome";
 
 @NgModule({
     declarations: [
-        MyApp,
+        ThePlaylist,
         HomePage,
+        AuthError,
+        WelcomePage,
 
         SearchBarComponent,
 
@@ -29,12 +33,14 @@ import {AuthService} from "../services/AuthService";
     imports: [
         BrowserModule,
         HttpClientModule,
-        IonicModule.forRoot(MyApp),
+        IonicModule.forRoot(ThePlaylist),
     ],
     bootstrap: [IonicApp],
     entryComponents: [
-        MyApp,
-        HomePage
+        ThePlaylist,
+        HomePage,
+        AuthError,
+        WelcomePage
     ],
     providers: [
         StatusBar,
