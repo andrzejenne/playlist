@@ -11,6 +11,7 @@ namespace BBIT\Playlist\Services\MediaProviders;
 use BBIT\Playlist\Contracts\MediaProviderContract;
 use BBIT\Playlist\Helpers\MediaItem;
 use BBIT\Playlist\Helpers\MediaItemCollection;
+use BBIT\Playlist\Helpers\MediaItemPaginatedCollection;
 
 /**
  * Class Youtube
@@ -21,17 +22,24 @@ class YouTubeService implements MediaProviderContract
 
     /**
      * @param $q
+     * @param int $perPage
+     * @param null $pageToken
      * @return MediaItemCollection
      * @throws \Exception
      */
-    public function search($q)
+    public function search($q, $perPage = 24, $pageToken = null)
     {
-        $results = \Youtube::search($q, 20, ['id']);
+        $args = ['q' => $q, 'part' => 'id', 'maxResults' => $perPage];
+        if ($pageToken) {
+            $args['pageToken'] = $pageToken;
+        }
 
-        $results = $this->getDetails($results);
+        $search = \Youtube::searchAdvanced($args, true);
+
+        $details = $this->getDetails($search['results']);
 
         // @todo - create media list collection
-        return $this->transformResults($results);
+        return $this->transformResults($details, $search['info']['prevPageToken'], $search['info']['nextPageToken']);
     }
 
     /**
@@ -61,12 +69,14 @@ class YouTubeService implements MediaProviderContract
 
     /**
      * @param $results
+     * @param $prevPageToken
+     * @param $nextPageToken
      * @return MediaItemCollection
      * @throws \Exception
      */
-    private function transformResults($results)
+    private function transformResults($results, $prevPageToken, $nextPageToken)
     {
-        $collection = new MediaItemCollection([], $this);
+        $collection = new MediaItemPaginatedCollection($prevPageToken, $nextPageToken, [], $this);
 
         foreach ($results as $result) {
             if (isset($result->id)) {

@@ -58,4 +58,6 @@
             <!--<button ion-button clear item-end>Play</button>-->
         <!--</ion-item>-->
     </ion-list>
+    <button ion-button *ngIf="prevPageToken" (click)="onPrevClick()" style="float:left;">Prev</button>
+    <button ion-button *ngIf="nextPageToken" (click)="onNextClick()" style="float:right;">Next</button>
 </ion-content>

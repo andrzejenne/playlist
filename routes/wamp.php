@@ -8,6 +8,9 @@
 
 WampRoute::namespace('com')->group(function(){
     WampRoute::command('hello.world', 'HelloController@sayHello');
+    WampRoute::command('search', 'SearchController@search');
+    WampRoute::command('search.list', 'SearchController@list');
+    WampRoute::command('search.list.delete', 'SearchController@delete');
 });
 
 WampRoute::namespace('sub')->group(function(){

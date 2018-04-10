@@ -162,6 +162,10 @@ class WampRouter extends Client
         return implode('.', $full);
     }
 
+    /**
+     * @param $cls
+     * @return Controller
+     */
     private function getController($cls) {
         if (!isset($this->controllers[$cls])) {
             $this->controllers[$cls] = $this->app->make($cls);

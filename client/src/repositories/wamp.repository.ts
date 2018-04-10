@@ -1,9 +1,10 @@
 import {Injectable} from "@angular/core";
-// import {WampService} from "../services/WampService";
+import {WampService} from "../services/WampService";
+import {ConfigService} from "../services/ConfigService";
 
 @Injectable()
 export class WampRepository {
-    // constructor(private wamp: WampService) {
+    constructor(protected wamp: WampService, protected config: ConfigService) {
 
-    // }
+    }
 }

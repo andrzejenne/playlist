@@ -1,33 +1,28 @@
 import {Injectable} from '@angular/core';
-// import { HttpClient } from '@angular/common/http';
-
-import {Repository} from "./repository";
-import {RestUrl} from '../models/rest-url.model';
-import config from '../config';
-// import {SearchItem} from "../models/search-item";
 import {Search} from "../models/search";
 import {SearchItemCollection} from "../models/search-item-collection";
+import {WampRepository} from "./wamp.repository";
 
 @Injectable()
-export class SearchRepository extends Repository {
+export class SearchRepository extends WampRepository {
 
-  public search(q: string) {
-    return this.get<SearchItemCollection>(RestUrl.buildUrl(config.serverHost + 'api/search', null, null, null, {q: q}));
-  }
+    public search(uid: number, q: string, args: any = {}) {
+        return this.wamp.call<SearchItemCollection>('com.search', [{uid: uid, q: q, ...args}]);
+    }
 
-  public getSearchHistory() {
-    return this.get<Search[]>(RestUrl.buildUrl(config.serverHost + 'api/search/list'));
-  }
+    public getSearchHistory(uid: number) {
+        return this.wamp.call<Search[]>('com.search.list', [{uid: uid}]);
+    }
 
-  public removeSearchHistory(id: number) {
-    return this.delete(RestUrl.buildUrl(config.serverHost + 'api/search/list/' + id));
-  }
+    public removeSearchHistory(id: number) {
+        return this.wamp.call('com.search.list.delete', [{id: id}]);
+    }
 
-  public getInfo(sid: string) {
-    return this.get(RestUrl.buildUrl(config.serverHost + 'api/info/' + sid));
-  }
+    public getInfo(sid: string) {
+        return this.wamp.call('com.info', [{sid: sid}]);
+    }
 
-  public download(sid: string) {
-    return this.get(RestUrl.buildUrl(config.serverHost + 'api/download/' + sid));
-  }
+    public download(sid: string) {
+        return this.wamp.call('com.download', [{sid: sid}]);
+    }
 }

@@ -1,4 +1,4 @@
-import {Component, OnDestroy} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
 import {NavController} from 'ionic-angular';
 import {Subscription} from "rxjs/Subscription";
 import {SearchRepository} from "../../repositories/search.repository";
@@ -23,6 +23,10 @@ export class HomePage implements OnDestroy {
 
     public userData;
 
+    public nextPageToken: string;
+
+    public prevPageToken: string;
+
     private allHistory: Search[];
 
     private subs: Subscription[] = [];
@@ -33,7 +37,8 @@ export class HomePage implements OnDestroy {
         public navCtrl: NavController,
         private repo: SearchRepository,
         private wamp: WampService,
-        private auth: AuthService
+        private auth: AuthService,
+        private ref: ChangeDetectorRef
     ) {
         this.subs.push(this.wamp.subscribe(session => this.subscribeWamp()));
 
@@ -49,43 +54,47 @@ export class HomePage implements OnDestroy {
         this.auth.logout();
     }
 
+    public onNextClick() {
+        this.searchItems(null, {pageToken: this.nextPageToken})
+    }
+
+    public onPrevClick() {
+        this.searchItems(null, {pageToken: this.prevPageToken})
+    }
+
     public getSearchHistory() {
         console.info('getSearchHistory');
 
-        this.subs.push(
-            this.repo.getSearchHistory()
-                .subscribe(response => {
-                    this.allHistory = response;
-                    this.filterHistory();
-                })
-        );
+        this.repo.getSearchHistory(+this.userData.id)
+            .then(response => {
+                this.allHistory = response;
+                this.filterHistory();
+                this.ref.detectChanges();
+            });
     }
 
     public removeSearchHistory(event: MouseEvent, item: Search) {
         event.preventDefault();
         event.stopPropagation();
 
-        this.subs.push(
-            this.repo.removeSearchHistory(item.id)
-                .subscribe(response => this.removeSearchHistoryItem(item))
-        );
+        this.repo.removeSearchHistory(item.id)
+            .then(response => {
+                this.removeSearchHistoryItem(item);
+                this.ref.detectChanges();
+            });
     }
 
     public getInfo(event: MouseEvent, item: SearchItem) {
-        this.subs.push(
-            this.repo.getInfo(item.sid)
-                .subscribe(response => console.info(response))
-        );
+        this.repo.getInfo(item.sid)
+            .then(response => console.info(response))
     }
 
     public download(event: MouseEvent, item: SearchItem) {
-        this.subs.push(
-            this.repo.download(item.sid)
-                .subscribe(response => console.info(response))
-        );
+        this.repo.download(item.sid)
+            .then(response => console.info(response))
     }
 
-    public searchItems(query?: string) {
+    public searchItems(query?: string, args?: any) {
         console.info('searchItems');
 
         if (query) {
@@ -94,10 +103,20 @@ export class HomePage implements OnDestroy {
 
         this.history = [];
 
-        this.subs.push(
-            this.repo.search(this.search)
-                .subscribe(response => this.list = response.items)
-        );
+        if (this.search && this.search.length) {
+            this.repo.search(+this.userData.id, this.search, args || {})
+                .then(response => {
+                    this.list = response.items;
+                    console.info('response', response);
+                    this.nextPageToken = response.next;
+                    this.prevPageToken = response.prev;
+                    this.ref.detectChanges();
+                })
+        }
+        else {
+            this.list = [];
+            this.ref.detectChanges();
+        }
     }
 
     public ngOnDestroy(): void {

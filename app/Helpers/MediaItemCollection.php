@@ -36,7 +36,7 @@ class MediaItemCollection implements Arrayable, \JsonSerializable
     }
 
     /**
-     * @param MediaItem[] ...$item
+     * @param MediaItem ...$item
      * @return MediaItemCollection
      */
     public function add(MediaItem ...$item)

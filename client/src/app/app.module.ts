@@ -9,7 +9,6 @@ import {GooglePlus} from "@ionic-native/google-plus";
 import {ThePlaylist} from './app.component';
 import {HomePage} from '../pages/home/home';
 import {SearchRepository} from '../repositories/search.repository';
-import {SearchBarComponent} from "../pages/home/search-bar.component";
 import {DurationPipe} from "../pipes/duration";
 
 import {ConfigService} from "../services/ConfigService";
@@ -25,8 +24,6 @@ import {WelcomePage} from "../pages/welcome/welcome";
         HomePage,
         AuthError,
         WelcomePage,
-
-        SearchBarComponent,
 
         DurationPipe
     ],
