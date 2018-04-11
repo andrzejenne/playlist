@@ -9,9 +9,9 @@
 namespace BBIT\Playlist\Service\Downloader;
 
 use BBIT\Playlist\Contracts\DownloaderContract;
-use BBIT\Playlist\Helpers\Process;
 use BBIT\Playlist\Services\Downloader\Progress\YouTubeDownloadProgressReporter;
 use Illuminate\Support\Collection;
+use Symfony\Component\Process\Process;
 
 
 /**
@@ -51,6 +51,15 @@ class YouTubeDownloader extends DownloaderContract
         $this->reporter = $reporter;
     }
 
+    /**
+     * @param $sid
+     * @return string
+     */
+    public function getName($sid) {
+        $info = $this->getInfo($sid);
+
+        return $info->title;
+    }
 
     /**
      * @param $sid
@@ -63,15 +72,15 @@ class YouTubeDownloader extends DownloaderContract
         $audios = $this->getAudios($sid);
 
         if ($videos->count() && $audios->count()) {
-            $vcode = $videos->first()['format_id'];
-            $acode = $audios->first()['format_id'];
+            $vcode = $videos->first()->format_id;
+            $acode = $audios->first()->format_id;
+            if ($this->reporter) {
+                $this->reporter->restart();
+                $this->reporter->setUrl($sid);
+            }
             $cmd = static::run("--newline -f $vcode+$acode $sid", $this->reporter);
 
-            if ($cmd->success()) {
-                return $cmd->report();
-            } else {
-                throw new \Exception('Error downloading: ' . $cmd->error());
-            }
+            return static::getCmdStatus($cmd);
         } else {
             throw new \Exception('Cannot download, missing mandatory streams');
         }
@@ -92,14 +101,14 @@ class YouTubeDownloader extends DownloaderContract
         $audios = $this->getAudios($sid);
 
         if ($audios->count()) {
-            $acode = $audios->first()['format_id'];
+            $acode = $audios->first()->format_id;
+            if ($this->reporter) {
+                $this->reporter->restart();
+                $this->reporter->setUrl($sid);
+            }
             $cmd = static::run("--extract-audio --newline --audio-format $format -f $acode $sid", $this->reporter);
 
-            if ($cmd->success()) {
-                return $cmd->report();
-            } else {
-                throw new \Exception('Error downloading: ' . $cmd->error());
-            }
+            return static::getCmdStatus($cmd);
         } else {
             throw new \Exception('Cannot download, missing mandatory stream');
         }
@@ -137,13 +146,13 @@ class YouTubeDownloader extends DownloaderContract
         $collection = collect($info->formats);
 
         return $collection->filter(function ($item) {
-            if (in_array($item['ext'], static::$possibleAudios)) {
+            if (in_array($item->ext, static::$possibleAudios)) {
                 return $item;
             }
 
             return false;
         })->sortByDesc(function ($item) {
-            return $item['abr'];
+            return $item->abr;
         }, SORT_NUMERIC);
     }
 
@@ -155,7 +164,9 @@ class YouTubeDownloader extends DownloaderContract
     {
         if (!isset($this->_infoCache[$sid])) {
             try {
-                $info = json_decode(static::run("-J $sid")->info());
+                $cmd = static::run("-J $sid");
+                $output = $cmd->getOutput();
+                $info = json_decode($output);
                 $this->_infoCache[$sid] = $info;
             } catch (\Exception $e) {
                 $this->_infoCache[$sid] = false;
@@ -173,11 +184,33 @@ class YouTubeDownloader extends DownloaderContract
      */
     private static function run($args, YouTubeDownloadProgressReporter $reporter = null)
     {
-        return Process::prepare('youtube-dl')
-            ->enableOutput(null, $reporter ? $reporter->getOutputReader() : null)
-            ->enableErrorOutput(null, $reporter ? $reporter->getErrorReader() : null)
-            ->setWorkingDir(storage_path('temp'))
-            ->execute($args);
+        if (is_string($args)) {
+            $args = [$args];
+        }
+
+        $cmd = new Process('youtube-dl ' . implode(' ', $args), storage_path('temp'));
+
+        $callback = null;
+        if ($reporter) {
+            $callback = function($type, $buffer) use ($reporter) {
+                if (Process::ERR == $type) {
+                    $reporter->readErrorOutput($buffer);
+                }
+                else {
+                    $reporter->readOutput($buffer);
+                }
+            };
+        }
+        $cmd->enableOutput()
+            ->run($callback);
+
+        $cmd->wait();
+
+        if ($reporter) {
+            $reporter->finish();
+        }
+
+        return $cmd;
     }
 
     /**
@@ -186,5 +219,18 @@ class YouTubeDownloader extends DownloaderContract
      */
     private static function isAudioFormatValid($format) {
         return in_array($format, static::$audioTranscodeFormats);
+    }
+
+    /**
+     * @param Process $cmd
+     * @return string
+     * @throws \Exception
+     */
+    private static function getCmdStatus(Process $cmd) {
+        if ($cmd->isSuccessful()) {
+            return $cmd->getOutput();
+        } else {
+            throw new \Exception('Error downloading: ' . $cmd->getErrorOutput());
+        }
     }
 }

@@ -13,6 +13,7 @@ return [
 
     'class'           => \BBIT\Playlist\Services\WampServerService::class,
     'host'            => '0.0.0.0',
+    'serverHost' => 'localhost',
     'port'            => '9090',
     'proto' => 'ws://',
     'connectionLimit' => false,

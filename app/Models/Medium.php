@@ -18,7 +18,9 @@ class Medium extends BaseModel
 		  COL_GENRE_ID = 'genre_id',
 		  COL_RELEASED = 'released',
 		  COL_CREATED_AT = 'created_at',
-		  COL_UPDATED_AT = 'updated_at';
+		  COL_UPDATED_AT = 'updated_at',
+		  COL_PROVIDER_ID = 'provider_id',
+		  COL_PROVIDER_SID = 'provider_sid';
 
 	const TCOL_ID = self::TABLE . '.' . self::COL_ID,
 		  TCOL_NAME = self::TABLE . '.' . self::COL_NAME,
@@ -27,12 +29,15 @@ class Medium extends BaseModel
 		  TCOL_GENRE_ID = self::TABLE . '.' . self::COL_GENRE_ID,
 		  TCOL_RELEASED = self::TABLE . '.' . self::COL_RELEASED,
 		  TCOL_CREATED_AT = self::TABLE . '.' . self::COL_CREATED_AT,
-		  TCOL_UPDATED_AT = self::TABLE . '.' . self::COL_UPDATED_AT;
+		  TCOL_UPDATED_AT = self::TABLE . '.' . self::COL_UPDATED_AT,
+		  TCOL_PROVIDER_ID = self::TABLE . '.' . self::COL_PROVIDER_ID,
+		  TCOL_PROVIDER_SID = self::TABLE . '.' . self::COL_PROVIDER_SID;
 
 
     const REL_ARTIST = 'artist',
 		  REL_ALBUM = 'album',
-		  REL_GENRE = 'genre';
+		  REL_GENRE = 'genre',
+		  REL_PROVIDER = 'provider';
 
     protected $table = self::TABLE;
     
@@ -42,6 +47,8 @@ class Medium extends BaseModel
 		self::COL_ALBUM_ID,
 		self::COL_GENRE_ID,
 		self::COL_RELEASED,
+		self::COL_PROVIDER_ID,
+		self::COL_PROVIDER_SID,
 	];
 
     protected $casts = [
@@ -52,6 +59,7 @@ class Medium extends BaseModel
 		  self::REL_ARTIST,
 		  self::REL_ALBUM,
 		  self::REL_GENRE,
+		  self::REL_PROVIDER,
 	];
 
     protected $fields = [
@@ -63,6 +71,8 @@ class Medium extends BaseModel
 		self::COL_RELEASED,
 		self::COL_CREATED_AT,
 		self::COL_UPDATED_AT,
+		self::COL_PROVIDER_ID,
+		self::COL_PROVIDER_SID,
 	];
 
     	/**
@@ -87,6 +97,14 @@ class Medium extends BaseModel
 	public function genre()
 	{
 		return $this->belongsTo(Genre::class, self::COL_GENRE_ID);
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function provider()
+	{
+		return $this->belongsTo(MediaProvider::class, self::COL_PROVIDER_ID);
 	}
 
 

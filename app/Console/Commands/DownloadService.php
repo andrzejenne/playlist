@@ -2,7 +2,13 @@
 
 namespace BBIT\Playlist\Console\Commands;
 
+use BBIT\Playlist\Contracts\DownloaderContract;
+use BBIT\Playlist\Service\Downloader\YouTubeDownloader;
+use BBIT\Playlist\Services\WampClientService;
 use Illuminate\Console\Command;
+use Illuminate\Foundation\Application;
+use Thruway\ClientSession;
+use Thruway\Logging\Logger;
 
 /**
  * Class DownloadService
@@ -25,74 +31,49 @@ class DownloadService extends Command
      */
     protected $description = 'Download service';
 
-    public static $possibleAudios = [
-        'm4a'
-    ];
-
-    public static $possibleVideos = [
-        'mp4'
-    ];
+    /**
+     * @var Application
+     */
+    private $app;
 
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param Application $app
      */
-    public function __construct()
+    public function __construct(Application $app)
     {
         parent::__construct();
+        $this->app = $app;
     }
 
     /**
      * Execute the console command.
      *
      * @return mixed
+     * @throws \Exception
      */
     public function handle()
     {
-        $info = InfoController::getInfo($sid);
-        if ($info) {
-            $collection = collect($info['formats']);
+        /** @var WampClientService $wampClient */
+        $wampClient = $this->app->make(WampClientService::class);
 
-            $videos = $collection->filter(function ($item) {
-                if (in_array($item['ext'], static::$possibleVideos)) {
-                    return $item;
-                }
+        $wampClient->onOpen(function(ClientSession $session) use ($wampClient) {
 
-                return false;
-            })->sortByDesc(function ($item) {
-                return $item['width'];
-            });
+            /** @var DownloaderContract $downloader */
+            $downloader = $this->app->make(YouTubeDownloader::class);
 
-            $audios = $collection->filter(function ($item) {
-                if (in_array($item['ext'], static::$possibleAudios)) {
-                    return $item;
-                }
+            $sid = $this->argument('sid');
+            $name = $downloader->getName($sid);
 
-                return false;
-            })->sortByDesc(function ($item) {
-                return $item['abr'];
-            }, SORT_NUMERIC);
+            Logger::info('name:', $name);
+//            if ($info) {
+//                $downloader->download($sid);
+//            }
+            $wampClient->stop();
+        });
 
-            if ($videos->count() && $audios->count()) {
-                $vcode = $videos->first()['format_id'];
-                $acode = $audios->first()['format_id'];
-                $cmd = Process::prepare('youtube-dl')
-                    ->enableErrorOutput()
-                    ->enableOutput()
-                    ->setWorkingDir(storage_path('temp'))
-                    ->execute('-f', "$vcode+$acode", $sid);
+        $wampClient->run();
 
-                if ($cmd->success()) {
-                    return $cmd->report();
-                }
-                else {
-                    throw new \Exception('Error downloading: ' . $cmd->error());
-                }
-            }
-            else {
-                throw new \Exception('cannot download');
-            }
-        }
     }
 }

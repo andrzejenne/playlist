@@ -22,7 +22,7 @@ export class SearchRepository extends WampRepository {
         return this.wamp.call('com.info', [{sid: sid}]);
     }
 
-    public download(sid: string) {
-        return this.wamp.call('com.download', [{sid: sid}]);
+    public download(uid: number, sid: string) {
+        return this.wamp.call('com.mediaManager.download', [{uid: uid, sid: sid, provider: 'youtube'}]);
     }
 }

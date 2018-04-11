@@ -1,11 +1,12 @@
 import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {AlertController, NavController} from 'ionic-angular';
 import {Subscription} from "rxjs/Subscription";
 import {SearchRepository} from "../../repositories/search.repository";
 import {SearchItem} from "../../models/search-item";
 import {Search} from "../../models/search";
 import {WampService} from "../../services/WampService";
 import {AuthService} from "../../services/AuthService";
+import {ItemInterface} from "./item.interface";
 
 @Component({
     selector: 'page-home',
@@ -27,6 +28,8 @@ export class HomePage implements OnDestroy {
 
     public prevPageToken: string;
 
+    public downloads: ItemInterface[] = [];
+
     private allHistory: Search[];
 
     private subs: Subscription[] = [];
@@ -38,6 +41,7 @@ export class HomePage implements OnDestroy {
         private repo: SearchRepository,
         private wamp: WampService,
         private auth: AuthService,
+        private alertCtrl: AlertController,
         private ref: ChangeDetectorRef
     ) {
         this.subs.push(this.wamp.subscribe(session => this.subscribeWamp()));
@@ -90,8 +94,20 @@ export class HomePage implements OnDestroy {
     }
 
     public download(event: MouseEvent, item: SearchItem) {
-        this.repo.download(item.sid)
-            .then(response => console.info(response))
+        if (!this.isDownloading(item.sid)) {
+            this.downloads.push({
+                sid: item.sid,
+                title: item.title,
+                thumbnail: item.thumbnail,
+                started: false,
+                finished: false,
+                files: [],
+                status: []
+            });
+
+            this.repo.download(this.userData.id, item.sid)
+                .then(response => console.info(response))
+        }
     }
 
     public searchItems(query?: string, args?: any) {
@@ -162,8 +178,77 @@ export class HomePage implements OnDestroy {
         subs: {
             'sub.say.hi.cli': (data) => {
                 console.info('HI', data);
+            },
+            'sub.download.started': (data) => {
+                let item = this.getDownloading(data[0].url);
+
+                item.started = true;
+                this.ref.detectChanges();
+                console.info('Download started:', data);
+            },
+            'sub.download.progress': (data) => {
+                let file = this.getDownloadingFile(data[0].url, data[0].filename);
+
+                file.progress = data[0].progress;
+                this.ref.detectChanges();
+                console.info('Download progress:', data);
+            },
+            'sub.download.finished': (data) => {
+                let item = this.getDownloading(data[0].url);
+
+                item.finished = true;
+                this.ref.detectChanges();
+                console.info('Download finished:', data);
+            },
+            'sub.download.error': (data) => {
+                console.info('Download error:', data);
+            },
+            'sub.download.status': (data) => {
+                let item = this.getDownloading(data[0].url);
+
+                item.status.push(data[0].status);
+                this.ref.detectChanges();
+
+                console.info('Download status:', data);
+            },
+            'sub.download.filename': (data) => {
+                let item = this.getDownloading(data[0].url);
+                item.files.push({
+                    name: data[0].filename,
+                    progress: 0
+                });
+
+                this.ref.detectChanges();
+                console.info('Download filename:', data);
+            },
+            'sub.error': (data) => {
+                console.info('WampError: ', data);
+                this.alertCtrl.create({
+                    title: 'WampError',
+                    subTitle: data[0].message,
+                    buttons: ['OK']
+                });
             }
         }
+    };
+
+    private isDownloading(sid: string) {
+        return this.getDownloading(sid) !== null;
+    }
+
+    private getDownloading(sid: string) {
+        let item = this.downloads.find(item => item.sid === sid) || null;
+
+        return item;
+    }
+
+    private getDownloadingFile(sid: string, filename: string) {
+        let item = this.getDownloading(sid);
+        if (item) {
+            return item.files.find(file => file.name === filename) || null;
+        }
+
+        return null;
     }
 
 }

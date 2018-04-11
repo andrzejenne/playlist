@@ -60,4 +60,23 @@
     </ion-list>
     <button ion-button *ngIf="prevPageToken" (click)="onPrevClick()" style="float:left;">Prev</button>
     <button ion-button *ngIf="nextPageToken" (click)="onNextClick()" style="float:right;">Next</button>
+
+    <ion-list>
+        <ion-list-header>Download Queue</ion-list-header>
+
+        <ion-item *ngFor="let item of downloads" [ngClass]="{started: item.started, finished: item.finished}">
+            <ion-thumbnail item-start>
+                <img [src]="item.thumbnail" width="80">
+            </ion-thumbnail>
+            <h2>
+                {{item.title}}
+            </h2>
+            <p *ngFor="let file of item.files">
+                {{file.name}}
+                {{file.progress}}%
+            </p>
+            <ion-spinner *ngIf="!item.finished" item-end name="bubbles"></ion-spinner>
+            <ion-icon *ngIf="item.finished" item-end name="checkmark" large color="primary"></ion-icon>
+        </ion-item>
+    </ion-list>
 </ion-content>

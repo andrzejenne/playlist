@@ -17,17 +17,21 @@ use Thruway\ClientSession;
  */
 abstract class ProcessReporterContract
 {
+    protected $progress = 0;
+
+    protected $started = false;
+
+    protected $finished = false;
+
     /** @var string */
     private $info;
 
     /** @var string */
     private $error;
 
-    /** @var ClientSession */
-    private $session;
-
     /**
      * @param $pipes
+     * @deprecated
      */
     final public function report($pipes) {
         $stdOutEnabled = isset($pipes[Process::OUTPUT]);
@@ -53,23 +57,19 @@ abstract class ProcessReporterContract
     }
 
     /**
-     * @return string
+     * @return
+     * @deprecated
      */
     final public function info() {
         return $this->info;
     }
 
+    /**
+     * @return string
+     * @deprecated
+     */
     final public function error() {
         return $this->error;
-    }
-
-    /**
-     * @param ClientSession $session
-     * // @todo - to specific only YouTubeDownloadProgressReporter
-     */
-    final public function setSession(ClientSession $session)
-    {
-        $this->session = $session;
     }
 
     abstract function readOutput($line);

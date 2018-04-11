@@ -9,6 +9,7 @@
 namespace BBIT\Playlist\Services;
 
 use BBIT\Playlist\Wamp\WampRouter;
+use Illuminate\Foundation\Application;
 use Thruway\ClientSession;
 use Thruway\Peer\Client;
 use Thruway\Peer\ClientInterface;
@@ -30,32 +31,37 @@ class WampClientService
     private $client;
 
     /** @var */
-    private $onOpen;
+    private $onOpenCallback;
 
     /**
      * WampServer constructor.
+     * @param Application $app
      * @throws \Exception
      */
-    public function __construct()
+    public function __construct(Application $app)
     {
-        $host = config('ratchet.host', 'localhost');
+        $host = config('ratchet.serverHost', 'localhost');
         $port = config('ratchet.port', 8080);
         $proto = config('ratchet.proto', 'ws://');
 
         $this->client = new Client('playlist'); // @todo - realm to config
-        $this->client->addTransportProvider(new PawlTransportProvider($proto . $host . $port));
 
-        $this->client->on('open', function(ClientSession $session) {
+        $url = $proto . $host . ':' . $port;
+
+        $this->client->addTransportProvider(new PawlTransportProvider($url));
+
+        $this->client->on('open', function(ClientSession $session) use ($app) {
             $this->session = $session;
-            if ($this->onOpen) {
-                $this->onOpen($session);
+            $app->instance(ClientSession::class, $session);
+            if ($this->onOpenCallback) {
+                ($this->onOpenCallback)($session);
             }
         });
     }
 
 
     public function onOpen($callback) {
-        $this->onOpen = $callback;
+        $this->onOpenCallback = $callback;
     }
 
     /**
@@ -64,6 +70,15 @@ class WampClientService
     public function run()
     {
         $this->client->start();
+    }
+
+    /**
+     *
+     */
+    public function stop()
+    {
+        $this->client->setAttemptRetry(false);
+        $this->session->close();
     }
 
 }

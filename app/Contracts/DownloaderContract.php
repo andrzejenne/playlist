@@ -42,4 +42,10 @@ abstract class DownloaderContract
      * @return Collection
      */
     abstract public function getAudios($sid);
+
+    /**
+     * @param $sid
+     * @return string
+     */
+    abstract public function getName($sid);
 }

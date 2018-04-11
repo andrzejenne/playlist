@@ -38,6 +38,9 @@ class MediaManager extends Command
      */
     private $app;
 
+    /** @var ClientSession */
+    private $session;
+
     /**
      * Create a new command instance.
      *
@@ -62,10 +65,13 @@ class MediaManager extends Command
         /** @var MediaManagerService $manager */
         $manager = $this->app->make(MediaManagerService::class);
 
-        $this->service->onOpen(function(ClientSession $session) use ($manager) {
+        $this->service->onOpen(function (ClientSession $session) use ($manager) {
+            $this->session = $session;
            $manager->attachToWampSession($session);
         });
 
         $this->service->run();
+
+        $manager->detachWampSession($this->session);
     }
 }

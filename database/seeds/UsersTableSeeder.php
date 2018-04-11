@@ -3,6 +3,9 @@
 use BBIT\Playlist\Models\User;
 use Illuminate\Database\Seeder;
 
+/**
+ * Class UsersTableSeeder
+ */
 class UsersTableSeeder extends Seeder
 {
     /**

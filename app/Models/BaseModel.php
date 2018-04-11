@@ -27,4 +27,11 @@ class BaseModel extends Model
         CAST_FLOAT   = 'float',
         CAST_INTEGER = 'integer',
         CAST_BOOLEAN = 'boolean';
+
+    /**
+     * @return integer
+     */
+    public function getId() {
+        return $this->getAttribute(self::COL_ID);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace BBIT\Playlist\Providers;
 
+use BBIT\Playlist\Services\WampClientService;
 use BBIT\Playlist\Services\WampServerService;
 use BBIT\Playlist\Wamp\WampRouter;
 use Illuminate\Support\ServiceProvider;
@@ -26,6 +27,7 @@ class WampServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(WampServerService::class, WampServerService::class);
+        $this->app->bind(WampClientService::class, WampClientService::class);
         $this->app->singleton(WampRouter::class, WampRouter::class);
         $this->app->alias(WampRouter::class, 'wamp');
     }
@@ -38,6 +40,7 @@ class WampServiceProvider extends ServiceProvider
         return parent::provides()
             + [
                 WampServerService::class,
+                WampClientService::class,
                 WampRouter::class,
                 'wamp'
             ];

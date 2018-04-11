@@ -9,6 +9,10 @@
 namespace BBIT\Playlist\Services;
 
 use BBIT\Playlist\Contracts\DownloaderContract;
+use BBIT\Playlist\Models\MediaProvider;
+use BBIT\Playlist\Models\Medium;
+use BBIT\Playlist\Service\Downloader\DummyDownloader;
+use BBIT\Playlist\Service\Downloader\YouTubeDownloader;
 use Illuminate\Foundation\Application;
 use Symfony\Component\Process\Process;
 use Thruway\ClientSession;
@@ -30,6 +34,15 @@ class MediaManagerService
     /** @var DownloaderContract[] */
     private $downloaders;
 
+    private $queue = [];
+
+    private $processing;
+
+    private static $downloaderAliases = [
+//        'youtube' => YouTubeDownloader::class
+        'youtube' => DummyDownloader::class
+    ];
+
     /**
      * MediaManagerService constructor.
      * @param Application $app
@@ -50,22 +63,65 @@ class MediaManagerService
     }
 
     /**
-     * @param $args
+     * @param ClientSession $session
      */
-    private function download($args) {
+    public function detachWampSession(ClientSession $session) {
+        $session->unregister('com.mediaManager.download');
+    }
+
+    /**
+     * @param $args
+     * @throws \Exception
+     */
+    public function download($args) {
         $provider = getValue($args[0]->provider);
         $sid = getValue($args[0]->sid);
+        $type = getValue($args[0]->type, 'video');
+        $format = getValue($args[0]->format, 'mp3'); // @todo configurable default download format
 
         if ($provider && $sid) {
-            $this->session->publish('sub.mediaManager.start', [['sid' => $sid]]);
+            $this->queue[] = [
+                $provider,
+                $sid,
+                $type,
+                $format
+            ];
 
-            $downloader = $this->getDownloader($provider);
-
-            if (!$downloader) {
-                $this->session->publish('sub.error', [['message' => "$name media downloader not found"]]);
+            if (!$this->processing) {
+                while (count($this->queue)) {
+                    $this->process(array_shift($this->queue));
+                }
+                $this->processing = null;
             }
-            else {
-                $downloader->download($sid);
+        }
+
+        $this->session->getLoop()->tick();
+    }
+
+    /**
+     * @param $item
+     */
+    private function process($item) {
+        $this->processing = $item;
+
+        list($provider, $sid, $type, $format) = $item;
+
+        $downloader = $this->getDownloader($provider);
+
+        if (!$downloader) {
+            $this->session->publish('sub.error', [['message' => "$provider media downloader not found"]]);
+        }
+        else {
+            try {
+                if ('video' == $type) {
+                    $downloader->download($sid);
+                }
+                else {
+                    $downloader->downloadAudio($sid, $format);
+                }
+            }
+            catch (\Throwable $t) {
+                $this->session->publish('sub.error', [['message' => $t->getMessage()]]);
             }
         }
     }
@@ -76,8 +132,7 @@ class MediaManagerService
      */
     private function getDownloader($name) {
         if (!isset($this->downloaders[$name])) {
-            $this->downloaders[$name] = $this->app->make($name.'.media.service');
-
+            $this->downloaders[$name] = $this->app->make(static::$downloaderAliases[$name]);
         }
 
         return $this->downloaders[$name];
