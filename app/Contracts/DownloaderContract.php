@@ -9,6 +9,7 @@
 namespace BBIT\Playlist\Contracts;
 
 use Illuminate\Support\Collection;
+use Symfony\Component\Process\Process;
 
 /**
  * Class DownloaderContract
@@ -18,7 +19,7 @@ abstract class DownloaderContract
 {
     /**
      * @param $sid
-     * @return string
+     * @return Process
      * @throws \Exception
      */
     abstract public function download($sid);

@@ -45,7 +45,7 @@ class DummyDownloader extends DownloaderContract
 
     /**
      * @param $sid
-     * @return string
+     * @return Process
      * @throws \Exception
      */
     public function download($sid)
@@ -57,7 +57,9 @@ class DummyDownloader extends DownloaderContract
 
         $cmd = static::run(base_path('tests/Feature/logs/dummy.sh'), $this->reporter);
 
-        return $cmd->getOutput();
+//        return $cmd->getOutput();
+
+        return $cmd;
     }
 
     /**
@@ -112,13 +114,13 @@ class DummyDownloader extends DownloaderContract
             };
         }
         $cmd->enableOutput()
-            ->start();
+            ->start($callback);
 
-        $cmd->wait($callback);
+//        $cmd->wait();
 
-        if ($reporter) {
-            $reporter->finish();
-        }
+//        if ($reporter) {
+//            $reporter->finish();
+//        }
 
         return $cmd;
     }

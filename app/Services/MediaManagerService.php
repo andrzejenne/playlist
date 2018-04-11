@@ -36,7 +36,8 @@ class MediaManagerService
 
     private $queue = [];
 
-    private $processing;
+    /** @var Process */
+    private $cmd;
 
     private static $downloaderAliases = [
 //        'youtube' => YouTubeDownloader::class
@@ -60,6 +61,14 @@ class MediaManagerService
         $this->session = $session;
 
         $session->register('com.mediaManager.download', [$this, 'download']);
+
+        $session->getLoop()->addPeriodicTimer(1, function() {
+            if (count($this->queue)) {
+                if (!$this->cmd || !$this->cmd->isRunning()) {
+                    $this->cmd = $this->process(array_shift($this->queue));
+                }
+            }
+        });
     }
 
     /**
@@ -87,12 +96,12 @@ class MediaManagerService
                 $format
             ];
 
-            if (!$this->processing) {
-                while (count($this->queue)) {
-                    $this->process(array_shift($this->queue));
-                }
-                $this->processing = null;
-            }
+//            if (!$this->cmd && count($this->queue)) {
+//                while (count($this->queue)) {
+//                $this->cmd = $this->process(array_shift($this->queue));
+//                }
+//                $this->cmd = null;
+//            }
         }
 
         $this->session->getLoop()->tick();
@@ -100,9 +109,10 @@ class MediaManagerService
 
     /**
      * @param $item
+     * @return string
      */
     private function process($item) {
-        $this->processing = $item;
+        $this->cmd = $item;
 
         list($provider, $sid, $type, $format) = $item;
 
@@ -114,16 +124,18 @@ class MediaManagerService
         else {
             try {
                 if ('video' == $type) {
-                    $downloader->download($sid);
+                    return $downloader->download($sid);
                 }
                 else {
-                    $downloader->downloadAudio($sid, $format);
+                    return $downloader->downloadAudio($sid, $format);
                 }
             }
             catch (\Throwable $t) {
                 $this->session->publish('sub.error', [['message' => $t->getMessage()]]);
             }
         }
+
+        return null;
     }
 
     /**
