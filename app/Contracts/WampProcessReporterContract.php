@@ -57,7 +57,7 @@ abstract class WampProcessReporterContract extends ProcessReporterContract
     final protected function reportEvent($event, $args = null)
     {
         $this->session->publish('sub.' . $event, [$args]); //, [], ["acknowledge" => true])
-        $this->session->getLoop()->tick();
+//        $this->session->getLoop()->tick();
 //            ->then(
 //                function () {
 //                    echo "Publish Acknowledged!\n";

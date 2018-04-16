@@ -21,7 +21,8 @@ page-home {
     }
   }
 
-  .started { background: lightblue; }
-  .finished { background: lightgreen; }
+  .fit-thumbnail { object-fit: cover; }
+  //.started { background: rgba(100, 100, 255, .1); }
+  //.finished { background: rgba(100, 255, 100, .1); }
 }
 

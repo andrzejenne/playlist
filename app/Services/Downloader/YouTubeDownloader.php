@@ -61,6 +61,7 @@ class YouTubeDownloader extends DownloaderContract
         return $info->title;
     }
 
+
     /**
      * @param $sid
      * @return string
@@ -155,6 +156,17 @@ class YouTubeDownloader extends DownloaderContract
             return $item->abr;
         }, SORT_NUMERIC);
     }
+
+    /**
+     *
+     */
+    public function finish()
+    {
+        if ($this->reporter) {
+            $this->reporter->finish();
+        }
+    }
+
 
     /**
      * @param $sid

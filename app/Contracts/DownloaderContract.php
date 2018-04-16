@@ -49,4 +49,9 @@ abstract class DownloaderContract
      * @return string
      */
     abstract public function getName($sid);
+
+    /**
+     * @return void
+     */
+    abstract public function finish();
 }

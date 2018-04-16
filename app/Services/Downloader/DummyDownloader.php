@@ -92,6 +92,17 @@ class DummyDownloader extends DownloaderContract
     }
 
     /**
+     *
+     */
+    public function finish()
+    {
+        if ($this->reporter) {
+            $this->reporter->finish();
+        }
+    }
+
+
+    /**
      * @param $cmd
      * @param YouTubeDownloadProgressReporter|null $reporter
      * @return Process

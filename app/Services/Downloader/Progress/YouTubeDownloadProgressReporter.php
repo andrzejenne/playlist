@@ -33,45 +33,48 @@ class YouTubeDownloadProgressReporter extends YoutubeDLWampProcessReporterContra
 
 
     /**
-     * @param $line
+     * @param $buffer
      * @throws \Exception
      */
-    public function readOutput($line)
+    public function readOutput($buffer)
     {
-        try {
-            if (!$this->started) {
-                $this->started = true;
-                $this->finished = false;
-                $this->progress = 0;
-                $this->reportEvent(static::EVENT_START, [
-                    'url' => $this->getUrl()
-                ]);
-            }
-            if (preg_match(static::PROGRESS_REGEX, $line, $matches)) {
-                $this->progress = +$matches[1];
-                $this->reportEvent(static::EVENT_PROGRESS, [
-                    'progress' => $this->progress,
-                    'filename' => $this->filename,
-                    'url' => $this->getUrl()
-                ]);
-            } else {
-                if (preg_match(static::FILENAME_DOWNLOAD_REGEX, $line, $matches)) {
-                    $this->filename = $matches[1];
+        $lines = explode("\n", $buffer);
+
+        foreach ($lines as $line) {
+            try {
+                if (!$this->started) {
+                    $this->started = true;
+                    $this->finished = false;
                     $this->progress = 0;
-                    $this->reportEvent(static::EVENT_FILENAME, [
-                        'url' => $this->getUrl(),
-                        'filename' => $this->filename
-                    ]);
-                } else {
-                    $this->reportEvent(static::EVENT_STATUS, [
-                        'url' => $this->getUrl(),
-                        'filename' => $this->filename
+                    $this->reportEvent(static::EVENT_START, [
+                        'url' => $this->getUrl()
                     ]);
                 }
+                if (preg_match(static::PROGRESS_REGEX, $line, $matches)) {
+                    $this->progress = +$matches[1];
+                    $this->reportEvent(static::EVENT_PROGRESS, [
+                        'progress' => $this->progress,
+                        'filename' => $this->filename,
+                        'url' => $this->getUrl()
+                    ]);
+                } else {
+                    if (preg_match(static::FILENAME_DOWNLOAD_REGEX, $line, $matches)) {
+                        $this->filename = $matches[1];
+                        $this->progress = 0;
+                        $this->reportEvent(static::EVENT_FILENAME, [
+                            'url' => $this->getUrl(),
+                            'filename' => $this->filename
+                        ]);
+                    } else {
+                        $this->reportEvent(static::EVENT_STATUS, [
+                            'url' => $this->getUrl(),
+                            'filename' => $this->filename
+                        ]);
+                    }
+                }
+            } catch (\Throwable $t) {
+                throw new \Exception('Error Occured: ' . $t->getMessage());
             }
-        }
-        catch (\Throwable $t) {
-            throw new \Exception('Error Occured: ' . $t->getMessage());
         }
     }
 

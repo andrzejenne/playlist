@@ -13,6 +13,8 @@ use BBIT\Playlist\Models\MediaProvider;
 use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Service\Downloader\DummyDownloader;
 use BBIT\Playlist\Service\Downloader\YouTubeDownloader;
+use BBIT\Playlist\Services\Downloader\DownloadProcess;
+use BBIT\Playlist\Services\Downloader\DownloadRequest;
 use Illuminate\Foundation\Application;
 use Symfony\Component\Process\Process;
 use Thruway\ClientSession;
@@ -34,10 +36,11 @@ class MediaManagerService
     /** @var DownloaderContract[] */
     private $downloaders;
 
+    /** @var DownloadRequest[] */
     private $queue = [];
 
-    /** @var Process */
-    private $cmd;
+    /** @var DownloadProcess */
+    private $proc;
 
     private static $downloaderAliases = [
 //        'youtube' => YouTubeDownloader::class
@@ -62,10 +65,14 @@ class MediaManagerService
 
         $session->register('com.mediaManager.download', [$this, 'download']);
 
-        $session->getLoop()->addPeriodicTimer(1, function() {
-            if (count($this->queue)) {
-                if (!$this->cmd || !$this->cmd->isRunning()) {
-                    $this->cmd = $this->process(array_shift($this->queue));
+        $session->getLoop()->addPeriodicTimer(.01, function() {
+            if ($this->proc && !$this->proc->isRunning()) {
+                $this->proc->finish();
+                $this->proc = null;
+            }
+            else {
+                if (count($this->queue) && !$this->proc) {
+                    $this->proc = $this->process(array_shift($this->queue));
                 }
             }
         });
@@ -89,33 +96,23 @@ class MediaManagerService
         $format = getValue($args[0]->format, 'mp3'); // @todo configurable default download format
 
         if ($provider && $sid) {
-            $this->queue[] = [
+            $this->queue[] = DownloadRequest::create(
                 $provider,
                 $sid,
                 $type,
                 $format
-            ];
-
-//            if (!$this->cmd && count($this->queue)) {
-//                while (count($this->queue)) {
-//                $this->cmd = $this->process(array_shift($this->queue));
-//                }
-//                $this->cmd = null;
-//            }
+            );
         }
-
-        $this->session->getLoop()->tick();
     }
 
     /**
-     * @param $item
-     * @return string
+     * @param $request
+     * @return DownloadProcess|null
      */
-    private function process($item) {
-        $this->cmd = $item;
+    private function process(DownloadRequest $request) {
+        $this->proc = $request;
 
-        list($provider, $sid, $type, $format) = $item;
-
+        $provider = $request->getProvider();
         $downloader = $this->getDownloader($provider);
 
         if (!$downloader) {
@@ -123,12 +120,7 @@ class MediaManagerService
         }
         else {
             try {
-                if ('video' == $type) {
-                    return $downloader->download($sid);
-                }
-                else {
-                    return $downloader->downloadAudio($sid, $format);
-                }
+                return $request->makeDownload($downloader);
             }
             catch (\Throwable $t) {
                 $this->session->publish('sub.error', [['message' => $t->getMessage()]]);
