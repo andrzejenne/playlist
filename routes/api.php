@@ -29,7 +29,7 @@ Route::middleware(['web', \Barryvdh\Cors\HandleCors::class])->get('/user', funct
         }
     }
     finally {
-        return null;
+        return '{}';
     }
 });
 

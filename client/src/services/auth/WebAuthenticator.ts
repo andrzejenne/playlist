@@ -27,7 +27,7 @@ export class WebAuthenticator extends Authenticator {
                 }
             )
                 .subscribe((response:any) => { // @todo - contract
-                  debugger;
+                  // debugger;
                         if (response !== null && response.id) {
                             this.setUser(response);
                             resolve(response);
@@ -38,7 +38,7 @@ export class WebAuthenticator extends Authenticator {
                         }
                     },
                     error => {
-                  debugger;
+                  // debugger;
                         console.info('ERROR:', error);
                         reject(error);
                     });
@@ -53,7 +53,8 @@ export class WebAuthenticator extends Authenticator {
 
     private authenticateMe() {
         window.location.href = this.config.get('auth.requestUrl')
+            + '?'
             // + '?token=' + token
-            + '&redirect=' + this.config.get('auth.redirectUrl')
+            + 'redirect=' + this.config.get('auth.redirectUrl')
     }
 }
