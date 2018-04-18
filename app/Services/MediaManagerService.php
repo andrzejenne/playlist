@@ -9,14 +9,11 @@
 namespace BBIT\Playlist\Services;
 
 use BBIT\Playlist\Contracts\DownloaderContract;
-use BBIT\Playlist\Models\MediaProvider;
-use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Service\Downloader\DummyDownloader;
 use BBIT\Playlist\Service\Downloader\YouTubeDownloader;
 use BBIT\Playlist\Services\Downloader\DownloadProcess;
 use BBIT\Playlist\Services\Downloader\DownloadRequest;
 use Illuminate\Foundation\Application;
-use Symfony\Component\Process\Process;
 use Thruway\ClientSession;
 
 
@@ -43,8 +40,8 @@ class MediaManagerService
     private $proc;
 
     private static $downloaderAliases = [
-//        'youtube' => YouTubeDownloader::class
-        'youtube' => DummyDownloader::class
+        'youtube' => YouTubeDownloader::class
+//        'youtube' => DummyDownloader::class
     ];
 
     /**

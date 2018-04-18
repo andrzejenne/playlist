@@ -3,9 +3,9 @@
         <button ion-button menuToggle="menu">
             <ion-icon name="menu"></ion-icon>
         </button>
-        <ion-searchbar [(ngModel)]="search" (ionFocus)="getSearchHistory(); focused = true;" (ionBlur)="focused = false" (ionInput)="searchItems()" [debounce]="500"></ion-searchbar>
+        <ion-searchbar [(ngModel)]="search" (ionFocus)="getSearchHistory(); focused = true;" (ionBlur)="focused = false"></ion-searchbar>
         <ion-buttons end right>
-            <button ion-button *ngIf="search && search.length > 1" (click)="onSearchClick">Search</button>
+            <button ion-button *ngIf="search && search.length > 1" (click)="onSearchClick()">Search</button>
             <button ion-button (click)="onLogoutClick" color="danger" round icon-start>
                 <ion-icon name="log-out"></ion-icon>
                 Logout
@@ -44,6 +44,10 @@
                 <div class="actions">
                     <ion-icon name="information-circle" (click)="getInfo($event, item)"></ion-icon>
                     <ion-icon name="download" (click)="download($event, item)"></ion-icon>
+                    <a [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">
+                      <ion-icon name="search">
+                      </ion-icon>
+                    </a>
                 </div>
             </ion-card-content>
         </ion-card>

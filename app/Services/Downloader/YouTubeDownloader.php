@@ -10,6 +10,7 @@ namespace BBIT\Playlist\Service\Downloader;
 
 use BBIT\Playlist\Contracts\DownloaderContract;
 use BBIT\Playlist\Services\Downloader\Progress\YouTubeDownloadProgressReporter;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Symfony\Component\Process\Process;
 
@@ -79,7 +80,13 @@ class YouTubeDownloader extends DownloaderContract
                 $this->reporter->restart();
                 $this->reporter->setUrl($sid);
             }
-            $cmd = static::run("--newline -f $vcode+$acode $sid", $this->reporter);
+            $outDir = storage_path('app/media/youtube/' . $sid[0] . $sid[1] . '/' . $sid[2] . $sid[3]);
+//            \Storage::makeDirectory($outDir)
+            if (!file_exists($outDir)) {
+                mkdir($outDir, 0777, true);
+            }
+
+            $cmd = static::run("--newline -f $vcode+$acode $sid -o '$outDir/%(id)s.%(ext)s'", $this->reporter);
 
             return static::getCmdStatus($cmd);
         } else {
