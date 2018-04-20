@@ -13,6 +13,7 @@ use BBIT\Playlist\Services\Downloader\Progress\YouTubeDownloadProgressReporter;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Symfony\Component\Process\Process;
+use Thruway\Logging\Logger;
 
 
 /**
@@ -23,7 +24,9 @@ class YouTubeDownloader extends DownloaderContract
 {
 
     public static $possibleAudios = [
-        'm4a'
+        'aac',
+        'mp3',
+        'm4a',
     ];
 
     public static $possibleVideos = [
@@ -86,7 +89,10 @@ class YouTubeDownloader extends DownloaderContract
                 mkdir($outDir, 0777, true);
             }
 
-            $cmd = static::run("--newline -f $vcode+$acode $sid -o '$outDir/%(id)s.%(ext)s'", $this->reporter);
+//            $cmd = static::run("--newline -f $vcode+$acode $sid -o '$outDir/%(id)s.%(ext)s'", $this->reporter);
+            \Storage::put('/tmp/test', "youtube-dl --newline -f $vcode+$acode $sid --keep-fragments --write-all-thumbnails -f mp4 --recode-video mp4 -o '$outDir/%(id)s.%(ext)s'");
+
+            $cmd = static::run("--newline -f $vcode+$acode $sid --keep-fragments --write-all-thumbnails -f mp4 --recode-video mp4 -o '$outDir/%(id)s.%(ext)s'", $this->reporter);
 
             return static::getCmdStatus($cmd);
         } else {
@@ -223,11 +229,11 @@ class YouTubeDownloader extends DownloaderContract
         $cmd->enableOutput()
             ->run($callback);
 
-        $cmd->wait();
+//        $cmd->wait();
 
-        if ($reporter) {
-            $reporter->finish();
-        }
+//        if ($reporter) {
+//            $reporter->finish();
+//        }
 
         return $cmd;
     }
