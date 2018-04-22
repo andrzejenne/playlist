@@ -55,9 +55,10 @@ class DummyDownloader extends DownloaderContract
             $this->reporter->setUrl($sid);
         }
 
-        $cmd = static::run(base_path('tests/Feature/logs/dummy.sh'), $this->reporter);
-
-//        return $cmd->getOutput();
+        $cmd = static::run(
+            new Process(base_path('tests/Feature/logs/dummy.sh')),
+            $this->reporter
+        );
 
         return $cmd;
     }
@@ -101,38 +102,14 @@ class DummyDownloader extends DownloaderContract
         }
     }
 
-
     /**
-     * @param $cmd
-     * @param YouTubeDownloadProgressReporter|null $reporter
-     * @return Process
+     * @param $id
+     * @return null|string
      */
-    private static function run($cmd, YouTubeDownloadProgressReporter $reporter = null)
+    public function getOutDir($id)
     {
-        $cmd = new Process($cmd, storage_path('temp'));
-
-        $cmd->setTimeout(null);
-
-        $callback = null;
-        if ($reporter) {
-            $callback = function($type, $buffer) use ($reporter) {
-                if (Process::ERR == $type) {
-                    $reporter->readErrorOutput(rtrim($buffer, "\n"));
-                }
-                else {
-                    $reporter->readOutput(rtrim($buffer, "\n"));
-                }
-            };
-        }
-        $cmd->enableOutput()
-            ->start($callback);
-
-//        $cmd->wait();
-
-//        if ($reporter) {
-//            $reporter->finish();
-//        }
-
-        return $cmd;
+        return null;
     }
+
+
 }

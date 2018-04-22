@@ -11,6 +11,7 @@ WampRoute::namespace('com')->group(function(){
     WampRoute::command('search', 'SearchController@search');
     WampRoute::command('search.list', 'SearchController@list');
     WampRoute::command('search.list.delete', 'SearchController@delete');
+    WampRoute::command('downloaded.list', 'DownloadedController@list');
 });
 
 WampRoute::namespace('sub')->group(function(){

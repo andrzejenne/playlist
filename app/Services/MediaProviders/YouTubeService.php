@@ -29,7 +29,7 @@ class YouTubeService implements MediaProviderContract
      */
     public function search($q, $perPage = 16, $pageToken = null)
     {
-        $args = ['q' => $q, 'part' => 'id', 'maxResults' => $perPage];
+        $args = ['q' => $q, 'part' => 'id', 'maxResults' => $perPage, 'type' => 'video'];
         if ($pageToken) {
             $args['pageToken'] = $pageToken;
         }
@@ -61,7 +61,7 @@ class YouTubeService implements MediaProviderContract
         $cached = [];
         $retrieved = [];
         foreach ($results as $result) {
-            if (isset($result->id->videoId)) {
+//            if (isset($result->id->videoId)) {
                 $sid = $result->id->videoId;
                 $info = \Cache::get('info.youtube.' . $sid);
                 if ($info) {
@@ -69,7 +69,7 @@ class YouTubeService implements MediaProviderContract
                 } else {
                     $ids[] = $sid;
                 }
-            }
+//            }
         }
 
         if (count($ids)) {

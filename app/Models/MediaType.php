@@ -19,8 +19,7 @@ class MediaType extends BaseModel
 		  TCOL_NAME = self::TABLE . '.' . self::COL_NAME,
 		  TCOL_SLUG = self::TABLE . '.' . self::COL_SLUG;
 
-
-    
+	public $timestamps = false;
 
     protected $table = self::TABLE;
     

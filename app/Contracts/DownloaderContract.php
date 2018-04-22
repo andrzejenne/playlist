@@ -8,6 +8,7 @@
 
 namespace BBIT\Playlist\Contracts;
 
+use BBIT\Playlist\Models\MediaProvider;
 use Illuminate\Support\Collection;
 use Symfony\Component\Process\Process;
 
@@ -54,4 +55,40 @@ abstract class DownloaderContract
      * @return void
      */
     abstract public function finish();
+
+    /**
+     * @param $id
+     * @return string
+     */
+    abstract public function getOutDir($id);
+
+    /**
+     * @return MediaProvider
+     */
+    abstract public function getProvider();
+
+    /**
+     * @param Process $cmd
+     * @param ProcessReporterContract|null $reporter
+     * @return Process
+     */
+    protected static final function run(Process $cmd, ProcessReporterContract $reporter = null)
+    {
+        $callback = null;
+        if ($reporter) {
+            $callback = function($type, $buffer) use ($reporter) {
+                if (Process::ERR == $type) {
+                    $reporter->readErrorOutput($buffer);
+                }
+                else {
+                    $reporter->readOutput($buffer);
+                }
+            };
+        }
+        $cmd->enableOutput()
+            ->run($callback);
+
+        return $cmd;
+    }
+
 }

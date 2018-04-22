@@ -7,6 +7,7 @@ import {Search} from "../../models/search";
 import {WampService} from "../../services/WampService";
 import {AuthService} from "../../services/AuthService";
 import {ItemInterface} from "./item.interface";
+import {DownloadedRepository} from "../../repositories/downloaded.repository";
 
 @Component({
     selector: 'page-home',
@@ -30,6 +31,8 @@ export class HomePage implements OnDestroy {
 
     public downloads: ItemInterface[] = [];
 
+    public downloadedMedia: any[] = [];
+
     private allHistory: Search[];
 
     private subs: Subscription[] = [];
@@ -39,6 +42,7 @@ export class HomePage implements OnDestroy {
     constructor(
         public navCtrl: NavController,
         private repo: SearchRepository,
+        private downloaded: DownloadedRepository,
         private wamp: WampService,
         private auth: AuthService,
         private alertCtrl: AlertController,
@@ -52,6 +56,13 @@ export class HomePage implements OnDestroy {
     public onSearchClick() {
         console.info('onSearchClick');
         this.searchItems();
+    }
+
+    public onDownloadedClick() {
+      this.downloaded.list().then(data => {
+        this.downloadedMedia = <any[]>data;
+        this.ref.detectChanges();
+      });
     }
 
     public onLogoutClick() {
@@ -249,6 +260,10 @@ export class HomePage implements OnDestroy {
         }
 
         return null;
+    }
+
+    getUrl(item: any, file: any) {
+      return 'http://localhost:8000/media/' + item.provider.slug +'/' + item.provider_sid[0] + item.provider_sid[1] + '/' + item.provider_sid[2] + item.provider_sid[3] + '/' + file.filename;
     }
 
 }

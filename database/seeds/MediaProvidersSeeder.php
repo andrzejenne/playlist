@@ -8,9 +8,6 @@ use Illuminate\Database\Seeder;
  */
 class MediaProvidersSeeder extends Seeder
 {
-    private $providers = [
-        'youtube' => 'YouTube'
-    ];
     /**
      * Run the database seeds.
      *
@@ -18,7 +15,8 @@ class MediaProvidersSeeder extends Seeder
      */
     public function run()
     {
-        foreach ($this->providers as $slug => $name) {
+        foreach (config('media.downloaders') as $name => $concrete) {
+            $slug = \BBIT\Playlist\Helpers\Str::slug($name);
             $record = MediaProvider::getBySlug($slug);
             if (!$record) {
                 factory(MediaProvider::class)->create(['slug' => $slug, 'name' => $name]);

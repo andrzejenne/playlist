@@ -44,5 +44,12 @@ class MediaProvider extends BaseModel
 		self::COL_SLUG,
 	];
 
-    
+//    public function toArray()
+//    {
+//        return parent::toArray() + [
+//            'url' => config('app.url') . '/media/' . $this->slug
+//        ];
+//    }
+
+
 }

@@ -42,11 +42,14 @@
                 <ion-card-title>{{item.title}}</ion-card-title>
                 <p style="height: 64px; overflow: hidden;">{{item.description}}</p>
                 <div class="actions">
-                    <ion-icon name="information-circle" (click)="getInfo($event, item)"></ion-icon>
-                    <ion-icon name="download" (click)="download($event, item)"></ion-icon>
+                    <a (click)="getInfo($event, item)">
+                      <ion-icon name="information-circle"></ion-icon>
+                    </a>
+                    <a (click)="download($event, item)">
+                      <ion-icon name="download"></ion-icon>
+                    </a>
                     <a [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">
-                      <ion-icon name="search">
-                      </ion-icon>
+                      <ion-icon name="search"></ion-icon>
                     </a>
                 </div>
             </ion-card-content>
@@ -82,5 +85,19 @@
             <ion-spinner *ngIf="!item.finished" item-end name="bubbles"></ion-spinner>
             <ion-icon *ngIf="item.finished" item-end name="checkmark" large color="primary"></ion-icon>
         </ion-item>
+    </ion-list>
+
+    <ion-list>
+      <button ion-button (click)="onDownloadedClick()">Downloaded</button>
+      <div *ngFor="let item of downloadedMedia">
+        {{item.name}}
+        <div *ngFor="let file of item.files">
+          {{getUrl(item, file)}}
+          {{file.type.slug}}
+          <video *ngIf="file.type.slug == 'video'" width="320" height="240" controls>
+            <source [src]="getUrl(item, file)" type="video/mp4">
+          </video>
+        </div>
+      </div>
     </ion-list>
 </ion-content>
