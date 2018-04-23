@@ -4,6 +4,7 @@ import autobahn, {ICallOptions, IPublication, IPublishOptions, IRegistration, IS
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Observable, Subscription} from "rxjs";
 import {skipWhile} from "rxjs/operators";
+import {WampQueue} from "./wamp/Queue";
 
 export interface SessionSubScriptionFunction {
     (session: autobahn.Session): void;
@@ -12,11 +13,15 @@ export interface SessionSubScriptionFunction {
 @Injectable()
 export class WampService {
 
+    private static MSG_WAMP_NOT_AVAIL = 'WAMP not available';
+
     private session: autobahn.Session;
 
     private subj: BehaviorSubject<autobahn.Session>;
 
     private obs: Observable<autobahn.Session> = null;
+
+    private queue = new WampQueue();
 
     private registrations: { [index: number]: { coms: IRegistration[], subs: ISubscription[] } } = {}; // @todo - proper interface
 
@@ -32,6 +37,7 @@ export class WampService {
 
         conn.onopen = (session => {
             this.session = session;
+            this.queue.send(session);
             this.subj.next(session);
         });
 
@@ -51,11 +57,23 @@ export class WampService {
     }
 
     get publish(): (topic: string, args?: any[], kwargs?: any, options?: IPublishOptions) => When.Promise<IPublication> {
-        return this.session.publish.bind(this.session);
+        if (this.session) {
+            return this.session.publish.bind(this.session);
+        }
+        else {
+            return this.queue.publish.bind(this.queue);
+            // throw WampService.MSG_WAMP_NOT_AVAIL
+        }
     }
 
     get call(): <TResult>(procedure: string, args?: any[], kwargs?: any, options?: ICallOptions) => When.Promise<TResult> {
-        return this.session.call.bind(this.session);
+        if (this.session) {
+            return this.session.call.bind(this.session);
+        }
+        else {
+            return this.queue.call.bind(this.queue);
+            // throw WampService.MSG_WAMP_NOT_AVAIL;
+        }
     }
 
     public register(commandsAndSubscriptions: { coms?: { [index: string]: any }, subs?: { [index: string]: any } }) { // @todo - proper interface

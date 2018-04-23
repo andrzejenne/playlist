@@ -8,21 +8,22 @@ import {GooglePlus} from "@ionic-native/google-plus";
 
 import {ThePlaylist} from './app.component';
 import {HomePage} from '../pages/home/home';
-import {SearchRepository} from '../repositories/search.repository';
+import {WelcomePage} from "../pages/welcome/welcome";
+import {SearchPage} from '../pages/search/search';
+
 import {DurationPipe} from "../pipes/duration";
 
-import {ConfigService} from "../services/ConfigService";
-import {WampService} from "../services/WampService";
 import {BackgroundMode} from "@ionic-native/background-mode";
-import {AuthService} from "../services/AuthService";
 import {AuthError} from "../pages/auth/error";
-import {WelcomePage} from "../pages/welcome/welcome";
-import {DownloadedRepository} from "../repositories/downloaded.repository";
+
+import {ServicesModule} from "./services.module";
+import {RepositoriesModule} from "./repositories.module";
 
 @NgModule({
     declarations: [
         ThePlaylist,
         HomePage,
+        SearchPage,
         AuthError,
         WelcomePage,
 
@@ -31,12 +32,15 @@ import {DownloadedRepository} from "../repositories/downloaded.repository";
     imports: [
         BrowserModule,
         HttpClientModule,
+        ServicesModule,
+        RepositoriesModule,
         IonicModule.forRoot(ThePlaylist),
     ],
     bootstrap: [IonicApp],
     entryComponents: [
         ThePlaylist,
         HomePage,
+        SearchPage,
         AuthError,
         WelcomePage
     ],
@@ -45,18 +49,8 @@ import {DownloadedRepository} from "../repositories/downloaded.repository";
         SplashScreen,
         {provide: ErrorHandler, useClass: IonicErrorHandler},
 
-        SearchRepository,
-        DownloadedRepository,
-
-        ConfigService,
-        WampService,
-
         GooglePlus,
         BackgroundMode,
-
-        // services
-            // auth
-        AuthService
     ]
 })
 export class AppModule {

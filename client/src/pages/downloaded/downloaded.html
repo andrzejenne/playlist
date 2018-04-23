@@ -1,0 +1,22 @@
+<ion-header>
+    <ion-navbar>
+        <button ion-button menuToggle="menu">
+            <ion-icon name="menu"></ion-icon>
+        </button>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-list>
+      <div *ngFor="let item of downloadedMedia">
+        {{item.name}}
+        <div *ngFor="let file of item.files">
+          {{getUrl(item, file)}}
+          {{file.type.slug}}
+          <video *ngIf="file.type.slug == 'video'" width="320" height="240" controls>
+            <source [src]="getUrl(item, file)" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </ion-list>
+</ion-content>

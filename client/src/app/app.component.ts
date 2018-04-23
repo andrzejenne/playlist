@@ -1,12 +1,14 @@
-import {Component} from '@angular/core';
-import {Platform} from 'ionic-angular';
+import {Component, ViewChild} from '@angular/core';
+import {MenuController, NavController, Platform} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 
-import {HomePage} from '../pages/home/home';
 import {BackgroundMode} from "@ionic-native/background-mode";
-import {AuthService} from "../services/AuthService";
 import {AuthError} from "../pages/auth/error";
+import {AuthService} from "../services/AuthService";
+import {PagesService} from "../services/PagesService";
+
+import {HomePage} from '../pages/home/home';
 import {WelcomePage} from "../pages/welcome/welcome";
 
 @Component({
@@ -17,11 +19,16 @@ export class ThePlaylist {
 
     authenticated: boolean = false;
 
-    constructor(platform: Platform,
-                statusBar: StatusBar,
-                splashScreen: SplashScreen,
-                backgroundMode: BackgroundMode,
-                auth: AuthService
+    @ViewChild('content') nav: NavController;
+    @ViewChild('menu') menu: MenuController;
+
+    constructor(
+        platform: Platform,
+        statusBar: StatusBar,
+        splashScreen: SplashScreen,
+        backgroundMode: BackgroundMode,
+        auth: AuthService,
+        private pages: PagesService
     ) {
         platform.ready().then(() => {
             // Okay, so the platform is ready and our plugins are available.
@@ -43,6 +50,16 @@ export class ThePlaylist {
                 this.onAuthenticated();
             }
         });
+    }
+
+    setPage(code: string) {
+        let page = this.pages.get(code);
+        let view = this.nav.getActive();
+        if (page !== view.component) {
+            this.nav.push(
+                page
+            );
+        }
     }
 
     onAuthenticated() {

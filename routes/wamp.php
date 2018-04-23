@@ -12,6 +12,7 @@ WampRoute::namespace('com')->group(function(){
     WampRoute::command('search.list', 'SearchController@list');
     WampRoute::command('search.list.delete', 'SearchController@delete');
     WampRoute::command('downloaded.list', 'DownloadedController@list');
+    WampRoute::command('playlists.list', 'PlaylistsController@list');
 });
 
 WampRoute::namespace('sub')->group(function(){
