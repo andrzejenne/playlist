@@ -7,23 +7,34 @@ import {AuthService} from "../services/AuthService";
 import {BrowserModule} from "@angular/platform-browser";
 import {HttpClientModule} from "@angular/common/http";
 import {DownloadManager} from "../services/DownloadManager";
+import {WampRepository} from "../repositories/wamp.repository";
+import {DownloadedRepository} from "../repositories/downloaded.repository";
+import {PlaylistsRepository} from "../repositories/playlists.repository";
+import {SearchRepository} from "../repositories/search.repository";
 
 @NgModule({
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-    ],
-    providers: [
-        ConfigService,
-        WampService,
-        AuthService,
-        PagesService,
-        DownloadManager
-    ],
-    exports: [
-        BrowserModule,
-        HttpClientModule,
-    ]
+  imports: [
+    BrowserModule,
+    HttpClientModule
+  ],
+  providers: [
+    ConfigService,
+    WampService,
+    AuthService,
+    PagesService,
+    DownloadManager,
+
+    // repos
+    WampRepository,
+    SearchRepository,
+    DownloadedRepository,
+    PlaylistsRepository,
+
+  ],
+  exports: [
+    BrowserModule,
+    HttpClientModule
+  ]
 })
 export class ServicesModule {
 

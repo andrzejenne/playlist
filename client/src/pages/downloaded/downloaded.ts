@@ -1,11 +1,10 @@
-import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
-import {AlertController, NavController, Select} from 'ionic-angular';
+import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
+import {AlertController, NavController} from 'ionic-angular';
 import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
-import {PlaylistsRepository} from "../../repositories/playlists.repository";
-import {SearchPage} from "../search/search";
 import {DownloadedRepository} from "../../repositories/downloaded.repository";
 import {Medium} from "../../models/medium";
+import {PlaylistsRepository} from "../../repositories/playlists.repository";
 
 @Component({
     selector: 'page-downloaded',
@@ -22,6 +21,7 @@ export class DownloadedPage implements OnDestroy {
     constructor(
         public navCtrl: NavController,
         private repo: DownloadedRepository,
+        private plRepo: PlaylistsRepository,
         private auth: AuthService,
         private alertCtrl: AlertController,
         private ref: ChangeDetectorRef
@@ -47,6 +47,13 @@ export class DownloadedPage implements OnDestroy {
                     alert.present();
                 })
         }
+    }
+
+    addToPlaylist(item: Medium) {
+      this.plRepo.addToPlaylist(item)
+        .then(result => result);
+// .then(
+      // @todo - info, added to playlist
     }
 
     getThumbnail(item: Medium) {

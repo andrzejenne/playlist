@@ -11,6 +11,7 @@ namespace BBIT\Playlist\Wamp\Controllers\com;
 use BBIT\Playlist\Models\MediaFile;
 use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Models\Playlist;
+use BBIT\Playlist\Models\User;
 use BBIT\Playlist\Wamp\Controllers\Controller;
 use Thruway\ClientSession;
 
@@ -58,6 +59,28 @@ class PlaylistsController extends Controller
 
     /**
      * @param $args
+     * @return Playlist|null
+     */
+    public function create($args) {
+        $user = User::whereId($args[0]->uid)->first();
+
+        if ($user) {
+            $playlist = new Playlist([
+                Playlist::COL_NAME => $args[0]->name
+            ]);
+
+            $playlist->user()->associate($user);
+
+            $playlist->save();
+
+            return $playlist;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $args
      * @return bool
      */
     public function add($args)
@@ -66,7 +89,7 @@ class PlaylistsController extends Controller
         $playlist = Playlist::whereId($args[0]->pid)
             ->first();
 
-        $playlist->media()->attach($args[0]->mid, ['ordering' => $args[0]->ordering]);
+        $playlist->media()->attach($args[0]->mid, ['ordering' => isset($args[0]->ordering) ? $args[0]->ordering : 0]);
 
         return true;
         // @todo - reorder

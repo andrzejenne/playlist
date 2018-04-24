@@ -1,45 +1,43 @@
 <ion-header>
-    <ion-navbar>
-        <button ion-button menuToggle="menu">
-            <ion-icon name="menu"></ion-icon>
-        </button>
-        <ion-item>
-            <ion-label>
-                Playlist
-            </ion-label>
-            <ion-select #playlistSelect ([ngModel])="playlist" (ionChange)="onPlaylistChange($event)">
-                <ion-option *ngFor="let playlist of playlists" [value]="playlist">
-                    {{playlist.name}}
-                </ion-option>
-            </ion-select>
-        </ion-item>
-        <ion-buttons end right>
-            <button ion-button>
-                <ion-icon name="more"></ion-icon>
-            </button>
-            <button ion-button color="primary" (click)="goToSearchPage()">
-                <ion-icon name="search" class="mr-1"></ion-icon>
-                Search
-            </button>
-            <button ion-button color="danger">
-                <ion-icon name="log-out" class="mr-1"></ion-icon>
-                LogOut
-            </button>
-        </ion-buttons>
-    </ion-navbar>
+  <ion-navbar>
+    <button ion-button menuToggle="menu">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-item>
+      <ion-label>
+        Playlist
+      </ion-label>
+      <ion-select #playlistSelect ([ngModel])="playlist" (ionChange)="onPlaylistChange($event)">
+        <ion-option *ngFor="let playlist of playlists" [value]="playlist">
+          {{playlist.name}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-buttons end right>
+      <button ion-button title="More options">
+        <ion-icon name="more"></ion-icon>
+      </button>
+      <button ion-button title="Search" tcolor="primary" (click)="goToSearchPage()">
+        <ion-icon name="search"></ion-icon>
+      </button>
+      <button ion-button title="LogOut" color="danger" (click)="logout()">
+        <ion-icon name="log-out"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-    <ion-list *ngIf="list && list.length" class="items">
-        <ion-card *ngFor="let item of list">
-            <img [src]="item.thumbnail">
-            <span class="duration">{{item.duration | duration}}</span>
-            <ion-card-content>
-                <ion-card-title>{{item.title}}</ion-card-title>
-                <p style="height: 64px; overflow: hidden;">{{item.description}}</p>
-                <div class="actions">
-                </div>
-            </ion-card-content>
-        </ion-card>
-    </ion-list>
+  <!--<pre>{{playlist|json}}</pre>-->
+  <!--<pre>{{media|json}}</pre>-->
+  <ion-list class="items">
+    <ion-list-header>Items</ion-list-header>
+    <ion-item *ngFor="let item of media">
+      <ion-icon name="logo-youtube" item-start color="primary"></ion-icon>
+      <!--<span class="duration">{{item.duration | duration}}</span>-->
+      <ion-label>{{item.name}}</ion-label>
+      <div class="actions">
+      </div>
+    </ion-item>
+  </ion-list>
 </ion-content>

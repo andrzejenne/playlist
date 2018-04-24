@@ -17,7 +17,6 @@ import {BackgroundMode} from "@ionic-native/background-mode";
 import {AuthError} from "../pages/auth/error";
 
 import {ServicesModule} from "./services.module";
-import {RepositoriesModule} from "./repositories.module";
 import {DownloadedPage} from "../pages/downloaded/downloaded";
 import {DownloadQueueComponent} from "../components/download-queue/download-queue.component";
 
@@ -38,7 +37,6 @@ import {DownloadQueueComponent} from "../components/download-queue/download-queu
         BrowserModule,
         HttpClientModule,
         ServicesModule,
-        RepositoriesModule,
         IonicModule.forRoot(ThePlaylist),
     ],
     bootstrap: [IonicApp],

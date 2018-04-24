@@ -35,6 +35,7 @@ class CreateMedia extends Migration
         Schema::create('media_playlist', function(Blueprint $table) {
             $table->integer('media_id')->unsigned();
             $table->integer('playlist_id')->unsigned();
+            $table->unsignedInteger('ordering')->nullable();
 
             $table->foreign('media_id')->references('id')
                 ->on('media')->onDelete('cascade');
