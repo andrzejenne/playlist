@@ -1,0 +1,14 @@
+page-downloaded {
+  .card {
+    width: 360px;
+    display: inline-block;
+    .card-title {
+      height: 50px;
+      overflow: hidden;
+      font-size: 120%;
+    }
+  }
+
+  .fit-thumbnail { object-fit: cover; }
+}
+

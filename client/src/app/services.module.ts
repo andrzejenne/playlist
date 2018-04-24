@@ -6,6 +6,7 @@ import {WampService} from "../services/WampService";
 import {AuthService} from "../services/AuthService";
 import {BrowserModule} from "@angular/platform-browser";
 import {HttpClientModule} from "@angular/common/http";
+import {DownloadManager} from "../services/DownloadManager";
 
 @NgModule({
     imports: [
@@ -17,6 +18,7 @@ import {HttpClientModule} from "@angular/common/http";
         WampService,
         AuthService,
         PagesService,
+        DownloadManager
     ],
     exports: [
         BrowserModule,

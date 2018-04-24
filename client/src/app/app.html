@@ -12,8 +12,8 @@
         <ion-list>
             <button ion-item (click)="setPage('home');menu.close()">Home</button>
             <button ion-item (click)="setPage('search');menu.close()">Search</button>
-            <button ion-item>Downloaded</button>
-            <button ion-item>Download Queue</button>
+            <button ion-item (click)="setPage('downloaded');menu.close()">Downloaded</button>
+            <button ion-item (click)="setPage('downloadQueue');menu.close()">Download Queue</button>
             <button ion-item menuClose="menu" detail-none>
                 Close Menu
             </button>

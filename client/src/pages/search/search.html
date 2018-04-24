@@ -6,6 +6,9 @@
         <ion-searchbar [(ngModel)]="search" (ionFocus)="getSearchHistory(); focused = true;" (ionBlur)="focused = false"></ion-searchbar>
         <ion-buttons end right>
             <button ion-button *ngIf="search && search.length > 1" (click)="onSearchClick()">Search</button>
+            <button ion-button (click)="openDownloadQueue()">
+                <ion-icon name="download" [color]="downloaderColor"></ion-icon>
+            </button>
         </ion-buttons>
         <!--<search-bar (search)="onSearchChange"></search-bar>-->
     </ion-navbar>

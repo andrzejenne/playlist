@@ -7,16 +7,15 @@
             <ion-label>
                 Playlist
             </ion-label>
-            <ion-select ([ngModel])="playlist">
-                <ion-option *ngFor="let playlist of playlists" [value]="playlist.id">
+            <ion-select #playlistSelect ([ngModel])="playlist" (ionChange)="onPlaylistChange($event)">
+                <ion-option *ngFor="let playlist of playlists" [value]="playlist">
                     {{playlist.name}}
                 </ion-option>
             </ion-select>
         </ion-item>
         <ion-buttons end right>
-            <button ion-button color="success">
-                <ion-icon name="plus-circled"></ion-icon>
-                Create
+            <button ion-button>
+                <ion-icon name="more"></ion-icon>
             </button>
             <button ion-button color="primary" (click)="goToSearchPage()">
                 <ion-icon name="search" class="mr-1"></ion-icon>

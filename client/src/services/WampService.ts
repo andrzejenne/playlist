@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {ConfigService} from "./ConfigService";
 import autobahn, {ICallOptions, IPublication, IPublishOptions, IRegistration, ISubscription} from "autobahn";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
@@ -13,7 +13,7 @@ export interface SessionSubScriptionFunction {
 @Injectable()
 export class WampService {
 
-    private static MSG_WAMP_NOT_AVAIL = 'WAMP not available';
+    // private static MSG_WAMP_NOT_AVAIL = 'WAMP not available';
 
     private session: autobahn.Session;
 
@@ -27,6 +27,9 @@ export class WampService {
 
     private _ri = 1;
 
+    public onClose = new EventEmitter();
+    public onOpen = new EventEmitter();
+
     constructor(private configService: ConfigService) {
 
         this.subj = new BehaviorSubject<autobahn.Session>(null);
@@ -39,11 +42,12 @@ export class WampService {
             this.session = session;
             this.queue.send(session);
             this.subj.next(session);
+            this.onOpen.next(session);
         });
 
         conn.onclose = (reason => {
             console.info('WAMP Closed: ', reason);
-
+            this.onClose.next(reason);
             return true;
         });
 

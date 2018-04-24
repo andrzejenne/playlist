@@ -4,27 +4,24 @@ import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
 import {SearchPage} from "../search/search";
+import {DownloadedRepository} from "../../repositories/downloaded.repository";
+import {Medium} from "../../models/medium";
 
 @Component({
-    selector: 'page-home',
-    templateUrl: 'home.html'
+    selector: 'page-downloaded',
+    templateUrl: 'downloaded.html'
 })
-export class HomePage implements OnDestroy {
+export class DownloadedPage implements OnDestroy {
+
+    downloaded: any;
 
     playlist: Playlist;
 
     public playlists: Playlist[] = [];
 
-    public media: any[] = [];
-
-    private searchPage = SearchPage;
-
-    @ViewChild('playlistSelect') select: Select;
-
     constructor(
         public navCtrl: NavController,
-        // public pages: PagesService,
-        private repo: PlaylistsRepository,
+        private repo: DownloadedRepository,
         private auth: AuthService,
         private alertCtrl: AlertController,
         private ref: ChangeDetectorRef
@@ -35,13 +32,9 @@ export class HomePage implements OnDestroy {
     ionViewDidLoad() {
         let user = this.auth.getUser();
         if (user && user.id) {
-            this.repo.list(user.id)
+            this.repo.list()
                 .then(data => {
-                    this.playlists = data;
-                    if (data.length) {
-                        this.select.setValue(data[0]);
-                        // this.playlistId = data[0].id;
-                    }
+                    this.downloaded = data;
                     this.ref.detectChanges();
                 })
                 .catch(error => { // @todo - error reporting service directly to repository
@@ -56,24 +49,29 @@ export class HomePage implements OnDestroy {
         }
     }
 
-    goToSearchPage() {
-        this.navCtrl.push(this.searchPage);
+    getThumbnail(item: Medium) {
+        for(let i = 0; i < item.files.length; i++){
+            if ('thumbnail' === item.files[i].type.slug) {
+                return item.files[i];
+            }
+        }
+
+        return null;
     }
 
-    onPlaylistChange(playlist) {
-        this.repo.load(playlist)
-            .then(data => this.media = data)
-            .catch(error => { // @todo - error reporting service directly to repository
-                let alert = this.alertCtrl.create({
-                    title: 'Error!',
-                    subTitle: error.message || 'error occured',
-                    buttons: ['Ok']
-                });
+    getThumbnailUrl(item: Medium) {
+        let thumb = this.getThumbnail(item);
+        if (thumb) {
+            return this.getUrl(item, thumb);
+        }
 
-                alert.present();
-            });
+        return null;
     }
 
     ngOnDestroy(): void {
+    }
+
+    getUrl(item: Medium, file: any) {
+        return 'http://localhost:8000/media/' + item.provider.slug +'/' + item.provider_sid[0] + item.provider_sid[1] + '/' + item.provider_sid[2] + item.provider_sid[3] + '/' + file.filename;
     }
 }

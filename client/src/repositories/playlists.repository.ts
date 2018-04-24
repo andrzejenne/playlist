@@ -8,4 +8,8 @@ export class PlaylistsRepository extends WampRepository {
     public list(uid: number) {
         return this.call<Playlist[]>('com.playlists.list', [{uid: uid}]);
     }
+
+    public load(playlist: Playlist) {
+        return this.call<any[]>('com.playlists.media', [{pid: playlist.id}]);
+    }
 }

@@ -59,7 +59,7 @@ class Playlist extends BaseModel
 	 */
 	public function media()
 	{
-		return $this->belongsToMany(Medium::class, 'media_playlist');
+		return $this->belongsToMany(Medium::class, 'media_playlist', 'playlist_id', 'media_id');
 	}
 
 	/**

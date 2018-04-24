@@ -1,9 +1,11 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
-import {AlertController, NavController} from 'ionic-angular';
+import {AlertController, Modal, ModalController, NavController} from 'ionic-angular';
 import {SearchRepository} from "../../repositories/search.repository";
 import {SearchItem} from "../../models/search-item";
 import {Search} from "../../models/search";
 import {AuthService} from "../../services/AuthService";
+import {DownloadManager} from "../../services/DownloadManager";
+import {DownloadQueueComponent} from "../../components/download-queue/download-queue.component";
 
 @Component({
     selector: 'page-search',
@@ -23,16 +25,30 @@ export class SearchPage {
 
     public prevPageToken: string;
 
+    downloaderColor = 'default';
+
+    downloaderModal: Modal;
+
     private allHistory: Search[];
 
     constructor(
         public navCtrl: NavController,
         private repo: SearchRepository,
         private auth: AuthService,
+        private downloadManager: DownloadManager,
         private alertCtrl: AlertController,
+        private modalCtrl: ModalController,
         private ref: ChangeDetectorRef
     ) {
 
+    }
+
+    public openDownloadQueue() {
+        if (!this.downloaderModal) {
+            this.downloaderModal = this.modalCtrl.create(DownloadQueueComponent);
+        }
+
+        this.downloaderModal.present();
     }
 
     public onSearchClick() {
@@ -76,7 +92,7 @@ export class SearchPage {
     }
 
     public download(event: MouseEvent, item: SearchItem) {
-        alert('implement');
+        this.downloadManager.download(this.auth.getUser().id, item, 'youtube');
     }
 
     public searchItems(query?: string, args?: any) {
