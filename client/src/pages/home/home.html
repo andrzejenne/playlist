@@ -45,7 +45,7 @@
       </button>
     </ion-item>
 
-    <ion-item *ngIf="current">
+    <ion-item *ngIf="current" class="current">
       <ion-thumbnail item-start>
         <img [src]="getThumbnailUrl(current)" class="fit-thumbnail">
       </ion-thumbnail>
@@ -74,17 +74,17 @@
     <ion-grid>
       <ion-row>
         <ion-col>
-          <div class="progress-bar">
-            <audio #audioPlayer preload="none"></audio>
-            <div class="line"></div>
-            <div #progress class="progress"></div>
-            <span class="time current-time">
-              {{currentTime | duration}}
-            </span>
-            <span class="time total-time">
-              {{totalTime | duration}}
-            </span>
-          </div>
+          <audio #audioPlayer preload="none"></audio>
+          <ion-item>
+            <ion-range [(ngModel)]="currentTime" color="danger" [min]="0" [max]="totalTime"
+                       [debounce]="500"
+                       (ionFocus)="onSliderFocus($event)"
+                       (ionBlur)="onSliderBlur($event)"
+                       (ionChange)="onSliderChange($event)">
+              <ion-label range-left>{{currentTime | duration}}</ion-label>
+              <ion-label range-right>{{totalTime | duration}}</ion-label>
+            </ion-range>
+          </ion-item>
         </ion-col>
         <ion-col>
           <div class="buttons">

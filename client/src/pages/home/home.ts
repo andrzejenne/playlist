@@ -195,6 +195,22 @@ export class HomePage implements OnDestroy {
     }
   }
 
+  onSliderChange(event) {
+    console.info('slide change', event);
+  }
+
+  onSliderFocus(event) {
+    console.info('slide focus', event);
+    this.pause();
+  }
+
+  onSliderBlur(event) {
+    console.info('slide blur', event);
+    this.play();
+
+    debugger;
+  }
+
   ngOnDestroy(): void {
   }
 
@@ -327,7 +343,7 @@ export class HomePage implements OnDestroy {
     this.currentTime = this.audioPlayer.nativeElement.currentTime;
     this.totalTime = this.audioPlayer.nativeElement.duration;
 
-    this.progress.nativeElement.style.left = ((this.currentTime / this.totalTime) * 100) + '%';
+    // this.progress.nativeElement.style.left = ((this.currentTime / this.totalTime) * 100) + '%';
 
     // this.ref.detectChanges();
   };

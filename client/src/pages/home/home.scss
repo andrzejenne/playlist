@@ -26,6 +26,10 @@ page-home {
     opacity: .3;
   }
 
+  .current {
+    .label { color: #2a88bd; }
+  }
+
   .fit-thumbnail {
     object-fit: cover;
   }
