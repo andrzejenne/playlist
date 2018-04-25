@@ -4,7 +4,7 @@ import {WampRepository} from "./wamp.repository";
 @Injectable()
 export class DownloadedRepository extends WampRepository {
 
-    public list() {
-        return this.call('com.downloaded.list');
-    }
+  public list() {
+    return this.call('com.downloaded.list');
+  }
 }

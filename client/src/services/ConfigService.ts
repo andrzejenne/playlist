@@ -3,12 +3,12 @@ import config from '../config';
 
 @Injectable()
 export class ConfigService {
-    config = config;
+  config = config;
 
-    get(path: string) {
-        return path.split('.')
-            .reduce((o, i) => o[i], this.config);
-    }
+  get(path: string) {
+    return path.split('.')
+      .reduce((o, i) => o[i], this.config);
+  }
 
-    isWebApp = document.URL.startsWith('http');
+  isWebApp = document.URL.startsWith('http');
 }

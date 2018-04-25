@@ -13,7 +13,8 @@ page-home {
       margin-top: -24px;
       margin-right: 5px;
       float: right;
-      background: #000; background: rgba(0,0,0, .7);
+      background: #000;
+      background: rgba(0, 0, 0, .7);
       border-radius: 3px;
       color: #fff;
       font-size: 90%;
@@ -21,8 +22,58 @@ page-home {
     }
   }
 
-  .fit-thumbnail { object-fit: cover; }
+  .played {
+    opacity: .3;
+  }
+
+  .fit-thumbnail {
+    object-fit: cover;
+  }
   //.started { background: rgba(100, 100, 255, .1); }
   //.finished { background: rgba(100, 255, 100, .1); }
+
+  .progress-bar {
+    height: 100%;
+    width: 100%;
+    display: inline-block;
+    padding: 10px 0;
+    margin: 0 20px;
+
+    position: relative;
+
+    .line {
+      width: 100%;
+      margin-top: 10px;
+      border: 1px solid #444;
+    }
+
+    .progress {
+      position: absolute;
+      background: #2a88bd;
+      box-shadow: 2px 2px 1px rgba(0,0,0, .3);
+      border-radius: 10px;
+      top: 10px; left: 0;
+      width: 20px; height: 20px;
+    }
+
+    .time {
+      color: #888;
+      font-size: 80%;
+    }
+    .current-time { position: absolute; left: 0; top: 28px; }
+    .total-time { position: absolute; right: 0; top: 28px; }
+  }
+
+  .buttons {
+    width: 100%;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: right;
+
+    .title {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
 }
 

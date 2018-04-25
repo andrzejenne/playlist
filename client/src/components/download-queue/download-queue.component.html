@@ -1,29 +1,29 @@
 <ion-header>
-    <ion-navbar>
-        <ion-buttons start>
-            <button ion-button (click)="dismiss()">Close</button>
-        </ion-buttons>
-        <ion-title>Download Queue</ion-title>
-    </ion-navbar>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">Close</button>
+    </ion-buttons>
+    <ion-title>Download Queue</ion-title>
+  </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-    <ion-list>
-        <ion-item *ngFor="let item of items" [ngClass]="{started: item.started, finished: item.finished}">
-            <ion-thumbnail item-start>
-                <img [src]="item.thumbnail" class="fit-thumbnail">
-            </ion-thumbnail>
-            <h2>
-                {{item.title}}
-            </h2>
-            <p *ngFor="let file of item.files">
-                {{file.name}}
-                {{file.progress}}%
-            </p>
-            <ion-spinner *ngIf="!item.finished" item-end name="bubbles"></ion-spinner>
-            <ion-icon *ngIf="item.finished" item-end name="checkmark" large color="primary"></ion-icon>
-        </ion-item>
-    </ion-list>
+  <ion-list>
+    <ion-item *ngFor="let item of items" [ngClass]="{started: item.started, finished: item.finished}">
+      <ion-thumbnail item-start>
+        <img [src]="item.thumbnail" class="fit-thumbnail">
+      </ion-thumbnail>
+      <h2>
+        {{item.title}}
+      </h2>
+      <p *ngFor="let file of item.files">
+        {{file.name}}
+        {{file.progress}}%
+      </p>
+      <ion-spinner *ngIf="!item.finished" item-end name="bubbles"></ion-spinner>
+      <ion-icon *ngIf="item.finished" item-end name="checkmark" large color="primary"></ion-icon>
+    </ion-item>
+  </ion-list>
 
-    <button ion-button color="danger" full (click)="dismiss()">Close</button>
+  <button ion-button color="danger" full (click)="dismiss()">Close</button>
 </ion-content>

@@ -7,14 +7,14 @@ import {DownloadQueueComponent} from "../components/download-queue/download-queu
 @Injectable()
 export class PagesService {
 
-    private pages = {
-        'home': HomePage,
-        'search': SearchPage,
-        'downloaded': DownloadedPage,
-        'downloadQueue': DownloadQueueComponent
-    };
+  private pages = {
+    'home': HomePage,
+    'search': SearchPage,
+    'downloaded': DownloadedPage,
+    'downloadQueue': DownloadQueueComponent
+  };
 
-    get(code: string) {
-        return this.pages[code] || HomePage;
-    }
+  get(code: string) {
+    return this.pages[code] || HomePage;
+  }
 }

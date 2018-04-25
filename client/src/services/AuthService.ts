@@ -10,38 +10,38 @@ import {GooglePlus} from "@ionic-native/google-plus";
 @Injectable()
 export class AuthService {
 
-    private authenticator: Authenticator;
+  private authenticator: Authenticator;
 
-    public logout$ = new Subject<boolean>();
+  public logout$ = new Subject<boolean>();
 
-    constructor(config: ConfigService, http: HttpClient, google: GooglePlus) {
-        if (config.isWebApp) {
-            this.authenticator = new WebAuthenticator(config, http);
-        }
-        else {
-            this.authenticator = new MobileAuthenticator(google);
-        }
+  constructor(config: ConfigService, http: HttpClient, google: GooglePlus) {
+    if (config.isWebApp) {
+      this.authenticator = new WebAuthenticator(config, http);
     }
-
-    isAuthenticated() {
-        return this.authenticator.isAuthenticated();
+    else {
+      this.authenticator = new MobileAuthenticator(google);
     }
+  }
 
-    authenticate() {
-        return this.authenticator.authenticate();
-    }
+  isAuthenticated() {
+    return this.authenticator.isAuthenticated();
+  }
 
-    getUser() {
-        return this.authenticator.currentUser();
-    }
+  authenticate() {
+    return this.authenticator.authenticate();
+  }
 
-    logout() {
-        this.authenticator.logout()
-            .then(
-                response => this.logout$.next(true)
-            )
-            .catch(
-                error => this.logout$.next(false)
-            )
-    }
+  getUser() {
+    return this.authenticator.currentUser();
+  }
+
+  logout() {
+    this.authenticator.logout()
+      .then(
+        response => this.logout$.next(true)
+      )
+      .catch(
+        error => this.logout$.next(false)
+      )
+  }
 }

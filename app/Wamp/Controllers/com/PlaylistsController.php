@@ -53,7 +53,10 @@ class PlaylistsController extends Controller
             ->first();
 
         return $playlist->media()
-            ->with(Medium::REL_FILES . '.' . MediaFile::REL_TYPE)->get();
+            ->with(
+                Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
+                Medium::REL_PROVIDER
+            )->get();
 
     }
 

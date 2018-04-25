@@ -5,80 +5,89 @@ import {Playlist} from "../../models/playlist";
 import {DownloadedRepository} from "../../repositories/downloaded.repository";
 import {Medium} from "../../models/medium";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
+import {MediaFile} from "../../models/media-file";
 
 @Component({
-    selector: 'page-downloaded',
-    templateUrl: 'downloaded.html'
+  selector: 'page-downloaded',
+  templateUrl: 'downloaded.html'
 })
 export class DownloadedPage implements OnDestroy {
 
-    downloaded: any;
+  public downloaded: any;
 
-    playlist: Playlist;
+  public playlist: Playlist;
 
-    public playlists: Playlist[] = [];
+  public playlists: Playlist[] = [];
 
-    constructor(
-        public navCtrl: NavController,
-        private repo: DownloadedRepository,
-        private plRepo: PlaylistsRepository,
-        private auth: AuthService,
-        private alertCtrl: AlertController,
-        private ref: ChangeDetectorRef
-    ) {
+  constructor(
+    public navCtrl: NavController,
+    private repo: DownloadedRepository,
+    private plRepo: PlaylistsRepository,
+    private auth: AuthService,
+    private alertCtrl: AlertController,
+    private ref: ChangeDetectorRef
+  ) {
 
-    }
+  }
 
-    ionViewDidLoad() {
-        let user = this.auth.getUser();
-        if (user && user.id) {
-            this.repo.list()
-                .then(data => {
-                    this.downloaded = data;
-                    this.ref.detectChanges();
-                })
-                .catch(error => { // @todo - error reporting service directly to repository
-                    let alert = this.alertCtrl.create({
-                        title: 'Error!',
-                        subTitle: error.message || 'error occured',
-                        buttons: ['Ok']
-                    });
+  ionViewDidLoad() {
+    this.repo.list()
+      .then(data => {
+        this.downloaded = data;
+        this.ref.detectChanges();
+      })
+      .catch(error => { // @todo - error reporting service directly to repository
+        let alert = this.alertCtrl.create({
+          title: 'Error!',
+          subTitle: error.message || 'error occured',
+          buttons: ['Ok']
+        });
 
-                    alert.present();
-                })
-        }
-    }
+        alert.present();
+      });
 
-    addToPlaylist(item: Medium) {
-      this.plRepo.addToPlaylist(item)
-        .then(result => result);
+    this.plRepo.playlists$.subscribe(playlists => {
+      this.playlists = playlists;
+      this.ref.detectChanges();
+    });
+
+    this.plRepo.playlist$.subscribe(playlist => {
+      this.playlist = playlist;
+      this.ref.detectChanges();
+    });
+  }
+
+  addToPlaylist(item: Medium) {
+    this.plRepo.addToPlaylist(item)
+      .then(result => result);
 // .then(
-      // @todo - info, added to playlist
+    // @todo - info, added to playlist
+  }
+
+  getThumbnail(item: Medium) {
+    for (let i = 0; i < item.files.length; i++) {
+      if ('thumbnail' === item.files[i].type.slug) {
+        return item.files[i];
+      }
     }
 
-    getThumbnail(item: Medium) {
-        for(let i = 0; i < item.files.length; i++){
-            if ('thumbnail' === item.files[i].type.slug) {
-                return item.files[i];
-            }
-        }
+    return null;
+  }
 
-        return null;
+  getThumbnailUrl(item: Medium) {
+    let thumb = this.getThumbnail(item);
+    if (thumb) {
+      return Medium.getFileUrl(item, thumb);
     }
 
-    getThumbnailUrl(item: Medium) {
-        let thumb = this.getThumbnail(item);
-        if (thumb) {
-            return this.getUrl(item, thumb);
-        }
+    return null;
+  }
 
-        return null;
-    }
+  getUrl(item: Medium, file: MediaFile) {
+    return Medium.getFileUrl(item, file);
+  }
 
-    ngOnDestroy(): void {
-    }
+  ngOnDestroy(): void {
+  }
 
-    getUrl(item: Medium, file: any) {
-        return 'http://localhost:8000/media/' + item.provider.slug +'/' + item.provider_sid[0] + item.provider_sid[1] + '/' + item.provider_sid[2] + item.provider_sid[3] + '/' + file.filename;
-    }
 }

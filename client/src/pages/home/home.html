@@ -7,7 +7,8 @@
       <ion-label>
         Playlist
       </ion-label>
-      <ion-select #playlistSelect ([ngModel])="playlist" (ionChange)="onPlaylistChange($event)">
+      <ion-select #playlistSelect [(ngModel)]="playlist" (ionChange)="onPlaylistChange($event)"
+                  interface="popover">
         <ion-option *ngFor="let playlist of playlists" [value]="playlist">
           {{playlist.name}}
         </ion-option>
@@ -32,12 +33,89 @@
   <!--<pre>{{media|json}}</pre>-->
   <ion-list class="items">
     <ion-list-header>Items</ion-list-header>
-    <ion-item *ngFor="let item of media">
-      <ion-icon name="logo-youtube" item-start color="primary"></ion-icon>
+
+    <ion-item *ngFor="let item of playedPlaylist" class="played">
+      <ion-thumbnail item-start>
+        <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
+      </ion-thumbnail>
       <!--<span class="duration">{{item.duration | duration}}</span>-->
       <ion-label>{{item.name}}</ion-label>
-      <div class="actions">
-      </div>
+      <button ion-button color="light" item-end (click)="playItem(item)">
+        <ion-icon name="play"></ion-icon>
+      </button>
+    </ion-item>
+
+    <ion-item *ngIf="current">
+      <ion-thumbnail item-start>
+        <img [src]="getThumbnailUrl(current)" class="fit-thumbnail">
+      </ion-thumbnail>
+      <!--<span class="duration">{{item.duration | duration}}</span>-->
+      <ion-label>{{current.name}}</ion-label>
+      <button ion-button color="primary" item-end>
+        <ion-icon name="play"></ion-icon>
+      </button>
+    </ion-item>
+
+    <ion-item *ngFor="let item of mediaPlaylist">
+      <ion-thumbnail item-start>
+        <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
+      </ion-thumbnail>
+      <!--<span class="duration">{{item.duration | duration}}</span>-->
+      <ion-label>{{item.name}}</ion-label>
+      <button ion-button color="light" item-end (click)="playItem(item)">
+        <ion-icon name="play"></ion-icon>
+      </button>
     </ion-item>
   </ion-list>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <div class="progress-bar">
+            <audio #audioPlayer preload="none"></audio>
+            <div class="line"></div>
+            <div #progress class="progress"></div>
+            <span class="time current-time">
+              {{currentTime | duration}}
+            </span>
+            <span class="time total-time">
+              {{totalTime | duration}}
+            </span>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="buttons">
+            <span class="title">{{current?.name}}</span>
+            <button ion-button (click)="playVideo()" title="Play Video" [color]="colors.video">
+              <ion-icon name="videocam"></ion-icon>
+            </button>
+            <button ion-button (click)="playAudio()" title="Play Audio only" [color]="colors.audio">
+              <ion-icon name="musical-notes"></ion-icon>
+            </button>
+            <button [disabled]="!playerStatus.playing || !playedPlaylist.length" ion-button (click)="playPrev()" title="Play previous" [color]="colors.prev">
+              <ion-icon name="skip-backward"></ion-icon>
+            </button>
+            <button ion-button (click)="togglePlay()" title="Play / Pause" [color]="colors.play">
+              <ion-icon [name]="playIcon"></ion-icon>
+            </button>
+            <!--<button ion-button>-->
+            <!--<ion-icon name="pause"></ion-icon>-->
+            <!--</button>-->
+            <button [disabled]="!playerStatus.playing || !mediaPlaylist.length" ion-button (click)="playNext()" title="Play next" [color]="colors.next">
+              <ion-icon name="skip-forward"></ion-icon>
+            </button>
+            <button ion-button (click)="toggleShuffle()" title="Toggle Shuffle" [color]="colors.shuffle">
+              <ion-icon name="shuffle"></ion-icon>
+            </button>
+            <button ion-button (click)="toggleRepeat()" title="Toggle Repeat" [color]="colors.repeat">
+              <ion-icon name="repeat"></ion-icon>
+            </button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-footer>

@@ -13,7 +13,8 @@ page-search {
       margin-top: -24px;
       margin-right: 5px;
       float: right;
-      background: #000; background: rgba(0,0,0, .7);
+      background: #000;
+      background: rgba(0, 0, 0, .7);
       border-radius: 3px;
       color: #fff;
       font-size: 90%;
@@ -21,7 +22,9 @@ page-search {
     }
   }
 
-  .fit-thumbnail { object-fit: cover; }
+  .fit-thumbnail {
+    object-fit: cover;
+  }
   //.started { background: rgba(100, 100, 255, .1); }
   //.finished { background: rgba(100, 255, 100, .1); }
 }

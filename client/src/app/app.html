@@ -2,22 +2,22 @@
 
 <ion-menu [content]="content" #menu id="menu">
 
-    <ion-header>
-        <ion-toolbar>
-            <ion-title>Menu</ion-title>
-        </ion-toolbar>
-    </ion-header>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Menu</ion-title>
+    </ion-toolbar>
+  </ion-header>
 
-    <ion-content>
-        <ion-list>
-            <button ion-item (click)="setPage('home');menu.close()">Home</button>
-            <button ion-item (click)="setPage('search');menu.close()">Search</button>
-            <button ion-item (click)="setPage('downloaded');menu.close()">Downloaded</button>
-            <button ion-item (click)="setPage('downloadQueue');menu.close()">Download Queue</button>
-            <button ion-item menuClose="menu" detail-none>
-                Close Menu
-            </button>
-        </ion-list>
-    </ion-content>
+  <ion-content>
+    <ion-list>
+      <button ion-item (click)="setPage('home');menu.close()">Playlists</button>
+      <button ion-item (click)="setPage('search');menu.close()">Search</button>
+      <button ion-item (click)="setPage('downloaded');menu.close()">Downloaded</button>
+      <button ion-item (click)="setPage('downloadQueue');menu.close()">Download Queue</button>
+      <button ion-item menuClose="menu" detail-none>
+        Close Menu
+      </button>
+    </ion-list>
+  </ion-content>
 
 </ion-menu>

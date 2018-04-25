@@ -21,43 +21,43 @@ import {DownloadedPage} from "../pages/downloaded/downloaded";
 import {DownloadQueueComponent} from "../components/download-queue/download-queue.component";
 
 @NgModule({
-    declarations: [
-        ThePlaylist,
-        HomePage,
-        SearchPage,
-        DownloadedPage,
-        AuthError,
-        WelcomePage,
+  declarations: [
+    ThePlaylist,
+    HomePage,
+    SearchPage,
+    DownloadedPage,
+    AuthError,
+    WelcomePage,
 
-        DownloadQueueComponent,
+    DownloadQueueComponent,
 
-        DurationPipe
-    ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        ServicesModule,
-        IonicModule.forRoot(ThePlaylist),
-    ],
-    bootstrap: [IonicApp],
-    entryComponents: [
-        ThePlaylist,
-        HomePage,
-        SearchPage,
-        DownloadedPage,
-        AuthError,
-        WelcomePage,
+    DurationPipe
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    ServicesModule,
+    IonicModule.forRoot(ThePlaylist),
+  ],
+  bootstrap: [IonicApp],
+  entryComponents: [
+    ThePlaylist,
+    HomePage,
+    SearchPage,
+    DownloadedPage,
+    AuthError,
+    WelcomePage,
 
-        DownloadQueueComponent,
-    ],
-    providers: [
-        StatusBar,
-        SplashScreen,
-        {provide: ErrorHandler, useClass: IonicErrorHandler},
+    DownloadQueueComponent,
+  ],
+  providers: [
+    StatusBar,
+    SplashScreen,
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
 
-        GooglePlus,
-        BackgroundMode,
-    ]
+    GooglePlus,
+    BackgroundMode,
+  ]
 })
 export class AppModule {
 }

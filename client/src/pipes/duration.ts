@@ -20,14 +20,14 @@ export class DurationPipe implements PipeTransform {
 
     let r = [];
     if (h) {
-      r.push(h, m < 10 ? '0' + m : m, s < 10 ? '0' + s : s);
+      r.push(h, m < 10 ? '0' + m : m, s < 10 ? '0' + s.toFixed(1) : s.toFixed(1));
     }
     else {
       if (m) {
-        r.push(m < 10 ? '0' + m : m, s < 10 ? '0' + s : s);
+        r.push(m < 10 ? '0' + m : m, s < 10 ? '0' + s.toFixed(1) : s.toFixed(1));
       }
       else {
-        r.push(s);
+        r.push(s.toFixed(1));
       }
     }
 

@@ -1,57 +1,46 @@
 <ion-header>
-    <ion-navbar>
-        <button ion-button menuToggle="menu">
-            <ion-icon name="menu"></ion-icon>
-        </button>
-        <ion-title>Downloaded</ion-title>
-        <ion-buttons end>
-            <ion-item>
-                <ion-label>
-                    Search
-                </ion-label>
-                <ion-select #playlistSelect ([ngModel])="playlist" (ionChange)="onPlaylistChange($event)">
-                    <ion-option *ngFor="let playlist of playlists" [value]="playlist">
-                        {{playlist.name}}
-                    </ion-option>
-                </ion-select>
-            </ion-item>
-            <ion-item>
-                <ion-label>
-                    Playlist
-                </ion-label>
-                <ion-select #playlistSelect ([ngModel])="playlist" (ionChange)="onPlaylistChange($event)">
-                    <ion-option *ngFor="let playlist of playlists" [value]="playlist">
-                        {{playlist.name}}
-                    </ion-option>
-                </ion-select>
-            </ion-item>
-        </ion-buttons>
-    </ion-navbar>
+  <ion-navbar>
+    <button ion-button menuToggle="menu">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Downloaded</ion-title>
+    <ion-buttons end>
+      <ion-item>
+        <ion-label>Playlist</ion-label>
+        <ion-select style="width: 200px;" #playlistSelect [(ngModel)]="playlist" (ionChange)="onPlaylistChange($event)"
+                    interface="popover">
+          <ion-option *ngFor="let playlist of playlists" [value]="playlist">
+            {{playlist.name}}
+          </ion-option>
+        </ion-select>
+      </ion-item>
+    </ion-buttons>
+  </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-    <ion-list>
-        <ion-card *ngFor="let item of downloaded">
-            <ion-card-content>
-                <ion-card-title>{{item.name}}</ion-card-title>
-                <div *ngFor="let file of item.files" [ngSwitch]="file.type.slug">
-                    <video *ngSwitchCase="'video'" width="320" controls [poster]="getThumbnailUrl(item)">
-                        <source [src]="getUrl(item, file)" type="video/mp4">
-                    </video>
-                    <audio *ngSwitchCase="'audio'" controls>
-                        <source [src]="getUrl(item, file)" type="audio/mp3">
-                    </audio>
-                </div>
-                <p style="height: 64px; overflow: hidden;">{{item.description}}</p>
-                <div class="actions">
-                  <button ion-button color="primary" (click)="addToPlaylist(item)">
-                    Add to Playlist
-                  </button>
-                    <!--<a [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">-->
-                        <!--<ion-icon name="search"></ion-icon>-->
-                    <!--</a>-->
-                </div>
-            </ion-card-content>
-        </ion-card>
-    </ion-list>
+  <ion-list>
+    <ion-card *ngFor="let item of downloaded">
+      <ion-card-content>
+        <ion-card-title>{{item.name}}</ion-card-title>
+        <div *ngFor="let file of item.files" [ngSwitch]="file.type.slug">
+          <video *ngSwitchCase="'video'" width="320" controls [poster]="getThumbnailUrl(item)" preload="none">
+            <source [src]="getUrl(item, file)" type="video/mp4">
+          </video>
+          <audio *ngSwitchCase="'audio'" controls preload="none">
+            <source [src]="getUrl(item, file)" type="audio/mp3">
+          </audio>
+        </div>
+        <p *ngIf="item.description" style="max-height: 64px; overflow: hidden;">{{item.description}}</p>
+        <div class="actions">
+          <button ion-button color="primary" (click)="addToPlaylist(item)">
+            Add to Playlist
+          </button>
+          <!--<a [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">-->
+          <!--<ion-icon name="search"></ion-icon>-->
+          <!--</a>-->
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
 </ion-content>
