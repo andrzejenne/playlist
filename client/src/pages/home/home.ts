@@ -1,11 +1,12 @@
 import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
-import {AlertController, NavController, Select} from 'ionic-angular';
+import {AlertController, NavController, Select, Slide} from 'ionic-angular';
 import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
 import {SearchPage} from "../search/search";
 import {Medium} from "../../models/medium";
 import {ElementReference} from "../../models/ElementReference";
+import {SlideElement} from "ionic-angular/components/slides/swiper/swiper-interfaces";
 
 @Component({
   selector: 'page-home',
@@ -196,19 +197,26 @@ export class HomePage implements OnDestroy {
   }
 
   onSliderChange(event) {
-    console.info('slide change', event);
+    // console.info('slide change', event);
   }
 
   onSliderFocus(event) {
-    console.info('slide focus', event);
-    this.pause();
+    // console.info('slide focus', event);
+    // this.pause();
   }
 
   onSliderBlur(event) {
-    console.info('slide blur', event);
-    this.play();
+    // console.info('slide blur', event.value);
+    if (event.value != this.audioPlayer.nativeElement.currentTime) {
+      // this.audioPlayer.nativeElement.currentTime = +event.value;
+      console.info(this.audioPlayer.nativeElement.currentTime);
+      this.audioPlayer.nativeElement.pause();
+      this.audioPlayer.nativeElement.currentTime = 60;
 
-    debugger;
+    }
+    // this.play();
+
+    // debugger;
   }
 
   ngOnDestroy(): void {
