@@ -44,12 +44,13 @@ export class ThePlaylist {
       if (!auth.isAuthenticated()) {
         auth.authenticate()
           .then(response => this.onAuthenticated())
-          .catch(error => this.onAuthenticationError());
+          .catch(error => this.onAuthenticationError(error));
       }
       else {
         this.onAuthenticated();
       }
     });
+
   }
 
   setPage(code: string) {
@@ -67,9 +68,11 @@ export class ThePlaylist {
     this.rootPage = HomePage;
   }
 
-  onAuthenticationError() {
+  onAuthenticationError(error) {
     this.authenticated = false;
     this.rootPage = AuthError;
+
+    console.error('AuthError', error);
   }
 }
 

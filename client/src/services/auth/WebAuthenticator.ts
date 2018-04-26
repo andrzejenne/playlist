@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
+import {Storage} from '@ionic/storage';
 
 import {Authenticator} from "./Authenticator";
 import {ConfigService} from "../ConfigService";
@@ -7,8 +8,10 @@ import {ConfigService} from "../ConfigService";
 @Injectable()
 export class WebAuthenticator extends Authenticator {
 
-  constructor(private config: ConfigService, private http: HttpClient) {
-    super();
+  constructor(private config: ConfigService, protected storage: Storage, private http: HttpClient) {
+    super(storage);
+
+    debugger;
   }
 
   authenticate() {
@@ -27,7 +30,6 @@ export class WebAuthenticator extends Authenticator {
       }
     )
       .subscribe((response: any) => { // @todo - contract
-          // debugger;
           if (response !== null && response.id) {
             this.setUser(response);
             resolve(response);
@@ -38,7 +40,6 @@ export class WebAuthenticator extends Authenticator {
           }
         },
         error => {
-          // debugger;
           console.info('ERROR:', error);
           reject(error);
         });

@@ -20,6 +20,22 @@
 
 <ion-content padding>
   <ion-list>
+    <ion-list-header>Servers</ion-list-header>
+    <ion-item *ngFor="let server of serverManager.servers">
+        <ion-title>{{server}}</ion-title>
+        <ion-icon item-end name="wifi" [color]="serverManager.isConnected(server) ? 'secondary' : 'danger'"></ion-icon>
+        <ion-buttons item-end>
+          <button ion-button color="danger" (click)="serverManager.remove(server)">
+            Delete
+          </button>
+        </ion-buttons>
+    </ion-item>
+    <ion-item>
+      <ion-input item-start [(ngModel)]="serverName"></ion-input>
+      <button item-end ion-button color="primary" (click)="serverManager.add(serverName)">Add</button>
+    </ion-item>
+  </ion-list>
+  <ion-list>
     <ion-card *ngFor="let item of downloaded">
       <ion-card-content>
         <ion-card-title>{{item.name}}</ion-card-title>

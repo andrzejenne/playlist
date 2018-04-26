@@ -55,6 +55,8 @@ export class HomePage implements OnDestroy {
 
   private interval: number;
 
+  private user: any;
+
   @ViewChild('playlistSelect') select: Select;
 
   @ViewChild('audioPlayer') audioPlayer: ElementReference<HTMLAudioElement>;
@@ -88,9 +90,10 @@ export class HomePage implements OnDestroy {
       this.ref.detectChanges();
     });
 
-    let user = this.auth.getUser();
-    if (user && user.id) {
-      this.repo.getPlaylists(user.id)
+    this.user = this.auth.getUser();
+
+    if (this.user && this.user.id) {
+      this.repo.getPlaylists(this.user.id)
     }
 
     this.initAudioPlayer();
@@ -346,7 +349,6 @@ export class HomePage implements OnDestroy {
   }
 
   private autoPlayIfInterrupted() {
-    debugger;
     this.storage.get('playlist')
       .then(playlistId => {
         this.storage.get('currentMedium')

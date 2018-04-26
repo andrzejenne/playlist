@@ -6,6 +6,7 @@ import {WebAuthenticator} from "./auth/WebAuthenticator";
 import {MobileAuthenticator} from "./auth/MobileAuthenticator";
 import {Subject} from "rxjs/Subject";
 import {GooglePlus} from "@ionic-native/google-plus";
+import {Storage} from "@ionic/storage";
 
 @Injectable()
 export class AuthService {
@@ -14,12 +15,12 @@ export class AuthService {
 
   public logout$ = new Subject<boolean>();
 
-  constructor(config: ConfigService, http: HttpClient, google: GooglePlus) {
+  constructor(config: ConfigService, http: HttpClient, google: GooglePlus, storage: Storage) {
     if (config.isWebApp) {
-      this.authenticator = new WebAuthenticator(config, http);
+      this.authenticator = new WebAuthenticator(config, storage, http);
     }
     else {
-      this.authenticator = new MobileAuthenticator(google);
+      this.authenticator = new MobileAuthenticator(google, storage);
     }
   }
 

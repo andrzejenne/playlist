@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component} from '@angular/core';
-import {AlertController, Modal, ModalController, NavController} from 'ionic-angular';
+import {Modal, ModalController, NavController} from 'ionic-angular';
 import {SearchRepository} from "../../repositories/search.repository";
 import {SearchItem} from "../../models/search-item";
 import {Search} from "../../models/search";
@@ -36,7 +36,7 @@ export class SearchPage {
     private repo: SearchRepository,
     private auth: AuthService,
     private downloadManager: DownloadManager,
-    private alertCtrl: AlertController,
+    // private alertCtrl: AlertController,
     private modalCtrl: ModalController,
     private ref: ChangeDetectorRef
   ) {
@@ -92,7 +92,8 @@ export class SearchPage {
   }
 
   public download(event: MouseEvent, item: SearchItem) {
-    this.downloadManager.download(this.auth.getUser().id, item, 'youtube');
+    let user = this.auth.getUser();
+    user && this.downloadManager.download(user.id, item, 'youtube');
   }
 
   public searchItems(query?: string, args?: any) {
@@ -105,14 +106,17 @@ export class SearchPage {
     this.history = [];
 
     if (this.search && this.search.length) {
-      this.repo.search(+this.auth.getUser().id, this.search, args || {})
+      let user = this.auth.getUser()
+      user &&
+      this.repo.search(+user.id, this.search, args || {})
         .then(response => {
           this.list = response.items;
           console.info('response', response);
           this.nextPageToken = response.next;
           this.prevPageToken = response.prev;
           this.ref.detectChanges();
-        })
+        });
+
     }
     else {
       this.list = [];

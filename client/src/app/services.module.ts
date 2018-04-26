@@ -11,11 +11,14 @@ import {WampRepository} from "../repositories/wamp.repository";
 import {DownloadedRepository} from "../repositories/downloaded.repository";
 import {PlaylistsRepository} from "../repositories/playlists.repository";
 import {SearchRepository} from "../repositories/search.repository";
+import {ServerManagerService} from "../services/ServerManagerService";
+import {IonicStorageModule} from "@ionic/storage";
 
 @NgModule({
   imports: [
     BrowserModule,
-    HttpClientModule
+    HttpClientModule,
+    IonicStorageModule
   ],
   providers: [
     ConfigService,
@@ -23,6 +26,7 @@ import {SearchRepository} from "../repositories/search.repository";
     AuthService,
     PagesService,
     DownloadManager,
+    ServerManagerService,
 
     // repos
     WampRepository,

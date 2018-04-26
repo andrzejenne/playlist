@@ -5,6 +5,7 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Observable, Subscription} from "rxjs";
 import {skipWhile} from "rxjs/operators";
 import {WampQueue} from "./wamp/Queue";
+import {ServerManagerService} from "./ServerManagerService";
 
 export interface SessionSubScriptionFunction {
   (session: autobahn.Session): void;
@@ -30,28 +31,13 @@ export class WampService {
   public onClose = new EventEmitter();
   public onOpen = new EventEmitter();
 
-  constructor(private configService: ConfigService) {
+  constructor(private configService: ConfigService, private serversManager: ServerManagerService) {
 
     this.subj = new BehaviorSubject<autobahn.Session>(null);
 
     this.obs = this.subj.asObservable().pipe(skipWhile(ses => !ses));
 
-    let conn = new autobahn.Connection({url: this.configService.get('wampHost'), realm: 'playlist'});
-
-    conn.onopen = (session => {
-      this.session = session;
-      this.queue.send(session);
-      this.subj.next(session);
-      this.onOpen.next(session);
-    });
-
-    conn.onclose = (reason => {
-      console.info('WAMP Closed: ', reason);
-      this.onClose.next(reason);
-      return true;
-    });
-
-    conn.open();
+    setTimeout(this.loadServers, 10);
 
     Observable.fromEvent(window, 'beforeunload').subscribe(event => this.unregisterAll());
   }
@@ -134,6 +120,32 @@ export class WampService {
     }
 
     return true;
+  }
+
+  private loadServers = () => {
+    if (!this.serversManager.servers.length) {
+      this.serversManager.add(this.configService.get('wampHost'));
+    }
+    this.serversManager.servers.forEach(server => {
+      let conn = new autobahn.Connection({url: server, realm: 'playlist'});
+
+      conn.onopen = (session => {
+        this.session = session;
+        this.queue.send(session);
+        this.subj.next(session);
+        this.onOpen.next(session);
+        this.serversManager.setSession(server, session);
+      });
+
+      conn.onclose = (reason => {
+        console.info('WAMP Closed: ', reason);
+        this.onClose.next(reason);
+        this.serversManager.close(server);
+        return true;
+      });
+
+      conn.open();
+    });
   }
 
 }

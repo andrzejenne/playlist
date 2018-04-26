@@ -1,11 +1,12 @@
 import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
 import {AlertController, NavController} from 'ionic-angular';
-import {AuthService} from "../../services/AuthService";
+// import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
 import {DownloadedRepository} from "../../repositories/downloaded.repository";
 import {Medium} from "../../models/medium";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
 import {MediaFile} from "../../models/media-file";
+import {ServerManagerService} from "../../services/ServerManagerService";
 
 @Component({
   selector: 'page-downloaded',
@@ -19,11 +20,14 @@ export class DownloadedPage implements OnDestroy {
 
   public playlists: Playlist[] = [];
 
+  public serverName: string;
+
   constructor(
     public navCtrl: NavController,
     private repo: DownloadedRepository,
     private plRepo: PlaylistsRepository,
-    private auth: AuthService,
+    // private auth: AuthService,
+    public serverManager: ServerManagerService,
     private alertCtrl: AlertController,
     private ref: ChangeDetectorRef
   ) {
@@ -77,7 +81,7 @@ export class DownloadedPage implements OnDestroy {
   getThumbnailUrl(item: Medium) {
     let thumb = this.getThumbnail(item);
     if (thumb) {
-      return Medium.getFileUrl(item, thumb);
+      return Medium.getFileUrl(item, thumb) + '?get';
     }
 
     return null;
