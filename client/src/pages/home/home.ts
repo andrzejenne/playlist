@@ -1,12 +1,12 @@
 import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
-import {AlertController, NavController, Select, Slide} from 'ionic-angular';
+import {Storage} from "@ionic/storage";
+import {AlertController, NavController, Select} from 'ionic-angular';
 import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
 import {SearchPage} from "../search/search";
 import {Medium} from "../../models/medium";
 import {ElementReference} from "../../models/ElementReference";
-import {SlideElement} from "ionic-angular/components/slides/swiper/swiper-interfaces";
 
 @Component({
   selector: 'page-home',
@@ -67,8 +67,10 @@ export class HomePage implements OnDestroy {
     private repo: PlaylistsRepository,
     private auth: AuthService,
     private alertCtrl: AlertController,
+    private storage: Storage,
     private ref: ChangeDetectorRef
   ) {
+
   }
 
   ionViewDidLoad() {
@@ -105,6 +107,7 @@ export class HomePage implements OnDestroy {
       .then(data => {
         this.media = data;
         this.preparePlaylist();
+        this.autoPlayIfInterrupted();
         this.ref.detectChanges();
       })
       .catch(error => { // @todo - error reporting service directly to repository
@@ -116,6 +119,8 @@ export class HomePage implements OnDestroy {
 
         alert.present();
       });
+
+    this.storage.set('playlist', playlist.id);
   }
 
   playVideo() {
@@ -134,7 +139,7 @@ export class HomePage implements OnDestroy {
     this.colors.video = 'light';
   }
 
-  playItem(item: Medium) {
+  playItem(item: Medium, seek = 0) {
     if (!this.mediaPlaylist) {
       this.preparePlaylist();
     }
@@ -147,6 +152,7 @@ export class HomePage implements OnDestroy {
     this.current = item;
 
     this.audioPlayer.nativeElement.src = Medium.getUrl(this.current, this.mediaType);
+    this.audioPlayer.nativeElement.currentTime = seek;
 
     this.play();
   }
@@ -201,22 +207,14 @@ export class HomePage implements OnDestroy {
   }
 
   onSliderFocus(event) {
-    // console.info('slide focus', event);
-    // this.pause();
+    this.pause();
   }
 
   onSliderBlur(event) {
-    // console.info('slide blur', event.value);
     if (event.value != this.audioPlayer.nativeElement.currentTime) {
-      // this.audioPlayer.nativeElement.currentTime = +event.value;
-      console.info(this.audioPlayer.nativeElement.currentTime);
-      this.audioPlayer.nativeElement.pause();
-      this.audioPlayer.nativeElement.currentTime = 60;
-
+      this.audioPlayer.nativeElement.currentTime = +event.value;
     }
-    // this.play();
-
-    // debugger;
+    this.play();
   }
 
   ngOnDestroy(): void {
@@ -244,6 +242,8 @@ export class HomePage implements OnDestroy {
     }
     else {
       this.current = null;
+      this.storage.remove('currentMedium');
+      this.storage.remove('currentTime');
     }
   }
 
@@ -267,7 +267,7 @@ export class HomePage implements OnDestroy {
   getThumbnailUrl(item: Medium) {
     let thumb = this.getThumbnail(item);
     if (thumb) {
-      return Medium.getFileUrl(item, thumb);
+      return Medium.getFileUrl(item, thumb) + '?get';
     }
 
     return null;
@@ -324,6 +324,8 @@ export class HomePage implements OnDestroy {
     this.interval = setInterval(this.onAudioProgress, 100);
 
     this.playStatus();
+
+    this.storage.set('currentMedium', this.current.id);
   }
 
   private pause() {
@@ -343,6 +345,25 @@ export class HomePage implements OnDestroy {
     this.audioPlayer.nativeElement.onended = this.onAudioEnded;
   }
 
+  private autoPlayIfInterrupted() {
+    debugger;
+    this.storage.get('playlist')
+      .then(playlistId => {
+        this.storage.get('currentMedium')
+          .then(mediumId => {
+            this.storage.get('currentTime')
+              .then(currentTime => {
+                if (this.playlist.id == playlistId) {
+                  let medium = this.media.filter(item => item.id == mediumId)[0];
+                  if (medium) {
+                    this.playItem(medium, currentTime);
+                  }
+                }
+            });
+          })
+      });
+  }
+
   private onAudioEnded = (ev: MediaStreamErrorEvent) => {
     this.playNext();
   };
@@ -350,7 +371,7 @@ export class HomePage implements OnDestroy {
   private onAudioProgress = () => {
     this.currentTime = this.audioPlayer.nativeElement.currentTime;
     this.totalTime = this.audioPlayer.nativeElement.duration;
-
+    this.storage.set('currentTime', this.currentTime);
     // this.progress.nativeElement.style.left = ((this.currentTime / this.totalTime) * 100) + '%';
 
     // this.ref.detectChanges();
@@ -365,4 +386,5 @@ export class HomePage implements OnDestroy {
       return current !== item && played.indexOf(item) === -1;
     };
   }
+
 }

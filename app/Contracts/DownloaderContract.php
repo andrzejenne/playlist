@@ -18,6 +18,9 @@ use Symfony\Component\Process\Process;
  */
 abstract class DownloaderContract
 {
+    /** @var MediaProvider */
+    private $provider;
+
     /**
      * @param $sid
      * @return Process
@@ -57,15 +60,20 @@ abstract class DownloaderContract
     abstract public function finish();
 
     /**
-     * @param $id
      * @return string
      */
-    abstract public function getOutDir($id);
+    abstract public function getProviderSlug();
 
     /**
      * @return MediaProvider
      */
-    abstract public function getProvider();
+    final public function getProvider() {
+        if (!$this->provider) {
+            $this->provider = MediaProvider::whereSlug($this->getProviderSlug())->first();
+        }
+
+        return $this->provider;
+    }
 
     /**
      * @param Process $cmd

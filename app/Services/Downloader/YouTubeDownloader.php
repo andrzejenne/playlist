@@ -47,9 +47,6 @@ class YouTubeDownloader extends DownloaderContract
     /** @var array */
     private $_infoCache = [];
 
-    /** @var MediaProvider */
-    private $provider;
-
     /**
      * YouTubeDownloader constructor.
      * @param YouTubeDownloadProgressReporter $reporter
@@ -202,15 +199,11 @@ class YouTubeDownloader extends DownloaderContract
 
 
     /**
-     * @return MediaProvider
+     * @return string
      */
-    public function getProvider()
+    public function getProviderSlug()
     {
-        if (!$this->provider) {
-            $this->provider = MediaProvider::whereSlug('youtube')->first();
-        }
-
-        return $this->provider;
+        return 'youtube';
     }
 
 

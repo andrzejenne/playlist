@@ -42,6 +42,11 @@ class MediaManagerService
     /** @var DownloadProcess */
     private $proc;
 
+    /**
+     * @var MediaDiscoveryService
+     */
+    private $mediaDiscoveryService;
+
 //    private static $downloaderAliases = [
 //        'youtube' => YouTubeDownloader::class
 //        'youtube' => DummyDownloader::class
@@ -50,10 +55,12 @@ class MediaManagerService
     /**
      * MediaManagerService constructor.
      * @param Application $app
+     * @param MediaDiscoveryService $mediaDiscoveryService
      */
-    public function __construct(Application $app)
+    public function __construct(Application $app, MediaDiscoveryService $mediaDiscoveryService)
     {
         $this->app = $app;
+        $this->mediaDiscoveryService = $mediaDiscoveryService;
     }
 
 
@@ -70,7 +77,7 @@ class MediaManagerService
             if ($this->proc && !$this->proc->isRunning()) {
                 $this->proc->finish();
                 if ($this->proc->isSuccessful()) {
-                    $this->disoverMedia($this->proc);
+                    $this->mediaDiscoveryService->disoverMedia($this->proc);
                 }
                 $this->proc = null;
             } else {
@@ -155,75 +162,6 @@ class MediaManagerService
         }
 
         return $this->downloaders[$name];
-    }
-
-    /**
-     * @param DownloadProcess $proc
-     * @todo - to MediaDiscoveryService
-     */
-    private function disoverMedia(DownloadProcess $proc)
-    {
-        $id = $proc->getRequest()->getSid();
-        $downloader = $proc->getDownloader();
-        $dir = $downloader->getOutDir($id);
-
-        $provider = $downloader->getProvider();
-
-        /** @var Medium $medium */
-        $medium = Medium::whereProviderId($provider->getId())
-            ->whereProviderSid($id)
-            ->first();
-
-        if (!$medium) {
-            $medium = new Medium([
-                Medium::COL_NAME => $downloader->getName($id),
-                Medium::COL_PROVIDER_SID => $id
-            ]);
-            $medium->provider()->associate($provider);
-            $medium->save();
-            $existing = [];
-        }
-        else {
-            $existing = $medium->files->map(function(MediaFile $file){
-                return $file->filename;
-            });
-        }
-
-        $files = \File::allFiles($dir);
-//        $unknown = MediaType::whereSlug('unknown')->first();
-        $types = MediaFileType::all()->mapWithKeys(function(MediaFileType $type){
-            return [$type->slug => $type];
-        });
-
-        foreach ($files as $file) {
-            $filename = basename($file);
-            if (!isset($existing[$filename])) {
-                $fileRecord = new MediaFile([
-                    MediaFile::COL_FILENAME => $filename,
-                    MediaFile::COL_SIZE => filesize($file)
-                ]);
-
-                $typeSlug = null;
-                $ext = $file->getExtension();
-                switch($ext) {
-                    case 'jpg':
-                    case 'png':
-                        $typeSlug = 'thumbnail';
-                        break;
-                    case 'mp3':
-                        $typeSlug = 'audio';
-                        break;
-                    case 'mp4':
-                    case 'mkv':
-                    default:
-                        $typeSlug = 'video';
-                        break;
-                }
-                $fileRecord->media()->associate($medium);
-                $fileRecord->type()->associate($types[$typeSlug]);
-                $fileRecord->save();
-            }
-        }
     }
 
     /**

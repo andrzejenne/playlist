@@ -1,6 +1,8 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {ErrorHandler, NgModule} from '@angular/core';
 import {HttpClientModule} from '@angular/common/http';
+import {IonicStorageModule} from '@ionic/storage';
+
 import {IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {StatusBar} from '@ionic-native/status-bar';
@@ -37,6 +39,7 @@ import {DownloadQueueComponent} from "../components/download-queue/download-queu
     BrowserModule,
     HttpClientModule,
     ServicesModule,
+    IonicStorageModule.forRoot(),
     IonicModule.forRoot(ThePlaylist),
   ],
   bootstrap: [IonicApp],

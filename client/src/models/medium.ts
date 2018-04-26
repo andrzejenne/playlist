@@ -25,7 +25,7 @@ export class Medium extends Model {
   }
 
   public static getFileUrl(item: Medium, file: MediaFile) {
-    return 'http://localhost:8000/media/' + item.provider.slug + '/' + item.provider_sid[0] + item.provider_sid[1] + '/' + item.provider_sid[2] + item.provider_sid[3] + '/' + file.filename;
+    return 'http://localhost:8000/media/' + item.provider_sid + '/' + file.id;
   }
 
 }
