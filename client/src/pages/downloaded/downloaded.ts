@@ -1,12 +1,14 @@
 import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
-import {AlertController, NavController} from 'ionic-angular';
+import {ModalController, NavController} from 'ionic-angular';
 // import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
 import {DownloadedRepository} from "../../repositories/downloaded.repository";
 import {Medium} from "../../models/medium";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
 import {MediaFile} from "../../models/media-file";
-import {ServerManagerService} from "../../services/ServerManagerService";
+import {ErrorReporting} from "../../services/ErrorReporting";
+import {Subscription} from "rxjs/Subscription";
+import {VideoPlayerComponent} from "../../components/video-player/video-player.component";
 
 @Component({
   selector: 'page-downloaded',
@@ -20,15 +22,15 @@ export class DownloadedPage implements OnDestroy {
 
   public playlists: Playlist[] = [];
 
-  public serverName: string;
+  public subs: Subscription[] = [];
 
   constructor(
     public navCtrl: NavController,
     private repo: DownloadedRepository,
     private plRepo: PlaylistsRepository,
     // private auth: AuthService,
-    public serverManager: ServerManagerService,
-    private alertCtrl: AlertController,
+    private errorReporter: ErrorReporting,
+    private modalController: ModalController,
     private ref: ChangeDetectorRef
   ) {
 
@@ -40,15 +42,7 @@ export class DownloadedPage implements OnDestroy {
         this.downloaded = data;
         this.ref.detectChanges();
       })
-      .catch(error => { // @todo - error reporting service directly to repository
-        let alert = this.alertCtrl.create({
-          title: 'Error!',
-          subTitle: error.message || 'error occured',
-          buttons: ['Ok']
-        });
-
-        alert.present();
-      });
+      .catch(this.errorReporter.report);
 
     this.plRepo.playlists$.subscribe(playlists => {
       this.playlists = playlists;
@@ -59,6 +53,7 @@ export class DownloadedPage implements OnDestroy {
       this.playlist = playlist;
       this.ref.detectChanges();
     });
+
   }
 
   addToPlaylist(item: Medium) {
@@ -91,7 +86,32 @@ export class DownloadedPage implements OnDestroy {
     return Medium.getFileUrl(item, file);
   }
 
+  playVideo(item: Medium) {
+    let data = {
+      src: Medium.getUrl(item, 'video'),
+      thumbnail: Medium.getUrl(item, 'thumbnail')+'?get',
+      type: 'video/mp4',
+      title: item.name,
+      width: 600// @todo - getter
+    };
+    this.modalController.create(VideoPlayerComponent, data).present();
+  }
+
+  hasVideo(item: Medium) {
+    let file = Medium.getFile(item, 'video');
+
+    return file && file.type.slug == 'video';
+  }
+
+  hasAudio(item: Medium) {
+    let file = Medium.getFile(item, 'audio');
+
+    return file && file.type.slug == 'audio';
+  }
+
+
   ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
   }
 
 }

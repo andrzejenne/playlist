@@ -72,7 +72,7 @@ class MediaStreamController
                         $cStart = $range[0];
 
 //                        $cEnd = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $cStart + 102400; // $cEnd;
-                        $cEnd = $cStart + 256000;
+                        $cEnd = $cStart + 512000;
                     }
                     $cEnd = ($cEnd > $end) ? $end : $cEnd;
                     if ($cStart > $cEnd || $cStart > $end || $cEnd >= $size) {

@@ -21,6 +21,8 @@ import {AuthError} from "../pages/auth/error";
 import {ServicesModule} from "./services.module";
 import {DownloadedPage} from "../pages/downloaded/downloaded";
 import {DownloadQueueComponent} from "../components/download-queue/download-queue.component";
+import {VideoPlayerComponent} from "../components/video-player/video-player.component";
+import {ServerManagerComponent} from "../components/server-manager/server-manager.component";
 
 @NgModule({
   declarations: [
@@ -32,6 +34,8 @@ import {DownloadQueueComponent} from "../components/download-queue/download-queu
     WelcomePage,
 
     DownloadQueueComponent,
+    VideoPlayerComponent,
+    ServerManagerComponent,
 
     DurationPipe
   ],
@@ -52,6 +56,8 @@ import {DownloadQueueComponent} from "../components/download-queue/download-queu
     WelcomePage,
 
     DownloadQueueComponent,
+    VideoPlayerComponent,
+    ServerManagerComponent,
   ],
   providers: [
     StatusBar,

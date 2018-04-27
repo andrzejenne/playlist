@@ -14,14 +14,7 @@ export class MobileAuthenticator extends Authenticator {
   }
 
   public logout() {
-    return new Promise(this.logoutCallback);
-  }
-
-  private logoutCallback = (resolve, reject) => {
     return this.googlePlus.logout()
-      .then(response => super.logout()
-        .then(finished => resolve(response))
-      )
-      .catch(error => reject(error));
-  };
+      .then(response => super.logout());
+  }
 }

@@ -10,15 +10,13 @@ export class WebAuthenticator extends Authenticator {
 
   constructor(private config: ConfigService, protected storage: Storage, private http: HttpClient) {
     super(storage);
-
-    debugger;
   }
 
   authenticate() {
     return new Promise(this.authenticationCallback);
   }
 
-  logout() {
+  logout(): Promise<boolean> {
     return new Promise(this.logoutCallback);
   }
 
@@ -42,6 +40,8 @@ export class WebAuthenticator extends Authenticator {
         error => {
           console.info('ERROR:', error);
           reject(error);
+
+          return false;
         });
   };
 
@@ -49,7 +49,7 @@ export class WebAuthenticator extends Authenticator {
     super.logout();
 
     return this.http.delete(this.config.get('auth.userUrl'))
-      .subscribe(response => resolve(response), error => reject(error));
+      .subscribe(response => resolve(true), error => reject(error));
   };
 
   private authenticateMe() {

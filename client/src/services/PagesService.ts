@@ -3,6 +3,7 @@ import {SearchPage} from "../pages/search/search";
 import {HomePage} from "../pages/home/home";
 import {DownloadedPage} from "../pages/downloaded/downloaded";
 import {DownloadQueueComponent} from "../components/download-queue/download-queue.component";
+import {WelcomePage} from "../pages/welcome/welcome";
 
 @Injectable()
 export class PagesService {
@@ -11,7 +12,8 @@ export class PagesService {
     'home': HomePage,
     'search': SearchPage,
     'downloaded': DownloadedPage,
-    'downloadQueue': DownloadQueueComponent
+    'downloadQueue': DownloadQueueComponent,
+    'servers': WelcomePage
   };
 
   get(code: string) {

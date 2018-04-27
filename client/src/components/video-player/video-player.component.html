@@ -1,0 +1,5 @@
+<div class="video-player">
+  <video *ngIf="src" [poster]="thumbnail" controls [width]="width">
+    <source [src]="src" [type]="type">
+  </video>
+</div>

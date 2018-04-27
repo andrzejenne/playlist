@@ -20,42 +20,28 @@
 
 <ion-content padding>
   <ion-list>
-    <ion-list-header>Servers</ion-list-header>
-    <ion-item *ngFor="let server of serverManager.servers">
-        <ion-title>{{server}}</ion-title>
-        <ion-icon item-end name="wifi" [color]="serverManager.isConnected(server) ? 'secondary' : 'danger'"></ion-icon>
-        <ion-buttons item-end>
-          <button ion-button color="danger" (click)="serverManager.remove(server)">
-            Delete
-          </button>
-        </ion-buttons>
-    </ion-item>
-    <ion-item>
-      <ion-input item-start [(ngModel)]="serverName"></ion-input>
-      <button item-end ion-button color="primary" (click)="serverManager.add(serverName)">Add</button>
-    </ion-item>
-  </ion-list>
-  <ion-list>
     <ion-card *ngFor="let item of downloaded">
       <ion-card-content>
         <ion-card-title>{{item.name}}</ion-card-title>
-        <div *ngFor="let file of item.files" [ngSwitch]="file.type.slug">
-          <video *ngSwitchCase="'video'" width="320" controls [poster]="getThumbnailUrl(item)" preload="none">
-            <source [src]="getUrl(item, file)" type="video/mp4">
-          </video>
-          <audio *ngSwitchCase="'audio'" controls preload="none">
-            <source [src]="getUrl(item, file)" type="audio/mp3">
-          </audio>
-        </div>
+        <img [src]="getThumbnailUrl(item)" width="160">
         <p *ngIf="item.description" style="max-height: 64px; overflow: hidden;">{{item.description}}</p>
-        <div class="actions">
-          <button ion-button color="primary" (click)="addToPlaylist(item)">
-            Add to Playlist
+        <ion-buttons>
+          <button ion-button color="primary" small icon-left clear (click)="addToPlaylist(item)">
+            <ion-icon name="list"></ion-icon>
+            <div>Add to playlist</div>
+          </button>
+          <button *ngIf="hasVideo(item)" ion-button color="primary" small icon-left clear (click)="playVideo(item)">
+            <ion-icon name="videocam"></ion-icon>
+            <div>Play video</div>
+          </button>
+          <button *ngIf="hasAudio(item)" ion-button color="primary" small icon-left clear (click)="playAudio(item)">
+            <ion-icon name="musical-notes"></ion-icon>
+            <div>Play audio</div>
           </button>
           <!--<a [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">-->
           <!--<ion-icon name="search"></ion-icon>-->
           <!--</a>-->
-        </div>
+        </ion-buttons>
       </ion-card-content>
     </ion-card>
   </ion-list>

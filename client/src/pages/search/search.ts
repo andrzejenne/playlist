@@ -31,6 +31,8 @@ export class SearchPage {
 
   private allHistory: Search[];
 
+  private userId: number;
+
   constructor(
     public navCtrl: NavController,
     private repo: SearchRepository,
@@ -41,6 +43,11 @@ export class SearchPage {
     private ref: ChangeDetectorRef
   ) {
 
+  }
+
+  ionViewDidLoad() {
+    this.auth.getUser()
+      .then(user => this.userId = user.id);
   }
 
   public openDownloadQueue() {
@@ -67,7 +74,7 @@ export class SearchPage {
   public getSearchHistory() {
     console.info('getSearchHistory');
 
-    this.repo.getSearchHistory(+this.auth.getUser().id)
+    this.repo.getSearchHistory(this.userId)
       .then(response => {
         this.allHistory = response;
         this.filterHistory();
@@ -92,8 +99,7 @@ export class SearchPage {
   }
 
   public download(event: MouseEvent, item: SearchItem) {
-    let user = this.auth.getUser();
-    user && this.downloadManager.download(user.id, item, 'youtube');
+    this.downloadManager.download(this.userId, item, 'youtube');
   }
 
   public searchItems(query?: string, args?: any) {
@@ -106,9 +112,7 @@ export class SearchPage {
     this.history = [];
 
     if (this.search && this.search.length) {
-      let user = this.auth.getUser()
-      user &&
-      this.repo.search(+user.id, this.search, args || {})
+      this.repo.search(this.userId, this.search, args || {})
         .then(response => {
           this.list = response.items;
           console.info('response', response);

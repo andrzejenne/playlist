@@ -13,6 +13,7 @@ import {PlaylistsRepository} from "../repositories/playlists.repository";
 import {SearchRepository} from "../repositories/search.repository";
 import {ServerManagerService} from "../services/ServerManagerService";
 import {IonicStorageModule} from "@ionic/storage";
+import {ErrorReporting} from "../services/ErrorReporting";
 
 @NgModule({
   imports: [
@@ -27,6 +28,7 @@ import {IonicStorageModule} from "@ionic/storage";
     PagesService,
     DownloadManager,
     ServerManagerService,
+    ErrorReporting,
 
     // repos
     WampRepository,

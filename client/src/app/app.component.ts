@@ -10,6 +10,8 @@ import {PagesService} from "../services/PagesService";
 
 import {HomePage} from '../pages/home/home';
 import {WelcomePage} from "../pages/welcome/welcome";
+import {ServerManagerService} from "../services/ServerManagerService";
+import {WampService} from "../services/WampService";
 
 @Component({
   templateUrl: 'app.html'
@@ -27,7 +29,9 @@ export class ThePlaylist {
     statusBar: StatusBar,
     splashScreen: SplashScreen,
     backgroundMode: BackgroundMode,
-    auth: AuthService,
+    private serverManager: ServerManagerService,
+    private wamp: WampService,
+    private auth: AuthService,
     private pages: PagesService
   ) {
     platform.ready().then(() => {
@@ -41,14 +45,8 @@ export class ThePlaylist {
 
       auth.logout$.subscribe(result => this.authenticated = !result);
 
-      if (!auth.isAuthenticated()) {
-        auth.authenticate()
-          .then(response => this.onAuthenticated())
-          .catch(error => this.onAuthenticationError(error));
-      }
-      else {
-        this.onAuthenticated();
-      }
+      this.serverManager.ready()
+        .then(this.onServersReady);
     });
 
   }
@@ -63,16 +61,35 @@ export class ThePlaylist {
     }
   }
 
-  onAuthenticated() {
+  private onAuthenticated(response) {
     this.authenticated = true;
     this.rootPage = HomePage;
   }
 
-  onAuthenticationError(error) {
+  private onAuthenticationError(error) {
     this.authenticated = false;
     this.rootPage = AuthError;
 
     console.error('AuthError', error);
   }
+
+  private onIsAuthenticated = (is) => {
+    if (!is) {
+      this.auth.authenticate()
+        .then(response => this.onAuthenticated(response))
+        .catch(error => this.onAuthenticationError(error));
+    }
+    else {
+      this.onAuthenticated(true);
+    }
+  };
+
+  private onServersReady = (servers) => {
+    if (Object.keys(servers).length) {
+      this.serverManager.each(server => this.wamp.connect(server));
+      this.auth.isAuthenticated()
+        .then(this.onIsAuthenticated);
+    }
+  };
 }
 

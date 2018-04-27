@@ -1,46 +1,47 @@
 import {Injectable} from "@angular/core";
 import {Storage} from "@ionic/storage";
+import {User} from "../../models/user";
 
 @Injectable()
 export abstract class Authenticator {
 
-  private user;
+  private user: User;
 
   abstract authenticate(): Promise<any>;
 
   protected constructor(protected storage: Storage) {
-    this.storage.get('user')
+  }
+
+  isAuthenticated(): Promise<boolean> {
+    return this.currentUser()
+      .then(user => user && user.id > 0);
+  }
+
+  logout(): Promise<boolean> {
+    return this.storage.remove('user')
+      .then(result => {
+        this.user = null;
+
+        return true;
+      })
+      .catch(error => false);
+  }
+
+  currentUser(): Promise<User> {
+    return this.storage.get('user')
       .then(user => {
         this.user = user;
+        return user;
       })
       .catch(error => {
         this.user = null;
+        // @todo - report error
       });
-  }
-
-  isAuthenticated() {
-    let user = this.currentUser();
-
-    return user && user.id > 0;
-  }
-
-  logout(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.storage.remove('user')
-        .then(result => {
-          this.user = null;
-          resolve(result)
-        })
-        .catch(error => reject(error));
-    });
-  }
-
-  currentUser(): any {
-    return this.user;
   }
 
   setUser(user) {
     this.user = user;
+
     return this.storage.set('user', user);
   }
 }

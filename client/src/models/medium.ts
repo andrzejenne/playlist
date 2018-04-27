@@ -14,14 +14,27 @@ export class Medium extends Model {
   album?: any;
   genre?: any;
 
-  public static getUrl(item: Medium, type: string) {
+  public static getFile(item: Medium, type: string) {
     let files = item.files.filter(file => file.type.slug == type);
-    if (!files.length) {
-      files = item.files.filter(file => file.type.slug == 'video');
-    }
-    let file = files[0];
 
-    return this.getFileUrl(item, file);
+    if (files.length) {
+      return files[0];
+    }
+
+    return null;
+  }
+
+  public static getUrl(item: Medium, type: string) {
+    let file = this.getFile(item, type);
+    if (!file && type != 'video') {
+      file = this.getFile(item, 'video');
+    }
+
+    if (file) {
+      return this.getFileUrl(item, file);
+    }
+
+    return null;
   }
 
   public static getFileUrl(item: Medium, file: MediaFile) {

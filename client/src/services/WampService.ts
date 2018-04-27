@@ -6,6 +6,7 @@ import {Observable, Subscription} from "rxjs";
 import {skipWhile} from "rxjs/operators";
 import {WampQueue} from "./wamp/Queue";
 import {ServerManagerService} from "./ServerManagerService";
+import {Server} from "../models/server";
 
 export interface SessionSubScriptionFunction {
   (session: autobahn.Session): void;
@@ -37,7 +38,7 @@ export class WampService {
 
     this.obs = this.subj.asObservable().pipe(skipWhile(ses => !ses));
 
-    setTimeout(this.loadServers, 10);
+    this.loadServers();
 
     Observable.fromEvent(window, 'beforeunload').subscribe(event => this.unregisterAll());
   }
@@ -109,6 +110,35 @@ export class WampService {
     }
   }
 
+  public connect(server: Server) {
+    console.info('connecting', server);
+
+    let conn = new autobahn.Connection({url: Server.getWampHost(server), realm: 'playlist'});
+
+    conn.onopen = (session => {
+      this.session = session;
+      this.queue.send(session);
+      this.subj.next(session);
+      this.onOpen.next(session);
+      this.serversManager.setSession(server.host, session);
+    });
+
+    conn.onclose = (reason => {
+      console.info('WAMP Closed: ', reason);
+      this.onClose.next(reason);
+      this.serversManager.close(server.host);
+      return true;
+    });
+
+    conn.open();
+
+//    console.info('connecting ', server);
+  }
+
+  disconnect(server: Server) {
+    server.session.close();
+  }
+
   /**
    *
    * @returns {boolean}
@@ -122,30 +152,18 @@ export class WampService {
     return true;
   }
 
-  private loadServers = () => {
-    if (!this.serversManager.servers.length) {
-      this.serversManager.add(this.configService.get('wampHost'));
-    }
-    this.serversManager.servers.forEach(server => {
-      let conn = new autobahn.Connection({url: server, realm: 'playlist'});
+  private loadServers() {
+    this.serversManager.ready()
+      .then(servers => {
+//        if (!servers.length) {
+//          this.serversManager.add(this.configService.get('wampHost'));
+//        }
 
-      conn.onopen = (session => {
-        this.session = session;
-        this.queue.send(session);
-        this.subj.next(session);
-        this.onOpen.next(session);
-        this.serversManager.setSession(server, session);
-      });
-
-      conn.onclose = (reason => {
-        console.info('WAMP Closed: ', reason);
-        this.onClose.next(reason);
-        this.serversManager.close(server);
-        return true;
-      });
-
-      conn.open();
-    });
+        this.serversManager.each(server => this.connect(server));
+      })
+      .catch(error => error);
   }
+
+
 
 }

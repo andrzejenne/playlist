@@ -7,6 +7,8 @@ import {PlaylistsRepository} from "../../repositories/playlists.repository";
 import {SearchPage} from "../search/search";
 import {Medium} from "../../models/medium";
 import {ElementReference} from "../../models/ElementReference";
+import {User} from "../../models/user";
+import {ErrorReporting} from "../../services/ErrorReporting";
 
 @Component({
   selector: 'page-home',
@@ -70,6 +72,7 @@ export class HomePage implements OnDestroy {
     private auth: AuthService,
     private alertCtrl: AlertController,
     private storage: Storage,
+    private errorReporting: ErrorReporting,
     private ref: ChangeDetectorRef
   ) {
 
@@ -90,11 +93,8 @@ export class HomePage implements OnDestroy {
       this.ref.detectChanges();
     });
 
-    this.user = this.auth.getUser();
-
-    if (this.user && this.user.id) {
-      this.repo.getPlaylists(this.user.id)
-    }
+    this.auth.getUser()
+      .then(this.onGetUser);
 
     this.initAudioPlayer();
   }
@@ -113,15 +113,7 @@ export class HomePage implements OnDestroy {
         this.autoPlayIfInterrupted();
         this.ref.detectChanges();
       })
-      .catch(error => { // @todo - error reporting service directly to repository
-        let alert = this.alertCtrl.create({
-          title: 'Error!',
-          subTitle: error.message || 'error occured',
-          buttons: ['Ok']
-        });
-
-        alert.present();
-      });
+      .catch(this.errorReporting.report);
 
     this.storage.set('playlist', playlist.id);
   }
@@ -349,20 +341,19 @@ export class HomePage implements OnDestroy {
   }
 
   private autoPlayIfInterrupted() {
-    this.storage.get('playlist')
-      .then(playlistId => {
-        this.storage.get('currentMedium')
-          .then(mediumId => {
-            this.storage.get('currentTime')
-              .then(currentTime => {
-                if (this.playlist.id == playlistId) {
-                  let medium = this.media.filter(item => item.id == mediumId)[0];
-                  if (medium) {
-                    this.playItem(medium, currentTime);
-                  }
-                }
-            });
-          })
+    Promise
+      .all([
+        this.storage.get('playlist'),
+        this.storage.get('currentMedium'),
+        this.storage.get('currentTime')
+      ])
+      .then(values => {
+        if (this.playlist.id == values[0]) {
+          let medium = this.media.filter(item => item.id == values[1])[0];
+          if (medium) {
+            this.playItem(medium, values[2]);
+          }
+        }
       });
   }
 
@@ -377,6 +368,14 @@ export class HomePage implements OnDestroy {
     // this.progress.nativeElement.style.left = ((this.currentTime / this.totalTime) * 100) + '%';
 
     // this.ref.detectChanges();
+  };
+
+  private onGetUser = (user: User) => {
+    this.user = user;
+
+    if (this.user && this.user.id) {
+      this.repo.getPlaylists(this.user.id)
+    }
   };
 
   private static shuffleCallback = (a: any, b: any) => {
