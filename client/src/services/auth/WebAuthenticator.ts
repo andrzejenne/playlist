@@ -4,11 +4,17 @@ import {Storage} from '@ionic/storage';
 
 import {Authenticator} from "./Authenticator";
 import {ConfigService} from "../ConfigService";
+import {ServerManagerService} from "../ServerManagerService";
 
 @Injectable()
 export class WebAuthenticator extends Authenticator {
 
-  constructor(private config: ConfigService, protected storage: Storage, private http: HttpClient) {
+  constructor(
+    private config: ConfigService,
+    protected storage: Storage,
+    private serverManager: ServerManagerService,
+    private http: HttpClient
+  ) {
     super(storage);
   }
 
@@ -21,28 +27,34 @@ export class WebAuthenticator extends Authenticator {
   }
 
   private authenticationCallback = (resolve, reject) => {
-    this.http.get(
-      this.config.get('auth.userUrl'),
-      {
-        withCredentials: true
-      }
-    )
-      .subscribe((response: any) => { // @todo - contract
-          if (response !== null && response.id) {
-            this.setUser(response);
-            resolve(response);
-          }
-          else {
-            reject('not authenticated');
-            this.authenticateMe();
-          }
-        },
-        error => {
-          console.info('ERROR:', error);
-          reject(error);
+    this.serverManager.ready()
+      .then(servers => {
+        for (let host in servers) {
+          this.http.get(
+            this.serverManager.getServerUrl(host, this.config.get('auth.userUrl')),
+            {
+              withCredentials: true
+            }
+          )
+            .subscribe((response: any) => { // @todo - contract
+                if (response !== null && response.id) {
+                  this.setUser(response);
+                  resolve(response);
+                }
+                else {
+                  reject('not authenticated');
+                  this.authenticateMe();
+                }
+              },
+              error => {
+                console.info('ERROR:', error);
+                reject(error);
 
-          return false;
-        });
+                return false;
+              });
+        }
+      })
+      .catch(error => reject(error));
   };
 
   private logoutCallback = (resolve, reject) => {

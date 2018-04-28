@@ -219,6 +219,8 @@ class YouTubeDownloader extends DownloaderContract
                     static::getProcess("-J $sid")
                 );
 
+                $cmd->wait(); // @todo - make async, we have to return Promise
+
                 $output = $cmd->getOutput();
                 $info = json_decode($output);
                 $this->_infoCache[$sid] = $info;

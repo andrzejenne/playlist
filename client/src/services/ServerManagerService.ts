@@ -2,6 +2,8 @@ import {Injectable} from "@angular/core";
 import {Storage} from "@ionic/storage";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Server} from "../models/server";
+import {Medium} from "../models/medium";
+import {MediaFile} from "../models/media-file";
 
 @Injectable()
 export class ServerManagerService {
@@ -14,20 +16,20 @@ export class ServerManagerService {
 
   private isReady: boolean;
 
-  private readyResolver: any;
-
-  private readyRejector: any;
+  private readyResolvers: any[] = [];
 
   constructor(private storage: Storage) {
     storage.get('servers')
       .then(servers => {
+        // debugger;
         this.servers = servers || {};
 
         if (servers && Object.keys(servers).length) {
           this.isReady = true;
           this.servers$.next(this.servers);
-          if (this.readyResolver) {
-            this.readyResolver(servers);
+          if (this.readyResolvers) {
+            this.readyResolvers.forEach(r => r(servers));
+            this.readyResolvers = [];
           }
         }
         else {
@@ -80,18 +82,45 @@ export class ServerManagerService {
     }
   }
 
+  getServerUrl(host: string, uri: string = '') {
+    return Server.getHost(this.servers[host]) + uri;
+  }
+
+  public getFile(item: Medium, type: string) {
+    let files = item.files.filter(file => file.type.slug == type);
+
+    if (files.length) {
+      return files[0];
+    }
+
+    return null;
+  }
+
+  public getUrl(item: Medium, type: string) {
+    let file = this.getFile(item, type);
+    if (!file && type != 'video') {
+      file = this.getFile(item, 'video');
+    }
+
+    if (file) {
+      return this.getFileUrl(item, file);
+    }
+
+    return null;
+  }
+
+  public getFileUrl(item: Medium, file: MediaFile) {
+    for( let host in this.servers) {
+      return this.getServerUrl(host) + '/media/' + item.provider_sid + '/' + file.id;
+    }
+  }
+
   private onReady = (resolve, reject) => {
     if (this.isReady) {
-//      if (this.isReady) {
         resolve(this.servers);
-//      }
-//      else {
-//        reject(this.servers);
-//      }
     }
     else {
-      this.readyResolver = resolve;
-      this.readyRejector = reject;
+      this.readyResolvers.push(resolve);
     }
   }
 

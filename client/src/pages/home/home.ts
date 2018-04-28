@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
 import {Storage} from "@ionic/storage";
-import {AlertController, NavController, Select} from 'ionic-angular';
+import {NavController, Select} from 'ionic-angular';
 import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
@@ -8,7 +8,7 @@ import {SearchPage} from "../search/search";
 import {Medium} from "../../models/medium";
 import {ElementReference} from "../../models/ElementReference";
 import {User} from "../../models/user";
-import {ErrorReporting} from "../../services/ErrorReporting";
+import {ServerManagerService} from "../../services/ServerManagerService";
 
 @Component({
   selector: 'page-home',
@@ -35,13 +35,13 @@ export class HomePage implements OnDestroy {
   };
 
   public colors = {
-    video: 'light',
+    video: 'dark',
     audio: 'primary',
-    prev: 'light',
-    next: 'light',
-    play: 'light',
-    shuffle: 'light',
-    repeat: 'light'
+    prev: 'dark',
+    next: 'dark',
+    play: 'dark',
+    shuffle: 'dark',
+    repeat: 'dark'
   };
 
   playIcon: string = 'play';
@@ -70,9 +70,9 @@ export class HomePage implements OnDestroy {
     // public pages: PagesService,
     private repo: PlaylistsRepository,
     private auth: AuthService,
-    private alertCtrl: AlertController,
+    private servers: ServerManagerService,
     private storage: Storage,
-    private errorReporting: ErrorReporting,
+    // private errorReporting: ErrorReporting,
     private ref: ChangeDetectorRef
   ) {
 
@@ -106,23 +106,36 @@ export class HomePage implements OnDestroy {
   onPlaylistChange(playlist) {
     // this.repo.selectPlaylist(playlist);
 
-    this.repo.load(playlist)
-      .then(data => {
-        this.media = data;
-        this.preparePlaylist();
-        this.autoPlayIfInterrupted();
-        this.ref.detectChanges();
-      })
-      .catch(this.errorReporting.report);
+    if (playlist.media) {
+      this.media = playlist.media;
+      this.preparePlaylist();
+      this.autoPlayIfInterrupted();
+      this.ref.detectChanges();
+    }
 
     this.storage.set('playlist', playlist.id);
+  }
+
+  removeItem(medium: Medium) {
+    if (medium === this.current) {
+      this.pause();
+      this.current = null;
+      this.audioPlayer.nativeElement.currentTime = 0;
+      this.audioPlayer.nativeElement.src = '';
+    }
+
+    this.repo.removeFromPlaylist(medium, this.playlist)
+      .then(num => {
+        this.ref.detectChanges();
+        return num;
+      });
   }
 
   playVideo() {
     this.playerStatus.video = true;
     this.playerStatus.audio = false;
 
-    this.colors.audio = 'light';
+    this.colors.audio = 'dark';
     this.colors.video = 'primary';
   }
 
@@ -131,7 +144,7 @@ export class HomePage implements OnDestroy {
     this.playerStatus.audio = true;
 
     this.colors.audio = 'primary';
-    this.colors.video = 'light';
+    this.colors.video = 'dark';
   }
 
   playItem(item: Medium, seek = 0) {
@@ -146,7 +159,7 @@ export class HomePage implements OnDestroy {
 
     this.current = item;
 
-    this.audioPlayer.nativeElement.src = Medium.getUrl(this.current, this.mediaType);
+    this.audioPlayer.nativeElement.src = this.servers.getUrl(this.current, this.mediaType);
     this.audioPlayer.nativeElement.currentTime = seek;
 
     this.play();
@@ -173,7 +186,7 @@ export class HomePage implements OnDestroy {
 
   toggleRepeat() {
     this.playerStatus.repeat = !this.playerStatus.repeat;
-    this.colors.repeat = this.playerStatus.repeat ? 'primary' : 'light';
+    this.colors.repeat = this.playerStatus.repeat ? 'primary' : 'dark';
   }
 
   toggleShuffle() {
@@ -181,7 +194,7 @@ export class HomePage implements OnDestroy {
       this.preparePlaylist();
     }
     this.playerStatus.shuffle = !this.playerStatus.shuffle;
-    this.colors.shuffle = this.playerStatus.shuffle ? 'primary' : 'light';
+    this.colors.shuffle = this.playerStatus.shuffle ? 'primary' : 'dark';
     if (this.playerStatus.shuffle) {
       this.shuffle(this.mediaPlaylist);
     }
@@ -262,7 +275,7 @@ export class HomePage implements OnDestroy {
   getThumbnailUrl(item: Medium) {
     let thumb = this.getThumbnail(item);
     if (thumb) {
-      return Medium.getFileUrl(item, thumb) + '?get';
+      return this.servers.getFileUrl(item, thumb) + '?get';
     }
 
     return null;
@@ -281,7 +294,7 @@ export class HomePage implements OnDestroy {
   private getNextSrc() {
     if (this.mediaPlaylist.length) {
       this.current = this.mediaPlaylist.shift();
-      return Medium.getUrl(this.current, this.mediaType);
+      return this.servers.getUrl(this.current, this.mediaType);
     }
 
     return null;
@@ -290,7 +303,7 @@ export class HomePage implements OnDestroy {
   private getPrevSrc() {
     if (this.playedPlaylist.length) {
       this.current = this.playedPlaylist.pop();
-      return Medium.getUrl(this.current, this.mediaType);
+      return this.servers.getUrl(this.current, this.mediaType);
     }
 
     return null;
@@ -305,7 +318,7 @@ export class HomePage implements OnDestroy {
   }
 
   private playStatus() {
-    this.colors.play = this.playerStatus.playing ? 'primary' : 'light';
+    this.colors.play = this.playerStatus.playing ? 'primary' : 'dark';
     this.playIcon = this.playerStatus.playing ? 'pause' : 'play';
   }
 

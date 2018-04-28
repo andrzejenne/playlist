@@ -1,5 +1,4 @@
-import {EventEmitter, Injectable} from '@angular/core';
-import {ConfigService} from "./ConfigService";
+import {Injectable} from '@angular/core';
 import autobahn, {ICallOptions, IPublication, IPublishOptions, IRegistration, ISubscription} from "autobahn";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Observable, Subscription} from "rxjs";
@@ -7,6 +6,7 @@ import {skipWhile} from "rxjs/operators";
 import {WampQueue} from "./wamp/Queue";
 import {ServerManagerService} from "./ServerManagerService";
 import {Server} from "../models/server";
+import {ReplaySubject} from "rxjs/ReplaySubject";
 
 export interface SessionSubScriptionFunction {
   (session: autobahn.Session): void;
@@ -29,10 +29,10 @@ export class WampService {
 
   private _ri = 1;
 
-  public onClose = new EventEmitter();
-  public onOpen = new EventEmitter();
+  public onClose = new ReplaySubject();
+  public onOpen = new ReplaySubject();
 
-  constructor(private configService: ConfigService, private serversManager: ServerManagerService) {
+  constructor(private serversManager: ServerManagerService) {
 
     this.subj = new BehaviorSubject<autobahn.Session>(null);
 

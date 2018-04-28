@@ -10,9 +10,7 @@
 <ion-content padding>
   <ion-list>
     <ion-item *ngFor="let item of items" [ngClass]="{started: item.started, finished: item.finished}">
-      <ion-thumbnail item-start>
-        <img [src]="item.thumbnail" class="fit-thumbnail">
-      </ion-thumbnail>
+      <img [src]="item.thumbnail" item-start width="160">
       <h2>
         {{item.title}}
       </h2>

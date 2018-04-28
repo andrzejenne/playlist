@@ -1,17 +1,26 @@
 page-search {
-  .card {
-    width: 210px;
-    display: inline-block;
-    .card-title {
-      height: 50px;
-      overflow: hidden;
-      font-size: 120%;
+  ion-navbar {
+    ion-buttons {
+      ion-icon {
+        font-size: 200%;
+      }
     }
+  }
+
+  .fit-thumbnail {
+    object-fit: cover;
+  }
+
+  .thumbnail {
+    position: relative;
+    width: 160px;
+    img {
+      width: 100%;
+    }
+
     .duration {
-      position: relative;
+      position: absolute;
       z-index: 1;
-      margin-top: -24px;
-      margin-right: 5px;
       float: right;
       background: #000;
       background: rgba(0, 0, 0, .7);
@@ -19,13 +28,9 @@ page-search {
       color: #fff;
       font-size: 90%;
       padding: 2px 4px;
+      bottom: 5px;
+      right: 5px;
     }
   }
-
-  .fit-thumbnail {
-    object-fit: cover;
-  }
-  //.started { background: rgba(100, 100, 255, .1); }
-  //.finished { background: rgba(100, 255, 100, .1); }
 }
 

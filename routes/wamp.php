@@ -19,6 +19,8 @@ WampRoute::namespace('com')->group(function(){
     WampRoute::command('playlists.add', 'PlaylistsController@add');
     WampRoute::command('playlists.remove', 'PlaylistsController@remove');
     WampRoute::command('playlists.order', 'PlaylistsController@order');
+
+    WampRoute::command('media.getBySid', 'MediaController@getBySid');
 });
 
 WampRoute::namespace('sub')->group(function(){

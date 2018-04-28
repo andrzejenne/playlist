@@ -6,6 +6,7 @@ import {Search} from "../../models/search";
 import {AuthService} from "../../services/AuthService";
 import {DownloadManager} from "../../services/DownloadManager";
 import {DownloadQueueComponent} from "../../components/download-queue/download-queue.component";
+import {PlaylistsRepository} from "../../repositories/playlists.repository";
 
 @Component({
   selector: 'page-search',
@@ -38,6 +39,7 @@ export class SearchPage {
     private repo: SearchRepository,
     private auth: AuthService,
     private downloadManager: DownloadManager,
+    private playlistRepository: PlaylistsRepository,
     // private alertCtrl: AlertController,
     private modalCtrl: ModalController,
     private ref: ChangeDetectorRef
@@ -100,6 +102,10 @@ export class SearchPage {
 
   public download(event: MouseEvent, item: SearchItem) {
     this.downloadManager.download(this.userId, item, 'youtube');
+  }
+
+  public toPlaylist(event: MouseEvent, item: SearchItem) {
+    this.downloadManager.downloadToPlaylist(this.userId, item, this.playlistRepository.playlist, 'youtube');
   }
 
   public searchItems(query?: string, args?: any) {

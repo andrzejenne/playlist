@@ -94,7 +94,7 @@ abstract class DownloaderContract
             };
         }
         $cmd->enableOutput()
-            ->run($callback);
+            ->start($callback);
 
         return $cmd;
     }

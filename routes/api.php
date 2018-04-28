@@ -28,9 +28,10 @@ Route::middleware(['web', \Barryvdh\Cors\HandleCors::class])->get('/user', funct
             return $json;
         }
     }
-    finally {
+    catch (\Throwable $t) {
         return '{}';
     }
+
 });
 
 Route::namespace('API')->group(function () {
@@ -48,4 +49,5 @@ Route::namespace('API')->group(function () {
     Route::get('/info/{sid}', 'InfoController@info');
 
     Route::get('/download/{sid}', 'YoutubeDownloadController@download');
+    Route::get('/user/email', 'UsersController@getByEmail'); // @todo - not safe
 });

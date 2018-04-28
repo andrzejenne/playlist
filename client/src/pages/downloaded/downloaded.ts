@@ -9,6 +9,7 @@ import {MediaFile} from "../../models/media-file";
 import {ErrorReporting} from "../../services/ErrorReporting";
 import {Subscription} from "rxjs/Subscription";
 import {VideoPlayerComponent} from "../../components/video-player/video-player.component";
+import {ServerManagerService} from "../../services/ServerManagerService";
 
 @Component({
   selector: 'page-downloaded',
@@ -31,6 +32,7 @@ export class DownloadedPage implements OnDestroy {
     // private auth: AuthService,
     private errorReporter: ErrorReporting,
     private modalController: ModalController,
+    private servers: ServerManagerService,
     private ref: ChangeDetectorRef
   ) {
 
@@ -44,15 +46,17 @@ export class DownloadedPage implements OnDestroy {
       })
       .catch(this.errorReporter.report);
 
-    this.plRepo.playlists$.subscribe(playlists => {
-      this.playlists = playlists;
-      this.ref.detectChanges();
-    });
+    this.subs.push(
+      this.plRepo.playlists$.subscribe(playlists => {
+        this.playlists = playlists;
+        this.ref.detectChanges();
+      }),
 
-    this.plRepo.playlist$.subscribe(playlist => {
-      this.playlist = playlist;
-      this.ref.detectChanges();
-    });
+      this.plRepo.playlist$.subscribe(playlist => {
+        this.playlist = playlist;
+        this.ref.detectChanges();
+      })
+    );
 
   }
 
@@ -76,20 +80,20 @@ export class DownloadedPage implements OnDestroy {
   getThumbnailUrl(item: Medium) {
     let thumb = this.getThumbnail(item);
     if (thumb) {
-      return Medium.getFileUrl(item, thumb) + '?get';
+      return this.servers.getFileUrl(item, thumb) + '?get';
     }
 
     return null;
   }
 
   getUrl(item: Medium, file: MediaFile) {
-    return Medium.getFileUrl(item, file);
+    return this.servers.getFileUrl(item, file);
   }
 
   playVideo(item: Medium) {
     let data = {
-      src: Medium.getUrl(item, 'video'),
-      thumbnail: Medium.getUrl(item, 'thumbnail')+'?get',
+      src: this.servers.getUrl(item, 'video'),
+      thumbnail: this.servers.getUrl(item, 'thumbnail')+'?get',
       type: 'video/mp4',
       title: item.name,
       width: 600// @todo - getter
@@ -98,13 +102,13 @@ export class DownloadedPage implements OnDestroy {
   }
 
   hasVideo(item: Medium) {
-    let file = Medium.getFile(item, 'video');
+    let file = this.servers.getFile(item, 'video');
 
     return file && file.type.slug == 'video';
   }
 
   hasAudio(item: Medium) {
-    let file = Medium.getFile(item, 'audio');
+    let file = this.servers.getFile(item, 'audio');
 
     return file && file.type.slug == 'audio';
   }

@@ -26,25 +26,28 @@
   </ion-list>
 
   <ion-list *ngIf="list && list.length" class="items">
-    <ion-card *ngFor="let item of list">
-      <img [src]="item.thumbnail">
-      <span class="duration">{{item.duration | duration}}</span>
-      <ion-card-content>
-        <ion-card-title>{{item.title}}</ion-card-title>
-        <p style="height: 64px; overflow: hidden;">{{item.description}}</p>
-        <div class="actions">
-          <a (click)="getInfo($event, item)">
-            <ion-icon name="information-circle"></ion-icon>
-          </a>
-          <a (click)="download($event, item)">
-            <ion-icon name="download"></ion-icon>
-          </a>
-          <a [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">
-            <ion-icon name="search"></ion-icon>
-          </a>
-        </div>
-      </ion-card-content>
-    </ion-card>
+    <ion-item *ngFor="let item of list">
+      <div class="thumbnail" item-start>
+        <img [src]="item.thumbnail">
+        <span class="duration">{{item.duration | duration}}</span>
+      </div>
+      <h2>{{item.title}}</h2>
+      <p>{{item.description}}</p>
+      <ion-buttons item-end>
+        <button ion-button small clear icon-left (click)="download($event, item)">
+          <ion-icon name="download"></ion-icon>
+          <span>Download</span>
+        </button>
+        <button ion-button small clear icon-left (click)="toPlaylist($event, item)">
+          <ion-icon name="list"></ion-icon>
+          <span>To playlist</span>
+        </button>
+        <a ion-button small clear icon-left [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">
+          <ion-icon name="search"></ion-icon>
+          <span>Preview</span>
+        </a>
+      </ion-buttons>
+    </ion-item>
   </ion-list>
   <button ion-button *ngIf="prevPageToken" (click)="onPrevClick()" style="float:left;">Prev</button>
   <button ion-button *ngIf="nextPageToken" (click)="onNextClick()" style="float:right;">Next</button>

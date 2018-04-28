@@ -16,12 +16,10 @@ export class ServerManagerComponent {
   newServer: Server = <Server>{};
 
   constructor(private serverManager: ServerManagerService, private wamp: WampService, private ref: ChangeDetectorRef) {
-
-  }
-
-  ionViewDidLoad() {
+    // debugger;
     this.serverManager.ready()
       .then(servers => {
+        // debugger;
         this.servers = servers;
         for (let host in servers) {
           this.hosts.push(host);

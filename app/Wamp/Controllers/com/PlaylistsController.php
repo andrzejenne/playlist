@@ -64,7 +64,8 @@ class PlaylistsController extends Controller
      * @param $args
      * @return Playlist|null
      */
-    public function create($args) {
+    public function create($args)
+    {
         $user = User::whereId($args[0]->uid)->first();
 
         if ($user) {
@@ -94,7 +95,7 @@ class PlaylistsController extends Controller
 
         $playlist->media()->attach($args[0]->mid, ['ordering' => isset($args[0]->ordering) ? $args[0]->ordering : 0]);
 
-        return true;
+        return Medium::whereId($args[0]->mid)->with(Medium::REL_PROVIDER, Medium::REL_FILES . '.' . MediaFile::REL_TYPE)->first();
         // @todo - reorder
     }
 
@@ -117,7 +118,8 @@ class PlaylistsController extends Controller
      * @param $args
      * @return int
      */
-    public function order($args) {
+    public function order($args)
+    {
         /** @var Playlist $playlist */
         $playlist = Playlist::whereId($args[0]->pid)
             ->first();

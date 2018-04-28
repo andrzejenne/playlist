@@ -10,8 +10,8 @@ import {PagesService} from "../services/PagesService";
 
 import {HomePage} from '../pages/home/home';
 import {WelcomePage} from "../pages/welcome/welcome";
-import {ServerManagerService} from "../services/ServerManagerService";
-import {WampService} from "../services/WampService";
+// import {ServerManagerService} from "../services/ServerManagerService";
+// import {WampService} from "../services/WampService";
 
 @Component({
   templateUrl: 'app.html'
@@ -29,8 +29,8 @@ export class ThePlaylist {
     statusBar: StatusBar,
     splashScreen: SplashScreen,
     backgroundMode: BackgroundMode,
-    private serverManager: ServerManagerService,
-    private wamp: WampService,
+    // private serverManager: ServerManagerService,
+    // private wamp: WampService,
     private auth: AuthService,
     private pages: PagesService
   ) {
@@ -45,8 +45,11 @@ export class ThePlaylist {
 
       auth.logout$.subscribe(result => this.authenticated = !result);
 
-      this.serverManager.ready()
-        .then(this.onServersReady);
+      this.auth.isAuthenticated()
+        .then(this.onIsAuthenticated);
+
+      // this.serverManager.ready()
+      //   .then(this.onServersReady);
     });
 
   }
@@ -84,12 +87,10 @@ export class ThePlaylist {
     }
   };
 
-  private onServersReady = (servers) => {
-    if (Object.keys(servers).length) {
-      this.serverManager.each(server => this.wamp.connect(server));
-      this.auth.isAuthenticated()
-        .then(this.onIsAuthenticated);
-    }
-  };
+  // private onServersReady = (servers) => {
+  //   if (Object.keys(servers).length) {
+  //     this.serverManager.each(server => this.wamp.connect(server));
+  //   }
+  // };
 }
 

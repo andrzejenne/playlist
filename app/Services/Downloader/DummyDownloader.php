@@ -44,6 +44,15 @@ class DummyDownloader extends DownloaderContract
     }
 
     /**
+     * @return string
+     */
+    public function getProviderSlug()
+    {
+        return 'youtube';
+    }
+
+
+    /**
      * @param $sid
      * @return Process
      * @throws \Exception

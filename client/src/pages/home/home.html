@@ -4,22 +4,19 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-item>
-      <ion-label>
-        Playlist
-      </ion-label>
       <ion-select #playlistSelect [(ngModel)]="playlist" (ionChange)="onPlaylistChange($event)"
-                  interface="popover">
+                  interface="action-sheet">
         <ion-option *ngFor="let playlist of playlists" [value]="playlist">
           {{playlist.name}}
         </ion-option>
       </ion-select>
     </ion-item>
-    <ion-buttons end right>
+    <ion-buttons end>
       <button ion-button title="More options">
-        <ion-icon name="more"></ion-icon>
+        <ion-icon large name="more"></ion-icon>
       </button>
       <button ion-button title="Search" tcolor="primary" (click)="goToSearchPage()">
-        <ion-icon name="search"></ion-icon>
+        <ion-icon large name="search"></ion-icon>
       </button>
       <button ion-button title="LogOut" color="danger" (click)="logout()">
         <ion-icon name="log-out"></ion-icon>
@@ -40,9 +37,14 @@
       </ion-thumbnail>
       <!--<span class="duration">{{item.duration | duration}}</span>-->
       <ion-label>{{item.name}}</ion-label>
-      <button ion-button color="light" item-end (click)="playItem(item)">
-        <ion-icon name="play"></ion-icon>
-      </button>
+      <ion-buttons item-end>
+        <button ion-button color="dark" clear (click)="playItem(item)">
+          <ion-icon name="play"></ion-icon>
+        </button>
+        <button ion-button color="dark" clear (click)="removeItem(item)">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-buttons>
     </ion-item>
 
     <ion-item *ngIf="current" class="current">
@@ -51,9 +53,14 @@
       </ion-thumbnail>
       <!--<span class="duration">{{item.duration | duration}}</span>-->
       <ion-label>{{current.name}}</ion-label>
-      <button ion-button color="primary" item-end>
-        <ion-icon name="play"></ion-icon>
-      </button>
+      <ion-buttons item-end>
+        <button ion-button color="primary" clear>
+          <ion-icon name="play"></ion-icon>
+        </button>
+        <button ion-button color="dark" clear (click)="removeItem(current)">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-buttons>
     </ion-item>
 
     <ion-item *ngFor="let item of mediaPlaylist">
@@ -62,60 +69,103 @@
       </ion-thumbnail>
       <!--<span class="duration">{{item.duration | duration}}</span>-->
       <ion-label>{{item.name}}</ion-label>
-      <button ion-button color="light" item-end (click)="playItem(item)">
-        <ion-icon name="play"></ion-icon>
-      </button>
+      <ion-buttons item-end>
+        <button ion-button color="dark" clear (click)="playItem(item)">
+          <ion-icon name="play"></ion-icon>
+        </button>
+        <button ion-button color="dark" clear (click)="removeItem(item)">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-buttons>
     </ion-item>
   </ion-list>
 </ion-content>
 
+<!--<ion-footer>-->
+  <!--<ion-toolbar>-->
+    <!--<audio #audioPlayer preload="none"></audio>-->
+    <!--<ion-item>-->
+      <!--<ion-range small [(ngModel)]="currentTime" color="danger" [min]="0" [max]="totalTime"-->
+                 <!--[debounce]="500"-->
+                 <!--(ionFocus)="onSliderFocus($event)"-->
+                 <!--(ionBlur)="onSliderBlur($event)"-->
+                 <!--(ionChange)="onSliderChange($event)">-->
+        <!--<ion-label range-left>{{currentTime | duration}}</ion-label>-->
+        <!--<ion-label range-right>{{totalTime | duration}}</ion-label>-->
+      <!--</ion-range>-->
+      <!--<ion-buttons item-end>-->
+        <!--<button ion-button clear small (click)="playVideo()" title="Play Video" [color]="colors.video">-->
+          <!--<ion-icon name="videocam"></ion-icon>-->
+        <!--</button>-->
+        <!--<button ion-button clear small (click)="playAudio()" title="Play Audio only" [color]="colors.audio">-->
+          <!--<ion-icon name="musical-notes"></ion-icon>-->
+        <!--</button>-->
+        <!--<button [disabled]="!playerStatus.playing || !playedPlaylist.length" ion-button clear small-->
+                <!--(click)="playPrev()"-->
+                <!--title="Play previous" [color]="colors.prev">-->
+          <!--<ion-icon name="skip-backward"></ion-icon>-->
+        <!--</button>-->
+        <!--<button ion-button (click)="togglePlay()" clear small title="Play / Pause" [color]="colors.play">-->
+          <!--<ion-icon [name]="playIcon"></ion-icon>-->
+        <!--</button>-->
+        <!--<button [disabled]="!playerStatus.playing || !mediaPlaylist.length" ion-button clear small-->
+                <!--(click)="playNext()"-->
+                <!--title="Play next" [color]="colors.next">-->
+          <!--<ion-icon name="skip-forward"></ion-icon>-->
+        <!--</button>-->
+        <!--<button ion-button (click)="toggleShuffle()" clear small title="Toggle Shuffle" [color]="colors.shuffle">-->
+          <!--<ion-icon name="shuffle"></ion-icon>-->
+        <!--</button>-->
+        <!--<button ion-button (click)="toggleRepeat()" clear small title="Toggle Repeat" [color]="colors.repeat">-->
+          <!--<ion-icon name="repeat"></ion-icon>-->
+        <!--</button>-->
+      <!--</ion-buttons>-->
+    <!--</ion-item>-->
+  <!--</ion-toolbar>-->
+<!--</ion-footer>-->
+
 <ion-footer>
   <ion-toolbar>
-    <ion-grid>
-      <ion-row>
-        <ion-col>
-          <audio #audioPlayer preload="none"></audio>
-          <ion-item>
-            <ion-range [(ngModel)]="currentTime" color="danger" [min]="0" [max]="totalTime"
-                       [debounce]="500"
-                       (ionFocus)="onSliderFocus($event)"
-                       (ionBlur)="onSliderBlur($event)"
-                       (ionChange)="onSliderChange($event)">
-              <ion-label range-left>{{currentTime | duration}}</ion-label>
-              <ion-label range-right>{{totalTime | duration}}</ion-label>
-            </ion-range>
-          </ion-item>
-        </ion-col>
-        <ion-col>
-          <div class="buttons">
-            <span class="title">{{current?.name}}</span>
-            <button ion-button (click)="playVideo()" title="Play Video" [color]="colors.video">
-              <ion-icon name="videocam"></ion-icon>
-            </button>
-            <button ion-button (click)="playAudio()" title="Play Audio only" [color]="colors.audio">
-              <ion-icon name="musical-notes"></ion-icon>
-            </button>
-            <button [disabled]="!playerStatus.playing || !playedPlaylist.length" ion-button (click)="playPrev()" title="Play previous" [color]="colors.prev">
-              <ion-icon name="skip-backward"></ion-icon>
-            </button>
-            <button ion-button (click)="togglePlay()" title="Play / Pause" [color]="colors.play">
-              <ion-icon [name]="playIcon"></ion-icon>
-            </button>
-            <!--<button ion-button>-->
-            <!--<ion-icon name="pause"></ion-icon>-->
-            <!--</button>-->
-            <button [disabled]="!playerStatus.playing || !mediaPlaylist.length" ion-button (click)="playNext()" title="Play next" [color]="colors.next">
-              <ion-icon name="skip-forward"></ion-icon>
-            </button>
-            <button ion-button (click)="toggleShuffle()" title="Toggle Shuffle" [color]="colors.shuffle">
-              <ion-icon name="shuffle"></ion-icon>
-            </button>
-            <button ion-button (click)="toggleRepeat()" title="Toggle Repeat" [color]="colors.repeat">
-              <ion-icon name="repeat"></ion-icon>
-            </button>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <audio #audioPlayer preload="none"></audio>
+    <ion-range [(ngModel)]="currentTime" color="danger" [min]="0" [max]="totalTime"
+               [debounce]="500"
+               (ionFocus)="onSliderFocus($event)"
+               (ionBlur)="onSliderBlur($event)"
+               (ionChange)="onSliderChange($event)">
+      <ion-label range-left>{{currentTime | duration}}</ion-label>
+      <ion-label range-right>{{totalTime | duration}}</ion-label>
+    </ion-range>
+    <div>
+      <ion-item>
+        <!--<h2 class="title">{{current?.name}}</h2>-->
+        <ion-buttons item-end>
+          <button ion-button clear small (click)="playVideo()" title="Play Video" [color]="colors.video">
+            <ion-icon name="videocam"></ion-icon>
+          </button>
+          <button ion-button clear small (click)="playAudio()" title="Play Audio only" [color]="colors.audio">
+            <ion-icon name="musical-notes"></ion-icon>
+          </button>
+          <button [disabled]="!playerStatus.playing || !playedPlaylist.length" ion-button clear small
+                  (click)="playPrev()"
+                  title="Play previous" [color]="colors.prev">
+            <ion-icon name="skip-backward"></ion-icon>
+          </button>
+          <button ion-button (click)="togglePlay()" clear small title="Play / Pause" [color]="colors.play">
+            <ion-icon [name]="playIcon"></ion-icon>
+          </button>
+          <button [disabled]="!playerStatus.playing || !mediaPlaylist.length" ion-button clear small
+                  (click)="playNext()"
+                  title="Play next" [color]="colors.next">
+            <ion-icon name="skip-forward"></ion-icon>
+          </button>
+          <button ion-button (click)="toggleShuffle()" clear small title="Toggle Shuffle" [color]="colors.shuffle">
+            <ion-icon name="shuffle"></ion-icon>
+          </button>
+          <button ion-button (click)="toggleRepeat()" clear small title="Toggle Repeat" [color]="colors.repeat">
+            <ion-icon name="repeat"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-item>
+    </div>
   </ion-toolbar>
 </ion-footer>

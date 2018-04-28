@@ -14,7 +14,9 @@ export abstract class Authenticator {
 
   isAuthenticated(): Promise<boolean> {
     return this.currentUser()
-      .then(user => user && user.id > 0);
+      .then(user => {
+        return user && user.id > 0
+      });
   }
 
   logout(): Promise<boolean> {

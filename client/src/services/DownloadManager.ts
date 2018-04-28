@@ -2,6 +2,9 @@ import {EventEmitter, Injectable} from "@angular/core";
 import {WampService} from "./WampService";
 import {SearchItem} from "../models/search-item";
 import {DownloadItem} from "../models/download-item";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Playlist} from "../models/playlist";
+import {PlaylistsRepository} from "../repositories/playlists.repository";
 
 @Injectable()
 export class DownloadManager {
@@ -10,11 +13,13 @@ export class DownloadManager {
 
   finished: DownloadItem[] = [];
 
+  private finished$ = new BehaviorSubject<DownloadItem>(null);
+
   private iwamp: number;
 
   private change$ = new EventEmitter();
 
-  constructor(private wamp: WampService) {
+  constructor(private wamp: WampService, private playlistRepo: PlaylistsRepository) {
     this.subscribeWamp();
   }
 
@@ -32,6 +37,27 @@ export class DownloadManager {
     }
   }
 
+  // @todo - optimize, dangerous recursion can occur
+  downloadToPlaylist(uid: number, item: SearchItem, playlist: Playlist, provider = 'youtube') {
+    let downloadItem = this.getDownloading(item.sid);
+    if (downloadItem) {
+      if (downloadItem.finished) {
+        this.playlistRepo.addToPlaylistBySid(item.sid, playlist);
+      }
+      else {
+        this.finished$.subscribe(finished => {
+          if (finished && finished.sid == item.sid) {
+            this.playlistRepo.addToPlaylistBySid(item.sid, playlist);
+          }
+        });
+      }
+    }
+    else {
+      this.download(uid, item, provider);
+      this.downloadToPlaylist(uid, item, playlist, provider);
+    }
+  }
+
   onChange(callback: any) {
     return this.change$.subscribe(callback);
   }
@@ -42,13 +68,14 @@ export class DownloadManager {
 
   private subscribeWamp() {
     this.wamp.onOpen.subscribe(() => {
+      console.debug('wamp.onOpen', this.wamp);
       this.iwamp = this.wamp.register(this.wampCommands);
     });
   }
 
-  private unsubscribeWamp() {
-    this.wamp.unregister(this.iwamp);
-  }
+  // private unsubscribeWamp() {
+  //   this.wamp.unregister(this.iwamp);
+  // }
 
   private wampCommands = {
     subs: {
@@ -72,6 +99,7 @@ export class DownloadManager {
         item.finished = true;
         this.change$.next(this.downloads);
         this.finished.push(item);
+        this.finished$.next(item);
         console.info('Download finished:', data);
       },
       'sub.download.error': (data) => {

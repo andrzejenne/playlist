@@ -19,30 +19,30 @@
 </ion-header>
 
 <ion-content padding>
+  <server-manager-component></server-manager-component>
+
   <ion-list>
-    <ion-card *ngFor="let item of downloaded">
-      <ion-card-content>
-        <ion-card-title>{{item.name}}</ion-card-title>
-        <img [src]="getThumbnailUrl(item)" width="160">
-        <p *ngIf="item.description" style="max-height: 64px; overflow: hidden;">{{item.description}}</p>
-        <ion-buttons>
-          <button ion-button color="primary" small icon-left clear (click)="addToPlaylist(item)">
-            <ion-icon name="list"></ion-icon>
-            <div>Add to playlist</div>
-          </button>
-          <button *ngIf="hasVideo(item)" ion-button color="primary" small icon-left clear (click)="playVideo(item)">
-            <ion-icon name="videocam"></ion-icon>
-            <div>Play video</div>
-          </button>
-          <button *ngIf="hasAudio(item)" ion-button color="primary" small icon-left clear (click)="playAudio(item)">
-            <ion-icon name="musical-notes"></ion-icon>
-            <div>Play audio</div>
-          </button>
-          <!--<a [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">-->
-          <!--<ion-icon name="search"></ion-icon>-->
-          <!--</a>-->
-        </ion-buttons>
-      </ion-card-content>
-    </ion-card>
+    <ion-item *ngFor="let item of downloaded">
+      <img item-start [src]="getThumbnailUrl(item)" width="160">
+      <h2>{{item.name}}</h2>
+      <p *ngIf="item.description">{{item.description}}</p>
+      <ion-buttons item-end>
+        <button ion-button color="primary" small icon-left clear (click)="addToPlaylist(item)">
+          <ion-icon name="list"></ion-icon>
+          <span>Add to playlist</span>
+        </button>
+        <button *ngIf="hasVideo(item)" ion-button color="primary" small icon-left clear (click)="playVideo(item)">
+          <ion-icon name="videocam"></ion-icon>
+          <span>Play video</span>
+        </button>
+        <button *ngIf="hasAudio(item)" ion-button color="primary" small icon-left clear (click)="playAudio(item)">
+          <ion-icon name="musical-notes"></ion-icon>
+          <span>Play audio</span>
+        </button>
+        <!--<a [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">-->
+        <!--<ion-icon name="search"></ion-icon>-->
+        <!--</a>-->
+      </ion-buttons>
+    </ion-item>
   </ion-list>
 </ion-content>

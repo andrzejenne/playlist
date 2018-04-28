@@ -19,15 +19,62 @@ export class PlaylistsRepository extends WampRepository {
   }
 
   public load(playlist: Playlist) {
-    return this.call<any[]>('com.playlists.media', [{pid: playlist.id}]);
+    return this.call<Medium[]>('com.playlists.media', [{pid: playlist.id}]);
   }
 
   public create(uid: number, name: string) {
-    return this.call<Playlist>('com.playlists.create', [{uid: uid, name: name}]);
+    return this.call<Playlist>('com.playlists.create', [{uid: uid, name: name}])
+      .then(playlist => {
+        this.playlist = playlist;
+        this.playlist$.next(this.playlist);
+        this.playlists.push(this.playlist);
+        this.playlists$.next(this.playlists);
+
+        return playlist;
+      });
   }
 
   public addToPlaylist(item: Medium, playlist = this.playlist) {
-    return this.call<any>('com.playlists.add', [{pid: playlist.id, mid: item.id}]);
+    return this.call<Medium>('com.playlists.add', [{pid: playlist.id, mid: item.id}])
+      .then(medium => {
+        if (!playlist.media) {
+          playlist.media = [];
+        }
+        playlist.media.push(medium);
+
+        this.playlists$.next(this.playlists);
+
+        if (playlist === this.playlist) {
+          this.playlist$.next(playlist);
+        }
+
+        return medium;
+      });
+  }
+
+  public addToPlaylistBySid(sid: string, playlist = this.playlist) {
+    return this.call<Medium>('com.media.getBySid', [{sid: sid}])
+      .then(medium => {
+        return this.addToPlaylist(medium, playlist);
+      });
+  }
+
+  public removeFromPlaylist(item: Medium, playlist = this.playlist) {
+    return this.call<number>('com.playlists.remove', [{pid: playlist.id, mid: item.id}])
+      .then(number => {
+        let index = playlist.media.indexOf(item);
+        if (index > -1) {
+          playlist.media.splice(index, 1);
+        }
+
+        this.playlists$.next(this.playlists);
+
+        if (playlist === this.playlist) {
+          this.playlist$.next(playlist);
+        }
+
+        return number;
+      });
   }
 
   getPlaylists(uid: number) {
@@ -60,8 +107,14 @@ export class PlaylistsRepository extends WampRepository {
   selectPlaylist(playlist: Playlist) {
     this.playlist = playlist;
 
-    console.info('select playlist', playlist);
+    // console.info('select playlist', playlist);
     this.playlist$.next(playlist);
+
+    return this.load(playlist)
+      .then(media => {
+        playlist.media = media;
+        this.playlist$.next(playlist);
+      })
   }
 
 }

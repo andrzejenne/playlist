@@ -54,7 +54,7 @@ class YouTubeDownloadProgressReporter extends YoutubeDLWampProcessReporterContra
                     $this->progress = +$matches[1];
                     $this->reportEvent(static::EVENT_PROGRESS, [
                         'progress' => $this->progress,
-                        'filename' => $this->filename,
+                        'filename' => basename($this->filename),
                         'url' => $this->getUrl()
                     ]);
                 } else {
@@ -63,12 +63,12 @@ class YouTubeDownloadProgressReporter extends YoutubeDLWampProcessReporterContra
                         $this->progress = 0;
                         $this->reportEvent(static::EVENT_FILENAME, [
                             'url' => $this->getUrl(),
-                            'filename' => $this->filename
+                            'filename' => basename($this->filename)
                         ]);
                     } else {
                         $this->reportEvent(static::EVENT_STATUS, [
                             'url' => $this->getUrl(),
-                            'filename' => $this->filename
+                            'filename' => basename($this->filename)
                         ]);
                     }
                 }
