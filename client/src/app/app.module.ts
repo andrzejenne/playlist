@@ -24,6 +24,8 @@ import {DownloadQueueComponent} from "../components/download-queue/download-queu
 import {VideoPlayerComponent} from "../components/video-player/video-player.component";
 import {ServerManagerComponent} from "../components/server-manager/server-manager.component";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
+import {SettingsPage} from "../pages/settings/settings";
+import {PlaylistComboComponent} from "../components/playlists-combo/playlist-combo.component";
 
 @NgModule({
   declarations: [
@@ -33,10 +35,12 @@ import {ScreenOrientation} from "@ionic-native/screen-orientation";
     DownloadedPage,
     AuthError,
     WelcomePage,
+    SettingsPage,
 
     DownloadQueueComponent,
     VideoPlayerComponent,
     ServerManagerComponent,
+    PlaylistComboComponent,
 
     DurationPipe
   ],
@@ -55,10 +59,12 @@ import {ScreenOrientation} from "@ionic-native/screen-orientation";
     DownloadedPage,
     AuthError,
     WelcomePage,
+    SettingsPage,
 
     DownloadQueueComponent,
     VideoPlayerComponent,
     ServerManagerComponent,
+    PlaylistComboComponent
   ],
   providers: [
     StatusBar,

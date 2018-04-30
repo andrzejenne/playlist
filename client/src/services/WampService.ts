@@ -113,7 +113,8 @@ export class WampService {
   public connect(server: Server) {
     console.info('connecting', server);
 
-    let conn = new autobahn.Connection({url: Server.getWampHost(server), realm: 'playlist'});
+    let opts = this.getConnectionOptions(server);
+    let conn = new autobahn.Connection(opts);
 
     conn.onopen = (session => {
       this.session = session;
@@ -136,7 +137,7 @@ export class WampService {
   }
 
   disconnect(server: Server) {
-    server.session.close();
+    server.session.leave('disconnect', 'have to go');
   }
 
   /**
@@ -152,6 +153,12 @@ export class WampService {
     return true;
   }
 
+  private getConnectionOptions(server: Server) {
+    return {
+      url: Server.getWampHost(server), realm: 'playlist'
+    }
+  }
+
   private loadServers() {
     this.serversManager.ready()
       .then(servers => {
@@ -159,11 +166,12 @@ export class WampService {
 //          this.serversManager.add(this.configService.get('wampHost'));
 //        }
 
-        this.serversManager.each(server => this.connect(server));
+        this.serversManager.each(
+          server => this.connect(server)
+        );
       })
       .catch(error => error);
   }
-
 
 
 }

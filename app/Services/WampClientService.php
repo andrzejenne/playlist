@@ -42,11 +42,11 @@ class WampClientService
     {
         $host = config('ratchet.serverHost', 'localhost');
         $port = config('ratchet.port', 8080);
-        $proto = config('ratchet.proto', 'ws://');
+        $scheme = config('ratchet.scheme', 'ws://');
 
         $this->client = new Client('playlist'); // @todo - realm to config
 
-        $url = $proto . $host . ':' . $port;
+        $url = $scheme . '://' . $host . ':' . $port; // @todo - helper
 
         $this->client->addTransportProvider(new PawlTransportProvider($url));
 

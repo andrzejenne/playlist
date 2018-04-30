@@ -2,16 +2,16 @@ import {Component, ViewChild} from '@angular/core';
 import {MenuController, NavController, Platform} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
+import {Storage} from '@ionic/storage';
 
 import {BackgroundMode} from "@ionic-native/background-mode";
 import {AuthError} from "../pages/auth/error";
 import {AuthService} from "../services/AuthService";
 import {PagesService} from "../services/PagesService";
 
-import {HomePage} from '../pages/home/home';
 import {WelcomePage} from "../pages/welcome/welcome";
-// import {ServerManagerService} from "../services/ServerManagerService";
-// import {WampService} from "../services/WampService";
+import {SettingsPage} from "../pages/settings/settings";
+import {HomePage} from "../pages/home/home";
 
 @Component({
   templateUrl: 'app.html'
@@ -24,6 +24,8 @@ export class ThePlaylist {
   @ViewChild('content') nav: NavController;
   @ViewChild('menu') menu: MenuController;
 
+  options: any; // @todo interface
+
   constructor(
     platform: Platform,
     statusBar: StatusBar,
@@ -32,8 +34,11 @@ export class ThePlaylist {
     // private serverManager: ServerManagerService,
     // private wamp: WampService,
     private auth: AuthService,
-    private pages: PagesService
+    private pages: PagesService,
+    private storage: Storage
   ) {
+    this.getOptions();
+
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -64,9 +69,18 @@ export class ThePlaylist {
     }
   }
 
+  goToSettings() {
+    return this.nav.push(SettingsPage)
+      .then(finished => this.menu.close());
+  }
+
   private onAuthenticated(response) {
     this.authenticated = true;
-    this.rootPage = HomePage;
+
+    this.getOptions()
+      .then(options => {
+        options.autojump && (this.rootPage = HomePage);
+      });
   }
 
   private onAuthenticationError(error) {
@@ -87,6 +101,18 @@ export class ThePlaylist {
     }
   };
 
+  private getOptions() {
+    if (this.options) {
+      return new Promise(resolve => resolve(this.options));
+    }
+    else {
+      return this.storage.get('options')
+        .then(options => {
+          this.options = options || {};
+          return this.options;
+        });
+    }
+  }
   // private onServersReady = (servers) => {
   //   if (Object.keys(servers).length) {
   //     this.serverManager.each(server => this.wamp.connect(server));

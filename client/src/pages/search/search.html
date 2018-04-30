@@ -10,9 +10,11 @@
              (blur)="focused = false">
     </div>
     <ion-buttons end right>
+      <button ion-button *ngIf="search" (click)="clearSearch()" icon-left>
+        <ion-icon name="close"></ion-icon>
+      </button>
       <button ion-button *ngIf="search && search.length > 1" (click)="onSearchClick()" icon-left>
         <ion-icon name="search"></ion-icon>
-        Search
       </button>
       <button ion-button (click)="openDownloadQueue()">
         <ion-icon name="download" [color]="downloaderColor"></ion-icon>
@@ -22,8 +24,9 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <ion-list *ngIf="!list.length && history.length" class="history">
+<ion-content>
+  <ion-list *ngIf="list && history && !list.length && history.length" class="history">
+    <pre>@todo - make as modal ?</pre>
     <ion-item *ngFor="let item of history" (click)="searchItems(item.query)">
       {{ item.query }}
       <button ion-button icon-only clear item-end (click)="removeSearchHistory($event, item)">
@@ -38,26 +41,29 @@
         <img [src]="item.thumbnail">
         <span class="duration">{{item.duration | duration}}</span>
       </div>
-      <div class="item-end">
+      <div item-end>
         <h2>{{item.title}}</h2>
-        <p>{{item.description}}</p>
+        <p style="max-height: 48px; overflow: hidden;">{{item.description}}</p>
         <ion-buttons end>
           <button ion-button small clear icon-left (click)="download($event, item)">
             <ion-icon name="download"></ion-icon>
-            <span>Download</span>
+            <span *ngIf="isLandscape()">Download</span>
           </button>
           <button ion-button small clear icon-left (click)="toPlaylist($event, item)">
             <ion-icon name="list"></ion-icon>
-            <span>To playlist</span>
+            <span *ngIf="isLandscape()">To playlist</span>
           </button>
           <a ion-button small clear icon-left [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">
             <ion-icon name="search"></ion-icon>
-            <span>Preview</span>
+            <span *ngIf="isLandscape()">Preview</span>
           </a>
         </ion-buttons>
       </div>
     </ion-item>
   </ion-list>
-  <button ion-button *ngIf="prevPageToken" (click)="onPrevClick()" style="float:left;">Prev</button>
-  <button ion-button *ngIf="nextPageToken" (click)="onNextClick()" style="float:right;">Next</button>
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <!--<button ion-button *ngIf="prevPageToken" (click)="onPrevClick()" style="float:left;">Prev</button>-->
+  <!--<button ion-button *ngIf="nextPageToken" (click)="onNextClick()" style="float:right;">Next</button>-->
 </ion-content>

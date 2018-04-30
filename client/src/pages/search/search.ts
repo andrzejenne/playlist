@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
-import {Modal, ModalController, NavController} from 'ionic-angular';
+import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
+import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
 import {SearchRepository} from "../../repositories/search.repository";
 import {SearchItem} from "../../models/search-item";
 import {Search} from "../../models/search";
@@ -7,12 +7,13 @@ import {AuthService} from "../../services/AuthService";
 import {DownloadManager} from "../../services/DownloadManager";
 import {DownloadQueueComponent} from "../../components/download-queue/download-queue.component";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
   selector: 'page-search',
   templateUrl: 'search.html'
 })
-export class SearchPage {
+export class SearchPage implements OnDestroy {
 
   public search: string;
 
@@ -34,6 +35,8 @@ export class SearchPage {
 
   private userId: number;
 
+  private subs: Subscription[] = [];
+
   constructor(
     public navCtrl: NavController,
     private repo: SearchRepository,
@@ -42,6 +45,7 @@ export class SearchPage {
     private playlistRepository: PlaylistsRepository,
     // private alertCtrl: AlertController,
     private modalCtrl: ModalController,
+    private platform: Platform,
     private ref: ChangeDetectorRef
   ) {
 
@@ -50,6 +54,19 @@ export class SearchPage {
   ionViewDidLoad() {
     this.auth.getUser()
       .then(user => this.userId = user.id);
+
+    this.subs.push(
+      this.downloadManager.onChange(changes => {
+        // @todo - fix
+        if (this.downloadManager.downloads) {
+          this.downloaderColor = 'primary';
+          if (this.downloadManager.finished.length >= this.downloadManager.downloads.length) {
+            this.downloaderColor = 'secondary';
+          }
+          this.ref.detectChanges();
+        }
+      })
+    );
   }
 
   public openDownloadQueue() {
@@ -71,6 +88,18 @@ export class SearchPage {
 
   public onPrevClick() {
     this.searchItems(null, {pageToken: this.prevPageToken})
+  }
+
+  public doInfinite(infiniteScroll) {
+    this.repo.search(this.userId, this.search, {pageToken: this.nextPageToken})
+      .then(response => {
+        this.list = this.list.concat(response.items);
+        console.info('response', response);
+        this.nextPageToken = response.next;
+        this.prevPageToken = response.prev;
+        this.ref.detectChanges();
+        infiniteScroll.complete();
+      });
   }
 
   public getSearchHistory() {
@@ -117,8 +146,11 @@ export class SearchPage {
 
     this.history = [];
 
+    args = args || {};
+    args.perPage = 16;
+
     if (this.search && this.search.length) {
-      this.repo.search(this.userId, this.search, args || {})
+      this.repo.search(this.userId, this.search, args)
         .then(response => {
           this.list = response.items;
           console.info('response', response);
@@ -132,6 +164,18 @@ export class SearchPage {
       this.list = [];
       this.ref.detectChanges();
     }
+  }
+
+  clearSearch() {
+    this.search = '';
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(s => s.unsubscribe());
+  }
+
+  isLandscape() {
+    return this.platform.isLandscape();
   }
 
   private filterHistory() {

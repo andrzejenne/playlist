@@ -3,12 +3,7 @@
     <button ion-button menuToggle="menu">
       <ion-icon name="menu"></ion-icon>
     </button>
-    <div class="form-group">
-      <ion-icon name="list"></ion-icon>
-      <select #playlistSelect [(ngModel)]="playlist" class="form-control" (ionChange)="onPlaylistChange($event)">
-        <option *ngFor="let playlist of playlists" [value]="playlist">{{playlist.name}}</option>
-      </select>
-    </div>
+    <playlists-combo (change)="onPlaylistChange($event)" [user]="user"></playlists-combo>
     <!--<ion-item>-->
     <!--<ion-select #playlistSelect [(ngModel)]="playlist" (ionChange)="onPlaylistChange($event)"-->
     <!--interface="action-sheet">-->
@@ -19,10 +14,14 @@
     <!--</ion-item>-->
     <ion-buttons end>
       <button ion-button title="More options">
-        <ion-icon large name="more"></ion-icon>
+        <ion-icon name="more"></ion-icon>
       </button>
-      <button ion-button title="Search" tcolor="primary" (click)="goToSearchPage()">
-        <ion-icon large name="search"></ion-icon>
+
+      <button ion-button title="Search" color="primary" (click)="goToSearchPage()">
+        <ion-icon name="search"></ion-icon>
+      </button>
+      <button ion-button title="Settings" color="default" (click)="goToSettingsPage()">
+        <ion-icon name="settings"></ion-icon>
       </button>
       <!--<button ion-button title="LogOut" color="danger" (click)="logout()">-->
         <!--<ion-icon name="log-out"></ion-icon>-->
@@ -32,76 +31,71 @@
 </ion-header>
 
 <ion-content #content>
-  <ion-grid>
-    <ion-row [hidden]="playerStatus.audio">
-      <ion-col class="video-col" style="height: {{video.height}} + 'px">
-        <video #videoPlayer height="100%"></video>
-      </ion-col>
-    </ion-row>
-    <ion-row style="height: 100%; ">
-      <ion-col>
-        <!--<pre>{{playlist|json}}</pre>-->
-        <!--<pre>{{media|json}}</pre>-->
-        <ion-list class="items">
-          <ion-list-header>Items</ion-list-header>
 
-          <ion-item *ngFor="let item of playedPlaylist" class="played">
-            <ion-thumbnail item-start>
-              <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
-            </ion-thumbnail>
-            <!--<span class="duration">{{item.duration | duration}}</span>-->
-            <div item-end>
-              <h2>{{item.name}}</h2>
-              <ion-buttons end>
-                <button ion-button color="dark" clear (click)="playItem(item)">
-                  <ion-icon name="play"></ion-icon>
-                </button>
-                <button ion-button color="dark" clear (click)="removeItem(item)">
-                  <ion-icon name="close"></ion-icon>
-                </button>
-              </ion-buttons>
-            </div>
-          </ion-item>
+  <div ion-fixed [hidden]="playerStatus.audio || !current"
+       class="video" style="width: 100%;">
+    <div [ngStyle]="video.containerStyle">
+      <video #videoPlayer [width]="video.width" [height]="video.height"></video>
+    </div>
+  </div>
 
-          <ion-item *ngIf="current" class="current">
-            <ion-thumbnail item-start>
-              <img [src]="getThumbnailUrl(current)" class="fit-thumbnail">
-            </ion-thumbnail>
-            <!--<span class="duration">{{item.duration | duration}}</span>-->
-            <div item-end>
-              <h2>{{current.name}}</h2>
-              <ion-buttons end>
-                <button ion-button color="primary" clear>
-                  <ion-icon name="play"></ion-icon>
-                </button>
-                <button ion-button color="dark" clear (click)="removeItem(current)">
-                  <ion-icon name="close"></ion-icon>
-                </button>
-              </ion-buttons>
-            </div>
-          </ion-item>
+  <ion-list class="items">
+    <ion-list-header>Items</ion-list-header>
 
-          <ion-item *ngFor="let item of mediaPlaylist">
-            <ion-thumbnail item-start>
-              <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
-            </ion-thumbnail>
-            <!--<span class="duration">{{item.duration | duration}}</span>-->
-            <div item-end>
-              <h2>{{item.name}}</h2>
-              <ion-buttons end>
-                <button ion-button color="dark" clear (click)="playItem(item)">
-                  <ion-icon name="play"></ion-icon>
-                </button>
-                <button ion-button color="dark" clear (click)="removeItem(item)">
-                  <ion-icon name="close"></ion-icon>
-                </button>
-              </ion-buttons>
-            </div>
-          </ion-item>
-        </ion-list>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+    <ion-item *ngFor="let item of playedPlaylist" class="played">
+      <ion-thumbnail item-start>
+        <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
+      </ion-thumbnail>
+      <!--<span class="duration">{{item.duration | duration}}</span>-->
+      <div item-end>
+        <h2>{{item.name}}</h2>
+        <ion-buttons end>
+          <button ion-button color="dark" clear (click)="playItem(item)">
+            <ion-icon name="play"></ion-icon>
+          </button>
+          <button ion-button color="dark" clear (click)="removeItem(item)">
+            <ion-icon name="close"></ion-icon>
+          </button>
+        </ion-buttons>
+      </div>
+    </ion-item>
+
+    <ion-item *ngIf="current" class="current">
+      <ion-thumbnail item-start>
+        <img [src]="getThumbnailUrl(current)" class="fit-thumbnail">
+      </ion-thumbnail>
+      <!--<span class="duration">{{item.duration | duration}}</span>-->
+      <div item-end>
+        <h2>{{current.name}}</h2>
+        <ion-buttons end>
+          <button ion-button color="primary" clear>
+            <ion-icon name="play"></ion-icon>
+          </button>
+          <button ion-button color="dark" clear (click)="removeItem(current)">
+            <ion-icon name="close"></ion-icon>
+          </button>
+        </ion-buttons>
+      </div>
+    </ion-item>
+
+    <ion-item *ngFor="let item of mediaPlaylist">
+      <ion-thumbnail item-start>
+        <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
+      </ion-thumbnail>
+      <!--<span class="duration">{{item.duration | duration}}</span>-->
+      <div item-end>
+        <h2>{{item.name}}</h2>
+        <ion-buttons end>
+          <button ion-button color="dark" clear (click)="playItem(item)">
+            <ion-icon name="play"></ion-icon>
+          </button>
+          <button ion-button color="dark" clear (click)="removeItem(item)">
+            <ion-icon name="close"></ion-icon>
+          </button>
+        </ion-buttons>
+      </div>
+    </ion-item>
+  </ion-list>
 </ion-content>
 
 <!--<ion-footer>-->
@@ -149,7 +143,7 @@
 
 <ion-footer>
   <ion-toolbar>
-    <audio #audioPlayer preload="none"></audio>
+    <!-- <audio #audioPlayer preload="none"></audio> -->
     <ion-range [(ngModel)]="currentTime" color="danger" [min]="0" [max]="totalTime"
                [debounce]="500"
                (ionFocus)="onSliderFocus($event)"
@@ -159,36 +153,34 @@
       <ion-label range-right>{{totalTime | duration}}</ion-label>
     </ion-range>
     <div>
-      <ion-item>
-        <!--<h2 class="title">{{current?.name}}</h2>-->
-        <ion-buttons item-end>
-          <button ion-button clear small (click)="playVideo()" title="Play Video" [color]="colors.video">
-            <ion-icon name="videocam"></ion-icon>
-          </button>
-          <button ion-button clear small (click)="playAudio()" title="Play Audio only" [color]="colors.audio">
-            <ion-icon name="musical-notes"></ion-icon>
-          </button>
-          <button [disabled]="!playerStatus.playing || !playedPlaylist.length" ion-button clear small
-                  (click)="playPrev()"
-                  title="Play previous" [color]="colors.prev">
-            <ion-icon name="skip-backward"></ion-icon>
-          </button>
-          <button ion-button (click)="togglePlay()" clear small title="Play / Pause" [color]="colors.play">
-            <ion-icon [name]="playIcon"></ion-icon>
-          </button>
-          <button [disabled]="!playerStatus.playing || !mediaPlaylist.length" ion-button clear small
-                  (click)="playNext()"
-                  title="Play next" [color]="colors.next">
-            <ion-icon name="skip-forward"></ion-icon>
-          </button>
-          <button ion-button (click)="toggleShuffle()" clear small title="Toggle Shuffle" [color]="colors.shuffle">
-            <ion-icon name="shuffle"></ion-icon>
-          </button>
-          <button ion-button (click)="toggleRepeat()" clear small title="Toggle Repeat" [color]="colors.repeat">
-            <ion-icon name="repeat"></ion-icon>
-          </button>
-        </ion-buttons>
-      </ion-item>
+      <!--<h2 class="title">{{current?.name}}</h2>-->
+      <ion-buttons end>
+        <button ion-button clear small (click)="playVideo()" title="Play Video" [color]="colors.video">
+          <ion-icon name="videocam"></ion-icon>
+        </button>
+        <button ion-button clear small (click)="playAudio()" title="Play Audio only" [color]="colors.audio">
+          <ion-icon name="musical-notes"></ion-icon>
+        </button>
+        <button [disabled]="!playerStatus.playing || !playedPlaylist.length" ion-button clear small
+                (click)="playPrev()"
+                title="Play previous" [color]="colors.prev">
+          <ion-icon name="skip-backward"></ion-icon>
+        </button>
+        <button ion-button (click)="togglePlay()" clear small title="Play / Pause" [color]="colors.play">
+          <ion-icon [name]="playIcon"></ion-icon>
+        </button>
+        <button [disabled]="!playerStatus.playing || !mediaPlaylist.length" ion-button clear small
+                (click)="playNext()"
+                title="Play next" [color]="colors.next">
+          <ion-icon name="skip-forward"></ion-icon>
+        </button>
+        <button ion-button (click)="toggleShuffle()" clear small title="Toggle Shuffle" [color]="colors.shuffle">
+          <ion-icon name="shuffle"></ion-icon>
+        </button>
+        <button ion-button (click)="toggleRepeat()" clear small title="Toggle Repeat" [color]="colors.repeat">
+          <ion-icon name="repeat"></ion-icon>
+        </button>
+      </ion-buttons>
     </div>
   </ion-toolbar>
 </ion-footer>

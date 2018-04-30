@@ -1,6 +1,5 @@
-import {ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
-import {Content, ModalController, NavController, Platform} from 'ionic-angular';
-// import {AuthService} from "../../services/AuthService";
+import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
+import {Content, NavController, Platform} from 'ionic-angular';
 import {Playlist} from "../../models/playlist";
 import {DownloadedRepository} from "../../repositories/downloaded.repository";
 import {Medium} from "../../models/medium";
@@ -8,22 +7,16 @@ import {PlaylistsRepository} from "../../repositories/playlists.repository";
 import {MediaFile} from "../../models/media-file";
 import {ErrorReporting} from "../../services/ErrorReporting";
 import {Subscription} from "rxjs/Subscription";
-import {VideoPlayerComponent} from "../../components/video-player/video-player.component";
 import {ServerManagerService} from "../../services/ServerManagerService";
-import {ElementReference} from "../../models/ElementReference";
-import {Container} from "@angular/compiler/src/i18n/i18n_ast";
+import {User} from "../../models/user";
+import {AuthService} from "../../services/AuthService";
 
 @Component({
   selector: 'page-downloaded',
   templateUrl: 'downloaded.html'
 })
 export class DownloadedPage implements OnDestroy {
-
   public downloaded: any;
-
-  public playlist: Playlist;
-
-  public playlists: Playlist[] = [];
 
   public subs: Subscription[] = [];
 
@@ -39,13 +32,17 @@ export class DownloadedPage implements OnDestroy {
     height: number;
   };
 
+  private playlist: Playlist;
+
+  private user: User;
+
   constructor(
     public navCtrl: NavController,
     private repo: DownloadedRepository,
     private plRepo: PlaylistsRepository,
-    // private auth: AuthService,
+    private auth: AuthService,
     private errorReporter: ErrorReporting,
-    private modalController: ModalController,
+    // private modalController: ModalController,
     private servers: ServerManagerService,
     private platform: Platform,
     private ref: ChangeDetectorRef
@@ -54,25 +51,19 @@ export class DownloadedPage implements OnDestroy {
   }
 
   ionViewDidLoad() {
+    this.auth.getUser()
+      .then(user => this.user = user);
+
     this.repo.list()
       .then(data => {
         this.downloaded = data;
         this.ref.detectChanges();
       })
       .catch(this.errorReporter.report);
+  }
 
-    this.subs.push(
-      this.plRepo.playlists$.subscribe(playlists => {
-        this.playlists = playlists;
-        this.ref.detectChanges();
-      }),
-
-      this.plRepo.playlist$.subscribe(playlist => {
-        this.playlist = playlist;
-        this.ref.detectChanges();
-      })
-    );
-
+  onPlaylistChange(playlist: Playlist) {
+    this.playlist = playlist;
   }
 
   addToPlaylist(item: Medium) {
@@ -147,5 +138,7 @@ export class DownloadedPage implements OnDestroy {
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
   }
+
+  isLandscape = () => this.platform.isLandscape();
 
 }

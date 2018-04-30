@@ -1,0 +1,6 @@
+<div class="form-group">
+  <ion-icon title="playlist" style="font-size: 100%; color: #aaa;" name="list"></ion-icon>
+  <select #playlistSelect [(ngModel)]="playlist" class="form-control" (ionChange)="onPlaylistChange($event)">
+    <option *ngFor="let playlist of playlists" [value]="playlist">{{playlist.name}}</option>
+  </select>
+</div>

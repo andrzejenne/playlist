@@ -4,22 +4,24 @@ import {Content, NavController, Select} from 'ionic-angular';
 import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
-import {SearchPage} from "../search/search";
 import {Medium} from "../../models/medium";
 import {ElementReference} from "../../models/ElementReference";
 import {User} from "../../models/user";
 import {ServerManagerService} from "../../services/ServerManagerService";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
+import {SettingsPage} from "../settings/settings";
+import {SearchPage} from "../search/search";
+
+//import {PagesService} from "../../services/PagesService";
 
 @Component({
   selector: 'page-home',
-  templateUrl: 'home.html'
+  templateUrl: 'home.html',
+//  providers: [{ provide: PagesService, useExisting: forwardRef(() => PagesService) }],
 })
 export class HomePage implements OnDestroy {
 
   public playlist: Playlist;
-
-  public playlists: Playlist[] = [];
 
   public media: Medium[] = [];
 
@@ -57,16 +59,18 @@ export class HomePage implements OnDestroy {
   @ViewChild('content') contentContainer: Content;
 
   video: {
+    width: number;
     height: number;
+    containerStyle: any;
   } = {
-    height: 0
+    width: 0,
+    height: 0,
+    containerStyle: {width: '100%'}
   };
-
-  private searchPage = SearchPage;
 
   private interval: number;
 
-  private user: any;
+  private user: User;
 
   @ViewChild('playlistSelect') select: Select;
 
@@ -77,7 +81,7 @@ export class HomePage implements OnDestroy {
 
   constructor(
     public navCtrl: NavController,
-    // public pages: PagesService,
+    //    public pages: PagesService,
     private repo: PlaylistsRepository,
     private auth: AuthService,
     private servers: ServerManagerService,
@@ -92,20 +96,6 @@ export class HomePage implements OnDestroy {
   }
 
   ionViewDidLoad() {
-
-    this.repo.playlists$.subscribe(playlists => {
-      this.playlists = playlists;
-      this.ref.detectChanges();
-    });
-    this.repo.playlist$.subscribe(playlist => {
-      if (playlist) {
-        this.playlist = playlist;
-        this.onPlaylistChange(playlist);
-        // console.info('select playlist', playlist);
-      }
-      this.ref.detectChanges();
-    });
-
     this.auth.getUser()
       .then(this.onGetUser);
 
@@ -127,11 +117,15 @@ export class HomePage implements OnDestroy {
   }
 
   goToSearchPage() {
-    this.navCtrl.push(this.searchPage);
+    this.navCtrl.push(SearchPage);
   }
 
-  onPlaylistChange(playlist) {
-    // this.repo.selectPlaylist(playlist);
+  goToSettingsPage() {
+    this.navCtrl.push(SettingsPage);
+  }
+
+  onPlaylistChange(playlist: Playlist) {
+    this.playlist = playlist;
 
     if (playlist.media) {
       this.media = playlist.media;
@@ -182,6 +176,8 @@ export class HomePage implements OnDestroy {
 
     this.colors.audio = 'dark';
     this.colors.video = 'primary';
+
+    this.setContentMarginIfVideo();
   }
 
   playAudio() {
@@ -190,6 +186,8 @@ export class HomePage implements OnDestroy {
 
     this.colors.audio = 'primary';
     this.colors.video = 'dark';
+
+    this.removeContentMargin();
   }
 
   playItem(item: Medium, seek = 0) {
@@ -409,6 +407,7 @@ export class HomePage implements OnDestroy {
 
   private initPlayers() {
     this.videoPlayer.nativeElement.onended = this.onPlayerPlayEnded;
+    this.videoPlayer.nativeElement.onloadedmetadata = this.onPlayerMetadata;
     // this.audioPlayer.nativeElement.onended = this.onPlayerPlayEnded;
   }
 
@@ -433,6 +432,38 @@ export class HomePage implements OnDestroy {
     this.playNext();
   };
 
+  private onPlayerMetadata = (ev: MediaStreamErrorEvent) => {
+    console.info('loadedMetaData', ev, this.videoPlayer.nativeElement.videoWidth, this.videoPlayer.nativeElement.videoHeight, this.contentContainer.contentWidth, this.contentContainer.contentHeight);
+    let player = this.getPlayer();
+    let aspect = player.videoWidth / player.videoHeight;
+    this.video.width = Math.min(player.videoWidth, this.contentContainer.contentWidth);
+    this.video.height = this.video.width / aspect;
+
+    let contentHeight = this.contentContainer.contentHeight;
+    let halfHeight = contentHeight / 2;
+    if (this.video.height > halfHeight) {
+      this.video.height = halfHeight;
+      this.video.width = aspect * this.video.height;
+    }
+
+    this.video.containerStyle = {width: '100%', height: this.video.height + "px"};
+
+    this.setContentMarginIfVideo();
+
+    this.ref.detectChanges();
+  };
+
+  private setContentMarginIfVideo() {
+    if (this.playerStatus.video && this.video.height) {
+      this.contentContainer.getScrollElement().style.marginTop = (this.video.height + this.contentContainer._hdrHeight) + 'px';
+    }
+  }
+
+  private removeContentMargin() {
+    // this.contentContainer.resize();
+    this.contentContainer.getScrollElement().style.marginTop = (this.contentContainer._hdrHeight) + 'px';
+  }
+
   private onPlayerProgress = () => {
     let player = this.getPlayer();
 
@@ -446,10 +477,6 @@ export class HomePage implements OnDestroy {
 
   private onGetUser = (user: User) => {
     this.user = user;
-
-    if (this.user && this.user.id) {
-      this.repo.getPlaylists(this.user.id)
-    }
   };
 
   private static shuffleCallback = (a: any, b: any) => {
@@ -462,7 +489,7 @@ export class HomePage implements OnDestroy {
     };
   }
 
-  private getPlayer(): HTMLVideoElement | HTMLAudioElement {
+  private getPlayer(): HTMLVideoElement { //} | HTMLAudioElement {
     // if (this.playerStatus.video) {
     return this.videoPlayer.nativeElement;
     // }

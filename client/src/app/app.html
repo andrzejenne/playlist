@@ -1,24 +1,42 @@
-<ion-nav [root]="rootPage" #content></ion-nav>
+<!-- <ion-split-pane> -->
+  <ion-menu [content]="content" #menu id="menu">
 
-<ion-menu [content]="content" #menu id="menu">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
 
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>Menu</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <ion-content>
+      <ion-list>
+        <button ion-item (click)="setPage('home');menu.close()">
+          <ion-icon name="list"></ion-icon>
+          Playlists</button>
+        <button ion-item (click)="setPage('search');menu.close()">
+          <ion-icon name="search"></ion-icon>
+          Search
+        </button>
+        <button ion-item (click)="setPage('downloaded');menu.close()">
+          <ion-icon name="cloud-download"></ion-icon>
+          Downloaded
+        </button>
+        <button ion-item (click)="setPage('downloadQueue');menu.close()">
+          <ion-icon name="download"></ion-icon>
+          Download Queue
+        </button>
+        <button ion-item (click)="goToSettings() && menu.close()">
+          <ion-icon name="settings"></ion-icon>
+          Settings
+        </button>
+        <!--<button ion-item (click)="setPage('servers');menu.close()">Servers</button>-->
+        <button ion-item menuClose="menu" detail-none>
+          <ion-icon name="close"></ion-icon>
+          Close Menu
+        </button>
+      </ion-list>
+    </ion-content>
 
-  <ion-content>
-    <ion-list>
-      <button ion-item (click)="setPage('home');menu.close()">Playlists</button>
-      <button ion-item (click)="setPage('search');menu.close()">Search</button>
-      <button ion-item (click)="setPage('downloaded');menu.close()">Downloaded</button>
-      <button ion-item (click)="setPage('downloadQueue');menu.close()">Download Queue</button>
-      <!--<button ion-item (click)="setPage('servers');menu.close()">Servers</button>-->
-      <button ion-item menuClose="menu" detail-none>
-        Close Menu
-      </button>
-    </ion-list>
-  </ion-content>
+  </ion-menu>
 
-</ion-menu>
+  <ion-nav [root]="rootPage" #content></ion-nav>
+<!-- </ion-split-pane> -->

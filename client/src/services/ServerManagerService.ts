@@ -4,13 +4,21 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Server} from "../models/server";
 import {Medium} from "../models/medium";
 import {MediaFile} from "../models/media-file";
+import {HttpClient} from "@angular/common/http";
+import {ErrorReporting} from "./ErrorReporting";
+import autobahn from 'autobahn';
 
 @Injectable()
 export class ServerManagerService {
 
-  servers: {[index: string]: Server} = {};
+  private static serverDiscoveryProtocolPorts = {
+    http: [null, 8000, 8080, 8100],
+    https: [null]
+  };
 
-  servers$ = new BehaviorSubject<{[index: string]: Server}>(this.servers);
+  servers: { [index: string]: Server } = {};
+
+  servers$ = new BehaviorSubject<{ [index: string]: Server }>(this.servers);
 
   private sessions = {};
 
@@ -18,7 +26,7 @@ export class ServerManagerService {
 
   private readyResolvers: any[] = [];
 
-  constructor(private storage: Storage) {
+  constructor(private storage: Storage, private http: HttpClient, private errorReporter: ErrorReporting) {
     storage.get('servers')
       .then(servers => {
         // debugger;
@@ -58,9 +66,38 @@ export class ServerManagerService {
     return this.storage.set('servers', this.servers);
   }
 
-  setSession(host: string, session: any) {
+  discover(host: string) {
+    return new Promise<Server>((resolve, reject) => {
+      let attempts = 0;
+      let errors = 0;
+
+      for (let proto in ServerManagerService.serverDiscoveryProtocolPorts) {
+        ServerManagerService.serverDiscoveryProtocolPorts[proto].forEach(port => {
+          attempts++;
+          let url = this.getServerDiscoveryUrl(host, proto, port);
+          this.http.get<Server>(url)
+            .subscribe(response => {
+              console.info('Server Discoverty Succes', host, proto, port, response);
+              resolve(response);
+            }, error => {
+              console.info('Server Discovery Error', error);
+              errors++;
+
+              if (errors == attempts) {
+                this.errorReporter.report({
+                  message: ['No instances running on ', host].join(' ')
+                });
+              }
+            })
+        });
+      }
+    });
+  }
+
+  setSession(host: string, session: autobahn.Session) {
     this.sessions[host] = session;
     this.servers[host].connected = true;
+    this.servers[host].session = session;
   }
 
   close(host: string) {
@@ -72,18 +109,22 @@ export class ServerManagerService {
     return this.servers[host].connected === true;
   }
 
-  ready():Promise<{[index: string]: Server}> {
+  ready(): Promise<{ [index: string]: Server }> {
     return new Promise(this.onReady);
   }
 
   each(callback: any) {
-    for(let host in this.servers) {
+    for (let host in this.servers) {
       callback(this.servers[host], host);
     }
   }
 
   getServerUrl(host: string, uri: string = '') {
     return Server.getHost(this.servers[host]) + uri;
+  }
+
+  getServerDiscoveryUrl(host: string, proto: string, port: string | null) {
+    return proto + '://' + host + (port ? ':' + port : '') + '/api/discover';
   }
 
   public getFile(item: Medium, type: string) {
@@ -110,14 +151,14 @@ export class ServerManagerService {
   }
 
   public getFileUrl(item: Medium, file: MediaFile) {
-    for( let host in this.servers) {
+    for (let host in this.servers) {
       return this.getServerUrl(host) + '/media/' + item.provider_sid + '/' + file.id;
     }
   }
 
   private onReady = (resolve, reject) => {
     if (this.isReady) {
-        resolve(this.servers);
+      resolve(this.servers);
     }
     else {
       this.readyResolvers.push(resolve);

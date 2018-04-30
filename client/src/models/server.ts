@@ -1,18 +1,23 @@
+import autobahn from 'autobahn';
+
 export class Server {
   host: string;
   port: number;
-  protocol: string;
+  scheme: string;
   wampPort: number;
-  wampProtocol: string;
+  wampScheme: string;
   connected: boolean;
-  session: any;
-
+  session: autobahn.Session;
 
   public static getHost(server: Server) {
-    return server.protocol + '://' + server.host + ':' + server.port;
+    return this.buildHostUrl(server.scheme, server.host, server.port);
   }
 
   public static getWampHost(server: Server) {
-    return server.wampProtocol + '://' + server.host + ':' + server.wampPort;
+    return this.buildHostUrl(server.wampScheme, server.host, server.wampPort);
+  }
+
+  private static buildHostUrl(scheme: string, host: string, port?: number) {
+    return scheme + '://' + host + (port ? ':' + port : '');
   }
 }

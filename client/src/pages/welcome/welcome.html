@@ -1,4 +1,22 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>The Playlist</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="goToServers()">
+        <ion-icon name="wifi" [color]="connected ? 'secondary' : 'primary'"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
 <ion-content padding>
-  <h1>Welcome to The Playlist</h1>
-  <server-manager-component></server-manager-component>
+  <h2>Welcome to The Playlist</h2>
+  <p>Now you can connect to your server and start playing your favourite music or movies without commercials.</p>
+  <p>All movies or music is first downloaded to your server. Then you can add your media to playlist.</p>
+  <p>Go to <a clear (click)="goToPlaylist()">Playlist</a>, to play your media.</p>
+
+  <ion-item>
+    <ion-label>Always jump to Playlists</ion-label>
+    <ion-checkbox [(ngModel)]="options.autojump" (ionChange)="updateAutojump($event)"></ion-checkbox>
+  </ion-item>
 </ion-content>

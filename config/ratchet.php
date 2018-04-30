@@ -15,7 +15,7 @@ return [
     'host'            => '0.0.0.0',
     'serverHost' => 'localhost',
     'port'            => '9090',
-    'proto' => 'ws://',
+    'scheme' => 'ws',
     'connectionLimit' => false,
     'throttle'        => [
         'onOpen'    => '5:1',

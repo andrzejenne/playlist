@@ -10,23 +10,15 @@ page-home {
   }
 
   .current {
-    .label { color: #2a88bd; }
+    .label,h2 { color: #2a88bd; }
   }
 
   .fit-thumbnail {
     object-fit: cover;
   }
 
-  ion-grid {
-    height: 100%;
-  }
-
-  .video-col {
+  .video {
     text-align: center;
-  }
-
-  video {
-    max-width: 100%;
   }
 
   .form-group {

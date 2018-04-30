@@ -36,6 +36,8 @@ Route::middleware(['web', \Barryvdh\Cors\HandleCors::class])->get('/user', funct
 
 Route::namespace('API')->group(function () {
     Route::get('/alive', 'AliveController@alive');
+    Route::get('/discover', 'AliveController@discover');
+
     Route::get('/info', function () {
         phpinfo();
     });
@@ -50,4 +52,6 @@ Route::namespace('API')->group(function () {
 
     Route::get('/download/{sid}', 'YoutubeDownloadController@download');
     Route::get('/user/email', 'UsersController@getByEmail'); // @todo - not safe
+
+
 });

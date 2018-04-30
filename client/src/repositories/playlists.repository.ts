@@ -15,8 +15,15 @@ export class PlaylistsRepository extends WampRepository {
   playlist$ = new BehaviorSubject<Playlist>(null);
 
   public list(uid: number) {
-    return this.call<Playlist[]>('com.playlists.list', [{uid: uid}]);
+    return this.call<Playlist[]>('com.playlists.list', [{uid: uid}])
+      .then(playlists => {
+        this.playlists = playlists;
+        this.playlists$.next(this.playlists);
+
+        return playlists;
+      });
   }
+
 
   public load(playlist: Playlist) {
     return this.call<Medium[]>('com.playlists.media', [{pid: playlist.id}]);
@@ -105,16 +112,18 @@ export class PlaylistsRepository extends WampRepository {
   }
 
   selectPlaylist(playlist: Playlist) {
-    this.playlist = playlist;
+    if (!this.playlist || this.playlist.id != playlist.id) {
+      this.playlist = playlist;
 
-    // console.info('select playlist', playlist);
-    this.playlist$.next(playlist);
+      // console.info('select playlist', playlist);
+      this.playlist$.next(playlist);
 
-    return this.load(playlist)
-      .then(media => {
-        playlist.media = media;
-        this.playlist$.next(playlist);
-      })
+      this.load(playlist)
+        .then(media => {
+          playlist.media = media;
+          this.playlist$.next(playlist);
+        })
+    }
   }
 
 }
