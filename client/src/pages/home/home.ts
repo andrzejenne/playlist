@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
 import {Storage} from "@ionic/storage";
-import {NavController, Select} from 'ionic-angular';
+import {Content, NavController, Select} from 'ionic-angular';
 import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
@@ -9,6 +9,7 @@ import {Medium} from "../../models/medium";
 import {ElementReference} from "../../models/ElementReference";
 import {User} from "../../models/user";
 import {ServerManagerService} from "../../services/ServerManagerService";
+import {ScreenOrientation} from "@ionic-native/screen-orientation";
 
 @Component({
   selector: 'page-home',
@@ -53,6 +54,14 @@ export class HomePage implements OnDestroy {
 
   playedPlaylist: Medium[];
 
+  @ViewChild('content') contentContainer: Content;
+
+  video: {
+    height: number;
+  } = {
+    height: 0
+  };
+
   private searchPage = SearchPage;
 
   private interval: number;
@@ -62,6 +71,7 @@ export class HomePage implements OnDestroy {
   @ViewChild('playlistSelect') select: Select;
 
   @ViewChild('audioPlayer') audioPlayer: ElementReference<HTMLAudioElement>;
+  @ViewChild('videoPlayer') videoPlayer: ElementReference<HTMLVideoElement>;
 
   @ViewChild('progress') progress: ElementReference<HTMLDivElement>;
 
@@ -72,10 +82,13 @@ export class HomePage implements OnDestroy {
     private auth: AuthService,
     private servers: ServerManagerService,
     private storage: Storage,
+    private screenOrientation: ScreenOrientation,
     // private errorReporting: ErrorReporting,
     private ref: ChangeDetectorRef
   ) {
-
+    // window.onresize = (ev ) => {
+    //   console.info('resize');
+    // }
   }
 
   ionViewDidLoad() {
@@ -96,7 +109,21 @@ export class HomePage implements OnDestroy {
     this.auth.getUser()
       .then(this.onGetUser);
 
-    this.initAudioPlayer();
+    this.initPlayers();
+
+    this.screenOrientation.onChange().subscribe(
+      () => {
+        console.log("Orientation Changed", this.screenOrientation.type);
+        if (this.screenOrientation.type.indexOf('portrait') > -1) {
+          if (this.videoPlayer.nativeElement.webkitDisplayingFullscreen) {
+            // this.videoPlayer.nativeElement();
+          }
+        }
+        else {
+          this.requestFullscreen();
+        }
+      }
+    );
   }
 
   goToSearchPage() {
@@ -120,8 +147,10 @@ export class HomePage implements OnDestroy {
     if (medium === this.current) {
       this.pause();
       this.current = null;
-      this.audioPlayer.nativeElement.currentTime = 0;
-      this.audioPlayer.nativeElement.src = '';
+
+      let player = this.getPlayer();
+      player.currentTime = 0;
+      player.src = '';
     }
 
     this.repo.removeFromPlaylist(medium, this.playlist)
@@ -131,7 +160,23 @@ export class HomePage implements OnDestroy {
       });
   }
 
+  requestFullscreen() {
+    let elem = <any>this.videoPlayer.nativeElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
+    } else if (elem.mozRequestFullScreen) {
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    }
+  }
+
   playVideo() {
+    if (this.playerStatus.video) {
+      this.requestFullscreen();
+    }
     this.playerStatus.video = true;
     this.playerStatus.audio = false;
 
@@ -159,8 +204,10 @@ export class HomePage implements OnDestroy {
 
     this.current = item;
 
-    this.audioPlayer.nativeElement.src = this.servers.getUrl(this.current, this.mediaType);
-    this.audioPlayer.nativeElement.currentTime = seek;
+    let player = this.getPlayer();
+    player.src = this.servers.getUrl(this.current, this.mediaType);
+
+    player.currentTime = seek;
 
     this.play();
   }
@@ -172,8 +219,10 @@ export class HomePage implements OnDestroy {
 
     this.playerStatus.playing = !this.playerStatus.playing;
 
-    if (!this.audioPlayer.nativeElement.src) {
-      this.audioPlayer.nativeElement.src = this.getNextSrc();
+    let player = this.getPlayer();
+
+    if (!player.src) {
+      player.src = this.getNextSrc();
     }
 
     if (this.playerStatus.playing) {
@@ -219,8 +268,10 @@ export class HomePage implements OnDestroy {
   }
 
   onSliderBlur(event) {
-    if (event.value != this.audioPlayer.nativeElement.currentTime) {
-      this.audioPlayer.nativeElement.currentTime = +event.value;
+    let player = this.getPlayer();
+
+    if (event.value != player.currentTime) {
+      player.currentTime = +event.value;
     }
     this.play();
   }
@@ -244,7 +295,9 @@ export class HomePage implements OnDestroy {
     let nextSrc = this.getNextSrc();
 
     if (nextSrc) {
-      this.audioPlayer.nativeElement.src = nextSrc;
+      let player = this.getPlayer();
+
+      player.src = nextSrc;
 
       this.play();
     }
@@ -263,7 +316,9 @@ export class HomePage implements OnDestroy {
     let prevSrc = this.getPrevSrc();
 
     if (prevSrc) {
-      this.audioPlayer.nativeElement.src = prevSrc;
+      let player = this.getPlayer();
+
+      player.src = prevSrc;
 
       this.play();
     }
@@ -328,8 +383,11 @@ export class HomePage implements OnDestroy {
     }
     this.playerStatus.playing = true;
 
-    this.audioPlayer.nativeElement.play();
-    this.interval = setInterval(this.onAudioProgress, 100);
+    let player = this.getPlayer();
+
+    player.play();
+
+    this.interval = setInterval(this.onPlayerProgress, 100);
 
     this.playStatus();
 
@@ -340,7 +398,7 @@ export class HomePage implements OnDestroy {
     clearInterval(this.interval);
 
     this.playerStatus.playing = false;
-    this.audioPlayer.nativeElement.pause();
+    this.getPlayer().pause();
 
     this.playStatus();
   }
@@ -349,8 +407,9 @@ export class HomePage implements OnDestroy {
     arr.sort(HomePage.shuffleCallback);
   }
 
-  private initAudioPlayer() {
-    this.audioPlayer.nativeElement.onended = this.onAudioEnded;
+  private initPlayers() {
+    this.videoPlayer.nativeElement.onended = this.onPlayerPlayEnded;
+    // this.audioPlayer.nativeElement.onended = this.onPlayerPlayEnded;
   }
 
   private autoPlayIfInterrupted() {
@@ -370,13 +429,15 @@ export class HomePage implements OnDestroy {
       });
   }
 
-  private onAudioEnded = (ev: MediaStreamErrorEvent) => {
+  private onPlayerPlayEnded = (ev: MediaStreamErrorEvent) => {
     this.playNext();
   };
 
-  private onAudioProgress = () => {
-    this.currentTime = this.audioPlayer.nativeElement.currentTime;
-    this.totalTime = this.audioPlayer.nativeElement.duration;
+  private onPlayerProgress = () => {
+    let player = this.getPlayer();
+
+    this.currentTime = player.currentTime;
+    this.totalTime = player.duration;
     this.storage.set('currentTime', this.currentTime);
     // this.progress.nativeElement.style.left = ((this.currentTime / this.totalTime) * 100) + '%';
 
@@ -399,6 +460,15 @@ export class HomePage implements OnDestroy {
     return (item: Medium) => {
       return current !== item && played.indexOf(item) === -1;
     };
+  }
+
+  private getPlayer(): HTMLVideoElement | HTMLAudioElement {
+    // if (this.playerStatus.video) {
+    return this.videoPlayer.nativeElement;
+    // }
+    // else {
+    //   return this.audioPlayer.nativeElement;
+    // }
   }
 
 }

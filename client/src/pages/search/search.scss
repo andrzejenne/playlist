@@ -14,6 +14,7 @@ page-search {
   .thumbnail {
     position: relative;
     width: 160px;
+    max-width: 30%;
     img {
       width: 100%;
     }
@@ -30,6 +31,15 @@ page-search {
       padding: 2px 4px;
       bottom: 5px;
       right: 5px;
+    }
+  }
+
+  .search {
+    input[type=search] {
+      width: 50%;
+      border: 0;
+      background: none;
+      font-size: 150%;
     }
   }
 }

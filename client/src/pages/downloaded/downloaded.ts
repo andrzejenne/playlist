@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
-import {ModalController, NavController} from 'ionic-angular';
+import {ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import {Content, ModalController, NavController, Platform} from 'ionic-angular';
 // import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
 import {DownloadedRepository} from "../../repositories/downloaded.repository";
@@ -10,6 +10,8 @@ import {ErrorReporting} from "../../services/ErrorReporting";
 import {Subscription} from "rxjs/Subscription";
 import {VideoPlayerComponent} from "../../components/video-player/video-player.component";
 import {ServerManagerService} from "../../services/ServerManagerService";
+import {ElementReference} from "../../models/ElementReference";
+import {Container} from "@angular/compiler/src/i18n/i18n_ast";
 
 @Component({
   selector: 'page-downloaded',
@@ -25,6 +27,18 @@ export class DownloadedPage implements OnDestroy {
 
   public subs: Subscription[] = [];
 
+  public player = false;
+
+  @ViewChild('content') contentContainer: Content;
+
+  public video: {
+    src: string;
+    type: string;
+    thumbnail: string;
+    title: string;
+    height: number;
+  };
+
   constructor(
     public navCtrl: NavController,
     private repo: DownloadedRepository,
@@ -33,6 +47,7 @@ export class DownloadedPage implements OnDestroy {
     private errorReporter: ErrorReporting,
     private modalController: ModalController,
     private servers: ServerManagerService,
+    private platform: Platform,
     private ref: ChangeDetectorRef
   ) {
 
@@ -91,14 +106,29 @@ export class DownloadedPage implements OnDestroy {
   }
 
   playVideo(item: Medium) {
-    let data = {
+    this.player = true;
+    this.video = {
       src: this.servers.getUrl(item, 'video'),
-      thumbnail: this.servers.getUrl(item, 'thumbnail')+'?get',
+      thumbnail: this.servers.getUrl(item, 'thumbnail') + '?get',
       type: 'video/mp4',
       title: item.name,
-      width: 600// @todo - getter
+      height: this.contentContainer.getContentDimensions().contentHeight / 2
     };
-    this.modalController.create(VideoPlayerComponent, data).present();
+
+    this.ref.detectChanges();
+    // let data = {
+    //   src: this.servers.getUrl(item, 'video'),
+    //   thumbnail: this.servers.getUrl(item, 'thumbnail')+'?get',
+    //   type: 'video/mp4',
+    //   title: item.name,
+    //   width: 600// @todo - getter
+    // };
+    // this.modalController.create(VideoPlayerComponent, data).present();
+  }
+
+  closeVideo() {
+    this.player = false;
+    this.video = null;
   }
 
   hasVideo(item: Medium) {

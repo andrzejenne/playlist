@@ -23,6 +23,7 @@ import {DownloadedPage} from "../pages/downloaded/downloaded";
 import {DownloadQueueComponent} from "../components/download-queue/download-queue.component";
 import {VideoPlayerComponent} from "../components/video-player/video-player.component";
 import {ServerManagerComponent} from "../components/server-manager/server-manager.component";
+import {ScreenOrientation} from "@ionic-native/screen-orientation";
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import {ServerManagerComponent} from "../components/server-manager/server-manage
 
     GooglePlus,
     BackgroundMode,
+    ScreenOrientation,
   ]
 })
 export class AppModule {

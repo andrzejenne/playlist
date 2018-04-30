@@ -3,10 +3,17 @@
     <button ion-button menuToggle="menu">
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-searchbar [(ngModel)]="search" (ionFocus)="getSearchHistory(); focused = true;"
-                   (ionBlur)="focused = false"></ion-searchbar>
+    <!--<ion-searchbar [(ngModel)]="search" (ionFocus)="getSearchHistory(); focused = true;"-->
+                   <!--(ionBlur)="focused = false"></ion-searchbar>-->
+    <div class="form-group search">
+      <input type="search" [(ngModel)]="search" placeholder="Search" (focus)="getSearchHistory(); focused = true;"
+             (blur)="focused = false">
+    </div>
     <ion-buttons end right>
-      <button ion-button *ngIf="search && search.length > 1" (click)="onSearchClick()">Search</button>
+      <button ion-button *ngIf="search && search.length > 1" (click)="onSearchClick()" icon-left>
+        <ion-icon name="search"></ion-icon>
+        Search
+      </button>
       <button ion-button (click)="openDownloadQueue()">
         <ion-icon name="download" [color]="downloaderColor"></ion-icon>
       </button>
@@ -31,22 +38,24 @@
         <img [src]="item.thumbnail">
         <span class="duration">{{item.duration | duration}}</span>
       </div>
-      <h2>{{item.title}}</h2>
-      <p>{{item.description}}</p>
-      <ion-buttons item-end>
-        <button ion-button small clear icon-left (click)="download($event, item)">
-          <ion-icon name="download"></ion-icon>
-          <span>Download</span>
-        </button>
-        <button ion-button small clear icon-left (click)="toPlaylist($event, item)">
-          <ion-icon name="list"></ion-icon>
-          <span>To playlist</span>
-        </button>
-        <a ion-button small clear icon-left [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">
-          <ion-icon name="search"></ion-icon>
-          <span>Preview</span>
-        </a>
-      </ion-buttons>
+      <div class="item-end">
+        <h2>{{item.title}}</h2>
+        <p>{{item.description}}</p>
+        <ion-buttons end>
+          <button ion-button small clear icon-left (click)="download($event, item)">
+            <ion-icon name="download"></ion-icon>
+            <span>Download</span>
+          </button>
+          <button ion-button small clear icon-left (click)="toPlaylist($event, item)">
+            <ion-icon name="list"></ion-icon>
+            <span>To playlist</span>
+          </button>
+          <a ion-button small clear icon-left [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">
+            <ion-icon name="search"></ion-icon>
+            <span>Preview</span>
+          </a>
+        </ion-buttons>
+      </div>
     </ion-item>
   </ion-list>
   <button ion-button *ngIf="prevPageToken" (click)="onPrevClick()" style="float:left;">Prev</button>
