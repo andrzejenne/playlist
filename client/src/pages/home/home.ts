@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
 import {Storage} from "@ionic/storage";
-import {Content, NavController, Select} from 'ionic-angular';
+import {Content, NavController, Select, PopoverController} from 'ionic-angular';
 import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
@@ -11,6 +11,7 @@ import {ServerManagerService} from "../../services/ServerManagerService";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {SettingsPage} from "../settings/settings";
 import {SearchPage} from "../search/search";
+import {AddPlaylistComponent} from "./playlist/add-playlist.component";
 
 //import {PagesService} from "../../services/PagesService";
 
@@ -68,6 +69,10 @@ export class HomePage implements OnDestroy {
     containerStyle: {width: '100%'}
   };
 
+  public playlistTools: boolean = false;
+
+  public selected: Medium[] = [];
+
   private interval: number;
 
   private user: User;
@@ -88,6 +93,7 @@ export class HomePage implements OnDestroy {
     private storage: Storage,
     private screenOrientation: ScreenOrientation,
     // private errorReporting: ErrorReporting,
+    private popoverCtrl: PopoverController,
     private ref: ChangeDetectorRef
   ) {
     // window.onresize = (ev ) => {
@@ -125,14 +131,7 @@ export class HomePage implements OnDestroy {
   }
 
   onPlaylistChange(playlist: Playlist) {
-    this.playlist = playlist;
-
-    if (playlist.media) {
-      this.media = playlist.media;
-      this.preparePlaylist();
-      this.autoPlayIfInterrupted();
-      this.ref.detectChanges();
-    }
+    this.repo.selectPlaylist(playlist);
 
     this.storage.set('playlist', playlist.id);
   }
@@ -147,7 +146,7 @@ export class HomePage implements OnDestroy {
       player.src = '';
     }
 
-    this.repo.removeFromPlaylist(medium, this.playlist)
+    return this.repo.removeFromPlaylist(medium, this.playlist)
       .then(num => {
         this.ref.detectChanges();
         return num;
@@ -190,7 +189,7 @@ export class HomePage implements OnDestroy {
     this.removeContentMargin();
   }
 
-  playItem(item: Medium, seek = 0) {
+  playItemFirst(item: Medium, seek = 0) {
     if (!this.mediaPlaylist) {
       this.preparePlaylist();
     }
@@ -198,6 +197,25 @@ export class HomePage implements OnDestroy {
     let index = this.mediaPlaylist.indexOf(item);
     if (index > -1) {
       this.mediaPlaylist.splice(index, 1);
+    }
+
+    this.current = item;
+
+    let player = this.getPlayer();
+    player.src = this.servers.getUrl(this.current, this.mediaType);
+
+    player.currentTime = seek;
+
+    this.play();
+  }
+
+  playItem(item: Medium, seek = 0) {
+    this.mediaPlaylist = [].concat(this.media);
+
+    let index = this.mediaPlaylist.indexOf(item);
+    if (index > -1) {
+      this.playedPlaylist = this.mediaPlaylist.splice(0, index);
+      this.mediaPlaylist.splice(0, 1);
     }
 
     this.current = item;
@@ -332,6 +350,42 @@ export class HomePage implements OnDestroy {
     }
 
     return null;
+  }
+
+  toggleSelectItem(item: Medium) {
+    if (this.isSelected(item)) {
+      let index = this.selected.indexOf(item);
+      this.selected.splice(index, 1);
+    }
+    else {
+      this.selected.push(item);
+    }
+  }
+
+  isSelected(item: Medium) {
+    return this.selected.indexOf(item) > -1;
+  }
+
+  removeSelected() {
+    let removed = [];
+    this.selected
+      .forEach(
+        item => removed.push(this.removeItem(item)
+        )
+      );
+
+    return Promise.all(removed)
+      .then(val => this.selected = []);
+  }
+
+  selectAll() {
+    this.selected = [].concat(this.media);
+  }
+
+  onPlaylistAddClick(ev) {
+    this.popoverCtrl.create(AddPlaylistComponent)
+      .present({ev: ev});
+
   }
 
   private getThumbnail(item: Medium) {
@@ -477,6 +531,21 @@ export class HomePage implements OnDestroy {
 
   private onGetUser = (user: User) => {
     this.user = user;
+
+    this.repo.getPlaylists(user.id);
+
+    this.repo.playlist$.subscribe(playlist => {
+      if (playlist) {
+        this.playlist = playlist;
+        if (playlist.media) {
+          this.media = playlist.media;
+          this.preparePlaylist();
+          this.autoPlayIfInterrupted();
+          this.ref.detectChanges();
+        }
+        this.ref.detectChanges();
+      }
+    });
   };
 
   private static shuffleCallback = (a: any, b: any) => {

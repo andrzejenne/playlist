@@ -4,6 +4,7 @@ import {WampService} from "../../services/WampService";
 import {SettingsPage} from "../settings/settings";
 import {HomePage} from "../home/home";
 import {Storage} from '@ionic/storage';
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
   selector: 'welcome',
@@ -16,6 +17,8 @@ export class WelcomePage {
 
   public options: any = {};
 
+  private subs: Subscription[] = [];
+
   constructor(
     public navCtrl: NavController,
     private wamp: WampService,
@@ -27,15 +30,17 @@ export class WelcomePage {
 
   ionViewDidLoad() {
     // @todo - multi server support
-    this.wamp.onOpen.subscribe(session => {
-      this.connected = true;
-      this.ref.detectChanges();
-    });
+    this.subs.push(
+      this.wamp.onOpen.subscribe(session => {
+        this.connected = true;
+        this.ref.detectChanges();
+      }),
 
-    this.wamp.onClose.subscribe( session => {
-      this.connected = false;
-      this.ref.detectChanges();
-    });
+      this.wamp.onClose.subscribe(session => {
+        this.connected = false;
+        this.ref.detectChanges();
+      })
+    );
   }
 
   goToServers() {
@@ -43,7 +48,7 @@ export class WelcomePage {
   }
 
   goToPlaylist() {
-   // this.navCtrl.push(HomePage);
+    // this.navCtrl.push(HomePage);
     this.navCtrl.setRoot(HomePage);
   }
 
@@ -51,5 +56,9 @@ export class WelcomePage {
     this.options.autojump = checkbox.checked;
 
     this.storage.set('options', this.options);
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(s => s.unsubscribe());
   }
 }

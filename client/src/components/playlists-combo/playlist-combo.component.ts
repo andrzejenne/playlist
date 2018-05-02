@@ -18,15 +18,17 @@ import {Subscription} from "rxjs/Subscription";
   templateUrl: 'playlist-combo.component.html'
 })
 export class PlaylistComboComponent implements OnChanges, AfterViewInit, OnDestroy {
-  public playlist: Playlist;
-
-  public playlists: Playlist[] = [];
 
   @Input()
   user: User;
 
+  @Input()
+  playlist: Playlist;
+
+  public playlists: Playlist[] = [];
+
   @Output()
-  change = new EventEmitter<Playlist>();
+  selected = new EventEmitter<Playlist>();
 
   private subs: Subscription[] = [];
 
@@ -38,37 +40,34 @@ export class PlaylistComboComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   ngAfterViewInit() {
-      this.subs.push(
-        this.repo.playlists$.subscribe(playlists => {
-        console.info('playlists', playlists);
+    this.subs.push(
+      this.repo.playlists$.subscribe(playlists => {
         this.playlists = playlists;
-        if (playlists.length) {
-          this.repo.selectPlaylist(playlists[0]);
-        }
-        this.ref.detectChanges();
-      }),
-      this.repo.playlist$.subscribe(playlist => {
-        if (playlist) {
-          console.info('playlist', playlist);
-          this.playlist = playlist;
-          this.change.next(playlist);
-          // console.info('select playlist', playlist);
-        }
         this.ref.detectChanges();
       })
     );
 
-    if (this.user && this.user.id) {
-      this.loadPlaylists();
-    }
+    // if (this.user && this.user.id) {
+    //   this.loadPlaylists();
+    // }
+  }
+
+  onPlaylistChange() {
+    this.selected.next(this.playlist);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['user']) {
-      // console.info('user changed');
-      if (changes['user'].currentValue) {
-        // console.info('ngOnChanges@loadPlaylist');
-        this.repo.list(changes['user'].currentValue.id);
+    // if (changes['user']) {
+    //   // console.info('user changed');
+    //   if (changes['user'].currentValue) {
+    //     // console.info('ngOnChanges@loadPlaylist');
+    //     this.repo.list(changes['user'].currentValue.id);
+    //   }
+    // }
+    if (changes['playlist']) {
+      if (changes['playlist'].currentValue) {
+        this.playlist = changes['playlist'].currentValue;
+        this.ref.detectChanges();
       }
     }
   }
@@ -77,8 +76,9 @@ export class PlaylistComboComponent implements OnChanges, AfterViewInit, OnDestr
     this.subs.forEach(s => s.unsubscribe());
   }
 
-  private loadPlaylists() {
-    console.info('loadPlaylists');
-    this.repo.list(this.user.id);
-  }
+
+  // private loadPlaylists() {
+  //   console.info('loadPlaylists');
+  //   this.repo.list(this.user.id);
+  // }
 }

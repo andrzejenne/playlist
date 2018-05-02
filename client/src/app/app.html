@@ -10,27 +10,27 @@
     <ion-content>
       <ion-list>
         <button ion-item (click)="setPage('home');menu.close()">
-          <ion-icon name="list"></ion-icon>
+          <ion-icon item-start name="list"></ion-icon>
           Playlists</button>
         <button ion-item (click)="setPage('search');menu.close()">
-          <ion-icon name="search"></ion-icon>
+          <ion-icon item-start name="search"></ion-icon>
           Search
         </button>
         <button ion-item (click)="setPage('downloaded');menu.close()">
-          <ion-icon name="cloud-download"></ion-icon>
-          Downloaded
+          <ion-icon item-start name="cloud-download"></ion-icon>
+          In Cloud
         </button>
         <button ion-item (click)="setPage('downloadQueue');menu.close()">
-          <ion-icon name="download"></ion-icon>
-          Download Queue
+          <ion-icon item-start name="download"></ion-icon>
+          Actions Queue
         </button>
         <button ion-item (click)="goToSettings() && menu.close()">
-          <ion-icon name="settings"></ion-icon>
+          <ion-icon item-start name="settings"></ion-icon>
           Settings
         </button>
         <!--<button ion-item (click)="setPage('servers');menu.close()">Servers</button>-->
         <button ion-item menuClose="menu" detail-none>
-          <ion-icon name="close"></ion-icon>
+          <ion-icon item-start name="close"></ion-icon>
           Close Menu
         </button>
       </ion-list>

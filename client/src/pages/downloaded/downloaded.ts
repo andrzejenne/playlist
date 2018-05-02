@@ -32,8 +32,6 @@ export class DownloadedPage implements OnDestroy {
     height: number;
   };
 
-  private playlist: Playlist;
-
   private user: User;
 
   constructor(
@@ -60,10 +58,6 @@ export class DownloadedPage implements OnDestroy {
         this.ref.detectChanges();
       })
       .catch(this.errorReporter.report);
-  }
-
-  onPlaylistChange(playlist: Playlist) {
-    this.playlist = playlist;
   }
 
   addToPlaylist(item: Medium) {

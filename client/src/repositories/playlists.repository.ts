@@ -90,6 +90,8 @@ export class PlaylistsRepository extends WampRepository {
         .then(data => {
           this.playlists = data;
 
+          // debugger;
+
           if (data.length) {
             this.selectPlaylist(data[0]);
           }
@@ -118,11 +120,17 @@ export class PlaylistsRepository extends WampRepository {
       // console.info('select playlist', playlist);
       this.playlist$.next(playlist);
 
-      this.load(playlist)
+      console.info('selected', playlist);
+
+      return this.load(playlist)
         .then(media => {
           playlist.media = media;
           this.playlist$.next(playlist);
-        })
+        });
+
+    }
+    else {
+      return new Promise((resolve, reject) => resolve(playlist));
     }
   }
 

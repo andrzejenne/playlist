@@ -3,18 +3,7 @@
     <button ion-button menuToggle="menu">
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Downloaded</ion-title>
-
-    <playlists-combo (change)="onPlaylistChange($event)" [user]="user"></playlists-combo>
-      <!--<ion-item>-->
-        <!--<ion-label>Playlist</ion-label>-->
-        <!--<ion-select style="width: 200px;" #playlistSelect [(ngModel)]="playlist" (ionChange)="onPlaylistChange($event)"-->
-                    <!--interface="popover">-->
-          <!--<ion-option *ngFor="let playlist of playlists" [value]="playlist">-->
-            <!--{{playlist.name}}-->
-          <!--</ion-option>-->
-        <!--</ion-select>-->
-      <!--</ion-item>-->
+    <ion-title>In Cloud</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -34,9 +23,9 @@
           <ion-list>
             <ion-item *ngFor="let item of downloaded">
               <img class="thumbnail" item-start [src]="getThumbnailUrl(item)" width="160">
-              <div item-end>
+              <div class="item-content">
                 <h2>{{item.name}}</h2>
-                <p *ngIf="item.description">{{item.description}}</p>
+                <!--<p *ngIf="item.description">{{item.description}}</p>-->
                 <ion-buttons end>
                   <button ion-button color="primary" small icon-left clear (click)="addToPlaylist(item)">
                     <ion-icon name="list"></ion-icon>

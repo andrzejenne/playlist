@@ -43,7 +43,7 @@ export class WebAuthenticator extends Authenticator {
                 }
                 else {
                   reject('not authenticated');
-                  this.authenticateMe();
+                  this.authenticateMe(host);
                 }
               },
               error => {
@@ -64,8 +64,8 @@ export class WebAuthenticator extends Authenticator {
       .subscribe(response => resolve(true), error => reject(error));
   };
 
-  private authenticateMe() {
-    window.location.href = this.config.get('auth.requestUrl')
+  private authenticateMe(host: string) {
+    window.location.href = this.serverManager.getServerUrl(host, this.config.get('auth.requestUrl'))
       + '?'
       // + '?token=' + token
       + 'redirect=' + this.config.get('auth.redirectUrl')

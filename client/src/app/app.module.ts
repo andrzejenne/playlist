@@ -16,6 +16,8 @@ import {SearchPage} from '../pages/search/search';
 import {DurationPipe} from "../pipes/duration";
 
 import {BackgroundMode} from "@ionic-native/background-mode";
+import {Keyboard} from "@ionic-native/keyboard";
+import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {AuthError} from "../pages/auth/error";
 
 import {ServicesModule} from "./services.module";
@@ -23,9 +25,9 @@ import {DownloadedPage} from "../pages/downloaded/downloaded";
 import {DownloadQueueComponent} from "../components/download-queue/download-queue.component";
 import {VideoPlayerComponent} from "../components/video-player/video-player.component";
 import {ServerManagerComponent} from "../components/server-manager/server-manager.component";
-import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {SettingsPage} from "../pages/settings/settings";
 import {PlaylistComboComponent} from "../components/playlists-combo/playlist-combo.component";
+import {AddPlaylistComponent} from "../pages/home/playlist/add-playlist.component";
 
 @NgModule({
   declarations: [
@@ -41,6 +43,8 @@ import {PlaylistComboComponent} from "../components/playlists-combo/playlist-com
     VideoPlayerComponent,
     ServerManagerComponent,
     PlaylistComboComponent,
+
+    AddPlaylistComponent,
 
     DurationPipe
   ],
@@ -64,7 +68,9 @@ import {PlaylistComboComponent} from "../components/playlists-combo/playlist-com
     DownloadQueueComponent,
     VideoPlayerComponent,
     ServerManagerComponent,
-    PlaylistComboComponent
+    PlaylistComboComponent,
+
+    AddPlaylistComponent,
   ],
   providers: [
     StatusBar,
@@ -74,6 +80,7 @@ import {PlaylistComboComponent} from "../components/playlists-combo/playlist-com
     GooglePlus,
     BackgroundMode,
     ScreenOrientation,
+    Keyboard
   ]
 })
 export class AppModule {
