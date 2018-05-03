@@ -18,6 +18,8 @@ import {DurationPipe} from "../pipes/duration";
 import {BackgroundMode} from "@ionic-native/background-mode";
 import {Keyboard} from "@ionic-native/keyboard";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
+import {Insomnia} from '@ionic-native/insomnia';
+
 import {AuthError} from "../pages/auth/error";
 
 import {ServicesModule} from "./services.module";
@@ -82,7 +84,8 @@ import {AndroidFullScreen} from '@ionic-native/android-full-screen';
     BackgroundMode,
     ScreenOrientation,
     Keyboard,
-    AndroidFullScreen
+    AndroidFullScreen,
+    Insomnia
   ]
 })
 export class AppModule {

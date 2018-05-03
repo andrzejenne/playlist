@@ -126,7 +126,7 @@ export class HomePage implements OnDestroy {
     if (event.deltaX > 0) {
       this.playItemFirst(item);
     }
-    else if (event.deltaX < 0){
+    else if (event.deltaX < 0) {
       this.removeItem(item);
     }
     // console.info('item swipe', event);
@@ -449,6 +449,12 @@ export class HomePage implements OnDestroy {
     }
   }
 
+  private preparePlaylistDiff() {
+    this.mediaPlaylist.splice(0, this.mediaPlaylist.length);
+    this.mediaPlaylist.push(...this.media);
+    this.playedPlaylist = [];
+  }
+
   private playStatus() {
     this.colors.play = this.playerStatus.playing ? 'primary' : 'dark';
     this.playIcon = this.playerStatus.playing ? 'pause' : 'play';
@@ -557,17 +563,22 @@ export class HomePage implements OnDestroy {
   private onGetUser = (user: User) => {
     this.user = user;
 
-    this.repo.getPlaylists(user.id);
+    this.storage.get('playlist')
+      .then(playlistId => {
+        this.repo.getPlaylists(user.id, playlistId);
+      });
 
     this.repo.playlist$.subscribe(playlist => {
-      if (playlist) {
-        this.playlist = playlist;
-        if (playlist.media) {
-          this.media = playlist.media;
+      if (playlist && playlist.media) {
+        this.media = playlist.media;
+        if (!this.playlist) {
           this.preparePlaylist();
           this.autoPlayIfInterrupted();
-          this.ref.detectChanges();
         }
+        else {
+          this.preparePlaylistDiff();
+        }
+        this.playlist = playlist;
         this.ref.detectChanges();
       }
     });

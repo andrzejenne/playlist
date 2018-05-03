@@ -97,7 +97,7 @@ export class PlaylistsRepository extends WampRepository {
       });
   }
 
-  getPlaylists(uid: number) {
+  getPlaylists(uid: number, defaultId = null) {
     if (!this.playlists) {
       this.list(uid)
         .then(data => {
@@ -106,7 +106,15 @@ export class PlaylistsRepository extends WampRepository {
           // debugger;
 
           if (data.length) {
-            this.selectPlaylist(data[0]);
+            if (defaultId !== null) {
+              let playlists = data.filter(playlist => playlist.id === defaultId);
+              if (playlists.length) {
+                this.selectPlaylist(playlists[0]);
+              }
+            }
+            else {
+              this.selectPlaylist(data[0]);
+            }
           }
           else {
             this.create(uid, 'default')

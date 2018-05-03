@@ -14,6 +14,7 @@ import {SearchRepository} from "../repositories/search.repository";
 import {ServerManagerService} from "../services/ServerManagerService";
 import {IonicStorageModule} from "@ionic/storage";
 import {ErrorReporting} from "../services/ErrorReporting";
+import {FullscreenObserverService} from "../services/FullscreenObserverService";
 
 @NgModule({
   imports: [
@@ -29,6 +30,8 @@ import {ErrorReporting} from "../services/ErrorReporting";
     DownloadManager,
     ServerManagerService,
     ErrorReporting,
+
+    FullscreenObserverService,
 
     // repos
     WampRepository,

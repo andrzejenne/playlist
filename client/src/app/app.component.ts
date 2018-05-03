@@ -13,6 +13,8 @@ import {PagesService} from "../services/PagesService";
 import {WelcomePage} from "../pages/welcome/welcome";
 import {SettingsPage} from "../pages/settings/settings";
 import {HomePage} from "../pages/home/home";
+import {FullscreenObserverService} from "../services/FullscreenObserverService";
+import {Insomnia} from "@ionic-native/insomnia";
 
 @Component({
   templateUrl: 'app.html'
@@ -37,7 +39,9 @@ export class ThePlaylist {
     private auth: AuthService,
     private pages: PagesService,
     private storage: Storage,
-    private immersive: AndroidFullScreen
+    private immersive: AndroidFullScreen,
+    private fullscreenObserver: FullscreenObserverService,
+    private insomnia: Insomnia
   ) {
     this.getOptions();
 
@@ -51,16 +55,30 @@ export class ThePlaylist {
       backgroundMode.enable();
       this.immersive.isImmersiveModeSupported()
         .then(
-          response => this.immersive.leanMode()
+          response => this.immersive.immersiveMode()
         )
         .catch(error => {
           console.error(error);
         });
 
+      // @todo - add subscriptions for cleanup
       auth.logout$.subscribe(result => this.authenticated = !result);
 
       this.auth.isAuthenticated()
         .then(this.onIsAuthenticated);
+
+      this.fullscreenObserver.change$.subscribe(is => {
+        if (is) {
+          this.insomnia.keepAwake();
+          console.info('insomnia.keepAwake');
+          // this.alert.create({message: 'is fullscreen'}).present();
+        }
+        else {
+          this.insomnia.allowSleepAgain();
+          console.info('insomnia.sleepAgain');
+          // this.alert.create({message: 'not fullscreen'}).present();
+        }
+      })
 
       // this.serverManager.ready()
       //   .then(this.onServersReady);
