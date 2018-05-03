@@ -175,6 +175,7 @@ export class HomePage implements OnDestroy {
     } else if (elem.webkitRequestFullscreen) {
       elem.webkitRequestFullscreen();
     }
+    // @todo - disable fullscreen
   }
 
   playVideo() {
