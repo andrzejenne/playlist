@@ -2,6 +2,7 @@ import {Component, ViewChild} from '@angular/core';
 import {MenuController, NavController, Platform} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
+import {AndroidFullScreen} from '@ionic-native/android-full-screen';
 import {Storage} from '@ionic/storage';
 
 import {BackgroundMode} from "@ionic-native/background-mode";
@@ -35,7 +36,8 @@ export class ThePlaylist {
     // private wamp: WampService,
     private auth: AuthService,
     private pages: PagesService,
-    private storage: Storage
+    private storage: Storage,
+    private immersive: AndroidFullScreen
   ) {
     this.getOptions();
 
@@ -47,6 +49,13 @@ export class ThePlaylist {
 
       // @todo - enable background mode only when playing something
       backgroundMode.enable();
+      this.immersive.isImmersiveModeSupported()
+        .then(
+          response => this.immersive.leanMode()
+        )
+        .catch(error => {
+          console.error(error);
+        });
 
       auth.logout$.subscribe(result => this.authenticated = !result);
 
@@ -113,6 +122,7 @@ export class ThePlaylist {
         });
     }
   }
+
   // private onServersReady = (servers) => {
   //   if (Object.keys(servers).length) {
   //     this.serverManager.each(server => this.wamp.connect(server));

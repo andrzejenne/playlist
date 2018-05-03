@@ -7,7 +7,7 @@
                    <!--(ionBlur)="focused = false"></ion-searchbar>-->
     <div class="form-group search">
       <input type="search" [(ngModel)]="search" placeholder="Search" (focus)="getSearchHistory(); focused = true;"
-             (blur)="focused = false">
+             (blur)="focused = false" (keyup.enter)="searchItems()">
     </div>
     <ion-buttons end right>
       <button ion-button *ngIf="search" (click)="clearSearch()" icon-left>
@@ -35,35 +35,38 @@
     </ion-item>
   </ion-list>
 
-  <ion-list *ngIf="list && list.length" class="items">
-    <ion-item *ngFor="let item of list">
-      <div class="thumbnail" item-start>
-        <img [src]="item.thumbnail">
-        <span class="duration">{{item.duration | duration}}</span>
-      </div>
-      <div item-end>
-        <h2>{{item.title}}</h2>
-        <p style="max-height: 48px; overflow: hidden;">{{item.description}}</p>
-        <ion-buttons end>
-          <button ion-button small clear icon-left (click)="download($event, item)">
-            <ion-icon name="download"></ion-icon>
-            <span *ngIf="isLandscape()">Download</span>
-          </button>
-          <button ion-button small clear icon-left (click)="toPlaylist($event, item)">
-            <ion-icon name="list"></ion-icon>
-            <span *ngIf="isLandscape()">To playlist</span>
-          </button>
-          <a ion-button small clear icon-left [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">
-            <ion-icon name="search"></ion-icon>
-            <span *ngIf="isLandscape()">Preview</span>
-          </a>
-        </ion-buttons>
-      </div>
-    </ion-item>
-  </ion-list>
-  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-    <ion-infinite-scroll-content></ion-infinite-scroll-content>
-  </ion-infinite-scroll>
+  <ng-template [ngIf]="list && list.length">
+    <ion-list class="items">
+      <ion-item *ngFor="let item of list">
+        <div class="thumbnail" item-start>
+          <img [src]="item.thumbnail">
+          <span class="duration">{{item.duration | duration}}</span>
+        </div>
+        <div class="item-content">
+          <h2>{{item.title}}</h2>
+          <!--<p style="max-height: 48px; overflow: hidden;">{{item.description}}</p>-->
+          <ion-buttons end>
+            <button ion-button small clear icon-left (click)="download($event, item)">
+              <ion-icon name="download"></ion-icon>
+              <span *ngIf="isLandscape()">Download</span>
+            </button>
+            <button ion-button small clear icon-left (click)="toPlaylist($event, item)">
+              <ion-icon name="list"></ion-icon>
+              <span *ngIf="isLandscape()">To playlist</span>
+            </button>
+            <a ion-button small clear icon-left [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">
+              <ion-icon name="search"></ion-icon>
+              <span *ngIf="isLandscape()">Preview</span>
+            </a>
+          </ion-buttons>
+        </div>
+      </ion-item>
+    </ion-list>
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+      <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </ng-template>
+
   <!--<button ion-button *ngIf="prevPageToken" (click)="onPrevClick()" style="float:left;">Prev</button>-->
   <!--<button ion-button *ngIf="nextPageToken" (click)="onNextClick()" style="float:right;">Next</button>-->
 </ion-content>

@@ -1,6 +1,5 @@
 import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
 import {Content, NavController, Platform} from 'ionic-angular';
-import {Playlist} from "../../models/playlist";
 import {DownloadedRepository} from "../../repositories/downloaded.repository";
 import {Medium} from "../../models/medium";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
@@ -16,11 +15,15 @@ import {AuthService} from "../../services/AuthService";
   templateUrl: 'downloaded.html'
 })
 export class DownloadedPage implements OnDestroy {
-  public downloaded: any;
+  public downloaded: Medium[];
+
+  public list: Medium[];
 
   public subs: Subscription[] = [];
 
   public player = false;
+
+  public search = '';
 
   @ViewChild('content') contentContainer: Content;
 
@@ -55,6 +58,7 @@ export class DownloadedPage implements OnDestroy {
     this.repo.list()
       .then(data => {
         this.downloaded = data;
+        this.list = [].concat(data);
         this.ref.detectChanges();
       })
       .catch(this.errorReporter.report);
@@ -134,5 +138,16 @@ export class DownloadedPage implements OnDestroy {
   }
 
   isLandscape = () => this.platform.isLandscape();
+
+  filter() {
+    if (this.search) {
+      this.list = this.downloaded.filter(item => {
+        return item && item.name && item.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
+      });
+    }
+    else {
+      this.list = [].concat(this.downloaded);
+    }
+  }
 
 }

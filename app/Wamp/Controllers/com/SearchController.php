@@ -60,11 +60,8 @@ class SearchController extends Controller
                 $search = new Search();
                 $search->fill(['query' => $query]);
                 $search->user_id = $args[0]->uid;
-                $search->save();
             }
-            else {
-                $search->save(); // updates updated at
-            }
+            $search->save();
         }
 
         return $results;

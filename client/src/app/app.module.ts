@@ -28,6 +28,7 @@ import {ServerManagerComponent} from "../components/server-manager/server-manage
 import {SettingsPage} from "../pages/settings/settings";
 import {PlaylistComboComponent} from "../components/playlists-combo/playlist-combo.component";
 import {AddPlaylistComponent} from "../pages/home/playlist/add-playlist.component";
+import {AndroidFullScreen} from '@ionic-native/android-full-screen';
 
 @NgModule({
   declarations: [
@@ -80,7 +81,8 @@ import {AddPlaylistComponent} from "../pages/home/playlist/add-playlist.componen
     GooglePlus,
     BackgroundMode,
     ScreenOrientation,
-    Keyboard
+    Keyboard,
+    AndroidFullScreen
   ]
 })
 export class AppModule {

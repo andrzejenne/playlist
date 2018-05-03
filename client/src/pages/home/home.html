@@ -68,7 +68,7 @@
   <ion-list class="items">
     <ion-list-header>Items</ion-list-header>
 
-    <ion-item *ngFor="let item of playedPlaylist" class="played" (press)="toggleSelectItem(item)">
+    <ion-item *ngFor="let item of playedPlaylist" class="played" (press)="toggleSelectItem(item)" (swipe)="onItemSwipe(item, $event)">
       <ion-thumbnail item-start [class.selected]="isSelected(item)" (tap)="toggleSelectItem(item)">
         <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
         <ion-icon *ngIf="isSelected(item)" name="checkmark"></ion-icon>
@@ -89,7 +89,7 @@
       </div>
     </ion-item>
 
-    <ion-item *ngIf="current" class="current" (press)="toggleSelectItem(current)">
+    <ion-item *ngIf="current" class="current" (press)="toggleSelectItem(current)" (swipe)="onItemSwipe(current, $event)">
       <ion-thumbnail item-start [class.selected]="isSelected(current)" (tap)="toggleSelectItem(current)">
         <img [src]="getThumbnailUrl(current)" class="fit-thumbnail">
         <ion-icon *ngIf="isSelected(current)" name="checkmark"></ion-icon>
@@ -105,7 +105,7 @@
       </div>
     </ion-item>
 
-    <ion-item *ngFor="let item of mediaPlaylist" (press)="toggleSelectItem(item)">
+    <ion-item *ngFor="let item of mediaPlaylist" (press)="toggleSelectItem(item)" (swipe)="onItemSwipe(item, $event)">
       <ion-thumbnail item-start [class.selected]="isSelected(item)" (tap)="toggleSelectItem(item)">
         <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
         <ion-icon *ngIf="isSelected(item)" name="checkmark"></ion-icon>

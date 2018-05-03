@@ -122,6 +122,17 @@ export class HomePage implements OnDestroy {
     );
   }
 
+  onItemSwipe(item: Medium, event: WheelEvent) {
+    if (event.deltaX > 0) {
+      this.playItemFirst(item);
+    }
+    else if (event.deltaX < 0){
+      this.removeItem(item);
+    }
+    // console.info('item swipe', event);
+  }
+
+
   goToSearchPage() {
     this.navCtrl.push(SearchPage);
   }

@@ -5,6 +5,16 @@
     </button>
     <ion-title>In Cloud</ion-title>
   </ion-navbar>
+  <ion-toolbar>
+    <ion-item>
+      <ion-icon item-start name="search"></ion-icon>
+      <ion-input icon-left type="text" [(ngModel)]="search" (ionChange)="filter()">
+      </ion-input>
+      <button item-end ion-button clear *ngIf="search" (click)="search=''">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content #content>
@@ -21,7 +31,7 @@
       <ion-col>
         <ion-content>
           <ion-list>
-            <ion-item *ngFor="let item of downloaded">
+            <ion-item *ngFor="let item of list">
               <img class="thumbnail" item-start [src]="getThumbnailUrl(item)" width="160">
               <div class="item-content">
                 <h2>{{item.name}}</h2>
