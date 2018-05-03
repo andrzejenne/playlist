@@ -382,10 +382,23 @@ export class HomePage implements OnDestroy {
     this.selected = [].concat(this.media);
   }
 
+  toggleSelectAll() {
+    if (!this.selected.length) {
+      this.selectAll();
+    }
+    else {
+      this.selected = [];
+    }
+  }
+
   onPlaylistAddClick(ev) {
     this.popoverCtrl.create(AddPlaylistComponent)
       .present({ev: ev});
 
+  }
+
+  removePlaylist(playlist: Playlist) {
+    this.repo.remove(playlist);
   }
 
   private getThumbnail(item: Medium) {

@@ -85,9 +85,29 @@ class PlaylistsController extends Controller
 
     /**
      * @param $args
+     * @return int
+     * @throws \Exception
+     */
+    public function remove($args)
+    {
+        /** @var Playlist $playlist */
+        $playlist = Playlist::whereId($args[0]->pid)
+            ->first();
+
+//        try {
+            return $playlist->delete();
+//        } catch (\Exception $e) {
+//            return ['error' => true, 'message' => $e->getMessage()];
+//        }
+        // @todo - reorder
+    }
+
+
+    /**
+     * @param $args
      * @return bool
      */
-    public function add($args)
+    public function addMedium($args)
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::whereId($args[0]->pid)
@@ -95,7 +115,8 @@ class PlaylistsController extends Controller
 
         $playlist->media()->attach($args[0]->mid, ['ordering' => isset($args[0]->ordering) ? $args[0]->ordering : 0]);
 
-        return Medium::whereId($args[0]->mid)->with(Medium::REL_PROVIDER, Medium::REL_FILES . '.' . MediaFile::REL_TYPE)->first();
+        return Medium::whereId($args[0]->mid)->with(Medium::REL_PROVIDER,
+            Medium::REL_FILES . '.' . MediaFile::REL_TYPE)->first();
         // @todo - reorder
     }
 
@@ -103,7 +124,7 @@ class PlaylistsController extends Controller
      * @param $args
      * @return int
      */
-    public function remove($args)
+    public function removeMedium($args)
     {
         /** @var Playlist $playlist */
         $playlist = Playlist::whereId($args[0]->pid)

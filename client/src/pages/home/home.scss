@@ -63,5 +63,16 @@ page-home {
     }
   }
 
+  ion-toolbar {
+    div.flex {
+      display: flex;
+      width: 100%;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+  }
+
 }
 

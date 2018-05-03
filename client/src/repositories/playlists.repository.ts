@@ -29,6 +29,19 @@ export class PlaylistsRepository extends WampRepository {
     return this.call<Medium[]>('com.playlists.media', [{pid: playlist.id}]);
   }
 
+  public remove(playlist: Playlist) {
+    return this.call<Medium[]>('com.playlists.remove', [{pid: playlist.id}])
+      .then(num => {
+        let index = this.playlists.indexOf(playlist);
+        if (index > -1) {
+          this.playlists.splice(index, 1);
+          this.playlists$.next(this.playlists);
+
+          return num;
+        }
+      });
+  }
+
   public create(uid: number, name: string) {
     return this.call<Playlist>('com.playlists.create', [{uid: uid, name: name}])
       .then(playlist => {
@@ -42,7 +55,7 @@ export class PlaylistsRepository extends WampRepository {
   }
 
   public addToPlaylist(item: Medium, playlist = this.playlist) {
-    return this.call<Medium>('com.playlists.add', [{pid: playlist.id, mid: item.id}])
+    return this.call<Medium>('com.playlists.addMedium', [{pid: playlist.id, mid: item.id}])
       .then(medium => {
         if (!playlist.media) {
           playlist.media = [];
@@ -67,7 +80,7 @@ export class PlaylistsRepository extends WampRepository {
   }
 
   public removeFromPlaylist(item: Medium, playlist = this.playlist) {
-    return this.call<number>('com.playlists.remove', [{pid: playlist.id, mid: item.id}])
+    return this.call<number>('com.playlists.removeMedium', [{pid: playlist.id, mid: item.id}])
       .then(number => {
         let index = playlist.media.indexOf(item);
         if (index > -1) {

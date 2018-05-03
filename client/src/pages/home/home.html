@@ -29,22 +29,31 @@
     </ion-buttons>
   </ion-navbar>
   <ion-toolbar *ngIf="playlistTools">
-    <button ion-button icon-left clear (click)="onPlaylistAddClick($event)">
-      <ion-icon name="add-circle" color="primary"></ion-icon>
-      Add new
-    </button>
+    <div class="flex">
+      <ion-col align-self-start>
+        <button ion-button icon-left clear (click)="onPlaylistAddClick($event)">
+          <ion-icon name="add-circle" color="primary"></ion-icon>
+          Add new
+        </button>
 
-    <button [disabled]="!media.length" ion-button icon-left clear (click)="selectAll()">
-      <ion-icon name="checkmark-circle" color="primary"></ion-icon>
-      Select All
-    </button>
+        <button [disabled]="!media.length" ion-button icon-left clear (click)="toggleSelectAll()">
+          <ion-icon name="checkmark-circle" color="primary"></ion-icon>
+          Toggle Select All
+        </button>
+      </ion-col>
+      <ion-col class="text-right" align-self-end>
+        <button ion-button icon-left clear color="danger" (click)="removePlaylist(playlist)">
+          <ion-icon name="trash"></ion-icon>
+          Remove Playlist
+        </button>
+
+        <button ion-button clear (click)="playlistTools = false">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-col>
+    </div>
   </ion-toolbar>
-  <ion-toolbar *ngIf="selected.length">
-    <button ion-button icon-left clear (click)="removeSelected()" color="danger">
-      <ion-icon name="trash"></ion-icon>
-      Remove Selected
-    </button>
-  </ion-toolbar>
+
 </ion-header>
 
 <ion-content #content>
@@ -117,6 +126,12 @@
       </div>
     </ion-item>
   </ion-list>
+
+  <ion-fab right bottom *ngIf="selected.length">
+    <button ion-fab color="danger" (tap)="removeSelected()">
+      <ion-icon name="trash"></ion-icon>
+    </button>
+  </ion-fab>
 </ion-content>
 
 <!--<ion-footer>-->
