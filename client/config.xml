@@ -20,6 +20,7 @@
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="0" />
     <platform name="android">
+        <preference name="android-minSdkVersion" value="19" />
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
@@ -85,10 +86,10 @@
         <variable name="REVERSED_CLIENT_ID" value="com.googleusercontent.apps.744265825715-4qemakkaiodqunirslls04hbl7p0l6j0" />
     </plugin>
     <plugin name="cordova-plugin-background-mode" spec="^0.7.2" />
-    <plugin name="cordova-sqlite-storage" spec="^2.3.1" />
     <allow-navigation href="http://192.168.1.148:8101" />
     <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1" />
     <plugin name="cordova-plugin-fullscreen" spec="^1.2.0" />
     <plugin name="cordova-plugin-insomnia" spec="^4.3.0" />
-    <engine name="android" spec="7.0.0" />
+    <plugin name="cordova-sqlite-storage" spec="^2.3.1" />
+    <engine name="android" spec="^7.0.0" />
 </widget>
