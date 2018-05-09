@@ -1,0 +1,48 @@
+$color: #eee;
+$knobColor: #2a88bd;
+
+.day-mode {
+
+  .primary-toolbar,
+  ion-header {
+    color: $color !important;
+
+    .toolbar-background {
+      border-color: #cc4400 !important;
+      background: #ff6600 !important;
+    }
+
+    .toolbar-title,
+    .label,
+    ion-select,
+    ion-icon {
+      color: $color !important;
+    }
+  }
+
+  ion-footer {
+    color: $color !important;
+
+    .toolbar-background {
+      border-color: #cc4400 !important;
+      background: #ff6600 !important;
+    }
+
+    .toolbar-title,
+    .label,
+    ion-select {
+      color: $color !important;
+    }
+
+    .range-bar-active,
+    .range-knob {
+      background-color: $knobColor;
+    }
+
+  }
+
+  select {
+    option { color: #222; }
+  }
+
+}
