@@ -44,6 +44,7 @@ class LibraryDiscover extends Command
      * Execute the console command.
      *
      * @return mixed
+     * @throws \getid3_exception
      */
     public function handle()
     {
