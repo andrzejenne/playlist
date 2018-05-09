@@ -53,6 +53,10 @@ export class ThePlaylist {
 
       // @todo - enable background mode only when playing something
       backgroundMode.enable();
+      backgroundMode.configure({
+        silent: true
+      });
+
       this.immersive.isImmersiveModeSupported()
         .then(
           response => this.immersive.immersiveMode()

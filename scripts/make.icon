@@ -1,0 +1,8 @@
+#!/bin/sh
+
+convert ./resources/icons/playlist.png -resize 72 ./client/resources/android/icon/drawable-hdpi-icon.png  
+convert ./resources/icons/playlist.png -resize 36 ./client/resources/android/icon/drawable-ldpi-icon.png  
+convert ./resources/icons/playlist.png -resize 48 ./client/resources/android/icon/drawable-mdpi-icon.png  
+convert ./resources/icons/playlist.png -resize 96 ./client/resources/android/icon/drawable-xhdpi-icon.png  
+convert ./resources/icons/playlist.png -resize 144 ./client/resources/android/icon/drawable-xxhdpi-icon.png  
+convert ./resources/icons/playlist.png -resize 192 ./client/resources/android/icon/drawable-xxxhdpi-icon.png

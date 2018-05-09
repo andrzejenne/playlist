@@ -51,6 +51,18 @@ class YouTubeService implements MediaProviderContract
     }
 
     /**
+     *
+     */
+    public function getConfig()
+    {
+        return [
+            self::KEY_SEARCH => true,
+            self::KEY_DELETE => true
+        ];
+    }
+
+
+    /**
      * @param $results
      * @return \StdClass
      * @throws \Exception
