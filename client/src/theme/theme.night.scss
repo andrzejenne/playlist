@@ -1,0 +1,72 @@
+$color: #aaa;
+
+$knobColor: #2a88bd;
+
+.night-mode {
+  .content {
+    background: #000011 !important;
+    .label,
+    ion-icon {
+      color: $color;
+    }
+  }
+
+  ion-header {
+
+    .toolbar-background {
+      border-color: #000022 !important;
+      background: #111122 !important;
+    }
+
+    color: $color !important;
+
+    .toolbar-title,
+    .label,
+    ion-select,
+    ion-icon {
+      color: $color !important;
+    }
+
+    .toggle {
+      .toggle-inner {
+        background-color: #aaa;
+      }
+      .toggle-icon {
+        background-color: #444;
+      }
+    }
+  }
+
+  ion-footer {
+    color: $color !important;
+
+    .toolbar-background {
+      border-color: #000022 !important;
+      background: #111122 !important;
+    }
+
+    .toolbar-title,
+    .label,
+    ion-select {
+      color: $color !important;
+    }
+
+    .toggle {
+      .toggle-inner {
+        background-color: #aaa;
+      }
+      .toggle-icon {
+        background-color: #444;
+      }
+    }
+
+    .range-bar-active,
+    .range-knob {
+      background-color: $knobColor;
+    }
+  }
+
+  select {
+    option { background: #001; color: #aaa; }
+  }
+}

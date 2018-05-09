@@ -28,12 +28,15 @@ $app-direction: ltr;
 // The "primary" color is the only required color in the map.
 
 $colors: (
-        primary: #488aff,
+        primary: #ff6600,
         secondary: #32db64,
         danger: #f53d3d,
         light: #f4f4f4,
         dark: #222
 );
+
+$list-background-color: transparent;
+$list-md-border-color: transparent;
 
 // App iOS Variables
 // --------------------------------------------------
@@ -55,6 +58,9 @@ $colors: (
 // default are overridden.
 
 @import "ionic.theme.default";
+
+@import 'theme.day';
+@import 'theme.night';
 
 // Ionicons
 // --------------------------------------------------

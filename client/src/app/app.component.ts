@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, HostBinding, ViewChild} from '@angular/core';
 import {MenuController, NavController, Platform} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
@@ -15,6 +15,9 @@ import {SettingsPage} from "../pages/settings/settings";
 import {HomePage} from "../pages/home/home";
 import {FullscreenObserverService} from "../services/FullscreenObserverService";
 import {Insomnia} from "@ionic-native/insomnia";
+import {ServerManagerService} from "../services/ServerManagerService";
+import {ConfigService} from "../services/ConfigService";
+import {SettingsContract} from "../services/contracts/SettingsContract";
 
 @Component({
   templateUrl: 'app.html'
@@ -27,7 +30,20 @@ export class ThePlaylist {
   @ViewChild('content') nav: NavController;
   @ViewChild('menu') menu: MenuController;
 
-  options: any; // @todo interface
+  server: string;
+
+  servers: string[] = [];
+
+  serverOptions: {value: any, label: string}[] = [];
+
+  dayMode: boolean = true;
+
+  dayModeIcon: string = 'sunny';
+
+  @HostBinding('class')
+  dayModeClass: string = 'day-mode';
+
+  private settings: SettingsContract;
 
   constructor(
     platform: Platform,
@@ -41,10 +57,10 @@ export class ThePlaylist {
     private storage: Storage,
     private immersive: AndroidFullScreen,
     private fullscreenObserver: FullscreenObserverService,
-    private insomnia: Insomnia
+    private insomnia: Insomnia,
+    private serverManager: ServerManagerService,
+    private config: ConfigService
   ) {
-    this.getOptions();
-
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -82,7 +98,18 @@ export class ThePlaylist {
           console.info('insomnia.sleepAgain');
           // this.alert.create({message: 'not fullscreen'}).present();
         }
-      })
+      });
+
+      this.serverManager.ready()
+        .then(servers => {
+          this.servers = Object.keys(servers);
+          this.serverOptions = this.servers.map(
+            host => {
+              return {value: host, label: host.split('.')[0]}
+            }
+          )
+
+        });
 
       // this.serverManager.ready()
       //   .then(this.onServersReady);
@@ -105,13 +132,29 @@ export class ThePlaylist {
       .then(finished => this.menu.close());
   }
 
+  onDayModeChange(event) {
+    this.dayModeIcon = this.dayMode ? 'sunny': 'moon';
+    this.dayModeClass = this.dayMode ? 'day-mode': 'night-mode';
+    this.settings.dayMode.value = this.dayMode;
+    this.config.save(this.settings);
+  }
+
+  onServerChange(event) {
+    console.info(event, this.server);
+  }
+
   private onAuthenticated(response) {
     this.authenticated = true;
 
-    this.getOptions()
-      .then(options => {
-        options.autojump && (this.rootPage = HomePage);
-      });
+    this.config.settings$.subscribe(settings => {
+      this.rootPage = HomePage;
+      if (settings) {
+        this.settings = settings;
+        if (settings.dayMode) {
+          this.dayMode = settings.dayMode.value;
+        }
+      }
+    });
   }
 
   private onAuthenticationError(error) {
@@ -131,19 +174,6 @@ export class ThePlaylist {
       this.onAuthenticated(true);
     }
   };
-
-  private getOptions() {
-    if (this.options) {
-      return new Promise(resolve => resolve(this.options));
-    }
-    else {
-      return this.storage.get('options')
-        .then(options => {
-          this.options = options || {};
-          return this.options;
-        });
-    }
-  }
 
   // private onServersReady = (servers) => {
   //   if (Object.keys(servers).length) {

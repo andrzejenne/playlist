@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
 import {Storage} from "@ionic/storage";
 import {Content, NavController, Select, PopoverController} from 'ionic-angular';
 import {AuthService} from "../../services/AuthService";
@@ -12,6 +12,8 @@ import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {SettingsPage} from "../settings/settings";
 import {SearchPage} from "../search/search";
 import {AddPlaylistComponent} from "./playlist/add-playlist.component";
+import {SettingsContract} from "../../services/contracts/SettingsContract";
+import {ConfigService} from "../../services/ConfigService";
 
 //import {PagesService} from "../../services/PagesService";
 
@@ -38,15 +40,17 @@ export class HomePage implements OnDestroy {
     audio: true,
   };
 
-  public colors = {
-    video: 'dark',
-    audio: 'primary',
-    prev: 'dark',
-    next: 'dark',
-    play: 'dark',
-    shuffle: 'dark',
-    repeat: 'dark'
+  public cls = {
+    video: 'inactive',
+    audio: 'active',
+    prev: 'inactive',
+    next: 'inactive',
+    play: 'inactive',
+    shuffle: 'inactive',
+    repeat: 'inactive'
   };
+
+  public settings: SettingsContract = null;
 
   playIcon: string = 'play';
 
@@ -94,7 +98,8 @@ export class HomePage implements OnDestroy {
     private screenOrientation: ScreenOrientation,
     // private errorReporting: ErrorReporting,
     private popoverCtrl: PopoverController,
-    private ref: ChangeDetectorRef
+    private config: ConfigService,
+    private ref: ChangeDetectorRef,
   ) {
     // window.onresize = (ev ) => {
     //   console.info('resize');
@@ -185,8 +190,8 @@ export class HomePage implements OnDestroy {
     this.playerStatus.video = true;
     this.playerStatus.audio = false;
 
-    this.colors.audio = 'dark';
-    this.colors.video = 'primary';
+    this.cls.audio = 'inactive';
+    this.cls.video = 'active';
 
     this.setContentMarginIfVideo();
   }
@@ -195,8 +200,8 @@ export class HomePage implements OnDestroy {
     this.playerStatus.video = false;
     this.playerStatus.audio = true;
 
-    this.colors.audio = 'primary';
-    this.colors.video = 'dark';
+    this.cls.audio = 'active';
+    this.cls.video = 'inactive';
 
     this.removeContentMargin();
   }
@@ -263,7 +268,7 @@ export class HomePage implements OnDestroy {
 
   toggleRepeat() {
     this.playerStatus.repeat = !this.playerStatus.repeat;
-    this.colors.repeat = this.playerStatus.repeat ? 'primary' : 'dark';
+    this.cls.repeat = this.playerStatus.repeat ? 'active' : 'inactive';
   }
 
   toggleShuffle() {
@@ -271,7 +276,7 @@ export class HomePage implements OnDestroy {
       this.preparePlaylist();
     }
     this.playerStatus.shuffle = !this.playerStatus.shuffle;
-    this.colors.shuffle = this.playerStatus.shuffle ? 'primary' : 'dark';
+    this.cls.shuffle = this.playerStatus.shuffle ? 'active' : 'inactive';
     if (this.playerStatus.shuffle) {
       this.shuffle(this.mediaPlaylist);
     }
@@ -456,7 +461,7 @@ export class HomePage implements OnDestroy {
   }
 
   private playStatus() {
-    this.colors.play = this.playerStatus.playing ? 'primary' : 'dark';
+    this.cls.play = this.playerStatus.playing ? 'active' : 'inactive';
     this.playIcon = this.playerStatus.playing ? 'pause' : 'play';
   }
 
@@ -568,20 +573,29 @@ export class HomePage implements OnDestroy {
         this.repo.getPlaylists(user.id, playlistId);
       });
 
-    this.repo.playlist$.subscribe(playlist => {
-      if (playlist && playlist.media) {
-        this.media = playlist.media;
-        if (!this.playlist) {
-          this.preparePlaylist();
-          this.autoPlayIfInterrupted();
-        }
-        else {
-          this.preparePlaylistDiff();
-        }
-        this.playlist = playlist;
-        this.ref.detectChanges();
+    this.config.settings$.subscribe(settings => {
+        this.settings = settings;
+
+        this.repo.playlist$.subscribe(playlist => {
+          if (playlist && playlist.media) {
+            this.media = playlist.media;
+            if (!this.playlist) {
+              this.preparePlaylist();
+              if (this.settings.player.autoplay.lastPosition) {
+                this.autoPlayIfInterrupted();
+              }
+            }
+            else {
+              this.preparePlaylistDiff();
+            }
+            this.playlist = playlist;
+            this.ref.detectChanges();
+          }
+        });
       }
-    });
+    );
+
+
   };
 
   private static shuffleCallback = (a: any, b: any) => {

@@ -11,4 +11,21 @@
     Server Settings
   </ion-label>
   <server-manager-component></server-manager-component>
+
+  <ion-label>
+    Player Settings
+  </ion-label>
+
+  <ion-list *ngIf="settings">
+    <ion-item>
+      <ion-label>Auto play from last known position</ion-label>
+      <ion-checkbox [(ngModel)]="settings.player.autoplay.lastPosition">
+      </ion-checkbox>
+    </ion-item>
+  </ion-list>
+
+  <button ion-button color="primary" (tap)="onApplyTap()">
+    Apply Changes
+  </button>
+
 </ion-content>

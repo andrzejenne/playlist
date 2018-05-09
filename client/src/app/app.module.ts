@@ -31,6 +31,8 @@ import {SettingsPage} from "../pages/settings/settings";
 import {PlaylistComboComponent} from "../components/playlists-combo/playlist-combo.component";
 import {AddPlaylistComponent} from "../pages/home/playlist/add-playlist.component";
 import {AndroidFullScreen} from '@ionic-native/android-full-screen';
+import {SelectComponent} from "../components/select/select.component";
+import {DayModeDirective} from "../directives/day-mode.directive";
 
 @NgModule({
   declarations: [
@@ -48,6 +50,9 @@ import {AndroidFullScreen} from '@ionic-native/android-full-screen';
     PlaylistComboComponent,
 
     AddPlaylistComponent,
+
+    SelectComponent,
+    DayModeDirective,
 
     DurationPipe
   ],

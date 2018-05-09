@@ -1,0 +1,10 @@
+<div class="form-group">
+  <label *ngIf="label" ion-text [color]="color"></label>
+  <ion-icon *ngIf="icon" [name]="icon" [color]="iconColor"></ion-icon>
+
+  <select [(ngModel)]="model" ion-text [color]="color">
+    <option *ngFor="let option of options" [value]="option.value" ion-text color="dark">
+      {{option.label}}
+    </option>
+  </select>
+</div>
