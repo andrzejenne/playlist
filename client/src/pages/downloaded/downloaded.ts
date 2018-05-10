@@ -10,6 +10,7 @@ import {ServerManagerService} from "../../services/ServerManagerService";
 import {User} from "../../models/user";
 import {AuthService} from "../../services/AuthService";
 import {SelectorService} from "../../services/SelectorService";
+import {ElementReference} from "../../models/ElementReference";
 
 @Component({
   selector: 'page-downloaded',
@@ -31,12 +32,16 @@ export class DownloadedPage implements OnDestroy {
 
   @ViewChild('content') contentContainer: Content;
 
-  public video: {
-    src: string;
-    type: string;
-    thumbnail: string;
-    title: string;
-    height: number;
+  @ViewChild('videoPlayer') videoPlayer: ElementReference<HTMLVideoElement>;
+
+  video: {
+    width?: number;
+    height?: number;
+    containerStyle?: any;
+  } = {
+    width: 0,
+    height: 0,
+    containerStyle: {width: '100%'}
   };
 
   private user: User;
@@ -67,6 +72,8 @@ export class DownloadedPage implements OnDestroy {
         this.ref.detectChanges();
       })
       .catch(this.errorReporter.report);
+
+    this.initPlayer();
   }
 
   addToPlaylist(item: Medium) {
@@ -101,13 +108,9 @@ export class DownloadedPage implements OnDestroy {
 
   playVideo(item: Medium) {
     this.player = true;
-    this.video = {
-      src: this.servers.getUrl(item, 'video'),
-      thumbnail: this.servers.getUrl(item, 'thumbnail') + '?get',
-      type: 'video/mp4',
-      title: item.name,
-      height: this.contentContainer.getContentDimensions().contentHeight / 2
-    };
+
+    this.videoPlayer.nativeElement.src = this.servers.getUrl(item, 'video');
+    this.videoPlayer.nativeElement.play();
 
     this.ref.detectChanges();
     // let data = {
@@ -118,11 +121,13 @@ export class DownloadedPage implements OnDestroy {
     //   width: 600// @todo - getter
     // };
     // this.modalController.create(VideoPlayerComponent, data).present();
+    this.setContentMarginIfVideo();
   }
 
   closeVideo() {
     this.player = false;
-    this.video = null;
+    this.video = {};
+    this.removeContentMargin();
   }
 
   hasVideo(item: Medium) {
@@ -159,15 +164,68 @@ export class DownloadedPage implements OnDestroy {
     let removed = [];
     this.selector.selected
       .forEach(
-        item => removed.push(this.removeItem(item)
+        item => removed.push(
+          this.removeItem(item)
         )
       );
 
     return Promise.all(removed)
-      .then(val => this.selector.clearSelection());
+      .then(val => {
+        this.selector.clearSelection();
+        this.ref.detectChanges();
+      });
   }
 
   private removeItem(item: Medium) {
-    this.repo.remove(item);
+    return this.repo.remove(item)
+      .then(number => {
+        let index = this.list.indexOf(item);
+        if (index > -1) {
+          this.list.splice(index, 1);
+        }
+        return number;
+      });
+  }
+
+  private initPlayer() {
+    this.videoPlayer.nativeElement.onended = this.onPlayerPlayEnded;
+    this.videoPlayer.nativeElement.onloadedmetadata = this.onPlayerMetadata;
+    // this.audioPlayer.nativeElement.onended = this.onPlayerPlayEnded;
+  }
+
+  private onPlayerPlayEnded = (ev: MediaStreamErrorEvent) => {
+    this.closeVideo();
+  };
+
+  private onPlayerMetadata = (ev: MediaStreamErrorEvent) => {
+    console.info('loadedMetaData', ev, this.videoPlayer.nativeElement.videoWidth, this.videoPlayer.nativeElement.videoHeight, this.contentContainer.contentWidth, this.contentContainer.contentHeight);
+    let player = this.videoPlayer.nativeElement;
+    let aspect = player.videoWidth / player.videoHeight;
+    this.video.width = Math.min(player.videoWidth, this.contentContainer.contentWidth);
+    this.video.height = this.video.width / aspect;
+
+    let contentHeight = this.contentContainer.contentHeight;
+    let halfHeight = contentHeight / 2;
+    if (this.video.height > halfHeight) {
+      this.video.height = halfHeight;
+      this.video.width = aspect * this.video.height;
+    }
+
+    this.video.containerStyle = {width: '100%', height: this.video.height + "px"};
+
+    this.setContentMarginIfVideo();
+
+    this.ref.detectChanges();
+  };
+
+  private setContentMarginIfVideo() {
+    if (this.video.height) {
+      this.contentContainer.getScrollElement().style.marginTop = (this.video.height + this.contentContainer._hdrHeight) + 'px';
+    }
+  }
+
+  private removeContentMargin() {
+    // this.contentContainer.resize();
+    this.contentContainer.getScrollElement().style.marginTop = (this.contentContainer._hdrHeight) + 'px';
   }
 }

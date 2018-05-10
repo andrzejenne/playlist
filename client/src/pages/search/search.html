@@ -17,11 +17,14 @@
         <button ion-button *ngIf="search" (click)="clearSearch()" clear>
           <ion-icon name="close"></ion-icon>
         </button>
-        <button ion-button (click)="openDownloadQueue()" clear>
-          <ion-icon name="download" [color]="downloaderColor"></ion-icon>
-        </button>
       </div>
     </ion-item>
+
+    <ion-buttons end>
+      <button ion-button (click)="openDownloadQueue()" clear>
+        <ion-icon name="download" [color]="downloaderColor"></ion-icon>
+      </button>
+    </ion-buttons>
     <!--<div class="form-group search">-->
       <!--<input type="search" [(ngModel)]="search" placeholder="Search" (focus)="getSearchHistory(); focused = true;"-->
              <!--(blur)="focused = false" (keyup.enter)="searchItems()">-->

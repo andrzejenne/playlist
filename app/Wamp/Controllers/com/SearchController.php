@@ -43,6 +43,7 @@ class SearchController extends Controller
      */
     public function search($args)
     {
+        // @todo - provider arg
         $service = $this->libraryProvider->getService();
 
         $query = $args[0]->q;

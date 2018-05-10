@@ -27,8 +27,10 @@ export class WebAuthenticator extends Authenticator {
   }
 
   private authenticationCallback = (resolve, reject) => {
+    console.info('authenticationCallback');
     this.serverManager.ready()
       .then(servers => {
+        console.info('serverManager.ready', servers);
         for (let host in servers) {
           this.http.get(
             this.serverManager.getServerUrl(host, this.config.get('auth.userUrl')),

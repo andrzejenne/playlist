@@ -26,7 +26,8 @@ export class MobileAuthenticator extends Authenticator {
           this.googlePlus.login({
             // scopes: 'profile',
             // webClientId: '744265825715-0gnjdoapqolit4trgtlu0qvhuakodhgj.apps.googleusercontent.com',
-            clientId: '744265825715-5g10rer102cquheear93qp3m7a5cdd03.apps.googleusercontent.com', // @todo - to config
+            // clientId: '744265825715-5g10rer102cquheear93qp3m7a5cdd03.apps.googleusercontent.com', // @todo - to config
+            clientId: '744265825715-2sem0c2ekj65v58tihqehln7ri03u5vf.apps.googleusercontent.com', // debug client 2
             offline: true
           })
             .then(response => {

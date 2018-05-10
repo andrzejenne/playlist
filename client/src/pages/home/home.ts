@@ -74,6 +74,7 @@ export class HomePage implements OnDestroy {
   @ViewChild('playlistSelect') select: Select;
 
   @ViewChild('audioPlayer') audioPlayer: ElementReference<HTMLAudioElement>;
+
   @ViewChild('videoPlayer') videoPlayer: ElementReference<HTMLVideoElement>;
 
   @ViewChild('progress') progress: ElementReference<HTMLDivElement>;
@@ -91,6 +92,7 @@ export class HomePage implements OnDestroy {
     private popoverCtrl: PopoverController,
     private config: ConfigService,
     private ref: ChangeDetectorRef,
+    private nav: NavController
   ) {
     // window.onresize = (ev ) => {
     //   console.info('resize');
@@ -98,6 +100,10 @@ export class HomePage implements OnDestroy {
   }
 
   ionViewDidLoad() {
+    if (!this.servers.hasServers()) {
+      this.nav.push(SettingsPage);
+    }
+
     this.auth.getUser()
       .then(this.onGetUser);
 
@@ -525,34 +531,34 @@ export class HomePage implements OnDestroy {
   private onGetUser = (user: User) => {
     this.user = user;
 
-    this.storage.get('playlist')
-      .then(playlistId => {
-        this.repo.getPlaylists(user.id, playlistId);
-      });
-
-    this.config.settings$.subscribe(settings => {
-        this.settings = settings;
-
-        this.repo.playlist$.subscribe(playlist => {
-          if (playlist && playlist.media) {
-            this.media = playlist.media;
-            if (!this.playlist) {
-              this.preparePlaylist();
-              if (this.settings.player.autoplay.lastPosition) {
-                this.autoPlayIfInterrupted();
-              }
-            }
-            else {
-              this.preparePlaylistDiff();
-            }
-            this.playlist = playlist;
-            this.ref.detectChanges();
-          }
+    if (user) {
+      this.storage.get('playlist')
+        .then(playlistId => {
+          this.repo.getPlaylists(user.id, playlistId);
         });
-      }
-    );
 
+      this.config.settings$.subscribe(settings => {
+          this.settings = settings;
 
+          this.repo.playlist$.subscribe(playlist => {
+            if (playlist && playlist.media) {
+              this.media = playlist.media;
+              if (!this.playlist) {
+                this.preparePlaylist();
+                if (this.settings.player.autoplay.lastPosition) {
+                  this.autoPlayIfInterrupted();
+                }
+              }
+              else {
+                this.preparePlaylistDiff();
+              }
+              this.playlist = playlist;
+              this.ref.detectChanges();
+            }
+          });
+        }
+      );
+    }
   };
 
   private static shuffleCallback = (a: any, b: any) => {

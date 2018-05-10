@@ -8,6 +8,7 @@
 
 namespace BBIT\Playlist\Services\MediaProviders;
 
+use Alaouy\Youtube\Youtube;
 use BBIT\Playlist\Contracts\MediaProviderContract;
 use BBIT\Playlist\Helpers\MediaItem;
 use BBIT\Playlist\Helpers\MediaItemCollection;
@@ -19,6 +20,20 @@ use BBIT\Playlist\Helpers\MediaItemPaginatedCollection;
  */
 class YouTubeService extends MediaProviderContract
 {
+    /**
+     * @var Youtube
+     */
+    private $service;
+
+    /**
+     * YouTubeService constructor.
+     * @param Youtube $service
+     */
+    public function __construct(Youtube $service)
+    {
+        $this->service = $service;
+    }
+
 
     /**
      * @param $q
@@ -34,7 +49,7 @@ class YouTubeService extends MediaProviderContract
             $args['pageToken'] = $pageToken;
         }
 
-        $search = \Youtube::searchAdvanced($args, true);
+        $search = $this->service->searchAdvanced($args, true);
 
         $details = $this->getDetails($search['results']);
 

@@ -14,7 +14,6 @@ use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Services\MediaDiscoveryService;
 use BBIT\Playlist\Wamp\Controllers\Controller;
 use BBIT\Playlist\Providers\MediaLibraryProvider;
-use BBIT\Playlist\Models\Search;
 use Thruway\ClientSession;
 
 /**
@@ -72,11 +71,13 @@ class DownloadedController extends Controller
         $medium = Medium::whereId($args[0]->mid)
             ->first();
 
+        // @todo - optimize
+        $providerSlug = $medium->provider->slug;
         /** @var MediaProviderContract $provider */
-        $provider = $this->libraryProvider->getService($medium->provider->getSlug());
+        $provider = $this->libraryProvider->getService($providerSlug);
 //        try {
         if ($provider->canDelete()) {
-            $outDir = $this->mediaDiscovery->getOutDir($provider, $medium->provider_sid);
+            $outDir = $this->mediaDiscovery->getOutDir($providerSlug, $medium->provider_sid);
             if (true === \File::deleteDirectory($outDir)) {
                 if (!\File::exists($outDir)) {
                     return $medium->delete();

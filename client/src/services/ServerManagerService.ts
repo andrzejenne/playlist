@@ -29,22 +29,16 @@ export class ServerManagerService {
   constructor(private storage: Storage, private http: HttpClient, private errorReporter: ErrorReporting) {
     storage.get('servers')
       .then(servers => {
-        // debugger;
+        console.info('storage.servers', servers);
         this.servers = servers || {};
 
-        if (servers && Object.keys(servers).length) {
-          this.isReady = true;
-          this.servers$.next(this.servers);
-          if (this.readyResolvers) {
-            this.readyResolvers.forEach(r => r(servers));
-            this.readyResolvers = [];
-          }
-        }
-        else {
-          this.isReady = false;
-//          if (this.readyRejector) {
-//            this.readyRejector(!servers ? 'no servers': servers);
-//          }
+        this.isReady = true;
+
+        this.servers$.next(this.servers);
+
+        if (this.readyResolvers) {
+          this.readyResolvers.forEach(r => r(this.servers));
+          this.readyResolvers = [];
         }
       })
       .catch(error => {
@@ -54,6 +48,10 @@ export class ServerManagerService {
 
   getServer(server: string) {
     return this.servers[server] || null;
+  }
+
+  hasServers() {
+    return Object.keys(this.servers).length > 0;
   }
 
   add(server: Server) {

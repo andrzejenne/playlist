@@ -20,11 +20,9 @@ use Illuminate\Support\ServiceProvider;
  */
 class MediaLibraryProvider extends ServiceProvider
 {
-    const YOUTUBE = 'youtube.media.service';
+    const SUFFIX = 'media.provider.library';
 
-    public $bindings = [
-        self::YOUTUBE => YouTubeService::class
-    ];
+    public $bindings;
 
     /**
      * MediaLibraryProvider constructor.
@@ -33,6 +31,8 @@ class MediaLibraryProvider extends ServiceProvider
     public function __construct(Application $app)
     {
         parent::__construct($app);
+
+        $this->bindings = config('media.providers');
     }
 
 
@@ -42,7 +42,7 @@ class MediaLibraryProvider extends ServiceProvider
     public function register()
     {
         foreach ($this->bindings as $alias => $binding) {
-            $this->app->bind($alias, $binding);
+            $this->app->bind($alias . '.' . static::SUFFIX, $binding);
         }
     }
 
@@ -57,6 +57,6 @@ class MediaLibraryProvider extends ServiceProvider
             $alias = key($this->bindings);
         }
 
-        return $this->app->make($this->bindings[$alias]);
+        return $this->app->make($alias . '.' . static::SUFFIX);
     }
 }

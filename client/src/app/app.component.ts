@@ -18,6 +18,7 @@ import {ServerManagerService} from "../services/ServerManagerService";
 import {ConfigService} from "../services/ConfigService";
 import {SettingsContract} from "../services/contracts/SettingsContract";
 import {HomePage} from "../pages/home/home";
+import {Server} from "../models/server";
 
 @Component({
   templateUrl: 'app.html'
@@ -34,7 +35,7 @@ export class ThePlaylist {
 
   servers: string[] = [];
 
-  serverOptions: {value: any, label: string}[] = [];
+  serverOptions: { value: any, label: string }[] = [];
 
   dayMode: boolean = true;
 
@@ -47,9 +48,9 @@ export class ThePlaylist {
 
   constructor(
     platform: Platform,
-    statusBar: StatusBar,
-    splashScreen: SplashScreen,
-    backgroundMode: BackgroundMode,
+    private statusBar: StatusBar,
+    private splashScreen: SplashScreen,
+    private backgroundMode: BackgroundMode,
     // private serverManager: ServerManagerService,
     // private wamp: WampService,
     private auth: AuthService,
@@ -76,55 +77,12 @@ export class ThePlaylist {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      statusBar.styleDefault();
-      splashScreen.hide();
 
-      // @todo - enable background mode only when playing something
-      backgroundMode.enable();
-      backgroundMode.configure({
-        silent: true
-      });
+      this.prepareApp();
 
-      this.immersive.isImmersiveModeSupported()
-        .then(
-          response => this.immersive.immersiveMode()
-        )
-        .catch(error => {
-          console.error(error);
-        });
 
-      // @todo - add subscriptions for cleanup
-      auth.logout$.subscribe(result => this.authenticated = !result);
+      this.prepareAuth();
 
-      this.auth.isAuthenticated()
-        .then(this.onIsAuthenticated);
-
-      this.fullscreenObserver.change$.subscribe(is => {
-        if (is) {
-          this.insomnia.keepAwake();
-          console.info('insomnia.keepAwake');
-          // this.alert.create({message: 'is fullscreen'}).present();
-        }
-        else {
-          this.insomnia.allowSleepAgain();
-          console.info('insomnia.sleepAgain');
-          // this.alert.create({message: 'not fullscreen'}).present();
-        }
-      });
-
-      this.serverManager.ready()
-        .then(servers => {
-          this.servers = Object.keys(servers);
-          this.serverOptions = this.servers.map(
-            host => {
-              return {value: host, label: host.split('.')[0]}
-            }
-          )
-
-        });
-
-      // this.serverManager.ready()
-      //   .then(this.onServersReady);
     });
 
   }
@@ -145,8 +103,8 @@ export class ThePlaylist {
   }
 
   onDayModeChange() {
-    this.dayModeIcon = this.dayMode ? 'sunny': 'moon';
-    this.dayModeClass = this.dayMode ? 'day-mode': 'night-mode';
+    this.dayModeIcon = this.dayMode ? 'sunny' : 'moon';
+    this.dayModeClass = this.dayMode ? 'day-mode' : 'night-mode';
     this.settings.dayMode.value = this.dayMode;
     this.config.save(this.settings);
   }
@@ -159,7 +117,7 @@ export class ThePlaylist {
 
   private onAuthenticated(response) {
     this.authenticated = true;
-    this.nav.setRoot(HomePage);
+    // this.nav.setRoot(HomePage);
   }
 
   private onAuthenticationError(error) {
@@ -170,6 +128,8 @@ export class ThePlaylist {
   }
 
   private onIsAuthenticated = (is) => {
+    console.info('onIsAuthenticated', is);
+
     if (!is) {
       this.auth.authenticate()
         .then(response => this.onAuthenticated(response))
@@ -179,6 +139,73 @@ export class ThePlaylist {
       this.onAuthenticated(true);
     }
   };
+
+  private prepareApp() {
+    this.statusBar.styleDefault();
+    this.splashScreen.hide();
+
+    // @todo - enable background mode only when playing something
+    this.backgroundMode.enable();
+    this.backgroundMode.configure({
+      silent: true
+    });
+
+    this.immersive.isImmersiveModeSupported()
+      .then(
+        response => this.immersive.immersiveMode()
+      )
+      .catch(error => {
+        console.error(error);
+      });
+
+    this.fullscreenObserver.change$.subscribe(is => {
+      if (is) {
+        this.insomnia.keepAwake();
+        console.info('insomnia.keepAwake');
+        // this.alert.create({message: 'is fullscreen'}).present();
+      }
+      else {
+        this.insomnia.allowSleepAgain();
+        console.info('insomnia.sleepAgain');
+        // this.alert.create({message: 'not fullscreen'}).present();
+      }
+    });
+  }
+
+  private prepareAuth() {
+    // @todo - add subscriptions for cleanup
+    this.auth.logout$.subscribe(result => this.authenticated = !result);
+
+    this.serverManager.ready()
+      .then(servers => {
+        this.setupServers(servers);
+
+        this.rootPage = HomePage;
+
+        this.serverManager.servers$.subscribe(
+          servers => this.setupServers(servers)
+        );
+      });
+  }
+
+  private setupServers(servers: { [index: string]: Server }) {
+    this.servers = Object.keys(servers) || [];
+    this.serverOptions = this.servers.map(
+      host => {
+        return {value: host, label: host.split('.')[0]}
+      }
+    );
+
+    if (this.servers.length == 1) {
+      this.server = this.servers[0];
+      this.onServerChange();
+    }
+
+    if (this.servers.length && !this.authenticated) {
+      this.auth.isAuthenticated()
+        .then(this.onIsAuthenticated);
+    }
+  }
 
   // private onServersReady = (servers) => {
   //   if (Object.keys(servers).length) {

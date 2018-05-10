@@ -24,54 +24,50 @@
 </ion-header>
 
 <ion-content #content>
-  <ion-grid>
-    <ion-row *ngIf="player">
-      <ion-col style="height: {{video.height}} + 'px">
-        <video controls [poster]="video.thumbnail" height="100%">
-          <source [src]="video.src" [type]="video.type">
-        </video>
-        <button ion-button color="danger" (click)="closeVideo()">Close</button>
-      </ion-col>
-    </ion-row>
-    <ion-row style="height: 100%;">
-      <ion-col>
-        <ion-content>
-          <ion-list>
-            <ion-item *ngFor="let item of list">
-              <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
-                <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
-                <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
-              </ion-thumbnail>
+  <div ion-fixed style="width: 100%;">
+    <div [hidden]="!player" class="video">
+      <div [ngStyle]="video?.containerStyle">
+        <video #videoPlayer [width]="video?.width" [height]="video?.height"></video>
+      </div>
+      <button ion-button end clear (click)="closeVideo()">
+        <ion-icon name="close"></ion-icon>
+        Close Video
+      </button>
+    </div>
+  </div>
 
-              <div class="item-content">
-                <h2>{{item.name}}</h2>
-                <!--<p *ngIf="item.description">{{item.description}}</p>-->
-                <ion-buttons end>
-                  <button ion-button color="primary" small icon-left clear (click)="addToPlaylist(item)">
-                    <ion-icon name="list"></ion-icon>
-                    <span *ngIf="isLandscape()">Add to playlist</span>
-                  </button>
-                  <button *ngIf="hasVideo(item)" ion-button color="primary" small icon-left clear
-                          (click)="playVideo(item)">
-                    <ion-icon name="videocam"></ion-icon>
-                    <span *ngIf="isLandscape()">Play video</span>
-                  </button>
-                  <button *ngIf="hasAudio(item)" ion-button color="primary" small icon-left clear
-                          (click)="playAudio(item)">
-                    <ion-icon name="musical-notes"></ion-icon>
-                    <span *ngIf="isLandscape()">Play audio</span>
-                  </button>
-                </ion-buttons>
-                <!--<a [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">-->
-                <!--<ion-icon name="search"></ion-icon>-->
-                <!--</a>-->
-              </div>
-            </ion-item>
-          </ion-list>
-        </ion-content>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <ion-list>
+    <ion-item *ngFor="let item of list">
+      <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
+        <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
+        <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
+      </ion-thumbnail>
+
+      <div class="item-content">
+        <h2>{{item.name}}</h2>
+        <!--<p *ngIf="item.description">{{item.description}}</p>-->
+        <ion-buttons end>
+          <button ion-button color="primary" small icon-left clear (click)="addToPlaylist(item)">
+            <ion-icon name="list"></ion-icon>
+            <span *ngIf="isLandscape()">Add to playlist</span>
+          </button>
+          <button *ngIf="hasVideo(item)" ion-button color="primary" small icon-left clear
+                  (click)="playVideo(item)">
+            <ion-icon name="videocam"></ion-icon>
+            <span *ngIf="isLandscape()">Play video</span>
+          </button>
+          <button *ngIf="hasAudio(item)" ion-button color="primary" small icon-left clear
+                  (click)="playAudio(item)">
+            <ion-icon name="musical-notes"></ion-icon>
+            <span *ngIf="isLandscape()">Play audio</span>
+          </button>
+        </ion-buttons>
+        <!--<a [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">-->
+        <!--<ion-icon name="search"></ion-icon>-->
+        <!--</a>-->
+      </div>
+    </ion-item>
+  </ion-list>
 
   <ion-fab right bottom *ngIf="selector.selected.length">
     <button ion-fab color="danger" (tap)="removeSelected()">

@@ -7,6 +7,10 @@
  */
 
 return [
+    'providers' => [
+        'youtube' => \BBIT\Playlist\Services\MediaProviders\YouTubeService::class,
+        'library' => \BBIT\Playlist\Services\MediaProviders\OwnLibraryService::class
+    ],
     'downloaders' => [
         'youtube' => \BBIT\Playlist\Service\Downloader\YouTubeDownloader::class
 //    'youtube' => \BBIT\Playlist\Service\Downloader\DummyDownloader::class

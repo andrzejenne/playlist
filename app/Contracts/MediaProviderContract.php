@@ -18,6 +18,7 @@ abstract class MediaProviderContract
         KEY_SEARCH = 'search';
 
     abstract public function getName();
+
     abstract public function search($q, $perPage = 24, $pageToken = null);
 
     public final function getConfig()
@@ -31,4 +32,14 @@ abstract class MediaProviderContract
     abstract public function canDelete();
 
     abstract public function canSearch();
+
+    /**
+     * @return mixed
+     */
+    public final function __toString()
+    {
+        return $this->getName();
+    }
+
+
 }
