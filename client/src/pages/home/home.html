@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header class="mode-color">
   <ion-navbar>
     <button ion-button menuToggle="menu">
       <ion-icon name="menu"></ion-icon>
@@ -13,41 +13,42 @@
     <!--</ion-select>-->
     <!--</ion-item>-->
     <ion-buttons end>
-      <button ion-button title="More options" (click)="playlistTools = !playlistTools">
+      <button ion-button title="More options" class="primary-button" (click)="playlistTools = !playlistTools">
         <ion-icon name="more"></ion-icon>
       </button>
 
-      <button ion-button title="Search" color="primary" (click)="goToSearchPage()">
+      <button ion-button title="Search" class="primary-button" (click)="goToSearchPage()">
         <ion-icon name="search"></ion-icon>
       </button>
       <!--<button ion-button title="Settings" color="default" (click)="goToSettingsPage()">-->
-        <!--<ion-icon name="settings"></ion-icon>-->
+      <!--<ion-icon name="settings"></ion-icon>-->
       <!--</button>-->
       <!--<button ion-button title="LogOut" color="danger" (click)="logout()">-->
-        <!--<ion-icon name="log-out"></ion-icon>-->
+      <!--<ion-icon name="log-out"></ion-icon>-->
       <!--</button>-->
     </ion-buttons>
   </ion-navbar>
   <ion-toolbar *ngIf="playlistTools">
     <div class="flex">
       <ion-col align-self-start>
-        <button ion-button icon-left clear (click)="onPlaylistAddClick($event)">
-          <ion-icon name="add-circle" color="primary"></ion-icon>
+        <button ion-button icon-left clear class="button-primary" (click)="onPlaylistAddClick($event)">
+          <ion-icon name="add-circle"></ion-icon>
           Add new
         </button>
 
-        <button [disabled]="!media.length" ion-button icon-left clear (click)="toggleSelectAll()">
-          <ion-icon name="checkmark-circle" color="primary"></ion-icon>
-          Toggle Select All
+        <button [disabled]="!media.length" class="button-primary" ion-button icon-left clear
+                (click)="selector.toggleSelectAll(media)">
+          <ion-icon [name]="selector.selected.length ? 'close-circle': 'checkmark-circle'"></ion-icon>
+          {{selector.selected.length ? 'Unselect' : 'Select All'}}
         </button>
       </ion-col>
       <ion-col class="text-right" align-self-end>
-        <button ion-button icon-left clear color="danger" (click)="removePlaylist(playlist)">
+        <button ion-button icon-left clear class="remove-button" (click)="removePlaylist(playlist)">
           <ion-icon name="trash"></ion-icon>
           Remove Playlist
         </button>
 
-        <button ion-button clear (click)="playlistTools = false">
+        <button ion-button clear class="primary-button" (click)="playlistTools = false">
           <ion-icon name="close"></ion-icon>
         </button>
       </ion-col>
@@ -66,12 +67,11 @@
   </div>
 
   <ion-list class="items">
-    <ion-list-header>Items</ion-list-header>
-
-    <ion-item *ngFor="let item of playedPlaylist" class="played" (press)="toggleSelectItem(item)" (swipe)="onItemSwipe(item, $event)">
-      <ion-thumbnail item-start [class.selected]="isSelected(item)" (tap)="toggleSelectItem(item)">
+    <ion-item *ngFor="let item of playedPlaylist" class="played" (press)="selector.toggleSelect(item)"
+              (swipe)="onItemSwipe(item, $event)">
+      <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
         <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
-        <ion-icon *ngIf="isSelected(item)" name="checkmark"></ion-icon>
+        <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
       </ion-thumbnail>
       <!--<span class="duration">{{item.duration | duration}}</span>-->
       <div class="item-content">
@@ -89,10 +89,11 @@
       </div>
     </ion-item>
 
-    <ion-item *ngIf="current" class="current" (press)="toggleSelectItem(current)" (swipe)="onItemSwipe(current, $event)">
-      <ion-thumbnail item-start [class.selected]="isSelected(current)" (tap)="toggleSelectItem(current)">
+    <ion-item *ngIf="current" class="current" (press)="selector.toggleSelect(current)"
+              (swipe)="onItemSwipe(current, $event)">
+      <ion-thumbnail item-start [class.selected]="selector.isSelected(current)" (tap)="selector.toggleSelect(current)">
         <img [src]="getThumbnailUrl(current)" class="fit-thumbnail">
-        <ion-icon *ngIf="isSelected(current)" name="checkmark"></ion-icon>
+        <ion-icon *ngIf="selector.isSelected(current)" name="checkmark"></ion-icon>
       </ion-thumbnail>
       <!--<span class="duration">{{item.duration | duration}}</span>-->
       <div class="item-content">
@@ -105,10 +106,10 @@
       </div>
     </ion-item>
 
-    <ion-item *ngFor="let item of mediaPlaylist" (press)="toggleSelectItem(item)" (swipe)="onItemSwipe(item, $event)">
-      <ion-thumbnail item-start [class.selected]="isSelected(item)" (tap)="toggleSelectItem(item)">
+    <ion-item *ngFor="let item of mediaPlaylist" (press)="selector.toggleSelect(item)" (swipe)="onItemSwipe(item, $event)">
+      <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
         <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
-        <ion-icon *ngIf="isSelected(item)" name="checkmark"></ion-icon>
+        <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
       </ion-thumbnail>
       <!--<span class="duration">{{item.duration | duration}}</span>-->
       <div class="item-content">
@@ -127,7 +128,7 @@
     </ion-item>
   </ion-list>
 
-  <ion-fab right bottom *ngIf="selected.length">
+  <ion-fab right bottom *ngIf="selector.selected.length">
     <button ion-fab color="danger" (tap)="removeSelected()">
       <ion-icon name="trash"></ion-icon>
     </button>
@@ -177,11 +178,12 @@
 <!--</ion-toolbar>-->
 <!--</ion-footer>-->
 
-<ion-footer>
+<ion-footer class="mode-color">
   <ion-toolbar class="footer-toolbar">
     <!-- <audio #audioPlayer preload="none"></audio> -->
     <ion-range [(ngModel)]="currentTime" [min]="0" [max]="totalTime"
                [debounce]="500"
+               [disabled]="!this.current"
                (ionFocus)="onSliderFocus($event)"
                (ionBlur)="onSliderBlur($event)"
                (ionChange)="onSliderChange($event)">
@@ -191,29 +193,34 @@
     <div>
       <!--<h2 class="title">{{current?.name}}</h2>-->
       <ion-buttons end>
-        <button ion-button clear small (click)="playVideo()" title="Play Video" [class]="cls.video">
+        <button ion-button clear small (click)="playVideo()" title="Play Video"
+                [class.button-primary]="playerStatus.video">
           <ion-icon name="videocam"></ion-icon>
         </button>
-        <button ion-button clear small (click)="playAudio()" title="Play Audio only" [class]="cls.audio">
+        <button ion-button clear small (click)="playAudio()" title="Play Audio only"
+                [class.button-primary]="playerStatus.audio">
           <ion-icon name="musical-notes"></ion-icon>
         </button>
         <button [disabled]="!playerStatus.playing || !playedPlaylist.length" ion-button clear small
                 (click)="playPrev()"
-                title="Play previous" [class]="cls.prev">
+                title="Play previous">
           <ion-icon name="skip-backward"></ion-icon>
         </button>
-        <button ion-button (click)="togglePlay()" clear small title="Play / Pause" [class]="cls.play">
+        <button ion-button (click)="togglePlay()" clear small title="Play / Pause"
+                [class.button-primary]="playerStatus.playing">
           <ion-icon [name]="playIcon"></ion-icon>
         </button>
         <button [disabled]="!playerStatus.playing || !mediaPlaylist.length" ion-button clear small
                 (click)="playNext()"
-                title="Play next" [class]="cls.next">
+                title="Play next">
           <ion-icon name="skip-forward"></ion-icon>
         </button>
-        <button ion-button (click)="toggleShuffle()" clear small title="Toggle Shuffle" [class]="cls.shuffle">
+        <button ion-button (click)="toggleShuffle()" clear small title="Toggle Shuffle"
+                [class.button-primary]="playerStatus.shuffle">
           <ion-icon name="shuffle"></ion-icon>
         </button>
-        <button ion-button (click)="toggleRepeat()" clear small title="Toggle Repeat" [class]="cls.repeat">
+        <button ion-button (click)="toggleRepeat()" clear small title="Toggle Repeat"
+                [class.button-primary]="playerStatus.repeat">
           <ion-icon name="repeat"></ion-icon>
         </button>
       </ion-buttons>

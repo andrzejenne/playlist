@@ -1,71 +1,85 @@
 $color: #aaa;
-
 $knobColor: #2a88bd;
+$primaryButton: #2a88bd;
+$removeButton: #bd1900;
+$dayModeIconColor: #a58400;
 
 .night-mode {
-  .content {
-    background: #000011 !important;
-    .label,
-    ion-icon {
-      color: $color;
-    }
-  }
 
-  ion-header {
+  .mode-color {
+
+    ion-header {
+      .toolbar {
+        .text-input { color: $color; }
+      }
+    }
+
+    .content {
+      background: #000011 !important;
+      .label,
+      ion-icon {
+        color: $color;
+      }
+    }
 
     .toolbar-background {
       border-color: #000022 !important;
       background: #111122 !important;
     }
 
-    color: $color !important;
-
-    .toolbar-title,
-    .label,
-    ion-select {
+    .toolbar {
       color: $color !important;
+      .toolbar-title,
+      ion-icon,
+      ion-select,
+      ion-label {
+        color: $color !important;
+      }
+
+      .button-primary {
+        color: $primaryButton !important;
+        ion-icon {
+          color: $primaryButton !important;
+        }
+      }
+
+      .button-primary:hover {
+        color: lighten($primaryButton, .2) !important;
+        ion-icon {
+          color: lighten($primaryButton, .2) !important;
+        }
+      }
+
+      .remove-button {
+        color: $removeButton !important;
+        ion-icon {
+          color: $removeButton !important;
+        }
+      }
+
+      .range-bar-active,
+      .range-knob {
+        background-color: $knobColor !important;
+      }
+      .range-disabled .range-knob {
+        outline: none !important;
+      }
+
+      .toggle {
+        .toggle-inner {
+          background-color: #aaa;
+        }
+        .toggle-icon {
+          background-color: #444;
+        }
+      }
+
+      .day-mode-icon {
+        color: $dayModeIconColor !important;
+      }
+
     }
 
-    .toggle {
-      .toggle-inner {
-        background-color: #aaa;
-      }
-      .toggle-icon {
-        background-color: #444;
-      }
-    }
   }
 
-  ion-footer {
-    color: $color !important;
-
-    .toolbar-background {
-      border-color: #000022 !important;
-      background: #111122 !important;
-    }
-
-    .toolbar-title,
-    .label,
-    ion-select {
-      color: $color !important;
-    }
-
-    .toggle {
-      .toggle-inner {
-        background-color: #aaa;
-      }
-      .toggle-icon {
-        background-color: #444;
-      }
-    }
-
-    .range-bar-active,
-    .range-knob {
-      background-color: $knobColor;
-    }
-  }
-
-  select {
-    option { background: #001; color: #aaa; }
-  }
 }

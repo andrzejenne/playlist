@@ -1,47 +1,69 @@
 $color: #eee;
-$knobColor: #2a88bd;
+$knobColor: #ffd000;
+$primaryButton: #ffd000;
+$removeButton: #bd1900;
+$dayModeIconColor: $knobColor;
 
 .day-mode {
 
-  .primary-toolbar,
-  ion-header {
-    color: $color !important;
+  .mode-color {
+
+    ion-header {
+      .toolbar {
+        .text-input { color: $color; }
+      }
+    }
+
 
     .toolbar-background {
       border-color: #cc4400 !important;
       background: #ff6600 !important;
     }
 
-    .toolbar-title,
-    .label,
-    ion-select {
+    .toolbar {
       color: $color !important;
+      .toolbar-title,
+      ion-icon,
+      ion-select,
+      ion-label {
+        color: $color !important;
+      }
+
+      .button-primary {
+        color: $primaryButton !important;
+        ion-icon {
+          color: $primaryButton !important;
+        }
+      }
+
+      .button-primary:hover {
+        color: lighten($primaryButton, .2) !important;
+        ion-icon {
+          color: lighten($primaryButton, .2) !important;
+        }
+      }
+
+      .remove-button {
+        color: $removeButton !important;
+        ion-icon {
+          color: $removeButton !important;
+        }
+      }
+
+      .range-bar-active,
+      .range-knob {
+        background-color: $knobColor !important;
+      }
+      .range-disabled .range-knob{
+        outline: none !important;
+      }
+
+      .day-mode-icon {
+        color: $dayModeIconColor !important;
+      }
+
     }
-  }
 
-  ion-footer {
-    color: $color !important;
-
-    .toolbar-background {
-      border-color: #cc4400 !important;
-      background: #ff6600 !important;
-    }
-
-    .toolbar-title,
-    .label,
-    ion-select {
-      color: $color !important;
-    }
-
-    .range-bar-active,
-    .range-knob {
-      background-color: $knobColor;
-    }
-
-  }
-
-  select {
-    option { color: #222; }
   }
 
 }

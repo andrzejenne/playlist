@@ -17,7 +17,7 @@ use BBIT\Playlist\Helpers\MediaItemPaginatedCollection;
  * Class Youtube
  * @package BBIT\Playlist\Services\MediaProviders
  */
-class OwnLibraryService implements MediaProviderContract
+class OwnLibraryService extends MediaProviderContract
 {
 
     /**
@@ -40,13 +40,20 @@ class OwnLibraryService implements MediaProviderContract
     }
 
     /**
-     *
+     * @return bool
      */
-    public function getConfig()
+    public function canDelete()
     {
-        return [
-            self::KEY_SEARCH => false,
-            self::KEY_DELETE => false
-        ];
+        return false;
     }
+
+    /**
+     * @return bool
+     */
+    public function canSearch()
+    {
+        return false;
+    }
+
+
 }

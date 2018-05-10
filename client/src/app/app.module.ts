@@ -10,7 +10,7 @@ import {GooglePlus} from "@ionic-native/google-plus";
 
 import {ThePlaylist} from './app.component';
 import {HomePage} from '../pages/home/home';
-import {WelcomePage} from "../pages/welcome/welcome";
+import {SplashPage} from "../pages/splash/splash";
 import {SearchPage} from '../pages/search/search';
 
 import {DurationPipe} from "../pipes/duration";
@@ -32,7 +32,6 @@ import {PlaylistComboComponent} from "../components/playlists-combo/playlist-com
 import {AddPlaylistComponent} from "../pages/home/playlist/add-playlist.component";
 import {AndroidFullScreen} from '@ionic-native/android-full-screen';
 import {SelectComponent} from "../components/select/select.component";
-import {DayModeDirective} from "../directives/day-mode.directive";
 
 @NgModule({
   declarations: [
@@ -41,7 +40,7 @@ import {DayModeDirective} from "../directives/day-mode.directive";
     SearchPage,
     DownloadedPage,
     AuthError,
-    WelcomePage,
+    SplashPage,
     SettingsPage,
 
     DownloadQueueComponent,
@@ -52,7 +51,6 @@ import {DayModeDirective} from "../directives/day-mode.directive";
     AddPlaylistComponent,
 
     SelectComponent,
-    DayModeDirective,
 
     DurationPipe
   ],
@@ -70,7 +68,7 @@ import {DayModeDirective} from "../directives/day-mode.directive";
     SearchPage,
     DownloadedPage,
     AuthError,
-    WelcomePage,
+    SplashPage,
     SettingsPage,
 
     DownloadQueueComponent,

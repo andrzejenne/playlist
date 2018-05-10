@@ -12,12 +12,23 @@ namespace BBIT\Playlist\Contracts;
  * Interface MediaProviderContract
  * @package BBIT\Playlist\Contracts
  */
-interface MediaProviderContract
+abstract class MediaProviderContract
 {
     const KEY_DELETE = 'delete',
         KEY_SEARCH = 'search';
 
-    public function getName();
-    public function search($q, $perPage = 24, $pageToken = null);
-    public function getConfig();
+    abstract public function getName();
+    abstract public function search($q, $perPage = 24, $pageToken = null);
+
+    public final function getConfig()
+    {
+        return [
+            self::KEY_SEARCH => false,
+            self::KEY_DELETE => $this->canDelete()
+        ];
+    }
+
+    abstract public function canDelete();
+
+    abstract public function canSearch();
 }

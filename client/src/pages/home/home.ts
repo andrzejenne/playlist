@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
 import {Storage} from "@ionic/storage";
 import {Content, NavController, Select, PopoverController} from 'ionic-angular';
 import {AuthService} from "../../services/AuthService";
@@ -14,12 +14,14 @@ import {SearchPage} from "../search/search";
 import {AddPlaylistComponent} from "./playlist/add-playlist.component";
 import {SettingsContract} from "../../services/contracts/SettingsContract";
 import {ConfigService} from "../../services/ConfigService";
+import {SelectorService} from "../../services/SelectorService";
 
 //import {PagesService} from "../../services/PagesService";
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
+  providers: [SelectorService]
 //  providers: [{ provide: PagesService, useExisting: forwardRef(() => PagesService) }],
 })
 export class HomePage implements OnDestroy {
@@ -38,16 +40,6 @@ export class HomePage implements OnDestroy {
     playing: false,
     video: false,
     audio: true,
-  };
-
-  public cls = {
-    video: 'inactive',
-    audio: 'active',
-    prev: 'inactive',
-    next: 'inactive',
-    play: 'inactive',
-    shuffle: 'inactive',
-    repeat: 'inactive'
   };
 
   public settings: SettingsContract = null;
@@ -75,8 +67,6 @@ export class HomePage implements OnDestroy {
 
   public playlistTools: boolean = false;
 
-  public selected: Medium[] = [];
-
   private interval: number;
 
   private user: User;
@@ -90,6 +80,7 @@ export class HomePage implements OnDestroy {
 
   constructor(
     public navCtrl: NavController,
+    public selector: SelectorService<Medium>,
     //    public pages: PagesService,
     private repo: PlaylistsRepository,
     private auth: AuthService,
@@ -190,18 +181,12 @@ export class HomePage implements OnDestroy {
     this.playerStatus.video = true;
     this.playerStatus.audio = false;
 
-    this.cls.audio = 'inactive';
-    this.cls.video = 'active';
-
     this.setContentMarginIfVideo();
   }
 
   playAudio() {
     this.playerStatus.video = false;
     this.playerStatus.audio = true;
-
-    this.cls.audio = 'active';
-    this.cls.video = 'inactive';
 
     this.removeContentMargin();
   }
@@ -268,7 +253,6 @@ export class HomePage implements OnDestroy {
 
   toggleRepeat() {
     this.playerStatus.repeat = !this.playerStatus.repeat;
-    this.cls.repeat = this.playerStatus.repeat ? 'active' : 'inactive';
   }
 
   toggleShuffle() {
@@ -276,7 +260,6 @@ export class HomePage implements OnDestroy {
       this.preparePlaylist();
     }
     this.playerStatus.shuffle = !this.playerStatus.shuffle;
-    this.cls.shuffle = this.playerStatus.shuffle ? 'active' : 'inactive';
     if (this.playerStatus.shuffle) {
       this.shuffle(this.mediaPlaylist);
     }
@@ -301,12 +284,14 @@ export class HomePage implements OnDestroy {
   }
 
   onSliderBlur(event) {
-    let player = this.getPlayer();
+    if (this.current) {
+      let player = this.getPlayer();
 
-    if (event.value != player.currentTime) {
-      player.currentTime = +event.value;
+      if (event.value != player.currentTime) {
+        player.currentTime = +event.value;
+      }
+      this.play();
     }
-    this.play();
   }
 
   ngOnDestroy(): void {
@@ -369,43 +354,16 @@ export class HomePage implements OnDestroy {
     return null;
   }
 
-  toggleSelectItem(item: Medium) {
-    if (this.isSelected(item)) {
-      let index = this.selected.indexOf(item);
-      this.selected.splice(index, 1);
-    }
-    else {
-      this.selected.push(item);
-    }
-  }
-
-  isSelected(item: Medium) {
-    return this.selected.indexOf(item) > -1;
-  }
-
   removeSelected() {
     let removed = [];
-    this.selected
+    this.selector.selected
       .forEach(
         item => removed.push(this.removeItem(item)
         )
       );
 
     return Promise.all(removed)
-      .then(val => this.selected = []);
-  }
-
-  selectAll() {
-    this.selected = [].concat(this.media);
-  }
-
-  toggleSelectAll() {
-    if (!this.selected.length) {
-      this.selectAll();
-    }
-    else {
-      this.selected = [];
-    }
+      .then(val => this.selector.clearSelection());
   }
 
   onPlaylistAddClick(ev) {
@@ -461,7 +419,6 @@ export class HomePage implements OnDestroy {
   }
 
   private playStatus() {
-    this.cls.play = this.playerStatus.playing ? 'active' : 'inactive';
     this.playIcon = this.playerStatus.playing ? 'pause' : 'play';
   }
 

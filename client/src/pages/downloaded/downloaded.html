@@ -4,8 +4,14 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>In Cloud</ion-title>
+
+    <ion-buttons end right>
+      <button ion-button title="More options" class="primary-button" (click)="tools = !tools">
+        <ion-icon name="more"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
-  <ion-toolbar>
+  <ion-toolbar *ngIf="tools">
     <ion-item>
       <ion-icon item-start name="search"></ion-icon>
       <ion-input icon-left type="text" [(ngModel)]="search" (ionChange)="filter()">
@@ -32,7 +38,11 @@
         <ion-content>
           <ion-list>
             <ion-item *ngFor="let item of list">
-              <img class="thumbnail" item-start [src]="getThumbnailUrl(item)" width="160">
+              <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
+                <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
+                <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
+              </ion-thumbnail>
+
               <div class="item-content">
                 <h2>{{item.name}}</h2>
                 <!--<p *ngIf="item.description">{{item.description}}</p>-->
@@ -62,4 +72,10 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <ion-fab right bottom *ngIf="selector.selected.length">
+    <button ion-fab color="danger" (tap)="removeSelected()">
+      <ion-icon name="trash"></ion-icon>
+    </button>
+  </ion-fab>
 </ion-content>

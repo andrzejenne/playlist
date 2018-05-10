@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
-import {Modal, ModalController, NavController, Platform} from 'ionic-angular';
+import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
+import {Modal, ModalController, NavController, Platform, TextInput} from 'ionic-angular';
 import {SearchRepository} from "../../repositories/search.repository";
 import {SearchItem} from "../../models/search-item";
 import {Search} from "../../models/search";
@@ -30,6 +30,9 @@ export class SearchPage implements OnDestroy {
   downloaderColor = 'default';
 
   downloaderModal: Modal;
+
+  @ViewChild('input')
+  input: TextInput;
 
   private allHistory: Search[];
 
@@ -168,6 +171,9 @@ export class SearchPage implements OnDestroy {
 
   clearSearch() {
     this.search = '';
+    this.list = [];
+    // @todo - not working ?
+    this.input.initFocus();
   }
 
   ngOnDestroy() {
@@ -176,6 +182,15 @@ export class SearchPage implements OnDestroy {
 
   isLandscape() {
     return this.platform.isLandscape();
+  }
+
+  openSearchHistory(event: UIEvent, item: Search) {
+    this.input.setValue(item.query);
+    this.input.setFocus();
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
   }
 
   private filterHistory() {

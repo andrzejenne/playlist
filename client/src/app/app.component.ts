@@ -3,27 +3,27 @@ import {MenuController, NavController, Platform} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {AndroidFullScreen} from '@ionic-native/android-full-screen';
-import {Storage} from '@ionic/storage';
+// import {Storage} from '@ionic/storage';
 
 import {BackgroundMode} from "@ionic-native/background-mode";
 import {AuthError} from "../pages/auth/error";
 import {AuthService} from "../services/AuthService";
 import {PagesService} from "../services/PagesService";
 
-import {WelcomePage} from "../pages/welcome/welcome";
+import {SplashPage} from "../pages/splash/splash";
 import {SettingsPage} from "../pages/settings/settings";
-import {HomePage} from "../pages/home/home";
 import {FullscreenObserverService} from "../services/FullscreenObserverService";
 import {Insomnia} from "@ionic-native/insomnia";
 import {ServerManagerService} from "../services/ServerManagerService";
 import {ConfigService} from "../services/ConfigService";
 import {SettingsContract} from "../services/contracts/SettingsContract";
+import {HomePage} from "../pages/home/home";
 
 @Component({
   templateUrl: 'app.html'
 })
 export class ThePlaylist {
-  rootPage: any = HomePage;
+  rootPage: any = SplashPage;
 
   authenticated: boolean = false;
 
@@ -54,13 +54,25 @@ export class ThePlaylist {
     // private wamp: WampService,
     private auth: AuthService,
     private pages: PagesService,
-    private storage: Storage,
+    // private storage: Storage,
     private immersive: AndroidFullScreen,
     private fullscreenObserver: FullscreenObserverService,
     private insomnia: Insomnia,
     private serverManager: ServerManagerService,
     private config: ConfigService
   ) {
+
+    this.config.settings$.subscribe(settings => {
+      if (settings) {
+        this.settings = settings;
+        this.server = settings.server;
+
+        if (settings.dayMode) {
+          this.dayMode = settings.dayMode.value;
+        }
+      }
+    });
+
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -147,18 +159,7 @@ export class ThePlaylist {
 
   private onAuthenticated(response) {
     this.authenticated = true;
-
-    this.config.settings$.subscribe(settings => {
-      this.rootPage = HomePage;
-      if (settings) {
-        this.settings = settings;
-        this.server = settings.server;
-
-        if (settings.dayMode) {
-          this.dayMode = settings.dayMode.value;
-        }
-      }
-    });
+    this.nav.setRoot(HomePage);
   }
 
   private onAuthenticationError(error) {

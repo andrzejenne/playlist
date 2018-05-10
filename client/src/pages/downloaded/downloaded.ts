@@ -9,10 +9,12 @@ import {Subscription} from "rxjs/Subscription";
 import {ServerManagerService} from "../../services/ServerManagerService";
 import {User} from "../../models/user";
 import {AuthService} from "../../services/AuthService";
+import {SelectorService} from "../../services/SelectorService";
 
 @Component({
   selector: 'page-downloaded',
-  templateUrl: 'downloaded.html'
+  templateUrl: 'downloaded.html',
+  providers: [SelectorService]
 })
 export class DownloadedPage implements OnDestroy {
   public downloaded: Medium[];
@@ -24,6 +26,8 @@ export class DownloadedPage implements OnDestroy {
   public player = false;
 
   public search = '';
+
+  public tools: boolean;
 
   @ViewChild('content') contentContainer: Content;
 
@@ -39,6 +43,7 @@ export class DownloadedPage implements OnDestroy {
 
   constructor(
     public navCtrl: NavController,
+    public selector: SelectorService<Medium>,
     private repo: DownloadedRepository,
     private plRepo: PlaylistsRepository,
     private auth: AuthService,
@@ -150,4 +155,19 @@ export class DownloadedPage implements OnDestroy {
     }
   }
 
+  removeSelected() {
+    let removed = [];
+    this.selector.selected
+      .forEach(
+        item => removed.push(this.removeItem(item)
+        )
+      );
+
+    return Promise.all(removed)
+      .then(val => this.selector.clearSelection());
+  }
+
+  private removeItem(item: Medium) {
+    this.repo.remove(item);
+  }
 }

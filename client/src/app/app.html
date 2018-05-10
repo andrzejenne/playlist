@@ -1,5 +1,5 @@
 <!-- <ion-split-pane> -->
-  <ion-menu [content]="content" #menu id="menu">
+  <ion-menu [content]="content" #menu id="menu" class="mode-color">
     <ion-header>
       <ion-toolbar class="menu-toolbar">
         <ion-title>
@@ -14,17 +14,17 @@
       </ion-toolbar>
       <ion-toolbar class="menu-toolbar">
         <ion-item>
-          <ion-label item-right ion-text>Server</ion-label>
+          <ion-label item-right>Server</ion-label>
           <!--<simple-select item-right [(ngModel)]="server" [options]="serverOptions" (change)="onServerChange($event)"></simple-select>-->
           <ion-select [(ngModel)]="server" (ionChange)="onServerChange()" interface="pop-over">
             <ion-option *ngFor="let host of servers" [value]="host">{{host.split('.')[0]}}</ion-option>
           </ion-select>
-          <ion-icon ion-text color="light" name="cloud" item-end></ion-icon>
+          <ion-icon ion-text name="cloud" item-end></ion-icon>
         </ion-item>
         <ion-item>
-          <ion-label item-right style="display: inline-block;">Day Mode</ion-label>
+          <ion-label item-right>Day Mode</ion-label>
           <ion-toggle item-right [(ngModel)]="dayMode" (ionChange)="onDayModeChange($event)"></ion-toggle>
-          <ion-icon item-end style="display: inline-block;" [name]="dayModeIcon" ion-text></ion-icon>
+          <ion-icon item-end [name]="dayModeIcon" class="day-mode-icon" ion-text></ion-icon>
         </ion-item>
       </ion-toolbar>
     </ion-header>
@@ -60,5 +60,5 @@
 
   </ion-menu>
 
-  <ion-nav [root]="rootPage" #content></ion-nav>
+  <ion-nav [root]="rootPage" #content class="mode-color"></ion-nav>
 <!-- </ion-split-pane> -->
