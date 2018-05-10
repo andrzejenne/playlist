@@ -52,6 +52,10 @@ export class ServerManagerService {
       });
   }
 
+  getServer(server: string) {
+    return this.servers[server] || null;
+  }
+
   add(server: Server) {
     this.servers[server.host] = server;
     this.servers$.next(this.servers);

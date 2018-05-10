@@ -23,7 +23,7 @@ import {SettingsContract} from "../services/contracts/SettingsContract";
   templateUrl: 'app.html'
 })
 export class ThePlaylist {
-  rootPage: any = WelcomePage;
+  rootPage: any = HomePage;
 
   authenticated: boolean = false;
 
@@ -132,15 +132,17 @@ export class ThePlaylist {
       .then(finished => this.menu.close());
   }
 
-  onDayModeChange(event) {
+  onDayModeChange() {
     this.dayModeIcon = this.dayMode ? 'sunny': 'moon';
     this.dayModeClass = this.dayMode ? 'day-mode': 'night-mode';
     this.settings.dayMode.value = this.dayMode;
     this.config.save(this.settings);
   }
 
-  onServerChange(event) {
-    console.info(event, this.server);
+  onServerChange() {
+    // console.info(event, this.server);
+    this.settings.server = this.server;
+    this.config.save(this.settings);
   }
 
   private onAuthenticated(response) {
@@ -150,6 +152,8 @@ export class ThePlaylist {
       this.rootPage = HomePage;
       if (settings) {
         this.settings = settings;
+        this.server = settings.server;
+
         if (settings.dayMode) {
           this.dayMode = settings.dayMode.value;
         }

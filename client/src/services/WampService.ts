@@ -7,6 +7,7 @@ import {WampQueue} from "./wamp/Queue";
 import {ServerManagerService} from "./ServerManagerService";
 import {Server} from "../models/server";
 import {ReplaySubject} from "rxjs/ReplaySubject";
+import {ConfigService} from "./ConfigService";
 
 export interface SessionSubScriptionFunction {
   (session: autobahn.Session): void;
@@ -16,6 +17,7 @@ export interface SessionSubScriptionFunction {
 export class WampService {
 
   // private static MSG_WAMP_NOT_AVAIL = 'WAMP not available';
+  public server: string;
 
   private session: autobahn.Session;
 
@@ -32,7 +34,7 @@ export class WampService {
   public onClose = new ReplaySubject();
   public onOpen = new ReplaySubject();
 
-  constructor(private serversManager: ServerManagerService) {
+  constructor(private serversManager: ServerManagerService, private config: ConfigService) {
 
     this.subj = new BehaviorSubject<autobahn.Session>(null);
 
@@ -166,9 +168,25 @@ export class WampService {
 //          this.serversManager.add(this.configService.get('wampHost'));
 //        }
 
-        this.serversManager.each(
-          server => this.connect(server)
-        );
+        // this.serversManager.each(
+        //   server => this.connect(server)
+        // );
+
+        this.config.settings$.subscribe(settings => {
+          if (settings && settings.server) {
+            if (this.server != settings.server) {
+              let server: Server;
+              if (this.server) {
+                server = this.serversManager.getServer(this.server);
+                server && this.disconnect(server);
+              }
+              if (settings.server) {
+                server = this.serversManager.getServer(settings.server);
+                server && this.connect(server);
+              }
+            }
+          }
+        })
       })
       .catch(error => error);
   }
