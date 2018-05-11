@@ -17,7 +17,7 @@ class CreateAlbumsTable extends Migration
             $table->increments('id');
             $table->string('name')->index();
             $table->date('released')->nullable();
-            $table->integer('genre_id')->unsigned();
+            $table->integer('genre_id')->unsigned()->nullable();
 
             $table->foreign('genre_id')->references('id')->on('genres')
                 ->onDelete('cascade');

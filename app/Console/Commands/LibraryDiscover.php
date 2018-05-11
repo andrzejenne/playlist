@@ -347,7 +347,15 @@ class LibraryDiscover extends Command
      */
     private function getMediaFileType($mime)
     {
-        list($type,) = explode('/', $mime);
+        switch ($mime) {
+            case 'application/ogg';
+                $type = 'audio';
+                break;
+        }
+
+        if (!isset($type)) {
+            list($type,) = explode('/', $mime);
+        }
 
         if (!isset($this->mediaFileTypes[$type])) {
             $this->mediaFileType[$type] = MediaFileType::whereSlug($type)->first();
