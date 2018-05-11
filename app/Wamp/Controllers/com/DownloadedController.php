@@ -9,6 +9,8 @@
 namespace BBIT\Playlist\Wamp\Controllers\com;
 
 use BBIT\Playlist\Contracts\MediaProviderContract;
+use BBIT\Playlist\Models\Album;
+use BBIT\Playlist\Models\Artist;
 use BBIT\Playlist\Models\MediaFile;
 use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Services\MediaDiscoveryService;
@@ -60,10 +62,22 @@ class DownloadedController extends Controller
             Medium::REL_ARTIST
         ]);
 
+        $search = isset($args[0]->search) ? $args[0]->search : false;
         $limit = isset($args[0]->limit) ? $args[0]->limit : 100;
         $offset = isset($args[0]->offset) ? $args[0]->offset : 0;
 //        $limit = 100;
 //        $offset = 0;
+
+        if (!empty($search)) {
+            $data->where(Medium::COL_NAME, 'like', "%$search%")
+                ->orWhereHas(Medium::REL_ALBUM, function ($query) use ($search) {
+                    $query->where(Album::COL_NAME, 'like', "%$search%");
+                })->orWhereHas(Medium::REL_ARTIST, function ($query) use ($search) {
+                    $query->where(Artist::COL_NAME, 'like', "%$search%");
+                });
+        }
+        // @todo - add search for album, artist, ...;
+        // @todo - add search type
 
         $pagination = $data->paginate($limit, ['*'], 'page', floor($offset / $limit) + 1);
 

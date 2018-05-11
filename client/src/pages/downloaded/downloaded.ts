@@ -82,27 +82,36 @@ export class DownloadedPage implements OnDestroy {
       )
     );
 
-    this.repo.list(this.limit, this.offset)
+    this.load();
+
+    this.initPlayer();
+  }
+
+  private load() {
+    return this.repo.list(this.limit, this.offset, this.search)
       .then(data => {
         console.info('DownloadedPage.data', data);
-        this.downloaded = data;
-        this.list = [].concat(data);
+        if (this.offset) {
+          this.downloaded = this.downloaded.concat(data);
+          this.list = [].concat(this.downloaded);
+          this.ref.detectChanges();
+        }
+        else {
+          this.downloaded = data;
+          this.list = [].concat(data);
+        }
         this.ref.detectChanges();
       })
       .catch(this.errorReporter.report);
 
-    this.initPlayer();
   }
 
   doInfinite(infiniteScroll: any) {
     console.log('doInfinite, start is currently ' + this.offset);
     this.offset += this.limit;
 
-    this.repo.list(this.limit, this.offset).then(data => {
-      this.downloaded = this.downloaded.concat(data);
-      this.list = [].concat(this.downloaded);
-      infiniteScroll.complete();
-    });
+    this.load()
+      .then(data => infiniteScroll.complete());
 
   }
 
@@ -144,6 +153,10 @@ export class DownloadedPage implements OnDestroy {
   isLandscape = () => this.platform.isLandscape();
 
   filter() {
+    this.offset = 0;
+
+    this.load();
+    /*
     if (this.search) {
       this.list = this.downloaded.filter(item => {
         return item && item.name && item.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
@@ -152,6 +165,7 @@ export class DownloadedPage implements OnDestroy {
     else {
       this.list = [].concat(this.downloaded);
     }
+    */
   }
 
   removeSelected() {
