@@ -11,6 +11,7 @@ import {User} from "../../models/user";
 import {AuthService} from "../../services/AuthService";
 import {SelectorService} from "../../services/SelectorService";
 import {ElementReference} from "../../models/ElementReference";
+import {MediaManagerService} from "../../services/MediaManagerService";
 
 @Component({
   selector: 'page-downloaded',
@@ -49,6 +50,7 @@ export class DownloadedPage implements OnDestroy {
   constructor(
     public navCtrl: NavController,
     public selector: SelectorService<Medium>,
+    public mediaManager: MediaManagerService,
     private repo: DownloadedRepository,
     private plRepo: PlaylistsRepository,
     private auth: AuthService,
@@ -83,33 +85,10 @@ export class DownloadedPage implements OnDestroy {
     // @todo - info, added to playlist
   }
 
-  getThumbnail(item: Medium) {
-    for (let i = 0; i < item.files.length; i++) {
-      if ('thumbnail' === item.files[i].type.slug) {
-        return item.files[i];
-      }
-    }
-
-    return null;
-  }
-
-  getThumbnailUrl(item: Medium) {
-    let thumb = this.getThumbnail(item);
-    if (thumb) {
-      return this.servers.getFileUrl(item, thumb) + '?get';
-    }
-
-    return null;
-  }
-
-  getUrl(item: Medium, file: MediaFile) {
-    return this.servers.getFileUrl(item, file);
-  }
-
-  playVideo(item: Medium) {
+  playMedia(item: Medium) {
     this.player = true;
 
-    this.videoPlayer.nativeElement.src = this.servers.getUrl(item, 'video');
+    this.videoPlayer.nativeElement.src = this.mediaManager.getUrl(item, 'video');
     this.videoPlayer.nativeElement.play();
 
     this.ref.detectChanges();
@@ -129,19 +108,6 @@ export class DownloadedPage implements OnDestroy {
     this.video = {};
     this.removeContentMargin();
   }
-
-  hasVideo(item: Medium) {
-    let file = this.servers.getFile(item, 'video');
-
-    return file && file.type.slug == 'video';
-  }
-
-  hasAudio(item: Medium) {
-    let file = this.servers.getFile(item, 'audio');
-
-    return file && file.type.slug == 'audio';
-  }
-
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());

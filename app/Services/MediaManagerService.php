@@ -9,6 +9,7 @@
 namespace BBIT\Playlist\Services;
 
 use BBIT\Playlist\Contracts\DownloaderContract;
+use BBIT\Playlist\Contracts\MediaProviderContract;
 use BBIT\Playlist\Models\MediaFile;
 use BBIT\Playlist\Models\MediaFileType;
 use BBIT\Playlist\Models\MediaProvider;
@@ -63,8 +64,11 @@ class MediaManagerService
      * @param MediaDiscoveryService $mediaDiscoveryService
      * @param MediaLibraryProvider $libraryProvider
      */
-    public function __construct(Application $app, MediaDiscoveryService $mediaDiscoveryService, MediaLibraryProvider $libraryProvider)
-    {
+    public function __construct(
+        Application $app,
+        MediaDiscoveryService $mediaDiscoveryService,
+        MediaLibraryProvider $libraryProvider
+    ) {
         $this->app = $app;
         $this->mediaDiscoveryService = $mediaDiscoveryService;
         $this->libraryProvider = $libraryProvider;
@@ -155,18 +159,20 @@ class MediaManagerService
     }
 
     /**
-     * @param $name
+     * @param MediaProviderContract $provider
      * @return DownloaderContract
      * @throws \Exception
      */
-    private function getDownloader($name)
+    private function getDownloader(MediaProviderContract $provider)
     {
+        $name = $provider->getName();
+
         if (!isset($this->downloaders[$name])) {
             $concrete = config('media.downloaders.' . $name);
             if ($concrete) {
                 $this->downloaders[$name] = $this->app->make($concrete);
             } else {
-                throw new \Exception('downloader ' . $name . ' not found');
+                throw new \Exception('downloader ' . $provider . ' not found');
             }
         }
 
@@ -176,7 +182,8 @@ class MediaManagerService
     /**
      * @param $msg
      */
-    private function reportError($msg) {
+    private function reportError($msg)
+    {
         $this->session->publish('sub.error', [
             ['message' => $msg]
         ]);
@@ -185,7 +192,8 @@ class MediaManagerService
     /**
      * @param \Throwable $t
      */
-    private function reportThrowable(\Throwable $t) {
+    private function reportThrowable(\Throwable $t)
+    {
         $this->reportError($t->getMessage());
     }
 }

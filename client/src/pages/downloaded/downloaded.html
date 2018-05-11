@@ -39,7 +39,7 @@
   <ion-list>
     <ion-item *ngFor="let item of list">
       <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
-        <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
+        <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
         <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
       </ion-thumbnail>
 
@@ -51,13 +51,13 @@
             <ion-icon name="list"></ion-icon>
             <span *ngIf="isLandscape()">Add to playlist</span>
           </button>
-          <button *ngIf="hasVideo(item)" ion-button color="primary" small icon-left clear
-                  (click)="playVideo(item)">
+          <button *ngIf="mediaManager.hasVideo(item)" ion-button color="primary" small icon-left clear
+                  (click)="playMedia(item)">
             <ion-icon name="videocam"></ion-icon>
             <span *ngIf="isLandscape()">Play video</span>
           </button>
-          <button *ngIf="hasAudio(item)" ion-button color="primary" small icon-left clear
-                  (click)="playAudio(item)">
+          <button *ngIf="mediaManager.hasAudio(item)" ion-button color="primary" small icon-left clear
+                  (click)="playMedia(item)">
             <ion-icon name="musical-notes"></ion-icon>
             <span *ngIf="isLandscape()">Play audio</span>
           </button>

@@ -18,6 +18,7 @@ use BBIT\Playlist\Contracts\MediaProviderContract;
  */
 class DownloadRequest
 {
+    /** @var MediaProviderContract  */
     private $provider;
     private $sid;
     private $type;
@@ -25,13 +26,13 @@ class DownloadRequest
 
     /**
      * DownloadRequest constructor.
-     * @param $provider
+     * @param MediaProviderContract $provider
      * @param $sid
      * @param $type
      * @param $format
      */
     public function __construct(
-        $provider,
+        MediaProviderContract $provider,
         $sid,
         $type,
         $format
@@ -50,7 +51,7 @@ class DownloadRequest
      * @return static
      */
     public static function create(
-        $provider,
+        MediaProviderContract $provider,
         $sid,
         $type,
         $format

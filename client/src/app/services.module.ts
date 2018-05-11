@@ -15,6 +15,7 @@ import {ServerManagerService} from "../services/ServerManagerService";
 import {IonicStorageModule} from "@ionic/storage";
 import {ErrorReporting} from "../services/ErrorReporting";
 import {FullscreenObserverService} from "../services/FullscreenObserverService";
+import {MediaManagerService} from "../services/MediaManagerService";
 
 @NgModule({
   imports: [
@@ -29,6 +30,7 @@ import {FullscreenObserverService} from "../services/FullscreenObserverService";
     PagesService,
     DownloadManager,
     ServerManagerService,
+    MediaManagerService,
     ErrorReporting,
 
     FullscreenObserverService,

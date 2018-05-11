@@ -33,15 +33,15 @@ class MediaStreamController
 
 
     /**
-     * @param $sid
+     * @param $id
      * @param $fid
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function stream($sid, $fid, Request $request)
+    public function stream($id, $fid, Request $request)
     {
-        $path = $this->mediaDiscoveryService->getFilePath($sid, $fid);
+        $path = $this->mediaDiscoveryService->getFilePath($id, $fid);
         if ($path) {
             $type = \File::mimeType($path);
             if ($type) {
@@ -71,8 +71,12 @@ class MediaStreamController
                         $range = explode('-', $range);
                         $cStart = $range[0];
 
-//                        $cEnd = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $cStart + 102400; // $cEnd;
-                        $cEnd = $cStart + 512000;
+                        if ($cStart > 0) {
+                            $cEnd = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $cStart + 102400; // $cEnd;
+                        }
+                        else {
+                            $cEnd = $cStart + 512000;
+                        }
                     }
                     $cEnd = ($cEnd > $end) ? $end : $cEnd;
                     if ($cStart > $cEnd || $cStart > $end || $cEnd >= $size) {
@@ -111,9 +115,10 @@ class MediaStreamController
                     return response($buf, 206, $headers);
 
                 } else {
-                    return response($request->has('get') ? \File::get($path) : null, 200, $headers + [
-                            'Content-Length' => $size
-                        ]);
+//                    return response($request->has('get') ? \File::get($path) : null, 200, $headers + [
+//                            'Content-Length' => $size
+//                        ]);
+                    return response(\File::get($path));
                 }
             } else {
                 return response('Unknown file type for ' . $path);

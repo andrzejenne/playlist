@@ -15,6 +15,7 @@ import {AddPlaylistComponent} from "./playlist/add-playlist.component";
 import {SettingsContract} from "../../services/contracts/SettingsContract";
 import {ConfigService} from "../../services/ConfigService";
 import {SelectorService} from "../../services/SelectorService";
+import {MediaManagerService} from "../../services/MediaManagerService";
 
 //import {PagesService} from "../../services/PagesService";
 
@@ -86,6 +87,7 @@ export class HomePage implements OnDestroy {
     private repo: PlaylistsRepository,
     private auth: AuthService,
     private servers: ServerManagerService,
+    private mediaManager: MediaManagerService,
     private storage: Storage,
     private screenOrientation: ScreenOrientation,
     // private errorReporting: ErrorReporting,
@@ -210,7 +212,7 @@ export class HomePage implements OnDestroy {
     this.current = item;
 
     let player = this.getPlayer();
-    player.src = this.servers.getUrl(this.current, this.mediaType);
+    player.src = this.mediaManager.getUrl(this.current, this.mediaType);
 
     player.currentTime = seek;
 
@@ -229,7 +231,7 @@ export class HomePage implements OnDestroy {
     this.current = item;
 
     let player = this.getPlayer();
-    player.src = this.servers.getUrl(this.current, this.mediaType);
+    player.src = this.mediaManager.getUrl(this.current, this.mediaType);
 
     player.currentTime = seek;
 
@@ -351,15 +353,6 @@ export class HomePage implements OnDestroy {
     }
   }
 
-  getThumbnailUrl(item: Medium) {
-    let thumb = this.getThumbnail(item);
-    if (thumb) {
-      return this.servers.getFileUrl(item, thumb) + '?get';
-    }
-
-    return null;
-  }
-
   removeSelected() {
     let removed = [];
     this.selector.selected
@@ -382,20 +375,10 @@ export class HomePage implements OnDestroy {
     this.repo.remove(playlist);
   }
 
-  private getThumbnail(item: Medium) {
-    for (let i = 0; i < item.files.length; i++) {
-      if ('thumbnail' === item.files[i].type.slug) {
-        return item.files[i];
-      }
-    }
-
-    return null;
-  }
-
   private getNextSrc() {
     if (this.mediaPlaylist.length) {
       this.current = this.mediaPlaylist.shift();
-      return this.servers.getUrl(this.current, this.mediaType);
+      return this.mediaManager.getUrl(this.current, this.mediaType);
     }
 
     return null;
@@ -404,7 +387,7 @@ export class HomePage implements OnDestroy {
   private getPrevSrc() {
     if (this.playedPlaylist.length) {
       this.current = this.playedPlaylist.pop();
-      return this.servers.getUrl(this.current, this.mediaType);
+      return this.mediaManager.getUrl(this.current, this.mediaType);
     }
 
     return null;

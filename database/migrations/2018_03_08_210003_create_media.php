@@ -18,6 +18,7 @@ class CreateMedia extends Migration
             $table->string('name')->index();
             $table->integer('artist_id')->unsigned()->nullable();
             $table->integer('album_id')->unsigned()->nullable();
+            $table->smallInteger('album_track')->unsigned()->nullable();
             $table->integer('genre_id')->unsigned()->nullable();
             $table->date('released')->nullable();
 

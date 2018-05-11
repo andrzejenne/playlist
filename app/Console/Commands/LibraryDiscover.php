@@ -97,7 +97,19 @@ class LibraryDiscover extends Command
 
         $this->provider = $this->libraryProvider->getService('library');
 
+        if (!$this->provider) {
+            $this->error('Provider `library` not found');
+
+            return;
+        }
+
         $this->providerEntity = MediaProvider::whereSlug($this->provider->getName())->first();
+
+        if (!$this->provider) {
+            $this->error('ProviderEntity `library` not found');
+
+            return;
+        }
 
         $path = config('media.library.path');
         if (!$path) {
@@ -183,9 +195,12 @@ class LibraryDiscover extends Command
         $album = static::getID3String('album', $analyze);
         $year = static::getID3String('year', $analyze);
         $genre = static::getID3String('genre', $analyze);
+        $track = static::getID3String('track', $analyze);
+
+        $filename = $analyze['filename'];
         $filePath = $analyze['filepath'];
         $dirInLib = Str::substr($filePath, Str::length($file[0]) + 1);
-        $pathInLib = $dirInLib . DIRECTORY_SEPARATOR . $analyze['filename'];
+        $pathInLib = $dirInLib . DIRECTORY_SEPARATOR . $filename;
 
         if (isset($analyze['comments']['picture'])) {
             $thumbnail = reset($analyze['comments']['picture']);
@@ -246,14 +261,17 @@ class LibraryDiscover extends Command
             $outDir = $analyze['filepath'];
             $ext = static::getExtFromMime($thumbnail['image_mime']);
             if ($ext) {
-                $path = $outDir . DIRECTORY_SEPARATOR . 'cover.' . $ext;
-                if (!\File::exists($path)) {
-                    \File::put($path, $thumbnail['data']);
+                $coverFilename = 'cover.' . $ext;
+                $thumbPath = $outDir . DIRECTORY_SEPARATOR . $coverFilename;
+                $thumbInLib = $dirInLib . DIRECTORY_SEPARATOR . $coverFilename;
+                if (!\File::exists($thumbPath)) {
+                    \File::put($thumbPath, $thumbnail['data']);
                 }
             }
         }
 
-        $sid = md5($pathInLib);
+        $sid = $this->provider->genSid($pathInLib, $file[0], $dirInLib);
+
         $medium = $this->media->get($sid);
         if (!$medium) {
             $medium = new Medium([
@@ -262,31 +280,61 @@ class LibraryDiscover extends Command
                 'provider_sid' => $sid
             ]);
             $medium->provider()->associate($this->providerEntity);
-            if ($albumEntity) {
-                $medium->album()->associate($albumEntity);
-            }
-            if ($artistEntity) {
-                $medium->artist()->associate($artistEntity);
-            }
-            if ($genreEntity) {
-                $medium->genre()->associate($genreEntity);
-            }
-            $medium->save();
-            /** @var MediaFile $file */
+        }
 
+        if ($albumEntity) {
+            $medium->album()->associate($albumEntity);
+        }
+        if ($artistEntity) {
+            $medium->artist()->associate($artistEntity);
+        }
+        if ($genreEntity) {
+            $medium->genre()->associate($genreEntity);
+        }
+        if ($track) {
+            $medium->setAttribute($medium::COL_ALBUM_TRACK, $track);
+        }
+        $medium->save();
+
+        /** @var Collection|MediaFile[] $files */
+        $files = $medium->files;
+        $file = $files->filter(function (MediaFile $file) use ($pathInLib) {
+            return $file->filename === $pathInLib;
+        })->first();
+
+        if (!$file) {
+            /** @var MediaFile $file */
             $file = $medium->files()->make([
-                'filename' => $pathInLib,
+                'filename' => $filename,
                 'size' => \File::size($filePath),
             ]);
             $mediaFileType = $this->getMediaFileType($analyze['mime_type']);
 
             $file->type()->associate($mediaFileType);
             $file->save();
+
+            $files->push($file);
         }
 
-        // @todo - add missing files
+        if (isset($thumbInLib) && isset($thumbPath) && isset($coverFilename)) {
+            $thumb = $files->filter(function (MediaFile $file) {
+                return $file->type->slug === 'thumbnail';
+            })->first();
 
-        // @todo - thumbnail
+            if (!$thumb) {
+                /** @var MediaFile $file */
+                $file = $medium->files()->make([
+                    'filename' => $coverFilename,
+                    'size' => \File::size($thumbPath),
+                ]);
+                $mediaFileType = $this->getMediaFileType('thumbnail');
+
+                $file->type()->associate($mediaFileType);
+                $file->save();
+
+                $files->push($file);
+            }
+        }
     }
 
     /**

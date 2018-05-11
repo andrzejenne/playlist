@@ -157,33 +157,6 @@ export class ServerManagerService {
     return proto + '://' + host + (port ? ':' + port : '') + '/api/discover';
   }
 
-  public getFile(item: Medium, type: string) {
-    let files = item.files.filter(file => file.type.slug == type);
-
-    if (files.length) {
-      return files[0];
-    }
-
-    return null;
-  }
-
-  public getUrl(item: Medium, type: string, host = this.host) {
-    let file = this.getFile(item, type);
-    if (!file && type != 'video') {
-      file = this.getFile(item, 'video');
-    }
-
-    if (file) {
-      return this.getFileUrl(item, file, host);
-    }
-
-    return null;
-  }
-
-  public getFileUrl(item: Medium, file: MediaFile, host = this.host) {
-    return this.getServerUrl(host) + '/media/' + item.provider_sid + '/' + file.id;
-  }
-
   private onReady = (resolve, reject) => {
     if (this.isReady) {
       resolve(this.servers);

@@ -70,7 +70,7 @@
     <ion-item *ngFor="let item of playedPlaylist" class="played" (press)="selector.toggleSelect(item)"
               (swipe)="onItemSwipe(item, $event)">
       <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
-        <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
+        <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
         <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
       </ion-thumbnail>
       <!--<span class="duration">{{item.duration | duration}}</span>-->
@@ -92,7 +92,7 @@
     <ion-item *ngIf="current" class="current" (press)="selector.toggleSelect(current)"
               (swipe)="onItemSwipe(current, $event)">
       <ion-thumbnail item-start [class.selected]="selector.isSelected(current)" (tap)="selector.toggleSelect(current)">
-        <img [src]="getThumbnailUrl(current)" class="fit-thumbnail">
+        <img [src]="mediaManager.getThumbnailUrl(current)" class="fit-thumbnail">
         <ion-icon *ngIf="selector.isSelected(current)" name="checkmark"></ion-icon>
       </ion-thumbnail>
       <!--<span class="duration">{{item.duration | duration}}</span>-->
@@ -108,7 +108,7 @@
 
     <ion-item *ngFor="let item of mediaPlaylist" (press)="selector.toggleSelect(item)" (swipe)="onItemSwipe(item, $event)">
       <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
-        <img [src]="getThumbnailUrl(item)" class="fit-thumbnail">
+        <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
         <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
       </ion-thumbnail>
       <!--<span class="duration">{{item.duration | duration}}</span>-->

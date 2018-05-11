@@ -19,6 +19,7 @@ import {ConfigService} from "../services/ConfigService";
 import {SettingsContract} from "../services/contracts/SettingsContract";
 import {HomePage} from "../pages/home/home";
 import {Server} from "../models/server";
+// import {MediaManagerService} from "../services/MediaManagerService";
 
 @Component({
   templateUrl: 'app.html'

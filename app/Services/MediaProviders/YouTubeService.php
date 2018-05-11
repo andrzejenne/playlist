@@ -131,7 +131,7 @@ class YouTubeService extends MediaProviderContract
         }
 
         if (count($ids)) {
-            $retrieved = \Youtube::getVideoInfo($ids);
+            $retrieved = $this->service->getVideoInfo($ids);
             foreach ($retrieved as $item) {
                 \Cache::forever('info.youtube.' . $item->id, $item);
             }

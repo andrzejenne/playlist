@@ -43,20 +43,29 @@ class MediaDiscoveryService
     }
 
     /**
-     * @param $sid
+     * @param $id
      * @param $fid
      * @return string|null
      */
-    public function getFilePath($sid, $fid)
+    public function getFilePath($id, $fid)
     {
         try {
-            $medium = Medium::whereProviderSid($sid)->first();
+            $medium = Medium::whereId($id)->first();
             if ($medium instanceof Medium) {
+                /** @var MediaProviderContract $providerLibrary */
+                $providerLibrary = $medium->provider->getService();
+
                 /** @var MediaFile $file */
-                $file = $medium->files()->whereId($fid)->first();
+                $file = $medium->files()
+                    ->whereId($fid)
+                    ->first();
+
                 if ($file instanceof MediaFile) {
-                    $path = $this->getMediumDir($medium->provider->slug,
-                            $medium->provider_sid) . DIRECTORY_SEPARATOR . $file->filename;
+/*                    $path = $this->getMediumDir($medium->provider->slug,
+                            $medium->provider_sid) . DIRECTORY_SEPARATOR . $file->filename;*/
+
+                    $path = $providerLibrary->getOutDir($medium->provider_sid) . DIRECTORY_SEPARATOR . $file->filename;
+
                     if (\File::exists($path)) {
                         return $path;
                     }

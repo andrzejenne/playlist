@@ -25,4 +25,4 @@ Route::get('/oauth/{driver}', 'Auth\SocialAuthController@redirectToProvider')->n
 Route::get('/oauth/{driver}/callback', 'Auth\SocialAuthController@handleProviderCallback')->name('social.callback');
 
 // Media Streamer
-Route::get('/media/{sid}/{fid}', 'MediaStreamController@stream');
+Route::get('/media/{id}/{fid}', 'MediaStreamController@stream');
