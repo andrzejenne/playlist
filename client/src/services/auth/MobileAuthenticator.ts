@@ -18,7 +18,7 @@ export class MobileAuthenticator extends Authenticator {
     super(storage);
   }
 
-  public authenticate() {
+  public authenticate(host: string) {
     console.info('authenticate');
     return new Promise((resolve, reject) => {
       this.serverManager.ready()
@@ -26,14 +26,15 @@ export class MobileAuthenticator extends Authenticator {
           this.googlePlus.login({
             // scopes: 'profile',
             // webClientId: '744265825715-0gnjdoapqolit4trgtlu0qvhuakodhgj.apps.googleusercontent.com',
-            // clientId: '744265825715-5g10rer102cquheear93qp3m7a5cdd03.apps.googleusercontent.com', // @todo - to config
-            clientId: '744265825715-2sem0c2ekj65v58tihqehln7ri03u5vf.apps.googleusercontent.com', // debug client 2
+            clientId: '744265825715-5g10rer102cquheear93qp3m7a5cdd03.apps.googleusercontent.com', // @todo - to config
+            // clientId: '744265825715-2sem0c2ekj65v58tihqehln7ri03u5vf.apps.googleusercontent.com', // debug client 2
             offline: true
           })
             .then(response => {
               // console.info('auth.mobile.google', response);
-              this.storage.set('userEmail', response.email);
-              for (let host in servers) {
+              // this.storage.set('userEmail', response.email);
+
+              // for (let host in servers) {
                 this.http.get(
                   this.serverManager.getServerUrl(host, this.config.get('auth.userUrl') + 'email/?value=' + response.email), // @todo - not safe
                   {
@@ -41,7 +42,7 @@ export class MobileAuthenticator extends Authenticator {
                   }
                 ).subscribe((response: any) => { // @todo - contract
                     if (response !== null && response.id) {
-                      this.setUser(response);
+                      this.setUser(host, response);
                       resolve(response);
                     }
                     else {
@@ -55,7 +56,7 @@ export class MobileAuthenticator extends Authenticator {
 
                     return false;
                   });
-              }
+              // }
               // return response;
             })
             .catch(error => {
@@ -66,8 +67,8 @@ export class MobileAuthenticator extends Authenticator {
 
   }
 
-  public logout() {
+  public logout(host: string) {
     return this.googlePlus.logout()
-      .then(response => super.logout());
+      .then(response => super.logout(host));
   }
 }

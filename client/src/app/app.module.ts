@@ -32,6 +32,7 @@ import {PlaylistComboComponent} from "../components/playlists-combo/playlist-com
 import {AddPlaylistComponent} from "../pages/home/playlist/add-playlist.component";
 import {AndroidFullScreen} from '@ionic-native/android-full-screen';
 import {SelectComponent} from "../components/select/select.component";
+import {ServerSwitchComponent} from "../components/server-switch/server-switch.component";
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import {SelectComponent} from "../components/select/select.component";
     AddPlaylistComponent,
 
     SelectComponent,
+    ServerSwitchComponent,
 
     DurationPipe
   ],

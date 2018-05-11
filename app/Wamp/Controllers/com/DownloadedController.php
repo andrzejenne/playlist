@@ -14,6 +14,7 @@ use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Services\MediaDiscoveryService;
 use BBIT\Playlist\Wamp\Controllers\Controller;
 use BBIT\Playlist\Providers\MediaLibraryProvider;
+use Illuminate\Support\Collection;
 use Thruway\ClientSession;
 
 /**
@@ -59,12 +60,16 @@ class DownloadedController extends Controller
             Medium::REL_ARTIST
         ]);
 
-//        $limit = isset($args[0]->limit) ? $args[0]->limit : 100;
-//        $offset = isset($args[0]->offset) ? $args[0]->offset : 0;
-        $limit = 100;
-        $offset = 0;
+        $limit = isset($args[0]->limit) ? $args[0]->limit : 100;
+        $offset = isset($args[0]->offset) ? $args[0]->offset : 0;
+//        $limit = 100;
+//        $offset = 0;
 
-        return $data->paginate($limit, '*', 'page', floor($offset / $limit) + 1)->items();
+        $pagination = $data->paginate($limit, ['*'], 'page', floor($offset / $limit) + 1);
+
+//        return $pagination->items();
+
+        return Collection::make($pagination->items());
     }
 
     /**

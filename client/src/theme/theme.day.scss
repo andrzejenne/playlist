@@ -29,6 +29,10 @@ $dayModeIconColor: $knobColor;
         color: $color !important;
       }
 
+      ion-icon.connected {
+        color: greenyellow !important;
+      }
+
       .button-primary {
         color: $primaryButton !important;
         ion-icon {

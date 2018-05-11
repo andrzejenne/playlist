@@ -44,7 +44,7 @@ export class PlaylistComboComponent implements OnChanges, AfterViewInit, OnDestr
       this.repo.playlists$.subscribe(playlists => {
         this.playlists = playlists;
         this.ref.detectChanges();
-      })
+      }),
     );
 
     // if (this.user && this.user.id) {

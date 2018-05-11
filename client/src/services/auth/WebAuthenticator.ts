@@ -5,6 +5,7 @@ import {Storage} from '@ionic/storage';
 import {Authenticator} from "./Authenticator";
 import {ConfigService} from "../ConfigService";
 import {ServerManagerService} from "../ServerManagerService";
+import {User} from "../../models/user";
 
 @Injectable()
 export class WebAuthenticator extends Authenticator {
@@ -18,29 +19,22 @@ export class WebAuthenticator extends Authenticator {
     super(storage);
   }
 
-  authenticate() {
-    return new Promise(this.authenticationCallback);
-  }
-
-  logout(): Promise<boolean> {
-    return new Promise(this.logoutCallback);
-  }
-
-  private authenticationCallback = (resolve, reject) => {
-    console.info('authenticationCallback');
-    this.serverManager.ready()
-      .then(servers => {
-        console.info('serverManager.ready', servers);
-        for (let host in servers) {
+  authenticate(host: string) {
+    return new Promise((resolve, reject) => {
+      console.info('authenticationCallback');
+      this.serverManager.ready()
+        .then(servers => {
+          console.info('serverManager.ready', servers);
+          // for (let host in servers) {
           this.http.get(
             this.serverManager.getServerUrl(host, this.config.get('auth.userUrl')),
             {
               withCredentials: true
             }
           )
-            .subscribe((response: any) => { // @todo - contract
+            .subscribe((response: User) => {
                 if (response !== null && response.id) {
-                  this.setUser(response);
+                  this.setUser(host, response);
                   resolve(response);
                 }
                 else {
@@ -54,17 +48,20 @@ export class WebAuthenticator extends Authenticator {
 
                 return false;
               });
-        }
-      })
-      .catch(error => reject(error));
-  };
+          // }
+        })
+        .catch(error => reject(error));
+    });
+  }
 
-  private logoutCallback = (resolve, reject) => {
-    super.logout();
+  logout(host: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      super.logout(host);
 
-    return this.http.delete(this.config.get('auth.userUrl'))
-      .subscribe(response => resolve(true), error => reject(error));
-  };
+      return this.http.delete(this.config.get('auth.userUrl'))
+        .subscribe(response => resolve(true), error => reject(error));
+    });
+  }
 
   private authenticateMe(host: string) {
     window.location.href = this.serverManager.getServerUrl(host, this.config.get('auth.requestUrl'))

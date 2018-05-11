@@ -98,38 +98,36 @@ export class PlaylistsRepository extends WampRepository {
   }
 
   getPlaylists(uid: number, defaultId = null) {
-    if (!this.playlists) {
-      this.list(uid)
-        .then(data => {
-          this.playlists = data;
+    this.list(uid)
+      .then(data => {
+        this.playlists = data;
 
-          // debugger;
+        // debugger;
 
-          if (data.length) {
-            if (defaultId !== null) {
-              let playlists = data.filter(playlist => playlist.id === defaultId);
-              if (playlists.length) {
-                this.selectPlaylist(playlists[0]);
-              }
-            }
-            else {
-              this.selectPlaylist(data[0]);
+        if (data.length) {
+          if (defaultId !== null) {
+            let playlists = data.filter(playlist => playlist.id === defaultId);
+            if (playlists.length) {
+              this.selectPlaylist(playlists[0]);
             }
           }
           else {
-            this.create(uid, 'default')
-              .then(playlist => {
-                this.playlists.push(playlist);
-                this.playlists$.next(this.playlists);
-                this.selectPlaylist(playlist);
-              })
-              .catch(error => console.error(error));
+            this.selectPlaylist(data[0]);
           }
+        }
+        else {
+          this.create(uid, 'default')
+            .then(playlist => {
+              this.playlists.push(playlist);
+              this.playlists$.next(this.playlists);
+              this.selectPlaylist(playlist);
+            })
+            .catch(error => console.error(error));
+        }
 
-          this.playlists$.next(data);
-        })
-        .catch(error => console.error(error));
-    }
+        this.playlists$.next(data);
+      })
+      .catch(error => console.error(error));
 
     return this.playlists;
   }

@@ -1,7 +1,7 @@
-import {Component, ElementRef, Renderer, ViewChild} from "@angular/core";
+import {Component, ElementRef, Input, Renderer, ViewChild} from "@angular/core";
 import {Keyboard} from "@ionic-native/keyboard";
 import {PlaylistsRepository} from "../../../repositories/playlists.repository";
-import {AuthService} from "../../../services/AuthService";
+// import {AuthService} from "../../../services/AuthService";
 import {User} from "../../../models/user";
 import {ViewController} from "ionic-angular";
 
@@ -14,6 +14,7 @@ export class AddPlaylistComponent {
 
   public name: string;
 
+  @Input()
   private user: User;
 
   constructor(
@@ -21,19 +22,19 @@ export class AddPlaylistComponent {
     private keyboard: Keyboard,
     private renderer: Renderer,
     private repo: PlaylistsRepository,
-    private auth: AuthService
+    // private auth: AuthService
   ) {
 
   }
 
-  ionViewDidLoad() {
-    this.auth.getUser().then(user => this.user = user);
-    setTimeout(() => {
-      let input = this.input.nativeElement.querySelector('input');
-      this.renderer.invokeElementMethod(input, 'focus');
-      this.keyboard.show();
-    }, 500);
-  }
+  // ionViewDidLoad() {
+  //   this.auth.getUser().then(user => this.user = user);
+  //   setTimeout(() => {
+  //     let input = this.input.nativeElement.querySelector('input');
+  //     this.renderer.invokeElementMethod(input, 'focus');
+  //     this.keyboard.show();
+  //   }, 500);
+  // }
 
   createPlaylist() {
     if (this.name) {

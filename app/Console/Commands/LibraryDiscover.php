@@ -301,8 +301,8 @@ class LibraryDiscover extends Command
 
         /** @var Collection|MediaFile[] $files */
         $files = $medium->files;
-        $file = $files->filter(function (MediaFile $file) use ($pathInLib) {
-            return $file->filename === $pathInLib;
+        $file = $files->filter(function (MediaFile $file) use ($filename) {
+            return $file->filename === $filename;
         })->first();
 
         if (!$file) {
@@ -311,12 +311,23 @@ class LibraryDiscover extends Command
                 'filename' => $filename,
                 'size' => \File::size($filePath),
             ]);
+            if (!isset($analyze['mime_type'])) {
+                $analyze['mime_type'] = \File::mimeType($analyze['filenamepath']);
+                if (!$analyze['mime_type']) {
+                    return false;
+                }
+            }
             $mediaFileType = $this->getMediaFileType($analyze['mime_type']);
 
-            $file->type()->associate($mediaFileType);
-            $file->save();
+            if ($mediaFileType) {
+                $file->type()->associate($mediaFileType);
+                $file->save();
 
-            $files->push($file);
+                $files->push($file);
+            }
+            else {
+                $this->warn('Invalid mime type ' . $analyze['mime_type'] . ' for ' . $analyze['filenamepath']);
+            }
         }
 
         if (isset($thumbInLib) && isset($thumbPath) && isset($coverFilename)) {

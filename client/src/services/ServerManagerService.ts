@@ -26,6 +26,10 @@ export class ServerManagerService {
 
   private sessions = {};
 
+  private connecting = {};
+
+  private connected = {};
+
   private isReady: boolean;
 
   private readyResolvers: any[] = [];
@@ -42,7 +46,6 @@ export class ServerManagerService {
     config.settings$.subscribe(settings => {
       if (settings) {
         this.settings = settings;
-        this.host = settings.server;
       }
     });
 
@@ -65,8 +68,16 @@ export class ServerManagerService {
       });
   }
 
-  getServer(server: string) {
-    return this.servers[server] || null;
+  getServer(host: string) {
+    return this.servers[host] || null;
+  }
+
+  getCurrentServer() {
+    return this.getServer(this.host);
+  }
+
+  getSession(host: string) {
+    return this.sessions[host];
   }
 
   hasServers() {
@@ -74,11 +85,12 @@ export class ServerManagerService {
   }
 
   setServer(host: string) {
-    this.host = host;
+    if (this.host != host) {
+      this.host = host;
 
-    this.settings.server = this.host;
-    this.config.save(this.settings);
-
+      this.settings.server = this.host;
+      this.config.save(this.settings);
+    }
     return this;
   }
 
@@ -126,17 +138,24 @@ export class ServerManagerService {
 
   setSession(host: string, session: autobahn.Session) {
     this.sessions[host] = session;
-    this.servers[host].connected = true;
-    this.servers[host].session = session;
+    this.connected[host] = true;
+    this.connecting[host] = false;
+  }
+
+  setConnecting(host: string, is: boolean) {
+    this.connecting[host] = is;
   }
 
   close(host: string) {
     this.sessions[host] = null;
-    this.servers[host].connected = false;
+    this.connected[host] = false;
   }
 
   isConnected(host: string) {
-    return this.servers[host].connected === true;
+    if (this.connected[host]) {
+      return this.connected[host] === true;
+    }
+    return false;
   }
 
   ready(): Promise<{ [index: string]: Server }> {
@@ -155,6 +174,10 @@ export class ServerManagerService {
 
   getServerDiscoveryUrl(host: string, proto: string, port: string | null) {
     return proto + '://' + host + (port ? ':' + port : '') + '/api/discover';
+  }
+
+  canConnect(server: Server) {
+    return !this.connecting[server.host] && !this.connected[server.host];
   }
 
   private onReady = (resolve, reject) => {

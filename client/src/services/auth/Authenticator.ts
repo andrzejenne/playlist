@@ -5,35 +5,32 @@ import {User} from "../../models/user";
 @Injectable()
 export abstract class Authenticator {
 
-  private user: User;
+  private user: {[index: string]: User};
 
-  abstract authenticate(): Promise<any>;
+  abstract authenticate(host: string): Promise<any>;
 
   protected constructor(protected storage: Storage) {
   }
 
-  isAuthenticated(): Promise<boolean> {
-    return this.currentUser()
+  isAuthenticated(host: string): Promise<boolean> {
+    return this.currentUser(host)
       .then(user => {
         return user && user.id > 0
       });
   }
 
-  logout(): Promise<boolean> {
-    return this.storage.remove('user')
-      .then(result => {
-        this.user = null;
-
-        return true;
-      })
+  logout(host: string): Promise<boolean> {
+    delete this.user[host];
+    return this.storage.set('user', this.user)
+      .then(result => true)
       .catch(error => false);
   }
 
-  currentUser(): Promise<User> {
+  currentUser(host: string): Promise<User> {
     return this.storage.get('user')
       .then(user => {
         this.user = user;
-        return user;
+        return user[host];
       })
       .catch(error => {
         this.user = null;
@@ -41,9 +38,12 @@ export abstract class Authenticator {
       });
   }
 
-  setUser(user) {
-    this.user = user;
+  setUser(host: string, user: User) {
+    if (!this.user) {
+      this.user = {};
+    }
+    this.user[host] = user;
 
-    return this.storage.set('user', user);
+    return this.storage.set('user', this.user);
   }
 }

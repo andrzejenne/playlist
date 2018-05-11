@@ -59,11 +59,11 @@ export class ServerManagerComponent implements AfterViewInit, OnDestroy {
   }
 
   onConnectClick(host: string) {
-    this.wamp.connect(this.servers[host]);
+    this.wamp.connect(host);
   }
 
   onDisconnectClick(host: string) {
-    this.wamp.disconnect(this.servers[host]);
+    this.wamp.disconnect(host);
   }
 
   private setServers(servers: { [index: string]: Server }) {

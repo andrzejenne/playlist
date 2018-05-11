@@ -12,6 +12,7 @@ import {AuthService} from "../../services/AuthService";
 import {SelectorService} from "../../services/SelectorService";
 import {ElementReference} from "../../models/ElementReference";
 import {MediaManagerService} from "../../services/MediaManagerService";
+import {ConfigService} from "../../services/ConfigService";
 
 @Component({
   selector: 'page-downloaded',
@@ -22,8 +23,6 @@ export class DownloadedPage implements OnDestroy {
   public downloaded: Medium[];
 
   public list: Medium[];
-
-  public subs: Subscription[] = [];
 
   public player = false;
 
@@ -47,6 +46,12 @@ export class DownloadedPage implements OnDestroy {
 
   private user: User;
 
+  private subs: Subscription[] = [];
+
+  private limit = 30;
+
+  private offset = 0;
+
   constructor(
     public navCtrl: NavController,
     public selector: SelectorService<Medium>,
@@ -57,6 +62,7 @@ export class DownloadedPage implements OnDestroy {
     private errorReporter: ErrorReporting,
     // private modalController: ModalController,
     private servers: ServerManagerService,
+    private config: ConfigService,
     private platform: Platform,
     private ref: ChangeDetectorRef
   ) {
@@ -64,11 +70,21 @@ export class DownloadedPage implements OnDestroy {
   }
 
   ionViewDidLoad() {
-    this.auth.getUser()
-      .then(user => this.user = user);
 
-    this.repo.list()
+    this.subs.push(
+      this.config.settings$.subscribe(
+        settings => {
+          if (settings && settings.server) {
+            this.auth.getUser(settings.server)
+              .then(user => this.user = user);
+          }
+        }
+      )
+    );
+
+    this.repo.list(this.limit, this.offset)
       .then(data => {
+        console.info('DownloadedPage.data', data);
         this.downloaded = data;
         this.list = [].concat(data);
         this.ref.detectChanges();
@@ -76,6 +92,18 @@ export class DownloadedPage implements OnDestroy {
       .catch(this.errorReporter.report);
 
     this.initPlayer();
+  }
+
+  doInfinite(infiniteScroll: any) {
+    console.log('doInfinite, start is currently ' + this.offset);
+    this.offset += this.limit;
+
+    this.repo.list(this.limit, this.offset).then(data => {
+      this.downloaded = this.downloaded.concat(data);
+      this.list = [].concat(this.downloaded);
+      infiniteScroll.complete();
+    });
+
   }
 
   addToPlaylist(item: Medium) {

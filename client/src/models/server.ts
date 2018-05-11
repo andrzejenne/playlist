@@ -6,8 +6,6 @@ export class Server {
   scheme: string;
   wampPort: number;
   wampScheme: string;
-  connected: boolean;
-  session: autobahn.Session;
 
   public static getHost(server: Server) {
     return this.buildHostUrl(server.scheme, server.host, server.port);

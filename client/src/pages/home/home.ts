@@ -16,6 +16,7 @@ import {SettingsContract} from "../../services/contracts/SettingsContract";
 import {ConfigService} from "../../services/ConfigService";
 import {SelectorService} from "../../services/SelectorService";
 import {MediaManagerService} from "../../services/MediaManagerService";
+import {WampService} from "../../services/WampService";
 
 //import {PagesService} from "../../services/PagesService";
 
@@ -87,6 +88,7 @@ export class HomePage implements OnDestroy {
     private repo: PlaylistsRepository,
     private auth: AuthService,
     private servers: ServerManagerService,
+    private wamp: WampService,
     private mediaManager: MediaManagerService,
     private storage: Storage,
     private screenOrientation: ScreenOrientation,
@@ -106,8 +108,11 @@ export class HomePage implements OnDestroy {
       this.nav.push(SettingsPage);
     }
 
-    this.auth.getUser()
-      .then(this.onGetUser);
+    this.wamp.connected.subscribe(host => {
+      console.info('HomePage.wamp.connected', host);
+      this.auth.getUser(host)
+        .then(this.onGetUser);
+    });
 
     this.initPlayers();
 
@@ -124,6 +129,17 @@ export class HomePage implements OnDestroy {
         }
       }
     );
+
+    // cleanup on server switch
+    this.wamp.serverSwitched.subscribe(servers => {
+      console.info('HomePage.serverSwitched', servers);
+      this.playlist = null;
+      this.media = [];
+      this.current = null;
+      this.playedPlaylist = null;
+      this.mediaPlaylist = null;
+      this.ref.detectChanges();
+    });
   }
 
   onItemSwipe(item: Medium, event: WheelEvent) {
@@ -513,7 +529,7 @@ export class HomePage implements OnDestroy {
 
   private onGetUser = (user: User) => {
     this.user = user;
-
+    console.info('HomePage.onGetUser', user);
     if (user) {
       this.storage.get('playlist')
         .then(playlistId => {

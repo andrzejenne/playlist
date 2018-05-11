@@ -9,9 +9,6 @@
 namespace BBIT\Playlist\Services\MediaProviders;
 
 use BBIT\Playlist\Contracts\MediaProviderContract;
-use BBIT\Playlist\Helpers\MediaItem;
-use BBIT\Playlist\Helpers\MediaItemCollection;
-use BBIT\Playlist\Helpers\MediaItemPaginatedCollection;
 use BBIT\Playlist\Helpers\Str;
 use BBIT\Playlist\Models\MediaFile;
 use BBIT\Playlist\Models\Medium;

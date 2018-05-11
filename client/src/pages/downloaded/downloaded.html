@@ -39,7 +39,8 @@
   <ion-list [virtualScroll]="list" approxItemHeight="100px">
     <ion-item *virtualItem="let item">
       <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
-        <ion-img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail"></ion-img>
+        <!--<ion-img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail"></ion-img>-->
+        <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
         <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
       </ion-thumbnail>
 
@@ -68,6 +69,10 @@
       </div>
     </ion-item>
   </ion-list>
+
+  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 
   <ion-fab right bottom *ngIf="selector.selected.length">
     <button ion-fab color="danger" (tap)="removeSelected()">

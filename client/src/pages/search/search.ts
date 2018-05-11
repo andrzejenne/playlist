@@ -8,6 +8,7 @@ import {DownloadManager} from "../../services/DownloadManager";
 import {DownloadQueueComponent} from "../../components/download-queue/download-queue.component";
 import {PlaylistsRepository} from "../../repositories/playlists.repository";
 import {Subscription} from "rxjs/Subscription";
+import {ConfigService} from "../../services/ConfigService";
 
 @Component({
   selector: 'page-search',
@@ -48,6 +49,7 @@ export class SearchPage implements OnDestroy {
     private playlistRepository: PlaylistsRepository,
     // private alertCtrl: AlertController,
     private modalCtrl: ModalController,
+    private config: ConfigService,
     private platform: Platform,
     private ref: ChangeDetectorRef
   ) {
@@ -55,8 +57,14 @@ export class SearchPage implements OnDestroy {
   }
 
   ionViewDidLoad() {
-    this.auth.getUser()
-      .then(user => this.userId = user.id);
+    this.subs.push(
+      this.config.settings$.subscribe(settings => {
+        if (settings && settings.server) {
+          this.auth.getUser(settings.server)
+            .then(user => this.userId = user.id);
+        }
+      })
+    );
 
     this.subs.push(
       this.downloadManager.onChange(changes => {

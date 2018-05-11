@@ -13,14 +13,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-toolbar class="menu-toolbar">
-        <ion-item>
-          <ion-label item-right>Server</ion-label>
-          <!--<simple-select item-right [(ngModel)]="server" [options]="serverOptions" (change)="onServerChange($event)"></simple-select>-->
-          <ion-select [(ngModel)]="server" (ionChange)="onServerChange()" interface="pop-over">
-            <ion-option *ngFor="let host of servers" [value]="host">{{host.split('.')[0]}}</ion-option>
-          </ion-select>
-          <ion-icon ion-text name="cloud" item-end></ion-icon>
-        </ion-item>
+        <server-switch-component></server-switch-component>
         <ion-item>
           <ion-label item-right>Day Mode</ion-label>
           <ion-toggle item-right [(ngModel)]="dayMode" (ionChange)="onDayModeChange($event)"></ion-toggle>

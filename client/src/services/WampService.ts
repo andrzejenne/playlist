@@ -8,6 +8,7 @@ import {ServerManagerService} from "./ServerManagerService";
 import {Server} from "../models/server";
 import {ReplaySubject} from "rxjs/ReplaySubject";
 import {ConfigService} from "./ConfigService";
+import {Subject} from "rxjs/Subject";
 
 export interface SessionSubScriptionFunction {
   (session: autobahn.Session): void;
@@ -15,9 +16,6 @@ export interface SessionSubScriptionFunction {
 
 @Injectable()
 export class WampService {
-
-  // private static MSG_WAMP_NOT_AVAIL = 'WAMP not available';
-  public server: string;
 
   private session: autobahn.Session;
 
@@ -31,8 +29,11 @@ export class WampService {
 
   private _ri = 1;
 
-  public onClose = new ReplaySubject();
-  public onOpen = new ReplaySubject();
+  public onClose = new BehaviorSubject<{server: Server, reason}>(null);
+  public onOpen = new BehaviorSubject<Server>(null);
+
+  public serverSwitched = new Subject();
+  public connected = new BehaviorSubject<string>(null);
 
   constructor(private serversManager: ServerManagerService, private config: ConfigService) {
 
@@ -40,7 +41,7 @@ export class WampService {
 
     this.obs = this.subj.asObservable().pipe(skipWhile(ses => !ses));
 
-    this.loadServers();
+    // this.loadServers();
 
     Observable.fromEvent(window, 'beforeunload').subscribe(event => this.unregisterAll());
   }
@@ -112,34 +113,65 @@ export class WampService {
     }
   }
 
-  public connect(server: Server) {
-    console.info('connecting', server);
+  /**
+   *
+   * @param {string} host
+   * @returns {boolean}
+   */
+  public connect(host: string) {
 
-    let opts = this.getConnectionOptions(server);
+    console.info('connecting', host);
+
+    // disconnect current server
+    let currentServer = this.serversManager.getCurrentServer();
+    if (currentServer && this.serversManager.isConnected(currentServer.host)) {
+      this.disconnect(currentServer.host);
+    }
+
+    let server = this.serversManager.getServer(host);
+    if (!server) {
+      console.warn('WampService@connect', 'servers not ready yet ?');
+      return false;
+    }
+    if (!this.serversManager.canConnect(server)) {
+      console.warn('WampService@connect', 'attempt to reconnect', server);
+      return false;
+    }
+
+    this.serversManager.setServer(host);
+
+    let opts = this.getConnectionOptions(host);
     let conn = new autobahn.Connection(opts);
 
+    this.serversManager.setConnecting(host, true);
+
     conn.onopen = (session => {
+      console.info('WAMP Opened: ', session);
       this.session = session;
       this.queue.send(session);
       this.subj.next(session);
-      this.onOpen.next(session);
-      this.serversManager.setSession(server.host, session);
+      this.onOpen.next(server);
+      this.serversManager.setSession(host, session);
+      if (currentServer) {
+        this.serverSwitched.next([currentServer, server]);
+      }
+      this.connected.next(host);
     });
 
     conn.onclose = (reason => {
       console.info('WAMP Closed: ', reason);
-      this.onClose.next(reason);
-      this.serversManager.close(server.host);
+      this.onClose.next({server, reason});
+      this.serversManager.close(host);
       return true;
     });
 
     conn.open();
 
-//    console.info('connecting ', server);
+    return true;
   }
 
-  disconnect(server: Server) {
-    server.session.leave('disconnect', 'have to go');
+  disconnect(host: string) {
+    this.serversManager.getSession(host).leave('disconnect', 'have to go');
   }
 
   /**
@@ -155,12 +187,20 @@ export class WampService {
     return true;
   }
 
-  private getConnectionOptions(server: Server) {
+  /**
+   *
+   * @param {string} host
+   * @returns {{url: string; realm: string}}
+   */
+  private getConnectionOptions(host: string) {
     return {
-      url: Server.getWampHost(server), realm: 'playlist'
+      url: Server.getWampHost(
+        this.serversManager.getServer(host)
+      ), realm: 'playlist'
     }
   }
 
+  /*
   private loadServers() {
     this.serversManager.ready()
       .then(servers => {
@@ -190,6 +230,8 @@ export class WampService {
       })
       .catch(error => error);
   }
+
+  */
 
 
 }
