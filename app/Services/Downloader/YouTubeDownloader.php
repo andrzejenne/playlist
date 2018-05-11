@@ -9,12 +9,10 @@
 namespace BBIT\Playlist\Service\Downloader;
 
 use BBIT\Playlist\Contracts\DownloaderContract;
-use BBIT\Playlist\Models\MediaProvider;
+use BBIT\Playlist\Providers\MediaLibraryProvider;
 use BBIT\Playlist\Services\Downloader\Progress\YouTubeDownloadProgressReporter;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Symfony\Component\Process\Process;
-use Thruway\Logging\Logger;
 
 
 /**
@@ -50,9 +48,15 @@ class YouTubeDownloader extends DownloaderContract
     /**
      * YouTubeDownloader constructor.
      * @param YouTubeDownloadProgressReporter $reporter
+     * @param MediaLibraryProvider $libraryProvider
      */
-    public function __construct(YouTubeDownloadProgressReporter $reporter)
+    public function __construct(
+        YouTubeDownloadProgressReporter $reporter,
+        MediaLibraryProvider $libraryProvider
+    )
     {
+        parent::__construct($libraryProvider);
+
         $this->reporter = $reporter;
     }
 
@@ -70,10 +74,10 @@ class YouTubeDownloader extends DownloaderContract
 
     /**
      * @param $sid
+     * @param $outDir
      * @return string
-     * @throws \Exception
      */
-    public function download($sid)
+    public function download($sid, $outDir)
     {
         $videos = $this->getVideos($sid);
         $audios = $this->getAudios($sid);
@@ -85,7 +89,6 @@ class YouTubeDownloader extends DownloaderContract
                 $this->reporter->restart();
                 $this->reporter->setUrl($sid);
             }
-            $outDir = $this->getOutDir($sid);
 //            \Storage::makeDirectory($outDir)
             if (!file_exists($outDir)) {
                 mkdir($outDir, 0777, true);
@@ -107,11 +110,12 @@ class YouTubeDownloader extends DownloaderContract
 
     /**
      * @param $sid
+     * @param $outDir
      * @param string $format
      * @return string
      * @throws \Exception
      */
-    public function downloadAudio($sid, $format = 'mp3')
+    public function downloadAudio($sid, $outDir, $format = 'mp3')
     {
         if (!static::isAudioFormatValid($format)) {
             throw new \Exception("Invalid audio format $format");
@@ -125,15 +129,19 @@ class YouTubeDownloader extends DownloaderContract
                 $this->reporter->restart();
                 $this->reporter->setUrl($sid);
             }
-            $cmd = static::run(
-                static::getProcess("--extract-audio --newline --audio-format $format -f $acode $sid"),
+            if (!file_exists($outDir)) {
+                mkdir($outDir, 0777, true);
+            }
+
+            return static::run(
+                static::getProcess("--extract-audio --newline --audio-format $format -f $acode $sid -o '$outDir/%(id)s.%(ext)s'"),
                 $this->reporter
             );
-
-            return static::getCmdStatus($cmd);
         } else {
-            throw new \Exception('Cannot download, missing mandatory stream');
+            $this->reporter->readErrorOutput('Cannot download, missing mandatory streams');
         }
+
+        return null;
     }
 
     /**
@@ -191,6 +199,7 @@ class YouTubeDownloader extends DownloaderContract
     /**
      * @param $id
      * @return string
+     * @deprecated
      */
     public function getOutDir($id)
     {

@@ -9,6 +9,7 @@
 namespace BBIT\Playlist\Service\Downloader;
 
 use BBIT\Playlist\Contracts\DownloaderContract;
+use BBIT\Playlist\Providers\MediaLibraryProvider;
 use BBIT\Playlist\Services\Downloader\Progress\YouTubeDownloadProgressReporter;
 use Illuminate\Support\Collection;
 use Symfony\Component\Process\Process;
@@ -29,9 +30,12 @@ class DummyDownloader extends DownloaderContract
     /**
      * YouTubeDownloader constructor.
      * @param YouTubeDownloadProgressReporter $reporter
+     * @param MediaLibraryProvider $libraryProvider
      */
-    public function __construct(YouTubeDownloadProgressReporter $reporter)
+    public function __construct(YouTubeDownloadProgressReporter $reporter, MediaLibraryProvider $libraryProvider)
     {
+        parent::__construct($libraryProvider);
+
         $this->reporter = $reporter;
     }
 
@@ -54,10 +58,10 @@ class DummyDownloader extends DownloaderContract
 
     /**
      * @param $sid
+     * @param $outDir
      * @return Process
-     * @throws \Exception
      */
-    public function download($sid)
+    public function download($sid, $outDir)
     {
         if ($this->reporter) {
             $this->reporter->restart();
@@ -74,11 +78,12 @@ class DummyDownloader extends DownloaderContract
 
     /**
      * @param $sid
+     * @param $outDir
      * @param string $format
      * @return string
      * @throws \Exception
      */
-    public function downloadAudio($sid, $format = 'mp3')
+    public function downloadAudio($sid, $outDir, $format = 'mp3')
     {
         throw new \Exception('not implemented');
     }

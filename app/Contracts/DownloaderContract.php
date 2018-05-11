@@ -9,6 +9,7 @@
 namespace BBIT\Playlist\Contracts;
 
 use BBIT\Playlist\Models\MediaProvider;
+use BBIT\Playlist\Providers\MediaLibraryProvider;
 use Illuminate\Support\Collection;
 use Symfony\Component\Process\Process;
 
@@ -18,23 +19,37 @@ use Symfony\Component\Process\Process;
  */
 abstract class DownloaderContract
 {
-    /** @var MediaProvider */
+    /** @var MediaProviderContract */
     private $provider;
-
     /**
-     * @param $sid
-     * @return Process
-     * @throws \Exception
+     * @var MediaLibraryProvider
      */
-    abstract public function download($sid);
+    private $libraryProvider;
+
+    /**
+     * DownloaderContract constructor.
+     * @param MediaLibraryProvider $libraryProvider
+     */
+    public function __construct(MediaLibraryProvider $libraryProvider)
+    {
+        $this->libraryProvider = $libraryProvider;
+    }
+
 
     /**
      * @param $sid
+     * @param $outDir
+     * @return Process
+     */
+    abstract public function download($sid, $outDir);
+
+    /**
+     * @param $sid
+     * @param $outDir
      * @param string $format
      * @return string
-     * @throws \Exception
      */
-    abstract public function downloadAudio($sid, $format = 'mp3');
+    abstract public function downloadAudio($sid, $outDir, $format = 'mp3');
 
     /**
      * @param $sid
@@ -64,12 +79,13 @@ abstract class DownloaderContract
      */
     abstract public function getProviderSlug();
 
+
     /**
-     * @return MediaProvider
+     * @return MediaProviderContract
      */
     final public function getProvider() {
         if (!$this->provider) {
-            $this->provider = MediaProvider::whereSlug($this->getProviderSlug())->first();
+            $this->provider = $this->libraryProvider->getService($this->getProviderSlug());
         }
 
         return $this->provider;

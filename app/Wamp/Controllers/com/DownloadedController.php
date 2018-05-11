@@ -71,13 +71,11 @@ class DownloadedController extends Controller
         $medium = Medium::whereId($args[0]->mid)
             ->first();
 
-        // @todo - optimize
-        $providerSlug = $medium->provider->slug;
         /** @var MediaProviderContract $provider */
-        $provider = $this->libraryProvider->getService($providerSlug);
+        $provider = $medium->provider->getInstance();
 //        try {
         if ($provider->canDelete()) {
-            $outDir = $this->mediaDiscovery->getOutDir($providerSlug, $medium->provider_sid);
+            $outDir = $this->mediaDiscovery->getMediumDir($provider, $medium);
             if (true === \File::deleteDirectory($outDir)) {
                 if (!\File::exists($outDir)) {
                     return $medium->delete();

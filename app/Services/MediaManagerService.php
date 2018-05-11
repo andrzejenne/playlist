@@ -14,6 +14,7 @@ use BBIT\Playlist\Models\MediaFileType;
 use BBIT\Playlist\Models\MediaProvider;
 use BBIT\Playlist\Models\MediaType;
 use BBIT\Playlist\Models\Medium;
+use BBIT\Playlist\Providers\MediaLibraryProvider;
 use BBIT\Playlist\Services\Downloader\DownloadProcess;
 use BBIT\Playlist\Services\Downloader\DownloadRequest;
 use Illuminate\Foundation\Application;
@@ -46,6 +47,10 @@ class MediaManagerService
      * @var MediaDiscoveryService
      */
     private $mediaDiscoveryService;
+    /**
+     * @var MediaLibraryProvider
+     */
+    private $libraryProvider;
 
 //    private static $downloaderAliases = [
 //        'youtube' => YouTubeDownloader::class
@@ -56,11 +61,13 @@ class MediaManagerService
      * MediaManagerService constructor.
      * @param Application $app
      * @param MediaDiscoveryService $mediaDiscoveryService
+     * @param MediaLibraryProvider $libraryProvider
      */
-    public function __construct(Application $app, MediaDiscoveryService $mediaDiscoveryService)
+    public function __construct(Application $app, MediaDiscoveryService $mediaDiscoveryService, MediaLibraryProvider $libraryProvider)
     {
         $this->app = $app;
         $this->mediaDiscoveryService = $mediaDiscoveryService;
+        $this->libraryProvider = $libraryProvider;
     }
 
 
@@ -102,7 +109,9 @@ class MediaManagerService
      */
     public function download($args)
     {
-        $provider = getValue($args[0]->provider);
+        $provider = $this->libraryProvider->getService(
+            getValue($args[0]->provider)
+        );
         $sid = getValue($args[0]->sid);
         $type = getValue($args[0]->type, 'video');
         $format = getValue($args[0]->format, 'mp3'); // @todo configurable default download format

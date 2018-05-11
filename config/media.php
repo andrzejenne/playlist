@@ -18,6 +18,6 @@ return [
 
     'library' => [
         'ext' => 'mp3,aac,ogg',
-        'path' => '/mnt/temp/music/'
+        'path' => env('MEDIA_LIBRARY_PATH', null)
     ]
 ];

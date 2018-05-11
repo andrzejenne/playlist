@@ -40,6 +40,8 @@ class Genre extends BaseModel
 		self::COL_NAME,
 	];
 
+    public $timestamps = false;
+
     	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */

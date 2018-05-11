@@ -13,6 +13,8 @@ use BBIT\Playlist\Contracts\MediaProviderContract;
 use BBIT\Playlist\Helpers\MediaItem;
 use BBIT\Playlist\Helpers\MediaItemCollection;
 use BBIT\Playlist\Helpers\MediaItemPaginatedCollection;
+use BBIT\Playlist\Models\MediaFile;
+use BBIT\Playlist\Models\Medium;
 
 /**
  * Class Youtube
@@ -81,6 +83,30 @@ class YouTubeService extends MediaProviderContract
         return true;
     }
 
+    public function getMediumDir(Medium $medium)
+    {
+        return $this->getOutDir($medium->provider_sid);
+    }
+
+    /**
+     * @param Medium $medium
+     * @param MediaFile $file
+     * @return string
+     */
+    public function getMediumFilePath(Medium $medium, MediaFile $file)
+    {
+        return $this->getMediumDir($medium) . DIRECTORY_SEPARATOR . $file->filename;
+    }
+
+    /**
+     * @param $sid
+     * @return string
+     */
+    public function getOutDir($sid)
+    {
+        return $sid[0] . $sid[1] . DIRECTORY_SEPARATOR . $sid[2] . $sid[3];
+    }
+
 
     /**
      * @param $results
@@ -94,13 +120,13 @@ class YouTubeService extends MediaProviderContract
         $retrieved = [];
         foreach ($results as $result) {
 //            if (isset($result->id->videoId)) {
-                $sid = $result->id->videoId;
-                $info = \Cache::get('info.youtube.' . $sid);
-                if ($info) {
-                    $cached[] = $info;
-                } else {
-                    $ids[] = $sid;
-                }
+            $sid = $result->id->videoId;
+            $info = \Cache::get('info.youtube.' . $sid);
+            if ($info) {
+                $cached[] = $info;
+            } else {
+                $ids[] = $sid;
+            }
 //            }
         }
 

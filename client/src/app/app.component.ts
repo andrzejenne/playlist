@@ -111,8 +111,7 @@ export class ThePlaylist {
 
   onServerChange() {
     // console.info(event, this.server);
-    this.settings.server = this.server;
-    this.config.save(this.settings);
+    this.serverManager.setServer(this.server);
   }
 
   private onAuthenticated(response) {

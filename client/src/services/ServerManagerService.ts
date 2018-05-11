@@ -7,6 +7,8 @@ import {MediaFile} from "../models/media-file";
 import {HttpClient} from "@angular/common/http";
 import {ErrorReporting} from "./ErrorReporting";
 import autobahn from 'autobahn';
+import {ConfigService} from "./ConfigService";
+import {SettingsContract} from "./contracts/SettingsContract";
 
 @Injectable()
 export class ServerManagerService {
@@ -15,6 +17,8 @@ export class ServerManagerService {
     http: [null, 8000, 8080, 8100],
     https: [null]
   };
+
+  host: string;
 
   servers: { [index: string]: Server } = {};
 
@@ -26,7 +30,22 @@ export class ServerManagerService {
 
   private readyResolvers: any[] = [];
 
-  constructor(private storage: Storage, private http: HttpClient, private errorReporter: ErrorReporting) {
+  private settings: SettingsContract;
+
+  constructor(
+    private storage: Storage,
+    private http: HttpClient,
+    private errorReporter: ErrorReporting,
+    private config: ConfigService
+  ) {
+
+    config.settings$.subscribe(settings => {
+      if (settings) {
+        this.settings = settings;
+        this.host = settings.server;
+      }
+    });
+
     storage.get('servers')
       .then(servers => {
         console.info('storage.servers', servers);
@@ -52,6 +71,15 @@ export class ServerManagerService {
 
   hasServers() {
     return Object.keys(this.servers).length > 0;
+  }
+
+  setServer(host: string) {
+    this.host = host;
+
+    this.settings.server = this.host;
+    this.config.save(this.settings);
+
+    return this;
   }
 
   add(server: Server) {
@@ -139,23 +167,21 @@ export class ServerManagerService {
     return null;
   }
 
-  public getUrl(item: Medium, type: string) {
+  public getUrl(item: Medium, type: string, host = this.host) {
     let file = this.getFile(item, type);
     if (!file && type != 'video') {
       file = this.getFile(item, 'video');
     }
 
     if (file) {
-      return this.getFileUrl(item, file);
+      return this.getFileUrl(item, file, host);
     }
 
     return null;
   }
 
-  public getFileUrl(item: Medium, file: MediaFile) {
-    for (let host in this.servers) {
-      return this.getServerUrl(host) + '/media/' + item.provider_sid + '/' + file.id;
-    }
+  public getFileUrl(item: Medium, file: MediaFile, host = this.host) {
+    return this.getServerUrl(host) + '/media/' + item.provider_sid + '/' + file.id;
   }
 
   private onReady = (resolve, reject) => {

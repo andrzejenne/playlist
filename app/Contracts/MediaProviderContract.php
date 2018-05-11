@@ -8,6 +8,9 @@
 
 namespace BBIT\Playlist\Contracts;
 
+use BBIT\Playlist\Models\MediaFile;
+use BBIT\Playlist\Models\Medium;
+
 /**
  * Interface MediaProviderContract
  * @package BBIT\Playlist\Contracts
@@ -32,6 +35,12 @@ abstract class MediaProviderContract
     abstract public function canDelete();
 
     abstract public function canSearch();
+
+    abstract public function getMediumDir(Medium $medium);
+
+    abstract public function getMediumFilePath(Medium $medium, MediaFile $file);
+
+    abstract public function getOutDir($sid);
 
     /**
      * @return mixed

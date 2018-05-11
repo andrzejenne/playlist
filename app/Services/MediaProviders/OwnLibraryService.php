@@ -12,6 +12,8 @@ use BBIT\Playlist\Contracts\MediaProviderContract;
 use BBIT\Playlist\Helpers\MediaItem;
 use BBIT\Playlist\Helpers\MediaItemCollection;
 use BBIT\Playlist\Helpers\MediaItemPaginatedCollection;
+use BBIT\Playlist\Models\MediaFile;
+use BBIT\Playlist\Models\Medium;
 
 /**
  * Class Youtube
@@ -53,6 +55,34 @@ class OwnLibraryService extends MediaProviderContract
     public function canSearch()
     {
         return false;
+    }
+
+    /**
+     * @param Medium $medium
+     * @return mixed
+     */
+    public function getMediumDir(Medium $medium)
+    {
+        return $this->getOutDir($medium->provider_sid);
+    }
+
+    /**
+     * @param Medium $medium
+     * @param MediaFile $file
+     * @return string
+     */
+    public function getMediumFilePath(Medium $medium, MediaFile $file)
+    {
+        return $this->getMediumDir($medium) . DIRECTORY_SEPARATOR . $file->filename;
+    }
+
+    /**
+     * @param $sid
+     * @return mixed
+     */
+    public function getOutDir($sid)
+    {
+        return $sid;
     }
 
 

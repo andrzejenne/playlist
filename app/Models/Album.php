@@ -55,6 +55,8 @@ class Album extends BaseModel
 		self::COL_UPDATED_AT,
 	];
 
+    public $timestamps = false;
+
     	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */

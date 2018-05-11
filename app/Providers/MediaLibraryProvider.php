@@ -24,6 +24,9 @@ class MediaLibraryProvider extends ServiceProvider
 
     public $bindings;
 
+    /** @var MediaProviderContract[] */
+    private $services;
+
     /**
      * MediaLibraryProvider constructor.
      * @param Application $app
@@ -32,6 +35,7 @@ class MediaLibraryProvider extends ServiceProvider
     {
         parent::__construct($app);
 
+        $this->services = [];
         $this->bindings = config('media.providers');
     }
 
@@ -41,22 +45,37 @@ class MediaLibraryProvider extends ServiceProvider
      */
     public function register()
     {
-        foreach ($this->bindings as $alias => $binding) {
-            $this->app->bind($alias . '.' . static::SUFFIX, $binding);
+        foreach ($this->bindings as $slug => $binding) {
+            $this->app->bind(static::getAlias($slug), $binding);
         }
     }
 
 
     /**
-     * @param null $alias
+     * @param string $alias
      * @return MediaProviderContract
      */
-    public function getService($alias = null)
+    public function getService(string $alias = null)
     {
         if (!$alias) {
             $alias = key($this->bindings);
         }
 
-        return $this->app->make($alias . '.' . static::SUFFIX);
+        if (!isset($this->services[$alias])) {
+            $this->services[$alias] = $this->app->make(
+                static::getAlias($alias)
+            );
+        }
+
+        return $this->services[$alias];
+    }
+
+    /**
+     * @param string $slug
+     * @return string
+     */
+    public static function getAlias(string $slug)
+    {
+        return $slug . '.' . static::SUFFIX;
     }
 }

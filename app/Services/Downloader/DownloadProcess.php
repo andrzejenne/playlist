@@ -56,11 +56,16 @@ class DownloadProcess
      * @throws \Exception
      */
     public static function download(DownloaderContract $downloader, DownloadRequest $request) {
+        $outDir = $request->getProvider()
+            ->getOutDir(
+                $request->getSid()
+            );
+
         if ('video' == $request->getType()) {
-            $proc = $downloader->download($request->getSid());
+            $proc = $downloader->download($request->getSid(), $outDir);
         }
         else {
-            $proc = $downloader->downloadAudio($request->getSid(), $request->getFormat());
+            $proc = $downloader->downloadAudio($request->getSid(), $outDir, $request->getFormat());
         }
 
         return new static($proc, $request, $downloader);

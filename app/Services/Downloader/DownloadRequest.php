@@ -9,6 +9,7 @@
 namespace BBIT\Playlist\Services\Downloader;
 
 use BBIT\Playlist\Contracts\DownloaderContract;
+use BBIT\Playlist\Contracts\MediaProviderContract;
 
 
 /**
@@ -42,7 +43,7 @@ class DownloadRequest
     }
 
     /**
-     * @param $provider
+     * @param MediaProviderContract $provider
      * @param $sid
      * @param $type
      * @param $format
@@ -58,7 +59,7 @@ class DownloadRequest
     }
 
     /**
-     * @return mixed
+     * @return MediaProviderContract
      */
     public function getProvider()
     {

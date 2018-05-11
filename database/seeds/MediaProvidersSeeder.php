@@ -15,7 +15,7 @@ class MediaProvidersSeeder extends Seeder
      */
     public function run()
     {
-        foreach (config('media.downloaders') as $name => $concrete) {
+        foreach (config('media.providers') as $name => $concrete) {
             $slug = \BBIT\Playlist\Helpers\Str::slug($name);
             $record = MediaProvider::getBySlug($slug);
             if (!$record) {

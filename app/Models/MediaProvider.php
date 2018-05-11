@@ -2,7 +2,9 @@
 
 namespace BBIT\Playlist\Models;
 
+use BBIT\Playlist\Contracts\MediaProviderContract;
 use BBIT\Playlist\Models\Traits\HasSlug;
+use BBIT\Playlist\Providers\MediaLibraryProvider;
 
 /**
  * Class MediaProvider
@@ -43,6 +45,13 @@ class MediaProvider extends BaseModel
 		self::COL_NAME,
 		self::COL_SLUG,
 	];
+
+    /**
+     * @return MediaProviderContract
+     */
+    public function getService() {
+        return \App::make(MediaLibraryProvider::getAlias($this->slug));
+    }
 
 //    public function toArray()
 //    {
