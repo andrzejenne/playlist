@@ -198,6 +198,9 @@ class LibraryDiscover extends Command
         $track = static::getID3String('track', $analyze);
 
         $filename = $analyze['filename'];
+        if (!$name) {
+            $name = $filename;
+        }
         $filePath = $analyze['filepath'];
         $dirInLib = Str::substr($filePath, Str::length($file[0]) + 1);
         $pathInLib = $dirInLib . DIRECTORY_SEPARATOR . $filename;
