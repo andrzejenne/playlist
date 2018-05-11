@@ -44,7 +44,7 @@
       </ion-thumbnail>
 
       <div class="item-content">
-        <h2>{{item.album ? item.album.name +' - ' : ''}}{{item.artist ? item.artist.name + ' - ' : ''}}{{item.name}}</h2>
+        <h2>{{item.artist ? item.artist.name + ' - ' : ''}}{{item.album ? item.album.name +' - ' : ''}}{{item.name}}</h2>
         <!--<p *ngIf="item.description">{{item.description}}</p>-->
         <ion-buttons end>
           <button ion-button color="primary" small icon-left clear (click)="addToPlaylist(item)">

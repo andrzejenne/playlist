@@ -59,7 +59,10 @@ class DownloadedController extends Controller
             Medium::REL_ARTIST
         ]);
 
-        return $data->get();
+        $limit = isset($args[0]->limit) ? $args[0]->limit : 100;
+        $offset = isset($args[0]->offset) ? $args[0]->offset : 0;
+
+        return $data->paginate($limit, '*', 'page', floor($offset / $limit) + 1)->items();
     }
 
     /**
