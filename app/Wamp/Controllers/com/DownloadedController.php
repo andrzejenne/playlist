@@ -72,7 +72,7 @@ class DownloadedController extends Controller
             ->first();
 
         /** @var MediaProviderContract $provider */
-        $provider = $medium->provider->getInstance();
+        $provider = $medium->provider->getService();
 //        try {
         if ($provider->canDelete()) {
             $outDir = $this->mediaDiscovery->getMediumDir($provider, $medium);

@@ -104,7 +104,13 @@ class YouTubeService extends MediaProviderContract
      */
     public function getOutDir($sid)
     {
-        return $sid[0] . $sid[1] . DIRECTORY_SEPARATOR . $sid[2] . $sid[3];
+//        return storage_path('app/media/youtube/' . $id[0] . $id[1] . '/' . $id[2] . $id[3]);
+        return storage_path('app'
+            . DIRECTORY_SEPARATOR . 'media'
+            . DIRECTORY_SEPARATOR . 'youtube'
+            . DIRECTORY_SEPARATOR . $sid[0] . $sid[1]
+            . DIRECTORY_SEPARATOR . $sid[2] . $sid[3]
+        );
     }
 
 

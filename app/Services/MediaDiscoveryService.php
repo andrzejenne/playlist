@@ -85,9 +85,12 @@ class MediaDiscoveryService
     {
         $id = $proc->getRequest()->getSid();
         $downloader = $proc->getDownloader();
-        $dir = $this->getMediumDir($downloader->getProvider(), $id);
+
+//        $dir = $this->getMediumDir($downloader->getProvider(), $id);
 
         $provider = $downloader->getProvider();
+
+        $dir = $provider->getOutDir($id);
 
         $mediaProvider = $this->getMediaProvider($provider->getName());
 
@@ -102,7 +105,7 @@ class MediaDiscoveryService
                 Medium::COL_PROVIDER_SID => $id
             ]);
             $medium->provider()
-                ->associate($provider);
+                ->associate($mediaProvider);
 
             $medium->save();
             $existing = [];
@@ -137,6 +140,8 @@ class MediaDiscoveryService
                         $typeSlug = 'thumbnail';
                         break;
                     case 'mp3':
+                    case 'ogg':
+                    case 'acc':
                         $typeSlug = 'audio';
                         break;
                     case 'mp4':
