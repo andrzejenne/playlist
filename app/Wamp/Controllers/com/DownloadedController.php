@@ -54,7 +54,9 @@ class DownloadedController extends Controller
         $data = Medium::with([
             Medium::REL_PROVIDER,
             Medium::REL_FILES,
-            Medium::REL_FILES . '.' . MediaFile::REL_TYPE
+            Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
+            Medium::REL_ALBUM,
+            Medium::REL_ARTIST
         ]);
 
         return $data->get();

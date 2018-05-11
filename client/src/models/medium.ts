@@ -10,7 +10,13 @@ export class Medium extends Model {
   provider?: MediaProvider;
   provider_sid: string;
 
-  artist?: any;
-  album?: any;
-  genre?: any;
+  artist?: {
+    name: string;
+  };
+  album?: {
+    name: string;
+  };
+  genre?: {
+    name: string;
+  };
 }
