@@ -1,39 +1,42 @@
-ion-thumbnail {
-  position: relative;
-  ion-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    font-size: 200%;
-    color: red;
-    text-shadow: 2px 2px 5px #000;
-    font-weight: bold;
-    margin: -10px 0 0 -10px;
+item-component {
+  ion-thumbnail {
+    position: relative;
+    ion-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      font-size: 200%;
+      color: red;
+      text-shadow: 2px 2px 5px #000;
+      font-weight: bold;
+      margin: -10px 0 0 -10px;
+    }
   }
-}
 
-ion-thumbnail.selected {
-  opacity: .5;
-}
-
-.current {
-  .label, h2 {
-    color: #2a88bd;
+  ion-thumbnail.selected {
+    opacity: .5;
   }
-}
 
-.played {
-  opacity: .3;
-}
+  .current {
+    .label, h2 {
+      color: #2a88bd;
+    }
+  }
 
+  .played {
+    opacity: .3;
+  }
 
-.item-content {
-  padding-left: 20px;
-  p { font-size: 75%; }
-  ion-icon {
-    margin-left: -20px;
-    margin-right: 4px;
-    width: 16px;
-    text-align: center;
+  .item-content {
+    padding-left: 20px;
+    p {
+      font-size: 75%;
+    }
+    ion-icon {
+      margin-left: -20px;
+      margin-right: 4px;
+      width: 16px;
+      text-align: center;
+    }
   }
 }

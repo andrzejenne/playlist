@@ -31,10 +31,20 @@
           <ion-icon item-start name="search" color="primary"></ion-icon>
           Search
         </button>
+        <hr>
         <button ion-item (click)="setPage('downloaded');menu.close()">
           <ion-icon item-start name="cloud-download" color="primary"></ion-icon>
-          In Cloud
+          All
         </button>
+        <button ion-item>
+          <ion-icon item-start name="videocam" color="primary"></ion-icon>
+          YouTube
+        </button>
+        <button ion-item>
+          <ion-icon item-start name="list-box" color="primary"></ion-icon>
+          Library
+        </button>
+        <hr>
         <button ion-item (click)="setPage('downloadQueue');menu.close()">
           <ion-icon item-start name="download" color="primary"></ion-icon>
           Actions Queue
