@@ -25,3 +25,15 @@ ion-thumbnail.selected {
 .played {
   opacity: .3;
 }
+
+
+.item-content {
+  padding-left: 20px;
+  p { font-size: 75%; }
+  ion-icon {
+    margin-left: -20px;
+    margin-right: 4px;
+    width: 16px;
+    text-align: center;
+  }
+}

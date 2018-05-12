@@ -7,28 +7,26 @@
   <!--<span class="duration">{{item.duration | duration}}</span>-->
   <div class="item-content">
     <h2>{{item.name}}</h2>
-    <div *ngIf="item.artist">
-      <ion-icon name="person"></ion-icon>
-      {{item.artist.name}}
-    </div>
-    <div *ngIf="item.album">
-      <ion-icon name="disc"></ion-icon>
-      {{item.album.name}}
-    </div>
-    <ion-buttons end *ngIf="current">
-      <button ion-button clear>
-        <ion-spinner name="dots" color="#2a88bd"></ion-spinner>
-      </button>
-    </ion-buttons>
-    <ion-buttons end *ngIf="!current">
-      <button ion-button color="dark" clear (click)="playFirst.emit(true)">
-        <ion-icon name="play">
-          <sub>1</sub>
-        </ion-icon>
-      </button>
-      <button ion-button color="dark" clear (click)="play.emit(true)">
-        <ion-icon name="play"></ion-icon>
-      </button>
-    </ion-buttons>
+    <p *ngIf="item.artist">
+      <ion-icon name="person"></ion-icon>{{item.artist.name}}
+    </p>
+    <p *ngIf="item.album">
+      <ion-icon name="disc"></ion-icon>{{item.album.name}}
+    </p>
   </div>
+  <ion-buttons end *ngIf="current">
+    <button ion-button clear>
+      <ion-spinner name="dots" color="#2a88bd"></ion-spinner>
+    </button>
+  </ion-buttons>
+  <ion-buttons end *ngIf="!current">
+    <button ion-button color="dark" clear (click)="playFirst.emit(true)">
+      <ion-icon name="play">
+        <sub>1</sub>
+      </ion-icon>
+    </button>
+    <button ion-button color="dark" clear (click)="play.emit(true)">
+      <ion-icon name="play"></ion-icon>
+    </button>
+  </ion-buttons>
 </ion-item>
