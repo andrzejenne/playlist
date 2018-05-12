@@ -24,4 +24,21 @@ class Str extends \Illuminate\Support\Str
     {
         return Str::replaceFirst("%$placeholder", $content, $stub);
     }
+
+    public static function toBytes($size)
+    {
+        switch (substr($size, -1)) {
+            case 'M':
+            case 'm':
+                return (int)$size * 1048576;
+            case 'K':
+            case 'k':
+                return (int)$size * 1024;
+            case 'G':
+            case 'g':
+                return (int)$size * 1073741824;
+            default:
+                return $size;
+        }
+    }
 }

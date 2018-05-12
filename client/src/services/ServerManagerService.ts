@@ -2,8 +2,6 @@ import {Injectable} from "@angular/core";
 import {Storage} from "@ionic/storage";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Server} from "../models/server";
-import {Medium} from "../models/medium";
-import {MediaFile} from "../models/media-file";
 import {HttpClient} from "@angular/common/http";
 import {ErrorReporting} from "./ErrorReporting";
 import autobahn from 'autobahn';

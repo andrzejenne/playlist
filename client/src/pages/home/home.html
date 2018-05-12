@@ -3,7 +3,7 @@
     <button ion-button menuToggle="menu">
       <ion-icon name="menu"></ion-icon>
     </button>
-    <playlists-combo (selected)="onPlaylistChange($event)" [playlist]="playlist" [user]="user"></playlists-combo>
+    <playlists-combo (selected)="onPlaylistChange($event)" [playlist]="playlist" [playlists]="plManager.playlists" [user]="user"></playlists-combo>
     <!--<ion-item>-->
     <!--<ion-select #playlistSelect [(ngModel)]="playlist" (ionChange)="onPlaylistChange($event)"-->
     <!--interface="action-sheet">-->

@@ -4,7 +4,7 @@ import {SearchItem} from "../models/search-item";
 import {DownloadItem} from "../models/download-item";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Playlist} from "../models/playlist";
-import {PlaylistsRepository} from "../repositories/playlists.repository";
+import {PlaylistsManagerService} from "./PlaylistsManagerService";
 
 @Injectable()
 export class DownloadManager {
@@ -19,7 +19,7 @@ export class DownloadManager {
 
   private change$ = new EventEmitter();
 
-  constructor(private wamp: WampService, private playlistRepo: PlaylistsRepository) {
+  constructor(private wamp: WampService, private plManager: PlaylistsManagerService) {
     this.subscribeWamp();
   }
 
@@ -42,12 +42,12 @@ export class DownloadManager {
     let downloadItem = this.getDownloading(item.sid);
     if (downloadItem) {
       if (downloadItem.finished) {
-        this.playlistRepo.addToPlaylistBySid(item.sid, playlist);
+        this.plManager.addToPlaylistBySid(item.sid, playlist);
       }
       else {
         this.finished$.subscribe(finished => {
           if (finished && finished.sid == item.sid) {
-            this.playlistRepo.addToPlaylistBySid(item.sid, playlist);
+            this.plManager.addToPlaylistBySid(item.sid, playlist);
           }
         });
       }

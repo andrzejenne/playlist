@@ -6,9 +6,9 @@ import {Search} from "../../models/search";
 import {AuthService} from "../../services/AuthService";
 import {DownloadManager} from "../../services/DownloadManager";
 import {DownloadQueueComponent} from "../../components/download-queue/download-queue.component";
-import {PlaylistsRepository} from "../../repositories/playlists.repository";
 import {Subscription} from "rxjs/Subscription";
 import {ConfigService} from "../../services/ConfigService";
+import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 
 @Component({
   selector: 'page-search',
@@ -46,7 +46,7 @@ export class SearchPage implements OnDestroy {
     private repo: SearchRepository,
     private auth: AuthService,
     private downloadManager: DownloadManager,
-    private playlistRepository: PlaylistsRepository,
+    private plManager: PlaylistsManagerService,
     // private alertCtrl: AlertController,
     private modalCtrl: ModalController,
     private config: ConfigService,
@@ -145,7 +145,7 @@ export class SearchPage implements OnDestroy {
   }
 
   public toPlaylist(event: MouseEvent, item: SearchItem) {
-    this.downloadManager.downloadToPlaylist(this.userId, item, this.playlistRepository.playlist, 'youtube');
+    this.downloadManager.downloadToPlaylist(this.userId, item, this.plManager.playlist, 'youtube');
   }
 
   public searchItems(query?: string, args?: any) {

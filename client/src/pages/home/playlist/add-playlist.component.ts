@@ -1,9 +1,7 @@
-import {Component, ElementRef, Input, Renderer, ViewChild} from "@angular/core";
-import {Keyboard} from "@ionic-native/keyboard";
-import {PlaylistsRepository} from "../../../repositories/playlists.repository";
-// import {AuthService} from "../../../services/AuthService";
+import {Component, ElementRef, Input, ViewChild} from "@angular/core";
 import {User} from "../../../models/user";
 import {ViewController} from "ionic-angular";
+import {PlaylistsManagerService} from "../../../services/PlaylistsManagerService";
 
 @Component({
   selector: 'add-playlist-component',
@@ -19,9 +17,7 @@ export class AddPlaylistComponent {
 
   constructor(
     public viewCtrl: ViewController,
-    private keyboard: Keyboard,
-    private renderer: Renderer,
-    private repo: PlaylistsRepository,
+    private plManager: PlaylistsManagerService,
     // private auth: AuthService
   ) {
 
@@ -38,7 +34,7 @@ export class AddPlaylistComponent {
 
   createPlaylist() {
     if (this.name) {
-      this.repo.create(this.user.id, this.name);
+      this.plManager.create(this.user, this.name);
     }
     this.viewCtrl.dismiss();
   }

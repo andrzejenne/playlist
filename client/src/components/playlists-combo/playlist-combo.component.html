@@ -1,6 +1,6 @@
 <div class="form-group">
   <ion-icon title="playlist" name="musical-notes"></ion-icon>
-  <select #playlistSelect [(ngModel)]="playlist" class="form-control" (change)="onPlaylistChange()">
+  <select #playlistSelect [(ngModel)]="playlist" class="form-control" (change)="selected.next(playlist)">
     <option *ngFor="let pl of playlists" [ngValue]="pl">{{pl.name}}</option>
   </select>
   <!--<pre>{{playlist | json}}</pre>-->

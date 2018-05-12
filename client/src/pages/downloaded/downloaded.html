@@ -3,8 +3,21 @@
     <button ion-button menuToggle="menu">
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>In Cloud</ion-title>
-
+    <ion-title left>In Cloud</ion-title>
+    <ion-buttons left>
+      <button ion-button clear>
+        <ion-icon name="musical-notes"></ion-icon>
+        Media
+      </button>
+      <button ion-button clear>
+        <ion-icon name="person"></ion-icon>
+        Artists
+      </button>
+      <button ion-button clear>
+        <ion-icon name="disc"></ion-icon>
+        Albums
+      </button>
+    </ion-buttons>
     <ion-buttons end right>
       <button ion-button title="More options" class="primary-button" (click)="tools = !tools">
         <ion-icon name="more"></ion-icon>

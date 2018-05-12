@@ -26,7 +26,7 @@ export class AuthService {
     google: GooglePlus,
     storage: Storage,
     serverManager: ServerManagerService,
-    wamp: WampService
+    private wamp: WampService
   ) {
 
     console.info('isWebApp', config.isWebApp, document.URL);
@@ -36,25 +36,27 @@ export class AuthService {
     else {
       this.authenticator = new MobileAuthenticator(config, google, storage, serverManager, http);
     }
+  }
 
-    wamp.connected.subscribe(host => {
-      console.info('AuthService.wamp.connected', host);
-      if (host) {
-        this.isAuthenticated(host)
-          .then(is => {
-            console.info('AuthService.isAuthenticated.is', is);
-            if (is) {
-              this.getUser(host)
-                .then(user => this.user = user);
-            }
-            else {
-              this.authenticate(host)
-                .then(user => this.user = user)
-                .catch(error => console.warn('AuthService.ERROR', error));
-            }
-          })
-      }
-    });
+  authenticateAndConnectToHost(host: string) {
+    this.isAuthenticated(host)
+      .then(is => {
+        console.info('AuthService.isAuthenticated.is', is);
+        if (is) {
+          this.getUser(host)
+            .then(user => this.connectUserToHost(user, host));
+        }
+        else {
+          this.authenticate(host)
+            .then(user => this.connectUserToHost(user, host))
+            .catch(error => console.warn('AuthService.ERROR', error));
+        }
+      });
+  }
+
+  private connectUserToHost(user: User, host: string) {
+    this.user = user;
+    this.wamp.connect(host);
   }
 
   isAuthenticated(host: string) {

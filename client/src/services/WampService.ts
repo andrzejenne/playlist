@@ -6,7 +6,6 @@ import {skipWhile} from "rxjs/operators";
 import {WampQueue} from "./wamp/Queue";
 import {ServerManagerService} from "./ServerManagerService";
 import {Server} from "../models/server";
-import {ReplaySubject} from "rxjs/ReplaySubject";
 import {ConfigService} from "./ConfigService";
 import {Subject} from "rxjs/Subject";
 
@@ -29,11 +28,12 @@ export class WampService {
 
   private _ri = 1;
 
-  public onClose = new BehaviorSubject<{server: Server, reason}>(null);
+  public onClose = new BehaviorSubject<{ server: Server, reason }>(null);
   public onOpen = new BehaviorSubject<Server>(null);
 
   public serverSwitched = new Subject();
   public connected = new BehaviorSubject<string>(null);
+  public disconnected = new BehaviorSubject<string>(null);
 
   constructor(private serversManager: ServerManagerService, private config: ConfigService) {
 
@@ -162,6 +162,7 @@ export class WampService {
       console.info('WAMP Closed: ', reason);
       this.onClose.next({server, reason});
       this.serversManager.close(host);
+      this.disconnected.next(host);
       return true;
     });
 

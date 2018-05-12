@@ -1,5 +1,3 @@
-import autobahn from 'autobahn';
-
 export class Server {
   host: string;
   port: number;

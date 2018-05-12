@@ -2,8 +2,6 @@ import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core'
 import {Content, NavController, Platform} from 'ionic-angular';
 import {DownloadedRepository} from "../../repositories/downloaded.repository";
 import {Medium} from "../../models/medium";
-import {PlaylistsRepository} from "../../repositories/playlists.repository";
-import {MediaFile} from "../../models/media-file";
 import {ErrorReporting} from "../../services/ErrorReporting";
 import {Subscription} from "rxjs/Subscription";
 import {ServerManagerService} from "../../services/ServerManagerService";
@@ -13,6 +11,7 @@ import {SelectorService} from "../../services/SelectorService";
 import {ElementReference} from "../../models/ElementReference";
 import {MediaManagerService} from "../../services/MediaManagerService";
 import {ConfigService} from "../../services/ConfigService";
+import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 
 @Component({
   selector: 'page-downloaded',
@@ -57,7 +56,7 @@ export class DownloadedPage implements OnDestroy {
     public selector: SelectorService<Medium>,
     public mediaManager: MediaManagerService,
     private repo: DownloadedRepository,
-    private plRepo: PlaylistsRepository,
+    private plManager: PlaylistsManagerService,
     private auth: AuthService,
     private errorReporter: ErrorReporting,
     // private modalController: ModalController,
@@ -116,7 +115,7 @@ export class DownloadedPage implements OnDestroy {
   }
 
   addToPlaylist(item: Medium) {
-    this.plRepo.addToPlaylist(item)
+    this.plManager.addToPlaylist(item, this.plManager.playlist)
       .then(result => result);
 // .then(
     // @todo - info, added to playlist

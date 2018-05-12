@@ -16,7 +16,6 @@ import {ServerManagerService} from "../services/ServerManagerService";
 import {ConfigService} from "../services/ConfigService";
 import {SettingsContract} from "../services/contracts/SettingsContract";
 import {HomePage} from "../pages/home/home";
-import {WampService} from "../services/WampService";
 
 @Component({
   templateUrl: 'app.html'
@@ -36,7 +35,11 @@ export class ThePlaylist {
   @HostBinding('class')
   dayModeClass: string = 'day-mode';
 
+  servers: string[] = [];
+
   private settings: SettingsContract;
+
+  private host: string;
 
   constructor(
     platform: Platform,
@@ -44,7 +47,6 @@ export class ThePlaylist {
     private splashScreen: SplashScreen,
     private backgroundMode: BackgroundMode,
     // private serverManager: ServerManagerService,
-    private wamp: WampService,
     private auth: AuthService,
     private pages: PagesService,
     // private storage: Storage,
@@ -98,6 +100,11 @@ export class ThePlaylist {
     this.dayModeClass = this.dayMode ? 'day-mode' : 'night-mode';
     this.settings.dayMode.value = this.dayMode;
     this.config.save(this.settings);
+  }
+
+  switchServer(host: string) {
+    this.host = host;
+    this.auth.authenticateAndConnectToHost(host);
   }
 
   // private onAuthenticated(response) {
@@ -163,13 +170,19 @@ export class ThePlaylist {
 
     this.serverManager.ready()
       .then(servers => {
+
+        servers && (this.servers = Object.keys(servers));
+
         this.rootPage = HomePage;
 
-        // this.config.settings$.subscribe(settings => {
-        //   if (settings && settings.server) {
-        //     this.wamp.connect(settings.server);
-        //   }
-        // })
+        this.config.settings$.subscribe(settings => {
+          if (settings && settings.server && this.host != settings.server) {
+            this.host = settings.server;
+            this.auth.authenticateAndConnectToHost(settings.server);
+          }
+        });
+
+        this.serverManager.servers$.subscribe(servers => servers && (this.servers = Object.keys(servers)));
 
       });
   }

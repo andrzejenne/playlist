@@ -3,7 +3,6 @@ import {Storage} from "@ionic/storage";
 import {Content, NavController, Select, PopoverController} from 'ionic-angular';
 import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
-import {PlaylistsRepository} from "../../repositories/playlists.repository";
 import {Medium} from "../../models/medium";
 import {ElementReference} from "../../models/ElementReference";
 import {User} from "../../models/user";
@@ -17,8 +16,7 @@ import {ConfigService} from "../../services/ConfigService";
 import {SelectorService} from "../../services/SelectorService";
 import {MediaManagerService} from "../../services/MediaManagerService";
 import {WampService} from "../../services/WampService";
-
-//import {PagesService} from "../../services/PagesService";
+import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 
 @Component({
   selector: 'page-home',
@@ -73,6 +71,8 @@ export class HomePage implements OnDestroy {
 
   private user: User;
 
+  private host: string;
+
   @ViewChild('playlistSelect') select: Select;
 
   @ViewChild('audioPlayer') audioPlayer: ElementReference<HTMLAudioElement>;
@@ -85,7 +85,7 @@ export class HomePage implements OnDestroy {
     public navCtrl: NavController,
     public selector: SelectorService<Medium>,
     //    public pages: PagesService,
-    private repo: PlaylistsRepository,
+    public plManager: PlaylistsManagerService,
     private auth: AuthService,
     private servers: ServerManagerService,
     private wamp: WampService,
@@ -109,9 +109,28 @@ export class HomePage implements OnDestroy {
     }
 
     this.wamp.connected.subscribe(host => {
-      console.info('HomePage.wamp.connected', host);
-      this.auth.getUser(host)
-        .then(this.onGetUser);
+      if (host) {
+        this.host = host;
+        console.info('HomePage.wamp.connected', host);
+        this.auth.getUser(host)
+          .then(this.onGetUser);
+      }
+    });
+
+    this.wamp.disconnected.subscribe(host => {
+      if (host) {
+        console.info('HomePage.wamp.disconnected', host);
+        if (host == this.host) {
+          this.media = [];
+          this.playlist = null;
+          this.current = null;
+          this.playedPlaylist = [];
+          this.mediaPlaylist = [];
+          this.host = null;
+          this.plManager.clearPlaylists();
+          this.ref.detectChanges();
+        }
+      }
     });
 
     this.initPlayers();
@@ -131,15 +150,15 @@ export class HomePage implements OnDestroy {
     );
 
     // cleanup on server switch
-    this.wamp.serverSwitched.subscribe(servers => {
-      console.info('HomePage.serverSwitched', servers);
-      this.playlist = null;
-      this.media = [];
-      this.current = null;
-      this.playedPlaylist = null;
-      this.mediaPlaylist = null;
-      this.ref.detectChanges();
-    });
+    // this.wamp.serverSwitched.subscribe(servers => {
+    //   console.info('HomePage.serverSwitched', servers);
+    //   this.playlist = null;
+    //   this.media = [];
+    //   this.current = null;
+    //   this.playedPlaylist = null;
+    //   this.mediaPlaylist = null;
+    //   this.ref.detectChanges();
+    // });
   }
 
   onItemSwipe(item: Medium, event: WheelEvent) {
@@ -162,7 +181,7 @@ export class HomePage implements OnDestroy {
   }
 
   onPlaylistChange(playlist: Playlist) {
-    this.repo.selectPlaylist(playlist);
+    this.plManager.selectPlaylist(playlist);
 
     this.storage.set('playlist', playlist.id);
   }
@@ -177,7 +196,7 @@ export class HomePage implements OnDestroy {
       player.src = '';
     }
 
-    return this.repo.removeFromPlaylist(medium, this.playlist)
+    return this.plManager.removeFromPlaylist(medium, this.playlist)
       .then(num => {
         this.ref.detectChanges();
         return num;
@@ -388,7 +407,7 @@ export class HomePage implements OnDestroy {
   }
 
   removePlaylist(playlist: Playlist) {
-    this.repo.remove(playlist);
+    this.plManager.remove(playlist);
   }
 
   private getNextSrc() {
@@ -533,13 +552,13 @@ export class HomePage implements OnDestroy {
     if (user) {
       this.storage.get('playlist')
         .then(playlistId => {
-          this.repo.getPlaylists(user.id, playlistId);
+          this.plManager.getPlaylists(user, playlistId);
         });
 
       this.config.settings$.subscribe(settings => {
           this.settings = settings;
 
-          this.repo.playlist$.subscribe(playlist => {
+          this.plManager.playlist$.subscribe(playlist => {
             if (playlist && playlist.media) {
               this.media = playlist.media;
               if (!this.playlist) {

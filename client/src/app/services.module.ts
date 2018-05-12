@@ -16,6 +16,7 @@ import {IonicStorageModule} from "@ionic/storage";
 import {ErrorReporting} from "../services/ErrorReporting";
 import {FullscreenObserverService} from "../services/FullscreenObserverService";
 import {MediaManagerService} from "../services/MediaManagerService";
+import {PlaylistsManagerService} from "../services/PlaylistsManagerService";
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import {MediaManagerService} from "../services/MediaManagerService";
     ServerManagerService,
     MediaManagerService,
     ErrorReporting,
+    PlaylistsManagerService,
 
     FullscreenObserverService,
 

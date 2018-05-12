@@ -8,6 +8,7 @@
 
 namespace BBIT\Playlist\Http\Controllers;
 
+use BBIT\Playlist\Helpers\Str;
 use BBIT\Playlist\Services\MediaDiscoveryService;
 use Illuminate\Http\Request;
 
@@ -72,9 +73,16 @@ class MediaStreamController
                         $cStart = $range[0];
 
                         if ($cStart > 0) {
+                            $memUsage = memory_get_usage(true);
+                            $maxMem = Str::toBytes(ini_get('memory_limit'));
+                            if ($maxMem < $memUsage) {
+                                $range[1] = $cStart + 512000;
+                            } else {
+                                // to avoid max mem usage fail
+                                $range[1] = min($cStart + ceil(($maxMem - $memUsage)) / 8, $range[1]);
+                            }
                             $cEnd = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $cStart + 102400; // $cEnd;
-                        }
-                        else {
+                        } else {
                             $cEnd = $cStart + 512000;
                         }
                     }

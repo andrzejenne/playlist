@@ -13,7 +13,7 @@
         </ion-buttons>
       </ion-toolbar>
       <ion-toolbar class="menu-toolbar">
-        <server-switch-component></server-switch-component>
+        <server-switch-component [host]="host" [servers]="servers" (server)="switchServer($event)"></server-switch-component>
         <ion-item>
           <ion-label item-right>Day Mode</ion-label>
           <ion-toggle item-right [(ngModel)]="dayMode" (ionChange)="onDayModeChange($event)"></ion-toggle>
