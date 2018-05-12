@@ -55,7 +55,7 @@ export class MediaManagerService {
       return this.getFileUrl(item, thumb, host);
     }
 
-    return '/assets/imgs/thumbnail.png';
+    return 'assets/imgs/thumbnail.png';
   }
 
   static getThumbnail(item: Medium) {

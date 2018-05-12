@@ -67,65 +67,34 @@
   </div>
 
   <ion-list class="items">
-    <ion-item *ngFor="let item of playedPlaylist" class="played" (press)="selector.toggleSelect(item)"
-              (swipe)="onItemSwipe(item, $event)">
-      <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
-        <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
-        <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
-      </ion-thumbnail>
-      <!--<span class="duration">{{item.duration | duration}}</span>-->
-      <div class="item-content">
-        <h2>{{item.name}}</h2>
-        <ion-buttons end>
-          <button ion-button color="dark" clear (click)="playItemFirst(item)">
-            <ion-icon name="play">
-              <sub>1</sub>
-            </ion-icon>
-          </button>
-          <button ion-button color="dark" clear (click)="playItem(item)">
-            <ion-icon name="play"></ion-icon>
-          </button>
-        </ion-buttons>
-      </div>
-    </ion-item>
+    <item-component *ngFor="let item of playedPlaylist"
+                    [item]="item"
+                    [played]="true"
+                    [selected]="selector.isSelected(item)"
+                    (select)="selector.toggleSelect(item)"
+                    [thumbnail]="mediaManager.getThumbnailUrl(item)"
+              (swipe)="onItemSwipe(item, $event)" (play)="playItem(item)" (playFirst)="playItemFirst(item)">
+    </item-component>
 
-    <ion-item *ngIf="current" class="current" (press)="selector.toggleSelect(current)"
-              (swipe)="onItemSwipe(current, $event)">
-      <ion-thumbnail item-start [class.selected]="selector.isSelected(current)" (tap)="selector.toggleSelect(current)">
-        <img [src]="mediaManager.getThumbnailUrl(current)" class="fit-thumbnail">
-        <ion-icon *ngIf="selector.isSelected(current)" name="checkmark"></ion-icon>
-      </ion-thumbnail>
-      <!--<span class="duration">{{item.duration | duration}}</span>-->
-      <div class="item-content">
-        <h2>{{current.name}}</h2>
-        <ion-buttons end>
-          <button ion-button clear>
-            <ion-spinner name="dots" color="#2a88bd"></ion-spinner>
-          </button>
-        </ion-buttons>
-      </div>
-    </ion-item>
+    <item-component *ngIf="current"
+                    [item]="current"
+                    [played]="false"
+                    [current]="true"
+                    [selected]="selector.isSelected(current)"
+                    (select)="selector.toggleSelect(current)"
+                    [thumbnail]="mediaManager.getThumbnailUrl(current)"
+                    (swipe)="onItemSwipe(current, $event)">
+    </item-component>
 
-    <ion-item *ngFor="let item of mediaPlaylist" (press)="selector.toggleSelect(item)" (swipe)="onItemSwipe(item, $event)">
-      <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
-        <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
-        <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
-      </ion-thumbnail>
-      <!--<span class="duration">{{item.duration | duration}}</span>-->
-      <div class="item-content">
-        <h2>{{item.name}}</h2>
-        <ion-buttons end>
-          <button ion-button color="dark" clear (click)="playItemFirst(item)">
-            <ion-icon name="play">
-              <sub>1</sub>
-            </ion-icon>
-          </button>
-          <button ion-button color="dark" clear (click)="playItem(item)">
-            <ion-icon name="play"></ion-icon>
-          </button>
-        </ion-buttons>
-      </div>
-    </ion-item>
+    <item-component *ngFor="let item of mediaPlaylist"
+                    [item]="item"
+                    [played]="false"
+                    [selected]="selector.isSelected(item)"
+                    (select)="selector.toggleSelect(item)"
+                    [thumbnail]="mediaManager.getThumbnailUrl(item)"
+                    (swipe)="onItemSwipe(item, $event)" (play)="playItem(item)" (playFirst)="playItemFirst(item)">
+    </item-component>
+
   </ion-list>
 
   <ion-fab right bottom *ngIf="selector.selected.length">

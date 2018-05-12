@@ -121,6 +121,7 @@ export class HomePage implements OnDestroy {
       if (host) {
         console.info('HomePage.wamp.disconnected', host);
         if (host == this.host) {
+          this.pause();
           this.media = [];
           this.playlist = null;
           this.current = null;
@@ -161,11 +162,11 @@ export class HomePage implements OnDestroy {
     // });
   }
 
-  onItemSwipe(item: Medium, event: WheelEvent) {
-    if (event.deltaX > 0) {
+  onItemSwipe(item: Medium, direction) {
+    if ('right' == direction) {
       this.playItemFirst(item);
     }
-    else if (event.deltaX < 0) {
+    else if ('left' == direction) {
       this.removeItem(item);
     }
     // console.info('item swipe', event);
@@ -555,27 +556,24 @@ export class HomePage implements OnDestroy {
           this.plManager.getPlaylists(user, playlistId);
         });
 
-      this.config.settings$.subscribe(settings => {
-          this.settings = settings;
+      this.settings = this.config.settings;
 
-          this.plManager.playlist$.subscribe(playlist => {
-            if (playlist && playlist.media) {
-              this.media = playlist.media;
-              if (!this.playlist) {
-                this.preparePlaylist();
-                if (this.settings.player.autoplay.lastPosition) {
-                  this.autoPlayIfInterrupted();
-                }
-              }
-              else {
-                this.preparePlaylistDiff();
-              }
-              this.playlist = playlist;
-              this.ref.detectChanges();
+      this.plManager.playlist$.subscribe(playlist => {
+        if (playlist && playlist.media) {
+          this.media = playlist.media;
+          if (!this.playlist) {
+            this.preparePlaylist();
+            if (this.settings.player.autoplay.lastPosition) {
+              this.autoPlayIfInterrupted();
             }
-          });
+          }
+          else {
+            this.preparePlaylistDiff();
+          }
+          this.playlist = playlist;
+          this.ref.detectChanges();
         }
-      );
+      });
     }
   };
 

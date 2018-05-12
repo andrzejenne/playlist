@@ -6,7 +6,6 @@ import {skipWhile} from "rxjs/operators";
 import {WampQueue} from "./wamp/Queue";
 import {ServerManagerService} from "./ServerManagerService";
 import {Server} from "../models/server";
-import {ConfigService} from "./ConfigService";
 import {Subject} from "rxjs/Subject";
 
 export interface SessionSubScriptionFunction {
@@ -35,7 +34,7 @@ export class WampService {
   public connected = new BehaviorSubject<string>(null);
   public disconnected = new BehaviorSubject<string>(null);
 
-  constructor(private serversManager: ServerManagerService, private config: ConfigService) {
+  constructor(private serversManager: ServerManagerService) {
 
     this.subj = new BehaviorSubject<autobahn.Session>(null);
 

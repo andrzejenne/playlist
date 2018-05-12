@@ -4,20 +4,20 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title left>In Cloud</ion-title>
-    <ion-buttons left>
-      <button ion-button clear>
-        <ion-icon name="musical-notes"></ion-icon>
-        Media
-      </button>
-      <button ion-button clear>
-        <ion-icon name="person"></ion-icon>
-        Artists
-      </button>
-      <button ion-button clear>
-        <ion-icon name="disc"></ion-icon>
-        Albums
-      </button>
-    </ion-buttons>
+    <!--<ion-buttons left>-->
+      <!--<button ion-button clear>-->
+        <!--<ion-icon name="musical-notes"></ion-icon>-->
+        <!--Media-->
+      <!--</button>-->
+      <!--<button ion-button clear>-->
+        <!--<ion-icon name="person"></ion-icon>-->
+        <!--Artists-->
+      <!--</button>-->
+      <!--<button ion-button clear>-->
+        <!--<ion-icon name="disc"></ion-icon>-->
+        <!--Albums-->
+      <!--</button>-->
+    <!--</ion-buttons>-->
     <ion-buttons end right>
       <button ion-button title="More options" class="primary-button" (click)="tools = !tools">
         <ion-icon name="more"></ion-icon>
@@ -58,7 +58,17 @@
       </ion-thumbnail>
 
       <div class="item-content">
-        <h2>{{item.artist ? item.artist.name + ' - ' : ''}}{{item.album ? item.album.name +' - ' : ''}}{{item.name}}</h2>
+        <div *ngIf="item.artist" class="artist">
+          <ion-icon name="person"></ion-icon>
+          {{item.artist.name}}
+        </div>
+        <div *ngIf="item.album" class="album">
+          <ion-icon name="disc"></ion-icon>
+          {{item.album.name}}
+        </div>
+
+
+        <h2>{{item.name}}</h2>
         <!--<p *ngIf="item.description">{{item.description}}</p>-->
         <ion-buttons end>
           <button ion-button color="primary" small icon-left clear (click)="addToPlaylist(item)">

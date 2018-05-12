@@ -4,7 +4,6 @@ import {DownloadedRepository} from "../../repositories/downloaded.repository";
 import {Medium} from "../../models/medium";
 import {ErrorReporting} from "../../services/ErrorReporting";
 import {Subscription} from "rxjs/Subscription";
-import {ServerManagerService} from "../../services/ServerManagerService";
 import {User} from "../../models/user";
 import {AuthService} from "../../services/AuthService";
 import {SelectorService} from "../../services/SelectorService";
@@ -60,7 +59,6 @@ export class DownloadedPage implements OnDestroy {
     private auth: AuthService,
     private errorReporter: ErrorReporting,
     // private modalController: ModalController,
-    private servers: ServerManagerService,
     private config: ConfigService,
     private platform: Platform,
     private ref: ChangeDetectorRef

@@ -55,6 +55,9 @@ class PlaylistsController extends Controller
         return $playlist->media()
             ->with(
                 Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
+                Medium::REL_ARTIST,
+                Medium::REL_ALBUM,
+                Medium::REL_GENRE,
                 Medium::REL_PROVIDER
             )->get();
 

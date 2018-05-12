@@ -33,6 +33,7 @@ import {AddPlaylistComponent} from "../pages/home/playlist/add-playlist.componen
 import {AndroidFullScreen} from '@ionic-native/android-full-screen';
 import {SelectComponent} from "../components/select/select.component";
 import {ServerSwitchComponent} from "../components/server-switch/server-switch.component";
+import {ItemComponent} from "../pages/home/item/item.component";
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import {ServerSwitchComponent} from "../components/server-switch/server-switch.c
 
     SelectComponent,
     ServerSwitchComponent,
+    ItemComponent,
 
     DurationPipe
   ],
