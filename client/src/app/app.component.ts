@@ -1,4 +1,4 @@
-import {Component, HostBinding, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, HostBinding, ViewChild} from '@angular/core';
 import {MenuController, NavController, Platform} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
@@ -10,12 +10,13 @@ import {PagesService} from "../services/PagesService";
 
 import {SplashPage} from "../pages/splash/splash";
 import {SettingsPage} from "../pages/settings/settings";
+import {HomePage} from "../pages/home/home";
+
 import {FullscreenObserverService} from "../services/FullscreenObserverService";
 import {Insomnia} from "@ionic-native/insomnia";
 import {ServerManagerService} from "../services/ServerManagerService";
 import {ConfigService} from "../services/ConfigService";
 import {SettingsContract} from "../services/contracts/SettingsContract";
-import {HomePage} from "../pages/home/home";
 
 @Component({
   templateUrl: 'app.html'
@@ -54,7 +55,8 @@ export class ThePlaylist {
     private fullscreenObserver: FullscreenObserverService,
     private insomnia: Insomnia,
     private serverManager: ServerManagerService,
-    private config: ConfigService
+    private config: ConfigService,
+    private ref: ChangeDetectorRef
   ) {
 
     this.config.settings$.subscribe(settings => {
@@ -174,6 +176,8 @@ export class ThePlaylist {
         servers && (this.servers = Object.keys(servers));
 
         this.rootPage = HomePage;
+
+        this.ref.detectChanges();
 
         this.config.settings$.subscribe(settings => {
           if (settings && settings.server && this.host != settings.server) {

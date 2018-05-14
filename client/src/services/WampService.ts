@@ -15,6 +15,7 @@ export interface SessionSubScriptionFunction {
 @Injectable()
 export class WampService {
 
+  // @todo - not ready for multiserver support
   private session: autobahn.Session;
 
   private subj: BehaviorSubject<autobahn.Session>;

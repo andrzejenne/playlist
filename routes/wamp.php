@@ -22,6 +22,10 @@ WampRoute::namespace('com')->group(function(){
     WampRoute::command('playlists.removeMedium', 'PlaylistsController@removeMedium');
     WampRoute::command('playlists.order', 'PlaylistsController@order');
 
+    WampRoute::command('library.albums', 'LibraryController@albums');
+    WampRoute::command('library.artists', 'LibraryController@artists');
+    WampRoute::command('library.genres', 'LibraryController@genres');
+
     WampRoute::command('media.getBySid', 'MediaController@getBySid');
 });
 

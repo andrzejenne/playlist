@@ -33,7 +33,12 @@ import {AddPlaylistComponent} from "../pages/home/playlist/add-playlist.componen
 import {AndroidFullScreen} from '@ionic-native/android-full-screen';
 import {SelectComponent} from "../components/select/select.component";
 import {ServerSwitchComponent} from "../components/server-switch/server-switch.component";
-import {ItemComponent} from "../pages/home/item/item.component";
+import {ItemComponent} from "../components/playlist/item/item.component";
+import {LibraryPage} from "../pages/library/library";
+import {PlaylistComponent} from "../components/playlist/playlist.component";
+import {ArtistsTab} from "../pages/library/tabs/artists/artists";
+import {AlbumsPage} from "../pages/library/tabs/albums/albums";
+import {GenresTab} from "../pages/library/tabs/genres/genres";
 
 @NgModule({
   declarations: [
@@ -44,11 +49,17 @@ import {ItemComponent} from "../pages/home/item/item.component";
     AuthError,
     SplashPage,
     SettingsPage,
+    LibraryPage,
+
+    ArtistsTab,
+    AlbumsPage,
+    GenresTab,
 
     DownloadQueueComponent,
     VideoPlayerComponent,
     ServerManagerComponent,
     PlaylistComboComponent,
+    PlaylistComponent,
 
     AddPlaylistComponent,
 
@@ -56,14 +67,21 @@ import {ItemComponent} from "../pages/home/item/item.component";
     ServerSwitchComponent,
     ItemComponent,
 
-    DurationPipe
+    DurationPipe,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     ServicesModule,
     IonicStorageModule.forRoot(),
-    IonicModule.forRoot(ThePlaylist),
+    IonicModule.forRoot(ThePlaylist, {
+      // backButtonText: 'Go Back',
+      iconMode: 'ios',
+      modalEnter: 'modal-slide-in',
+      modalLeave: 'modal-slide-out',
+      tabsPlacement: 'bottom',
+      pageTransition: 'ios-transition'
+    }),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -74,6 +92,11 @@ import {ItemComponent} from "../pages/home/item/item.component";
     AuthError,
     SplashPage,
     SettingsPage,
+    LibraryPage,
+
+    ArtistsTab,
+    AlbumsPage,
+    GenresTab,
 
     DownloadQueueComponent,
     VideoPlayerComponent,

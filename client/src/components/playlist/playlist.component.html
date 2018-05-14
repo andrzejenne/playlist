@@ -1,0 +1,42 @@
+<div ion-fixed [hidden]="status.audio || !current">
+  <div class="video">
+    <video #videoPlayer [width]="video.width" [height]="video.height"></video>
+  </div>
+</div>
+
+<ion-list class="items">
+  <item-component *ngFor="let item of playedPlaylist"
+                  [item]="item"
+                  [played]="true"
+                  [selected]="selector.isSelected(item)"
+                  (select)="selector.toggleSelect(item)"
+                  [thumbnail]="mediaManager.getThumbnailUrl(item)"
+                  (swipe)="onItemSwipe(item, $event)" (play)="playItem(item)" (playFirst)="playItemFirst(item)">
+  </item-component>
+
+  <item-component *ngIf="current"
+                  [item]="current"
+                  [played]="false"
+                  [current]="true"
+                  [selected]="selector.isSelected(current)"
+                  (select)="selector.toggleSelect(current)"
+                  [thumbnail]="mediaManager.getThumbnailUrl(current)"
+                  (swipe)="onItemSwipe(current, $event)">
+  </item-component>
+
+  <item-component *ngFor="let item of mediaPlaylist"
+                  [item]="item"
+                  [played]="false"
+                  [selected]="selector.isSelected(item)"
+                  (select)="selector.toggleSelect(item)"
+                  [thumbnail]="mediaManager.getThumbnailUrl(item)"
+                  (swipe)="onItemSwipe(item, $event)" (play)="playItem(item)" (playFirst)="playItemFirst(item)">
+  </item-component>
+
+</ion-list>
+
+<ion-fab right bottom *ngIf="removable && selector.selected.length">
+  <button ion-fab color="danger" (tap)="removeSelected()">
+    <ion-icon name="trash"></ion-icon>
+  </button>
+</ion-fab>

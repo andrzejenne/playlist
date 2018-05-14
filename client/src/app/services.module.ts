@@ -17,6 +17,8 @@ import {ErrorReporting} from "../services/ErrorReporting";
 import {FullscreenObserverService} from "../services/FullscreenObserverService";
 import {MediaManagerService} from "../services/MediaManagerService";
 import {PlaylistsManagerService} from "../services/PlaylistsManagerService";
+import {LibraryManagerService} from "../services/LibraryManagerService";
+import {LibraryRepository} from "../repositories/library.repository";
 
 @NgModule({
   imports: [
@@ -34,6 +36,7 @@ import {PlaylistsManagerService} from "../services/PlaylistsManagerService";
     MediaManagerService,
     ErrorReporting,
     PlaylistsManagerService,
+    LibraryManagerService,
 
     FullscreenObserverService,
 
@@ -42,6 +45,7 @@ import {PlaylistsManagerService} from "../services/PlaylistsManagerService";
     SearchRepository,
     DownloadedRepository,
     PlaylistsRepository,
+    LibraryRepository,
 
   ],
   exports: [
