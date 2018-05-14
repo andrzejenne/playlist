@@ -30,6 +30,7 @@ WampRoute::namespace('com')->group(function(){
     WampRoute::command('media.getByArtist', 'MediaController@getByArtist');
     WampRoute::command('media.getByAlbum', 'MediaController@getByAlbum');
     WampRoute::command('media.getByGenre', 'MediaController@getByGenre');
+    WampRoute::command('media.getByProvider', 'MediaController@getByProvider');
 });
 
 WampRoute::namespace('sub')->group(function(){

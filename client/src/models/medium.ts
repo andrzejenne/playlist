@@ -4,7 +4,8 @@ import {MediaProvider} from "./media-provider";
 
 export class Medium extends Model {
   name: string;
-  released: Date;
+  released: number;
+  duration: number;
   files: MediaFile[];
 
   provider?: MediaProvider;

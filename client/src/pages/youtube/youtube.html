@@ -1,0 +1,26 @@
+<ion-header class="mode-color">
+  <ion-navbar>
+    <button ion-button menuToggle="menu">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      YouTube
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list [virtualScroll]="media" approxItemHeight="100px">
+    <div *virtualItem="let item" class="list-item">
+      <medium-component [item]="item"
+                        [selected]="selector.isSelected(item)"
+                        (select)="selector.toggleSelect(item)"
+                        (toPlaylist)="addToPlaylist(item)"
+                        [hasVideo]="mediaManager.hasVideo(item)"
+                        [hasAudio]="mediaManager.hasAudio(item)"
+                        [thumbnail]="mediaManager.getThumbnailUrl(item)"
+                        [landscape]="platform.isLandscape()"
+                        (play)="playMedia(item)"></medium-component>
+    </div>
+  </ion-list>
+</ion-content>

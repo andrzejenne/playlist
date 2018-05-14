@@ -1,0 +1,35 @@
+<ion-item>
+  <ion-thumbnail item-start [class.selected]="selected" (tap)="select.next($event)">
+    <img [src]="thumbnail" class="fit-thumbnail">
+    <ion-icon *ngIf="selected" name="checkmark"></ion-icon>
+  </ion-thumbnail>
+
+  <div class="item-content">
+    <div *ngIf="item.artist" class="artist">
+      <ion-icon name="person"></ion-icon>
+      {{item.artist.name}}
+    </div>
+    <div *ngIf="item.album" class="album">
+      <ion-icon name="disc"></ion-icon>
+      {{item.album.name}}
+    </div>
+
+    <h2>{{item.name}}</h2>
+    <ion-buttons end>
+      <button ion-button color="primary" small icon-left clear (click)="toPlaylist.next($event)">
+        <ion-icon name="list"></ion-icon>
+        <span *ngIf="landscape">Add to playlist</span>
+      </button>
+      <button *ngIf="hasVideo" ion-button color="primary" small icon-left clear
+              (click)="play.next($event)">
+        <ion-icon name="videocam"></ion-icon>
+        <span *ngIf="landscape">Play video</span>
+      </button>
+      <button *ngIf="hasAudio" ion-button color="primary" small icon-left clear
+              (click)="play.next($event)">
+        <ion-icon name="musical-notes"></ion-icon>
+        <span *ngIf="landscape">Play audio</span>
+      </button>
+    </ion-buttons>
+  </div>
+</ion-item>

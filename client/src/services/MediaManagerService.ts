@@ -2,12 +2,17 @@ import {Injectable} from "@angular/core";
 import {ServerManagerService} from "./ServerManagerService";
 import {Medium} from "../models/medium";
 import {MediaFile} from "../models/media-file";
+import {MediaRepository} from "../repositories/media.repository";
 
 @Injectable()
 export class MediaManagerService {
 
-  constructor(private serverManager: ServerManagerService) {
+  constructor(private serverManager: ServerManagerService, private repo: MediaRepository) {
 
+  }
+
+  getByProvider(provider: string) {
+    return this.repo.getByProvider(provider);
   }
 
   hasVideo(item: Medium) {

@@ -39,6 +39,8 @@ import {PlaylistComponent} from "../components/playlist/playlist.component";
 import {ArtistsTab} from "../pages/library/tabs/artists/artists";
 import {AlbumsPage} from "../pages/library/tabs/albums/albums";
 import {GenresTab} from "../pages/library/tabs/genres/genres";
+import {MediumComponent} from "../components/medium/medium.component";
+import {YouTubePage} from "../pages/youtube/youtube";
 
 @NgModule({
   declarations: [
@@ -50,6 +52,7 @@ import {GenresTab} from "../pages/library/tabs/genres/genres";
     SplashPage,
     SettingsPage,
     LibraryPage,
+    YouTubePage,
 
     ArtistsTab,
     AlbumsPage,
@@ -66,6 +69,7 @@ import {GenresTab} from "../pages/library/tabs/genres/genres";
     SelectComponent,
     ServerSwitchComponent,
     ItemComponent,
+    MediumComponent,
 
     DurationPipe,
   ],
@@ -93,6 +97,7 @@ import {GenresTab} from "../pages/library/tabs/genres/genres";
     SplashPage,
     SettingsPage,
     LibraryPage,
+    YouTubePage,
 
     ArtistsTab,
     AlbumsPage,

@@ -36,8 +36,8 @@
           <ion-icon item-start name="cloud-download" color="primary"></ion-icon>
           All
         </button>
-        <button ion-item>
-          <ion-icon item-start name="videocam" color="primary"></ion-icon>
+        <button ion-item (click)="setPage('youtube');menu.close()">
+          <ion-icon item-start name="logo-youtube" color="primary"></ion-icon>
           YouTube
         </button>
         <button ion-item (click)="setPage('library');menu.close()">

@@ -19,6 +19,7 @@ import {MediaManagerService} from "../services/MediaManagerService";
 import {PlaylistsManagerService} from "../services/PlaylistsManagerService";
 import {LibraryManagerService} from "../services/LibraryManagerService";
 import {LibraryRepository} from "../repositories/library.repository";
+import {MediaRepository} from "../repositories/media.repository";
 
 @NgModule({
   imports: [
@@ -46,6 +47,7 @@ import {LibraryRepository} from "../repositories/library.repository";
     DownloadedRepository,
     PlaylistsRepository,
     LibraryRepository,
+    MediaRepository,
 
   ],
   exports: [

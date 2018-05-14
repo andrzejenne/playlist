@@ -50,17 +50,19 @@ export class DownloadedPage implements OnDestroy {
 
   private offset = 0;
 
+  private end = false;
+
   constructor(
     public navCtrl: NavController,
     public selector: SelectorService<Medium>,
     public mediaManager: MediaManagerService,
+    public platform: Platform,
     private repo: DownloadedRepository,
     private plManager: PlaylistsManagerService,
     private auth: AuthService,
     private errorReporter: ErrorReporting,
     // private modalController: ModalController,
     private config: ConfigService,
-    private platform: Platform,
     private ref: ChangeDetectorRef
   ) {
 
@@ -88,6 +90,9 @@ export class DownloadedPage implements OnDestroy {
     return this.repo.list(this.limit, this.offset, this.search)
       .then(data => {
         console.info('DownloadedPage.data', data);
+        if (data.length != this.limit) {
+          this.end = true;
+        }
         if (this.offset) {
           this.downloaded = this.downloaded.concat(data);
           this.list = [].concat(this.downloaded);
@@ -105,10 +110,16 @@ export class DownloadedPage implements OnDestroy {
 
   doInfinite(infiniteScroll: any) {
     console.log('doInfinite, start is currently ' + this.offset);
-    this.offset += this.limit;
 
-    this.load()
-      .then(data => infiniteScroll.complete());
+    if (!this.end) {
+      this.offset += this.limit;
+
+      this.load()
+        .then(data => infiniteScroll.complete());
+    }
+    else {
+      infiniteScroll.complete();
+    }
 
   }
 
@@ -147,10 +158,9 @@ export class DownloadedPage implements OnDestroy {
     this.subs.forEach(s => s.unsubscribe());
   }
 
-  isLandscape = () => this.platform.isLandscape();
-
   filter() {
     this.offset = 0;
+    this.end = false;
 
     this.load();
     /*
