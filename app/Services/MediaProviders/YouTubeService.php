@@ -137,10 +137,9 @@ class YouTubeService extends MediaProviderContract
         $info = \Cache::get('info.youtube.' . $sid);
         if (!$info && $immediately) {
             try {
-                $retrieved = $this->service->getVideoInfo($sid);
-                foreach ($retrieved as $item) {
-                    \Cache::forever('info.youtube.' . $item->id, $item);
-                    $info = $item;
+                $info = $this->service->getVideoInfo($sid);
+                if ($info) {
+                    \Cache::forever('info.youtube.' . $sid, $info);
                 }
             } catch (\Exception $e) {
                 $info = null;
