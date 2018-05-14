@@ -36,11 +36,12 @@ abstract class MediaProviderContract
 
     abstract public function canSearch();
 
-    abstract public function getMediumDir(Medium $medium);
+    abstract public function getMediumDir(Medium $medium, MediaFile $file);
 
     abstract public function getMediumFilePath(Medium $medium, MediaFile $file);
 
-    abstract public function getOutDir($sid);
+    // @todo - ugly solution below - refactor needed
+    abstract public function getOutDir(Medium $medium, MediaFile $file = null);
 
     /**
      * @return mixed

@@ -44,6 +44,7 @@ class MediaStreamController
     {
         $path = $this->mediaDiscoveryService->getFilePath($id, $fid);
         if ($path) {
+//            echo $path;
             $type = \File::mimeType($path);
             if ($type) {
                 $size = \File::size($path);

@@ -1,18 +1,6 @@
-// import {Component} from "@angular/core";
-// import {NavController} from "ionic-angular";
-//
-// @Component({
-//   selector: 'albums-tab',
-//   templateUrl: 'albums.html'
-// })
-// export class AlbumsPage {
-//   constructor(public navCtrl: NavController) {
-//
-//   }
-// }
-
-import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import {Component} from '@angular/core';
+import {NavParams} from 'ionic-angular';
+import {Album} from "../../../../models/album";
 
 @Component({
   selector: 'page-home',
@@ -20,8 +8,10 @@ import { NavController } from 'ionic-angular';
 })
 export class AlbumsPage {
 
-  constructor(public navCtrl: NavController) {
+  albums: Album[] = [];
 
+  constructor(params: NavParams) {
+    console.info(params);
+    this.albums = params.data || [];
   }
-
 }

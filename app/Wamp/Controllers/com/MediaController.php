@@ -13,6 +13,7 @@ use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Models\Playlist;
 use BBIT\Playlist\Models\User;
 use BBIT\Playlist\Wamp\Controllers\Controller;
+use Illuminate\Database\Eloquent\Collection;
 use Thruway\ClientSession;
 
 /**
@@ -43,5 +44,32 @@ class MediaController extends Controller
             ->first();
 
         return $medium;
+    }
+
+    /**
+     * @param $args
+     * @return Medium[]|Collection
+     */
+    public function getByArtist($args) {
+        return Medium::whereArtistId($args[0]->aid)
+            ->get();
+    }
+
+    /**
+     * @param $args
+     * @return Medium[]|Collection
+     */
+    public function getByAlbum($args) {
+        return Medium::whereAlbumId($args[0]->aid)
+            ->get();
+    }
+
+    /**
+     * @param $args
+     * @return Medium[]|Collection
+     */
+    public function getByGenre($args) {
+        return Medium::whereGenreId($args[0]->gid)
+            ->get();
     }
 }

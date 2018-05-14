@@ -117,7 +117,7 @@ export class ServerManagerService {
           let url = this.getServerDiscoveryUrl(host, proto, port);
           this.http.get<Server>(url)
             .subscribe(response => {
-              console.info('Server Discoverty Succes', host, proto, port, response);
+              console.info('Server Discovery Succes', host, proto, port, response);
               resolve(response);
             }, error => {
               console.info('Server Discovery Error', error);

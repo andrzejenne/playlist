@@ -16,6 +16,10 @@ return [
 //    'youtube' => \BBIT\Playlist\Service\Downloader\DummyDownloader::class
     ],
 
+    'covers' => [
+        'path' => storage_path('app/covers')
+    ],
+
     'library' => [
         'ext' => 'mp3,aac,ogg',
         'path' => env('MEDIA_LIBRARY_PATH', null)

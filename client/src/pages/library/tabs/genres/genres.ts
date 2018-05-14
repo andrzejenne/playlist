@@ -1,13 +1,16 @@
 import {Component} from "@angular/core";
-import {NavController} from "ionic-angular";
+import {NavParams} from "ionic-angular";
+import {Genre} from "../../../../models/genre";
 
 @Component({
   selector: 'genres-tab',
   templateUrl: 'genres.html'
 })
 export class GenresTab {
-  constructor(public navCtrl: NavController) {
 
+  genres: Genre[];
+
+  constructor(params: NavParams) {
+    this.genres = params.data || [];
   }
-
 }

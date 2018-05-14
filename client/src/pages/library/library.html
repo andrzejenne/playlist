@@ -9,20 +9,12 @@
   </ion-navbar>
 </ion-header>
 
-<!--<ion-content>-->
-<!--<ion-tabs>-->
-  <!--<ion-tab [root]="tab1Root" tabTitle="Home" tabIcon="home"></ion-tab>-->
-  <!--<ion-tab [root]="tab2Root" tabTitle="About" tabIcon="information-circle"></ion-tab>-->
-  <!--<ion-tab [root]="tab3Root" tabTitle="Contact" tabIcon="contacts"></ion-tab>-->
-<!--</ion-tabs>-->
-
-<!--</ion-content>-->
-
-<ion-tabs #tabs tabsPlacement="bottom" color="dark" tabsLayout="icon-start" [tabsHighlight]="true" name="library" selectedIndex="1">
-  <ion-tab tabTitle="Artists" [root]="tab1Root" tabIcon="person" [tabBadge]="artists.length">
+<ion-tabs #tabs tabsPlacement="bottom" color="dark" tabsLayout="icon-start" [tabsHighlight]="true" name="library"
+          selectedIndex="0">
+  <ion-tab tabTitle="Artists" [root]="tab1Root" [rootParams]="artists" tabIcon="person" [tabBadge]="artists.length">
   </ion-tab>
-  <ion-tab tabTitle="Albums" [root]="tab2Root" tabIcon="disc" [tabBadge]="albums.length">
+  <ion-tab tabTitle="Albums" [root]="tab2Root" [rootParams]="albums" tabIcon="disc" [tabBadge]="albums.length">
   </ion-tab>
-  <ion-tab tabTitle="Genres" [root]="tab3Root" tabIcon="musical-note" [tabBadge]="genres.length">
+  <ion-tab tabTitle="Genres" [root]="tab3Root" [rootParams]="genres" tabIcon="musical-note" [tabBadge]="genres.length">
   </ion-tab>
 </ion-tabs>

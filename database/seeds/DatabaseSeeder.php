@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(MediaTypesSeeder::class);
         $this->call(MediaFileTypesSeeder::class);
         $this->call(MediaProvidersSeeder::class);
+        $this->call(CoverTypesSeeder::class);
     }
 }

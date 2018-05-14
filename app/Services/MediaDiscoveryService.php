@@ -33,6 +33,9 @@ class MediaDiscoveryService
      */
     private $mediaProviderEntities;
 
+    /** @var \getID3 */
+    private $id3;
+
     /**
      * MediaDiscoveryService constructor.
      * @param MediaLibraryProvider $libraryProvider
@@ -40,6 +43,12 @@ class MediaDiscoveryService
     public function __construct(MediaLibraryProvider $libraryProvider)
     {
         $this->libraryProvider = $libraryProvider;
+
+        try {
+            $this->id3 = new \getID3();
+        } catch (\Exception $e) {
+            // @todo - log error
+        }
     }
 
     /**
@@ -61,10 +70,10 @@ class MediaDiscoveryService
                     ->first();
 
                 if ($file instanceof MediaFile) {
-/*                    $path = $this->getMediumDir($medium->provider->slug,
-                            $medium->provider_sid) . DIRECTORY_SEPARATOR . $file->filename;*/
+                    /*                    $path = $this->getMediumDir($medium->provider->slug,
+                                                $medium->provider_sid) . DIRECTORY_SEPARATOR . $file->filename;*/
 
-                    $path = $providerLibrary->getOutDir($medium->provider_sid) . DIRECTORY_SEPARATOR . $file->filename;
+                    $path = $providerLibrary->getOutDir($medium, $file) . DIRECTORY_SEPARATOR . $file->filename;
 
                     if (\File::exists($path)) {
                         return $path;
@@ -72,6 +81,7 @@ class MediaDiscoveryService
                 }
             }
         } catch (\Throwable $t) {
+//            die ($t->getMessage());
             // @todo - log file not found
         }
 
@@ -81,27 +91,39 @@ class MediaDiscoveryService
     /**
      * @param DownloadProcess $proc
      */
-    public function disoverMedia(DownloadProcess $proc)
+    public function disoverDownloadedMedia(DownloadProcess $proc)
     {
         $id = $proc->getRequest()->getSid();
-        $downloader = $proc->getDownloader();
 
-//        $dir = $this->getMediumDir($downloader->getProvider(), $id);
+        $downloader = $proc->getDownloader();
 
         $provider = $downloader->getProvider();
 
-        $dir = $provider->getOutDir($id);
-
         $mediaProvider = $this->getMediaProvider($provider->getName());
+
+        $this->discoverMedia($id, $downloader->getName($id), $provider, $mediaProvider);
+    }
+
+    /**
+     * @param $id
+     * @param $name
+     * @param MediaProviderContract $provider
+     * @param MediaProvider $mediaProvider
+     */
+    public function discoverMedia($id, $name, MediaProviderContract $provider, MediaProvider $mediaProvider)
+    {
 
         /** @var Medium $medium */
         $medium = Medium::whereProviderId($mediaProvider->id)
             ->whereProviderSid($id)
             ->first();
 
+        $duration = null;
+
         if (!$medium) {
             $medium = new Medium([
-                Medium::COL_NAME => $downloader->getName($id),
+                Medium::COL_NAME => $name,
+//                Medium::COL_DURATION => $duration,
                 Medium::COL_PROVIDER_SID => $id
             ]);
             $medium->provider()
@@ -110,10 +132,12 @@ class MediaDiscoveryService
             $medium->save();
             $existing = [];
         } else {
-            $existing = $medium->files->map(function (MediaFile $file) {
-                return $file->filename;
-            });
+            $existing = $medium->files()->get()->mapWithKeys(function (MediaFile $file) {
+                return [$file->filename => $file];
+            })->toArray();
         }
+
+        $dir = $provider->getOutDir($medium, null);
 
         $files = \File::allFiles($dir);
 //        $unknown = MediaType::whereSlug('unknown')->first();
@@ -143,12 +167,28 @@ class MediaDiscoveryService
                     case 'ogg':
                     case 'acc':
                         $typeSlug = 'audio';
+                        if ($this->id3) {
+                            $analyze = $this->id3->analyze($file);
+                        }
+
                         break;
                     case 'mp4':
                     case 'mkv':
                     default:
                         $typeSlug = 'video';
+
+                        if ($this->id3) {
+                            $analyze = $this->id3->analyze($file);
+                        }
+
                         break;
+                }
+
+                if (isset($analyze)) {
+                    if (isset($analyze['playtime_seconds'])) {
+                        $medium->setAttribute($medium::COL_DURATION, $analyze['playtime_seconds']);
+                        $medium->save();
+                    }
                 }
 
                 $fileRecord->media()
@@ -180,11 +220,12 @@ class MediaDiscoveryService
     /**
      * @param MediaProviderContract $provider
      * @param Medium $medium
+     * @param MediaFile $file
      * @return string
      */
-    public static function getMediumDir(MediaProviderContract $provider, Medium $medium)
+    public static function getMediumDir(MediaProviderContract $provider, Medium $medium, MediaFile $file)
     {
-        return static::getProviderPath($provider, $provider->getMediumDir($medium));
+        return static::getProviderPath($provider, $provider->getMediumDir($medium, $file));
     }
 
     /**

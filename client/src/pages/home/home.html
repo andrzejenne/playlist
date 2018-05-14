@@ -3,7 +3,8 @@
     <button ion-button menuToggle="menu">
       <ion-icon name="menu"></ion-icon>
     </button>
-    <playlists-combo (selected)="onPlaylistChange($event)" [playlist]="playlist" [playlists]="plManager.playlists" [user]="user"></playlists-combo>
+    <playlists-combo (selected)="onPlaylistChange($event)" [playlist]="playlist" [playlists]="plManager.playlists"
+                     [user]="user"></playlists-combo>
     <!--<ion-item>-->
     <!--<ion-select #playlistSelect [(ngModel)]="playlist" (ionChange)="onPlaylistChange($event)"-->
     <!--interface="action-sheet">-->
@@ -81,7 +82,7 @@
                     [selected]="selector.isSelected(item)"
                     (select)="selector.toggleSelect(item)"
                     [thumbnail]="mediaManager.getThumbnailUrl(item)"
-              (swipe)="onItemSwipe(item, $event)" (play)="playItem(item)" (playFirst)="playItemFirst(item)">
+                    (swipe)="onItemSwipe(item, $event)" (play)="playItem(item)" (playFirst)="playItemFirst(item)">
     </item-component>
 
     <item-component *ngIf="current"

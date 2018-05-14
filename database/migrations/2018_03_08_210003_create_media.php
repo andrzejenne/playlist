@@ -21,6 +21,7 @@ class CreateMedia extends Migration
             $table->smallInteger('album_track')->unsigned()->nullable();
             $table->integer('genre_id')->unsigned()->nullable();
             $table->date('released')->nullable();
+            $table->float('duration')->nullable();
 
             $table->foreign('artist_id')
                 ->references('id')->on('artists')->onDelete('cascade');

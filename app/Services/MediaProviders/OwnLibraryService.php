@@ -10,6 +10,7 @@ namespace BBIT\Playlist\Services\MediaProviders;
 
 use BBIT\Playlist\Contracts\MediaProviderContract;
 use BBIT\Playlist\Helpers\Str;
+use BBIT\Playlist\Models\LibraryAlbum;
 use BBIT\Playlist\Models\MediaFile;
 use BBIT\Playlist\Models\Medium;
 
@@ -59,11 +60,12 @@ class OwnLibraryService extends MediaProviderContract
 
     /**
      * @param Medium $medium
+     * @param MediaFile $file
      * @return mixed
      */
-    public function getMediumDir(Medium $medium)
+    public function getMediumDir(Medium $medium, MediaFile $file)
     {
-        return $this->getOutDir($medium->provider_sid);
+        return $this->getOutDir($medium, $file);
     }
 
     /**
@@ -73,18 +75,45 @@ class OwnLibraryService extends MediaProviderContract
      */
     public function getMediumFilePath(Medium $medium, MediaFile $file)
     {
-        return $this->getMediumDir($medium) . DIRECTORY_SEPARATOR . $file->filename;
+        return $this->getMediumDir($medium, $file) . DIRECTORY_SEPARATOR . $file->filename;
     }
 
     /**
-     * @param $sid
+     * @param Medium $medium
+     * @param MediaFile $file
      * @return mixed
      */
-    public function getOutDir($sid)
+    public function getOutDir(Medium $medium, MediaFile $file = null)
     {
-        return rtrim($this->getLib(Str::substr($sid, 6, 6)), DIRECTORY_SEPARATOR)
-            . DIRECTORY_SEPARATOR
-            . ltrim(Str::substr($sid, 12), DIRECTORY_SEPARATOR);
+        $sid = $medium->provider_sid;
+        $libHash = Str::substr($sid, 6, 6);
+        $fileName = $file->filename;
+        $libPath = rtrim($this->getLib($libHash), DIRECTORY_SEPARATOR);
+
+//        echo "$sid, $libHash, $fileName";
+
+        /** @var LibraryAlbum $libraryAlbum */
+        foreach ($medium->album->libraries as $libraryAlbum) {
+            if ($libraryAlbum->sid == $libHash) {
+                $possibleDir = $libPath . DIRECTORY_SEPARATOR . $libraryAlbum->path;
+                $possiblePath = $possibleDir . DIRECTORY_SEPARATOR . $fileName;
+                echo $possibleDir;
+                if (\File::exists($possiblePath)) {
+
+                    return $possibleDir;
+                }
+                else {
+//                    echo ' !';
+                }
+            }
+        }
+
+
+
+        return null;
+//        return $libPath
+//            . DIRECTORY_SEPARATOR
+//            . ltrim(Str::substr($sid, 12), DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -93,11 +122,11 @@ class OwnLibraryService extends MediaProviderContract
      * @param $dirInLib
      * @return string
      */
-    public static function genSid($pathInLib, $libPath, $dirInLib)
+    public static function genSid($pathInLib, $libPath) //, $dirInLib)
     {
         return Str::substr(md5($pathInLib), 0, 6)
-            . Str::substr(md5($libPath), 0, 6)
-            . $dirInLib;
+            . Str::substr(md5($libPath), 0, 6);
+//            . $dirInLib;
     }
 
     /**
@@ -124,7 +153,7 @@ class OwnLibraryService extends MediaProviderContract
             return $this->libs[$md5];
         }
 
-        print_r($this->libs);
+//        print_r($this->libs);
 
         return null;
     }

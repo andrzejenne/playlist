@@ -18,13 +18,17 @@ export class LibraryPage implements OnDestroy {
   albums: Album[] = [];
   genres: Genre[] = [];
 
-  tab1Root = ArtistsTab;
-  tab2Root = AlbumsPage;
-  tab3Root = GenresTab;
+  tab1Root: any;
+  tab2Root: any;
+  tab3Root: any;
 
   // @ViewChild('tabs') tabs: Tabs;
 
-  constructor(private libManager: LibraryManagerService, private ref: ChangeDetectorRef, public navCtrl: NavController) {
+  constructor(
+    private libManager: LibraryManagerService,
+    private ref: ChangeDetectorRef,
+    public navCtrl: NavController
+  ) {
   }
 
   ionViewDidLoad() {
@@ -34,6 +38,12 @@ export class LibraryPage implements OnDestroy {
         this.artists = data.artists;
         this.albums = data.albums;
         this.genres = data.genres;
+
+        this.tab1Root = ArtistsTab;
+        this.tab2Root = AlbumsPage;
+        this.tab3Root = GenresTab;
+
+        console.info(this);
 
         this.ref.detectChanges();
       }

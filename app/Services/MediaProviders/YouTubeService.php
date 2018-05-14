@@ -83,9 +83,14 @@ class YouTubeService extends MediaProviderContract
         return true;
     }
 
-    public function getMediumDir(Medium $medium)
+    /**
+     * @param Medium $medium
+     * @param MediaFile $file
+     * @return string
+     */
+    public function getMediumDir(Medium $medium, MediaFile $file)
     {
-        return $this->getOutDir($medium->provider_sid);
+        return $this->getOutDir($medium, $file);
     }
 
     /**
@@ -95,22 +100,54 @@ class YouTubeService extends MediaProviderContract
      */
     public function getMediumFilePath(Medium $medium, MediaFile $file)
     {
-        return $this->getMediumDir($medium) . DIRECTORY_SEPARATOR . $file->filename;
+        return $this->getMediumDir($medium, $file) . DIRECTORY_SEPARATOR . $file->filename;
+    }
+
+    /**
+     * @param Medium $medium
+     * @param MediaFile $file
+     * @return string
+     */
+    public function getOutDir(Medium $medium, MediaFile $file = null)
+    {
+        $sid = $medium->sid;
+
+        return $this->getBasePath()
+            . DIRECTORY_SEPARATOR . $sid[0] . $sid[1]
+            . DIRECTORY_SEPARATOR . $sid[2] . $sid[3];
+    }
+
+    /**
+     * @return string
+     */
+    public function getBasePath()
+    {
+        return storage_path('app'
+            . DIRECTORY_SEPARATOR . 'media'
+            . DIRECTORY_SEPARATOR . 'youtube');
     }
 
     /**
      * @param $sid
-     * @return string
+     * @param bool $immediately
+     * @return mixed
      */
-    public function getOutDir($sid)
+    public function info($sid, $immediately = true)
     {
-//        return storage_path('app/media/youtube/' . $id[0] . $id[1] . '/' . $id[2] . $id[3]);
-        return storage_path('app'
-            . DIRECTORY_SEPARATOR . 'media'
-            . DIRECTORY_SEPARATOR . 'youtube'
-            . DIRECTORY_SEPARATOR . $sid[0] . $sid[1]
-            . DIRECTORY_SEPARATOR . $sid[2] . $sid[3]
-        );
+        $info = \Cache::get('info.youtube.' . $sid);
+        if (!$info && $immediately) {
+            try {
+                $retrieved = $this->service->getVideoInfo($sid);
+                foreach ($retrieved as $item) {
+                    \Cache::forever('info.youtube.' . $item->id, $item);
+                    $info = $item;
+                }
+            } catch (\Exception $e) {
+                $info = null;
+            }
+        }
+
+        return $info;
     }
 
 
@@ -127,7 +164,7 @@ class YouTubeService extends MediaProviderContract
         foreach ($results as $result) {
 //            if (isset($result->id->videoId)) {
             $sid = $result->id->videoId;
-            $info = \Cache::get('info.youtube.' . $sid);
+            $info = $this->info($sid, false);
             if ($info) {
                 $cached[] = $info;
             } else {

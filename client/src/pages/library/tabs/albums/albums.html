@@ -5,5 +5,10 @@
 </ion-header>
 
 <ion-content>
-  <p>Albums</p>
+  <ion-list>
+    <ion-item *ngFor="let album of albums">
+      <h2>{{album.name}}</h2>
+    </ion-item>
+  </ion-list>
+  <pre>{{albums | json}}</pre>
 </ion-content>

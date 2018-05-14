@@ -88,7 +88,7 @@ class MediaManagerService
             if ($this->proc && !$this->proc->isRunning()) {
                 $this->proc->finish();
                 if ($this->proc->isSuccessful()) {
-                    $this->mediaDiscoveryService->disoverMedia($this->proc);
+                    $this->mediaDiscoveryService->disoverDownloadedMedia($this->proc);
                 }
                 $this->proc = null;
             } else {

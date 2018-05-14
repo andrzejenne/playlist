@@ -1,13 +1,16 @@
 import {Component} from "@angular/core";
-import {NavController} from "ionic-angular";
+import {NavParams} from "ionic-angular";
+import {Artist} from "../../../../models/artist";
 
 @Component({
   selector: 'artists-tab',
   templateUrl: 'artists.html'
 })
 export class ArtistsTab {
-  constructor(public navCtrl: NavController) {
 
+  artists: Artist[] = [];
+
+  constructor(params: NavParams) {
+    this.artists = params.data || [];
   }
-
 }

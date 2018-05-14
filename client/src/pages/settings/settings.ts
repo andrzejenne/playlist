@@ -1,5 +1,5 @@
 import {Component, OnDestroy} from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import {NavController, NavParams} from 'ionic-angular';
 import {ConfigService} from "../../services/ConfigService";
 import {SettingsContract} from "../../services/contracts/SettingsContract";
 import {Subscription} from "rxjs/Subscription";

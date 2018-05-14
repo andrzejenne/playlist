@@ -29,7 +29,7 @@ class ModelMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $signature = 'gen:model {name}';
+    protected $signature = 'gen:model {name} {--echo}';
 
     /**
      * The console command description.
@@ -91,6 +91,30 @@ class ModelMakeCommand extends GeneratorCommand
     {
         parent::__construct($files);
         $this->connection = $connection;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function handle()
+    {
+        if ($this->option('echo')) {
+            $name = $this->qualifyClass($this->getNameInput());
+
+            try {
+                $cls = $this->buildClass($name);
+
+                echo $cls;
+            }
+            catch (\Exception $e) {
+                $this->error($e->getMessage());
+            }
+
+            return null;
+        }
+        else {
+            return parent::handle();
+        }
     }
 
 

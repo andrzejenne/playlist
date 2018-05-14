@@ -6,14 +6,17 @@ use BBIT\Playlist\Helpers\Str;
 use BBIT\Playlist\Models\Album;
 use BBIT\Playlist\Models\Artist;
 use BBIT\Playlist\Models\Genre;
+use BBIT\Playlist\Models\LibraryAlbum;
 use BBIT\Playlist\Models\MediaFile;
 use BBIT\Playlist\Models\MediaFileType;
 use BBIT\Playlist\Models\MediaProvider;
 use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Providers\MediaLibraryProvider;
+use BBIT\Playlist\Services\CoversService;
 use BBIT\Playlist\Services\MediaProviders\OwnLibraryService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
+use PharIo\Manifest\Library;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;
@@ -72,15 +75,20 @@ class LibraryDiscover extends Command
      */
     private $mediaFileType;
 
+    /** @var CoversService */
+    private $coversService;
+
     /**
      * Create a new command instance.
      *
      * @param MediaLibraryProvider $libraryProvider
+     * @param CoversService $coversService
      */
-    public function __construct(MediaLibraryProvider $libraryProvider)
+    public function __construct(MediaLibraryProvider $libraryProvider, CoversService $coversService)
     {
         parent::__construct();
         $this->libraryProvider = $libraryProvider;
+        $this->coversService = $coversService;
     }
 
     /**
@@ -211,8 +219,12 @@ class LibraryDiscover extends Command
             $thumbnail = null;
         }
 
+        if (!$album) {
+            $album = \File::name($analyze['filepath']);
+        }
+
         if ($genre) {
-            $lGenre = mb_strtolower($genre);
+            $lGenre = Str::lower($genre);
             $genreEntity = $this->genres->get($lGenre);
             if (!$genreEntity) {
                 $genreEntity = new Genre([
@@ -226,7 +238,7 @@ class LibraryDiscover extends Command
         }
 
         if ($artist) {
-            $lArtist = mb_strtolower($artist);
+            $lArtist = Str::lower($artist);
             $artistEntity = $this->artists->get($lArtist);
             if (!$artistEntity) {
                 $artistEntity = new Artist([
@@ -240,47 +252,70 @@ class LibraryDiscover extends Command
         }
 
         if ($album) {
-            $lAlbum = mb_strtolower($album);
+            $lAlbum = Str::lower($album);
             $albumEntity = $this->albums->get($lAlbum);
             if (!$albumEntity) {
                 $albumEntity = new Album([
                     'name' => $album,
                     'year' => $year ? $year : null,
                 ]);
-                if ($genreEntity) {
-                    $albumEntity->genre()->associate($genreEntity);
-                }
-
-                $albumEntity->save();
 
                 $this->albums[$lAlbum] = $albumEntity;
             }
+
+            if ($genreEntity) {
+                $albumEntity->genre()->associate($genreEntity);
+            }
+            if ($artistEntity) {
+                $albumEntity->artist()->associate($artistEntity);
+            }
+            $albumEntity->save();
+
         } else {
             $albumEntity = null;
         }
 
         if ($thumbnail) {
             // @todo - cover type
-            $outDir = $analyze['filepath'];
+//            $outDir = $analyze['filepath'];
             $ext = static::getExtFromMime($thumbnail['image_mime']);
             if ($ext) {
-                $coverFilename = 'cover.' . $ext;
-                $thumbPath = $outDir . DIRECTORY_SEPARATOR . $coverFilename;
-                $thumbInLib = $dirInLib . DIRECTORY_SEPARATOR . $coverFilename;
-                if (!\File::exists($thumbPath)) {
-                    \File::put($thumbPath, $thumbnail['data']);
-                }
+//                $coverFilename = 'cover.' . $ext;
+//                $thumbPath = $outDir . DIRECTORY_SEPARATOR . $coverFilename;
+//                $thumbInLib = $dirInLib . DIRECTORY_SEPARATOR . $coverFilename;
+//                if (!\File::exists($thumbPath)) {
+//                    \File::put($thumbPath, $thumbnail['data']);
+//                }
+
+                $this->coversService->setCover($albumEntity, $thumbnail['data'], 'front', $ext);
             }
         }
 
-        $sid = $this->provider->genSid($pathInLib, $file[0], $dirInLib);
+        $sid = $this->provider->genSid($pathInLib, $file[0]); //, $dirInLib);
+        if ($albumEntity) {
+            $paths = $albumEntity->libraries()->get();
+
+            $libSid = Str::substr($sid, 6, 6);
+
+            $libraryAlbum = $paths->filter(function(LibraryAlbum $libraryAlbum) use ($libSid, $dirInLib){
+                return $libraryAlbum->sid == $libSid && $libraryAlbum->path == $dirInLib;
+            })->first();
+
+            if (!$libraryAlbum) {
+                $albumEntity->libraries()->create([
+                    LibraryAlbum::COL_SID => $libSid,
+                    LibraryAlbum::COL_PATH => $dirInLib
+                ]);
+            }
+        }
 
         $medium = $this->media->get($sid);
         if (!$medium) {
             $medium = new Medium([
-                'name' => $name,
-                'released' => null, // @todo - exact date of release ? or refactor to int just year,
-                'provider_sid' => $sid
+                Medium::COL_NAME => $name,
+                Medium::COL_DURATION => isset($analyze['playtime_seconds']) ? $analyze['playtime_seconds'] : null,
+                Medium::COL_RELEASED => null, // @todo - exact date of release ? or refactor to int just year,
+                Medium::COL_PROVIDER_SID => $sid
             ]);
             $medium->provider()->associate($this->providerEntity);
         }
@@ -324,8 +359,7 @@ class LibraryDiscover extends Command
                 $file->save();
 
                 $files->push($file);
-            }
-            else {
+            } else {
                 $this->warn('Invalid mime type ' . $analyze['mime_type'] . ' for ' . $analyze['filenamepath']);
             }
         }

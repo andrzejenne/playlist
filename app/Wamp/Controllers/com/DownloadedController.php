@@ -101,7 +101,7 @@ class DownloadedController extends Controller
         $provider = $medium->provider->getService();
 //        try {
         if ($provider->canDelete()) {
-            $outDir = $this->mediaDiscovery->getMediumDir($provider, $medium);
+            $outDir = $this->mediaDiscovery->getMediumDir($provider, $medium, null);
             if (true === \File::deleteDirectory($outDir)) {
                 if (!\File::exists($outDir)) {
                     return $medium->delete();
