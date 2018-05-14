@@ -110,7 +110,7 @@ class YouTubeService extends MediaProviderContract
      */
     public function getOutDir(Medium $medium, MediaFile $file = null)
     {
-        $sid = $medium->sid;
+        $sid = $medium->provider_sid;
 
         return $this->getBasePath()
             . DIRECTORY_SEPARATOR . $sid[0] . $sid[1]
