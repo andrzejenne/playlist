@@ -15,6 +15,7 @@
       <medium-component [item]="item"
                         [selected]="selector.isSelected(item)"
                         (select)="selector.toggleSelect(item)"
+                        [hasPlaylist]="playlist"
                         (toPlaylist)="addToPlaylist(item)"
                         [hasVideo]="mediaManager.hasVideo(item)"
                         [hasAudio]="mediaManager.hasAudio(item)"

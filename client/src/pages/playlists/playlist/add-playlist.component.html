@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button (click)="dismiss()">Close</button>
+    </ion-buttons>
+    <ion-title>New Playlist</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <ion-item>
+      <ion-label>Name</ion-label>
+      <ion-input #input type="text" [(ngModel)]="name" (keyup.enter)="createPlaylist()"></ion-input>
+      <button ion-button item-end color="primary" [disabled]="!name" (click)="createPlaylist()">Create</button>
+    </ion-item>
+  </ion-list>
+
+
+
+</ion-content>

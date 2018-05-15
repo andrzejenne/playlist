@@ -36,6 +36,10 @@ export class AddPlaylistComponent {
     if (this.name) {
       this.plManager.create(this.user, this.name);
     }
+    this.dismiss();
+  }
+
+  dismiss() {
     this.viewCtrl.dismiss();
   }
 }

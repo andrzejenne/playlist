@@ -1,4 +1,11 @@
 item-component {
+
+  ion-buttons {
+    ion-icon {
+      font-size: 200%;
+    }
+  }
+
   ion-thumbnail {
     position: relative;
     ion-icon {
@@ -9,12 +16,15 @@ item-component {
       color: red;
       text-shadow: 2px 2px 5px #000;
       font-weight: bold;
-      margin: -10px 0 0 -10px;
+      margin: -30px 0 0 -10px;
     }
   }
 
   ion-thumbnail.selected {
     opacity: .5;
+    ion-icon {
+      font-size: 400%;
+    }
   }
 
   .current {
@@ -27,16 +37,4 @@ item-component {
     opacity: .3;
   }
 
-  .item-content {
-    padding-left: 20px;
-    p {
-      font-size: 75%;
-    }
-    ion-icon {
-      margin-left: -20px;
-      margin-right: 4px;
-      width: 16px;
-      text-align: center;
-    }
-  }
 }

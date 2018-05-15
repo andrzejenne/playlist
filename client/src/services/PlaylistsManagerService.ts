@@ -96,7 +96,7 @@ export class PlaylistsManagerService {
   }
 
   getPlaylists(user: User, defaultId = null) {
-    this.list(user)
+    return this.list(user)
       .then(data => {
         this.playlists = data;
 
@@ -124,30 +124,28 @@ export class PlaylistsManagerService {
         }
 
         this.playlists$.next(data);
+
+        return data;
       })
       .catch(error => console.error(error));
-
-    return this.playlists;
   }
 
   selectPlaylist(playlist: Playlist) {
-    if (!this.playlist || this.playlist.id != playlist.id) {
-      this.playlist = playlist;
+    this.playlist = playlist;
 
-      // console.info('select playlist', playlist);
-      this.playlist$.next(playlist);
+    console.info('selected', playlist);
 
-      console.info('selected', playlist);
-
-      return this.repo.load(playlist.id)
+    if (this.playlist && this.playlist.id) {
+      return this.repo.load(this.playlist.id)
         .then(media => {
           playlist.media = media;
-          this.playlist$.next(playlist);
-        });
+          // this.playlist$.next(playlist);
 
+          return media;
+        });
     }
-    else {
-      return new Promise((resolve, reject) => resolve(playlist));
+    else  {
+      this.playlist$.next(playlist);
     }
   }
 

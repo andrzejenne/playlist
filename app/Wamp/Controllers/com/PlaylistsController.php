@@ -8,10 +8,12 @@
 
 namespace BBIT\Playlist\Wamp\Controllers\com;
 
+use BBIT\Playlist\Http\Resources\PlaylistCollection;
 use BBIT\Playlist\Models\MediaFile;
 use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Models\Playlist;
 use BBIT\Playlist\Models\User;
+use BBIT\Playlist\Models\Views\Playlist\PlaylistView;
 use BBIT\Playlist\Wamp\Controllers\Controller;
 use Thruway\ClientSession;
 
@@ -21,7 +23,6 @@ use Thruway\ClientSession;
  */
 class PlaylistsController extends Controller
 {
-
     /**
      * SearchController constructor.
      * @param ClientSession $session
@@ -37,9 +38,11 @@ class PlaylistsController extends Controller
      */
     public function list($args)
     {
-        return Playlist::whereUserId($args[0]->uid)
+        $playlists = Playlist::whereUserId($args[0]->uid)
             ->orderBy(Playlist::COL_NAME, 'ASC')
             ->get();
+
+        return $playlists;
     }
 
     /**
@@ -98,7 +101,7 @@ class PlaylistsController extends Controller
             ->first();
 
 //        try {
-            return $playlist->delete();
+        return $playlist->delete();
 //        } catch (\Exception $e) {
 //            return ['error' => true, 'message' => $e->getMessage()];
 //        }

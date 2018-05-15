@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
-import {Content, NavController, Platform} from 'ionic-angular';
+import {Content, NavController, NavParams, Platform} from 'ionic-angular';
 import {DownloadedRepository} from "../../repositories/downloaded.repository";
 import {Medium} from "../../models/medium";
 import {ErrorReporting} from "../../services/ErrorReporting";
@@ -11,6 +11,7 @@ import {ElementReference} from "../../models/ElementReference";
 import {MediaManagerService} from "../../services/MediaManagerService";
 import {ConfigService} from "../../services/ConfigService";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
+import {Playlist} from "../../models/playlist";
 
 @Component({
   selector: 'page-downloaded',
@@ -27,6 +28,8 @@ export class DownloadedPage implements OnDestroy {
   public search = '';
 
   public tools: boolean;
+
+  public playlist: Playlist;
 
   @ViewChild('content') contentContainer: Content;
 
@@ -63,9 +66,12 @@ export class DownloadedPage implements OnDestroy {
     private errorReporter: ErrorReporting,
     // private modalController: ModalController,
     private config: ConfigService,
-    private ref: ChangeDetectorRef
+    private ref: ChangeDetectorRef,
+    private params: NavParams
   ) {
-
+    if (params.data.id) {
+      this.playlist = params.data;
+    }
   }
 
   ionViewDidLoad() {
@@ -124,7 +130,7 @@ export class DownloadedPage implements OnDestroy {
   }
 
   addToPlaylist(item: Medium) {
-    this.plManager.addToPlaylist(item, this.plManager.playlist)
+    this.plManager.addToPlaylist(item, this.playlist)
       .then(result => result);
 // .then(
     // @todo - info, added to playlist

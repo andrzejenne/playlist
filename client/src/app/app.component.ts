@@ -10,7 +10,7 @@ import {PagesService} from "../services/PagesService";
 
 import {SplashPage} from "../pages/splash/splash";
 import {SettingsPage} from "../pages/settings/settings";
-import {HomePage} from "../pages/home/home";
+import {PlaylistsPage} from "../pages/playlists/playlists";
 
 import {FullscreenObserverService} from "../services/FullscreenObserverService";
 import {Insomnia} from "@ionic-native/insomnia";
@@ -56,6 +56,7 @@ export class ThePlaylist {
     private insomnia: Insomnia,
     private serverManager: ServerManagerService,
     private config: ConfigService,
+    private menuCtrl: MenuController,
     private ref: ChangeDetectorRef
   ) {
 
@@ -74,7 +75,6 @@ export class ThePlaylist {
       // Here you can do any higher level native things you might need.
 
       this.prepareApp();
-
 
       this.prepareAuth();
 
@@ -111,7 +111,7 @@ export class ThePlaylist {
 
   // private onAuthenticated(response) {
   //   this.authenticated = true;
-  //   // this.nav.setRoot(HomePage);
+  //   // this.nav.setRoot(PlaylistsPage);
   // }
   //
   // private onAuthenticationError(error) {
@@ -164,6 +164,8 @@ export class ThePlaylist {
         // this.alert.create({message: 'not fullscreen'}).present();
       }
     });
+
+    this.menuCtrl.enable(false, 'playlistMenu');
   }
 
   private prepareAuth() {
@@ -175,7 +177,7 @@ export class ThePlaylist {
 
         servers && (this.servers = Object.keys(servers));
 
-        this.rootPage = HomePage;
+        this.rootPage = PlaylistsPage;
 
         this.ref.detectChanges();
 

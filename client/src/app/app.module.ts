@@ -9,7 +9,7 @@ import {StatusBar} from '@ionic-native/status-bar';
 import {GooglePlus} from "@ionic-native/google-plus";
 
 import {ThePlaylist} from './app.component';
-import {HomePage} from '../pages/home/home';
+import {PlaylistsPage} from '../pages/playlists/playlists';
 import {SplashPage} from "../pages/splash/splash";
 import {SearchPage} from '../pages/search/search';
 
@@ -29,7 +29,7 @@ import {VideoPlayerComponent} from "../components/video-player/video-player.comp
 import {ServerManagerComponent} from "../components/server-manager/server-manager.component";
 import {SettingsPage} from "../pages/settings/settings";
 import {PlaylistComboComponent} from "../components/playlists-combo/playlist-combo.component";
-import {AddPlaylistComponent} from "../pages/home/playlist/add-playlist.component";
+import {AddPlaylistComponent} from "../pages/playlists/playlist/add-playlist.component";
 import {AndroidFullScreen} from '@ionic-native/android-full-screen';
 import {SelectComponent} from "../components/select/select.component";
 import {ServerSwitchComponent} from "../components/server-switch/server-switch.component";
@@ -45,7 +45,7 @@ import {YouTubePage} from "../pages/youtube/youtube";
 @NgModule({
   declarations: [
     ThePlaylist,
-    HomePage,
+    PlaylistsPage,
     SearchPage,
     DownloadedPage,
     AuthError,
@@ -90,7 +90,7 @@ import {YouTubePage} from "../pages/youtube/youtube";
   bootstrap: [IonicApp],
   entryComponents: [
     ThePlaylist,
-    HomePage,
+    PlaylistsPage,
     SearchPage,
     DownloadedPage,
     AuthError,
@@ -106,9 +106,9 @@ import {YouTubePage} from "../pages/youtube/youtube";
     DownloadQueueComponent,
     VideoPlayerComponent,
     ServerManagerComponent,
-    PlaylistComboComponent,
 
-    AddPlaylistComponent,
+    PlaylistComponent,
+    AddPlaylistComponent
   ],
   providers: [
     StatusBar,

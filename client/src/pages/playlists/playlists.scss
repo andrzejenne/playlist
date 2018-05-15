@@ -1,4 +1,28 @@
-page-home {
+page-playlists {
+
+  playlist-component {
+    height: 100%;
+    width: 100%;
+  }
+
+  .playlist-item {
+    ion-buttons {
+      ion-icon {
+        font-size: 200%;
+      }
+    }
+    h2 {
+      ion-badge {
+        position: relative;
+        bottom: 10px;
+      }
+    }
+  }
+
+  .playlist-item.selected {
+    background: rgba(0, 0, 0, .1);
+  }
+
   ion-navbar {
     ion-buttons {
       ion-icon {

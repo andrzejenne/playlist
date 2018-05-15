@@ -1,0 +1,107 @@
+<ion-header class="mode-color">
+  <ion-navbar>
+    <button ion-button menuToggle="menu">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      Playlists
+    </ion-title>
+    <!--<ion-buttons end>-->
+      <!--<button ion-button title="Search" class="primary-button" (click)="goToSearchPage()">-->
+        <!--<ion-icon name="search"></ion-icon>-->
+      <!--</button>-->
+    <!--</ion-buttons>-->
+  </ion-navbar>
+</ion-header>
+
+<ion-content #content>
+  <!--<playlist-component ion-fixed *ngIf="playlist" [playlist]="playlist"></playlist-component>-->
+  <pre>
+    {{playlists | json}}
+  </pre>
+  <ion-list>
+    <ion-item *ngFor="let playlist of playlists"
+              class="playlist-item"
+              (press)="selector.toggleSelect(playlist)"
+              [class.selected]="plManager.playlist == playlist">
+      <ion-icon item-start *ngIf="selector.length" color="primary"
+                (tap)="selector.toggleSelect(playlist)"
+                [name]="selector.isSelected(playlist) ? 'checkbox' : 'square'"></ion-icon>
+      <div class="item-content"
+           (tap)="openPlaylist(playlist)">
+        <h2>
+          {{playlist.name}}
+        </h2>
+        <p>
+          <span class="duration" *ngIf="playlist.duration">
+            <ion-icon name="list"></ion-icon>
+            {{playlist.count}}
+            |
+            <ion-icon name="time"></ion-icon>
+            {{playlist.duration | duration}}
+          </span>
+        </p>
+      </div>
+      <ion-buttons item-end>
+        <button ion-button clear>
+          <ion-icon name="shuffle"></ion-icon>
+        </button>
+        <button ion-button clear>
+          <ion-icon name="play"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+  <!--<div ion-fixed [hidden]="playerStatus.audio || !current"-->
+       <!--class="video" style="width: 100%;">-->
+    <!--<div [ngStyle]="video.containerStyle">-->
+      <!--<video #videoPlayer [width]="video.width" [height]="video.height"></video>-->
+    <!--</div>-->
+  <!--</div>-->
+
+  <!--<ion-list class="items">-->
+    <!--<item-component *ngFor="let item of playedPlaylist"-->
+                    <!--[item]="item"-->
+                    <!--[played]="true"-->
+                    <!--[selected]="selector.isSelected(item)"-->
+                    <!--(select)="selector.toggleSelect(item)"-->
+                    <!--[thumbnail]="mediaManager.getThumbnailUrl(item)"-->
+                    <!--(swipe)="onItemSwipe(item, $event)" (play)="playItem(item)" (playFirst)="playItemFirst(item)">-->
+    <!--</item-component>-->
+
+    <!--<item-component *ngIf="current"-->
+                    <!--[item]="current"-->
+                    <!--[played]="false"-->
+                    <!--[current]="true"-->
+                    <!--[selected]="selector.isSelected(current)"-->
+                    <!--(select)="selector.toggleSelect(current)"-->
+                    <!--[thumbnail]="mediaManager.getThumbnailUrl(current)"-->
+                    <!--(swipe)="onItemSwipe(current, $event)">-->
+    <!--</item-component>-->
+
+    <!--<item-component *ngFor="let item of mediaPlaylist"-->
+                    <!--[item]="item"-->
+                    <!--[played]="false"-->
+                    <!--[selected]="selector.isSelected(item)"-->
+                    <!--(select)="selector.toggleSelect(item)"-->
+                    <!--[thumbnail]="mediaManager.getThumbnailUrl(item)"-->
+                    <!--(swipe)="onItemSwipe(item, $event)" (play)="playItem(item)" (playFirst)="playItemFirst(item)">-->
+    <!--</item-component>-->
+
+  <!--</ion-list>-->
+
+  <!--<ion-fab right bottom *ngIf="selector.selected.length">-->
+    <!--<button ion-fab color="danger" (tap)="removeSelected()">-->
+      <!--<ion-icon name="trash"></ion-icon>-->
+    <!--</button>-->
+  <!--</ion-fab>-->
+  <ion-fab right bottom>
+    <button *ngIf="!selector.length" ion-fab color="secondary" (tap)="createPlaylist($event)">
+      <ion-icon name="add"></ion-icon>
+    </button>
+    <button *ngIf="selector.length" ion-fab color="danger" (tap)="removeSelected($event)">
+      <ion-icon name="trash"></ion-icon>
+    </button>
+  </ion-fab>
+</ion-content>
+

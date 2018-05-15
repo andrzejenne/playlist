@@ -4,6 +4,10 @@ import {Injectable} from "@angular/core";
 export class SelectorService<T> {
   selected: T[] = [];
 
+  get length() {
+    return this.selected.length;
+  }
+
   isSelected(item: T) {
     return this.selected.indexOf(item) > -1;
   }

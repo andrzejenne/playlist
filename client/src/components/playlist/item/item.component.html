@@ -7,11 +7,15 @@
   <!--<span class="duration">{{item.duration | duration}}</span>-->
   <div class="item-content">
     <h2>{{item.name}}</h2>
-    <p *ngIf="item.artist">
-      <ion-icon name="person"></ion-icon>{{item.artist.name}}
-    </p>
-    <p *ngIf="item.album">
-      <ion-icon name="disc"></ion-icon>{{item.album.name}}
+    <p>
+      <ion-icon name="contact" *ngIf="description"></ion-icon>
+      {{description}}
+      <!--<span *ngIf="item.artist">-->
+        <!--{{item.artist.name}}-->
+      <!--</span>-->
+      <!--<span *ngIf="item.album">-->
+        <!--{{item.album.name}}-->
+      <!--</span>-->
     </p>
   </div>
   <ion-buttons end *ngIf="current">
@@ -20,12 +24,12 @@
     </button>
   </ion-buttons>
   <ion-buttons end *ngIf="!current">
-    <button ion-button color="dark" clear (click)="playFirst.emit(true)">
+    <button ion-button color="primary" clear (click)="playFirst.emit(true)">
       <ion-icon name="play">
         <sub>1</sub>
       </ion-icon>
     </button>
-    <button ion-button color="dark" clear (click)="play.emit(true)">
+    <button ion-button color="primary" clear (click)="play.emit(true)">
       <ion-icon name="play"></ion-icon>
     </button>
   </ion-buttons>

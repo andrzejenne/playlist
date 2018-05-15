@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, Output} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output} from "@angular/core";
 import {Medium} from "../../models/medium";
 
 @Component({
   selector: 'medium-component',
   templateUrl: 'medium.component.html'
 })
-export class MediumComponent {
+export class MediumComponent implements AfterViewInit {
   @Input()
   item: Medium;
 
@@ -24,6 +24,9 @@ export class MediumComponent {
   @Input()
   landscape: boolean;
 
+  @Input()
+  hasPlaylist: boolean;
+
   @Output()
   select = new EventEmitter();
 
@@ -32,4 +35,28 @@ export class MediumComponent {
 
   @Output()
   toPlaylist = new EventEmitter();
+
+  details: string = '';
+
+  constructor(private ref: ChangeDetectorRef) {
+
+  }
+
+  ngAfterViewInit() {
+    this.setDetails();
+  }
+
+  private setDetails() {
+    let details = [];
+    if (this.item.artist) {
+      this.item.artist.name && details.push(this.item.artist.name);
+    }
+    if (this.item.album) {
+      this.item.album.name && details.push(this.item.album.name);
+    }
+
+    this.details = details.join(' | ');
+
+    this.ref.detectChanges();
+  }
 }

@@ -1,67 +1,99 @@
 <!-- <ion-split-pane> -->
-  <ion-menu [content]="content" #menu id="menu" class="mode-color">
-    <ion-header>
-      <ion-toolbar class="menu-toolbar">
-        <ion-title>
-          <!--<img src="../assets/icon/playlist.png">-->
-          The Playlist
-        </ion-title>
-        <ion-buttons end>
-          <button ion-button menuClose="menu" clear detail-none>
-            <ion-icon item-start name="close"></ion-icon>
-          </button>
-        </ion-buttons>
-      </ion-toolbar>
-      <ion-toolbar class="menu-toolbar">
-        <server-switch-component [host]="host" [servers]="servers" (server)="switchServer($event)"></server-switch-component>
-        <ion-item>
-          <ion-label item-right>Day Mode</ion-label>
-          <ion-toggle item-right [(ngModel)]="dayMode" (ionChange)="onDayModeChange($event)"></ion-toggle>
-          <ion-icon item-end [name]="dayModeIcon" class="day-mode-icon" ion-text></ion-icon>
-        </ion-item>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content>
-      <ion-list>
-        <button ion-item (click)="setPage('home');menu.close()">
-          <ion-icon item-start name="list" color="primary"></ion-icon>
-          Playlists</button>
-        <button ion-item (click)="setPage('search');menu.close()">
-          <ion-icon item-start name="search" color="primary"></ion-icon>
-          Search
-        </button>
-        <hr>
-        <button ion-item (click)="setPage('downloaded');menu.close()">
-          <ion-icon item-start name="cloud-download" color="primary"></ion-icon>
-          All
-        </button>
-        <button ion-item (click)="setPage('youtube');menu.close()">
-          <ion-icon item-start name="logo-youtube" color="primary"></ion-icon>
-          YouTube
-        </button>
-        <button ion-item (click)="setPage('library');menu.close()">
-          <ion-icon item-start name="list-box" color="primary"></ion-icon>
-          Library
-        </button>
-        <hr>
-        <button ion-item (click)="setPage('downloadQueue');menu.close()">
-          <ion-icon item-start name="download" color="primary"></ion-icon>
-          Actions Queue
-        </button>
-        <button ion-item (click)="goToSettings() && menu.close()">
-          <ion-icon item-start name="settings" color="primary"></ion-icon>
-          Settings
-        </button>
-        <!--<button ion-item (click)="setPage('servers');menu.close()">Servers</button>-->
-        <button ion-item menuClose="menu" detail-none>
+<ion-menu [content]="content" #menu id="menu" class="mode-color">
+  <ion-header>
+    <ion-toolbar class="menu-toolbar">
+      <ion-title>
+        <!--<img src="../assets/icon/playlist.png">-->
+        The Playlist
+      </ion-title>
+      <ion-buttons end>
+        <button ion-button menuClose="menu" clear detail-none>
           <ion-icon item-start name="close"></ion-icon>
-          Close Menu
         </button>
-      </ion-list>
-    </ion-content>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-toolbar class="menu-toolbar">
+      <server-switch-component [host]="host" [servers]="servers"
+                               (server)="switchServer($event)"></server-switch-component>
+      <ion-item>
+        <ion-label item-right>Day Mode</ion-label>
+        <ion-toggle item-right [(ngModel)]="dayMode" (ionChange)="onDayModeChange($event)"></ion-toggle>
+        <ion-icon item-end [name]="dayModeIcon" class="day-mode-icon" ion-text></ion-icon>
+      </ion-item>
+    </ion-toolbar>
+  </ion-header>
 
-  </ion-menu>
+  <ion-content>
+    <ion-list>
+      <button ion-item (click)="setPage('home');menu.close()">
+        <ion-icon item-start name="list" color="primary"></ion-icon>
+        Playlists
+      </button>
+      <button ion-item (click)="setPage('search');menu.close()">
+        <ion-icon item-start name="search" color="primary"></ion-icon>
+        Search
+      </button>
+      <hr>
+      <button ion-item (click)="setPage('downloaded');menu.close()">
+        <ion-icon item-start name="cloud-download" color="primary"></ion-icon>
+        All
+      </button>
+      <button ion-item (click)="setPage('youtube');menu.close()">
+        <ion-icon item-start name="logo-youtube" color="primary"></ion-icon>
+        YouTube
+      </button>
+      <button ion-item (click)="setPage('library');menu.close()">
+        <ion-icon item-start name="list-box" color="primary"></ion-icon>
+        Library
+      </button>
+      <hr>
+      <button ion-item (click)="setPage('downloadQueue');menu.close()">
+        <ion-icon item-start name="download" color="primary"></ion-icon>
+        Actions Queue
+      </button>
+      <button ion-item (click)="goToSettings() && menu.close()">
+        <ion-icon item-start name="settings" color="primary"></ion-icon>
+        Settings
+      </button>
+      <!--<button ion-item (click)="setPage('servers');menu.close()">Servers</button>-->
+      <button ion-item menuClose="menu" detail-none>
+        <ion-icon item-start name="close"></ion-icon>
+        Close Menu
+      </button>
+    </ion-list>
+  </ion-content>
+</ion-menu>
 
-  <ion-nav [root]="rootPage" #content class="mode-color"></ion-nav>
+<!--<ion-menu [content]="content" id="playlistMenu" side="right">-->
+  <!--<ion-header>-->
+    <!--<button ion-item (click)="setPage('search');menu.close()">-->
+      <!--<ion-icon item-start name="search" color="primary"></ion-icon>-->
+      <!--Search-->
+    <!--</button>-->
+  <!--</ion-header>-->
+  <!--<ion-content>-->
+    <!--<ion-list>-->
+      <!--<button ion-item (click)="setPage('downloaded');menu.close()">-->
+        <!--<ion-icon item-start name="cloud-download" color="primary"></ion-icon>-->
+        <!--All-->
+      <!--</button>-->
+      <!--<button ion-item (click)="setPage('youtube');menu.close()">-->
+        <!--<ion-icon item-start name="logo-youtube" color="primary"></ion-icon>-->
+        <!--YouTube-->
+      <!--</button>-->
+      <!--<button ion-item (click)="setPage('library');menu.close()">-->
+        <!--<ion-icon item-start name="list-box" color="primary"></ion-icon>-->
+        <!--Library-->
+      <!--</button>-->
+      <!--<hr>-->
+      <!--&lt;!&ndash;<button ion-item (click)="setPage('servers');menu.close()">Servers</button>&ndash;&gt;-->
+      <!--<button ion-item menuClose="playlistMenu" detail-none>-->
+        <!--<ion-icon item-start name="close"></ion-icon>-->
+        <!--Close Menu-->
+      <!--</button>-->
+    <!--</ion-list>-->
+  <!--</ion-content>-->
+<!--</ion-menu>-->
+
+<ion-nav [root]="rootPage" #content></ion-nav>
 <!-- </ion-split-pane> -->

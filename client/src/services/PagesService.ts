@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {SearchPage} from "../pages/search/search";
-import {HomePage} from "../pages/home/home";
+import {PlaylistsPage} from "../pages/playlists/playlists";
 import {DownloadedPage} from "../pages/downloaded/downloaded";
 import {DownloadQueueComponent} from "../components/download-queue/download-queue.component";
 import {SettingsPage} from "../pages/settings/settings";
@@ -11,7 +11,7 @@ import {YouTubePage} from "../pages/youtube/youtube";
 export class PagesService {
 
   private pages = {
-    'home': HomePage,
+    'playlists': PlaylistsPage,
     'search': SearchPage,
     'downloaded': DownloadedPage,
     'downloadQueue': DownloadQueueComponent,
@@ -21,6 +21,6 @@ export class PagesService {
   };
 
   get(code: string) {
-    return this.pages[code] || HomePage;
+    return this.pages[code] || PlaylistsPage;
   }
 }

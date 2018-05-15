@@ -55,6 +55,7 @@
                         [selected]="selector.isSelected(item)"
                         (select)="selector.toggleSelect(item)"
                         (toPlaylist)="addToPlaylist(item)"
+                        [hasPlaylist]="playlist"
                         [hasVideo]="mediaManager.hasVideo(item)"
                         [hasAudio]="mediaManager.hasAudio(item)"
                         [thumbnail]="mediaManager.getThumbnailUrl(item)"

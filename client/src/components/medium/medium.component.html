@@ -5,18 +5,14 @@
   </ion-thumbnail>
 
   <div class="item-content">
-    <div *ngIf="item.artist" class="artist">
-      <ion-icon name="person"></ion-icon>
-      {{item.artist.name}}
-    </div>
-    <div *ngIf="item.album" class="album">
-      <ion-icon name="disc"></ion-icon>
-      {{item.album.name}}
-    </div>
-
     <h2>{{item.name}}</h2>
+    <p>
+      <ion-icon name="contact" *ngIf="details"></ion-icon>
+      {{details}}
+    </p>
+
     <ion-buttons end>
-      <button ion-button color="primary" small icon-left clear (click)="toPlaylist.next($event)">
+      <button *ngIf="hasPlaylist" ion-button color="primary" small icon-left clear (click)="toPlaylist.next($event)">
         <ion-icon name="list"></ion-icon>
         <span *ngIf="landscape">Add to playlist</span>
       </button>
