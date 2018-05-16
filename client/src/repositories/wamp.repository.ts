@@ -10,16 +10,33 @@ export class WampRepository {
   }
 
   call<T>(cmd: string, ...args) {
+    console.info('WampRepository@call', cmd, ...args);
     return new Promise<T>((resolve, reject) => {
       try {
         this.wamp.call<T>(cmd, ...args)
-          .then(response => resolve(response))
+          .then(response => {
+            console.info('WampRepository@call.response', response);
+            return resolve(response)
+          })
           .catch(error => {
+
+            console.error('WAMP: Unexepcted Error', error);
+
+            let message = null;
+            if (error.args && error.args.length) {
+              message = error.args.implode('<br>');
+            }
+            else if (error.message) {
+              message = error.message;
+            }
+            else {
+              message = 'unknown error';
+            }
 
             this.alert.create({
               title: 'Unexepected Error',
               subTitle: ['Error calling', cmd].join(' '),
-              message: error.message || error
+              message: message
             }).present();
 
             return reject({message: error.message || error});

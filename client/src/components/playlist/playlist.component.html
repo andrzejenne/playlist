@@ -7,12 +7,16 @@
       {{playlist.name}}
     </ion-title>
     <ion-buttons end>
-    <!--<button ion-button title="Search" class="primary-button" (click)="goToSearchPage()">-->
-    <!--<ion-icon name="search"></ion-icon>-->
-    <!--</button>-->
-      <button ion-button (click)="togglePlaylistMenu()" clear>
-        <ion-icon name="menu"></ion-icon>
-      </button>
+      <!--<button ion-button title="Search" class="primary-button" (click)="goToSearchPage()">-->
+      <!--<ion-icon name="search"></ion-icon>-->
+      <!--</button>-->
+      <!--<button ion-button (click)="togglePlaylistMenu()" clear>-->
+      <!--<ion-icon name="menu"></ion-icon>-->
+      <!--</button>-->
+      <span class="duration">
+        <ion-icon name="time"></ion-icon>
+        {{playlist.duration | duration}}
+      </span>
     </ion-buttons>
   </ion-navbar>
 </ion-header>

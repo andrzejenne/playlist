@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
 import {Storage} from "@ionic/storage";
 import {
   NavController,
@@ -221,7 +221,10 @@ export class PlaylistsPage implements OnDestroy {
       this.storage.get('playlist')
         .then(playlistId => {
           this.plManager.list(user)
-            .then(playlists => this.playlists = playlists);
+            .then(playlists => {
+              this.playlists = playlists;
+              // this.ref.detectChanges();
+            });
         });
 
       this.settings = this.config.settings;

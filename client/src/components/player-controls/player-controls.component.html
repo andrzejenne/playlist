@@ -11,33 +11,33 @@
   <!--<h2 class="title">{{current?.name}}</h2>-->
   <ion-buttons end>
     <button ion-button clear small (click)="playVideo()" title="Play Video"
-            [class.button-primary]="playerStatus.video">
+            [class.button-primary]="video">
       <ion-icon name="videocam"></ion-icon>
     </button>
     <button ion-button clear small (click)="playAudio()" title="Play Audio only"
-            [class.button-primary]="playerStatus.audio">
+            [class.button-primary]="audio">
       <ion-icon name="musical-notes"></ion-icon>
     </button>
-    <button [disabled]="!playerStatus.playing || !playedPlaylist.length" ion-button clear small
+    <button [disabled]="!playing || !length" ion-button clear small
             (click)="playPrev()"
             title="Play previous">
       <ion-icon name="skip-backward"></ion-icon>
     </button>
     <button ion-button (click)="togglePlay()" clear small title="Play / Pause"
-            [class.button-primary]="playerStatus.playing">
+            [class.button-primary]="playing">
       <ion-icon [name]="playIcon"></ion-icon>
     </button>
-    <button [disabled]="!playerStatus.playing || !mediaPlaylist.length" ion-button clear small
+    <button [disabled]="!playing || !length" ion-button clear small
             (click)="playNext()"
             title="Play next">
       <ion-icon name="skip-forward"></ion-icon>
     </button>
     <button ion-button (click)="toggleShuffle()" clear small title="Toggle Shuffle"
-            [class.button-primary]="playerStatus.shuffle">
+            [class.button-primary]="shuffle">
       <ion-icon name="shuffle"></ion-icon>
     </button>
     <button ion-button (click)="toggleRepeat()" clear small title="Toggle Repeat"
-            [class.button-primary]="playerStatus.repeat">
+            [class.button-primary]="repeat">
       <ion-icon name="repeat"></ion-icon>
     </button>
   </ion-buttons>

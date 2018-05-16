@@ -11,8 +11,9 @@ WampRoute::namespace('com')->group(function(){
     WampRoute::command('search', 'SearchController@search');
     WampRoute::command('search.list', 'SearchController@list');
     WampRoute::command('search.list.delete', 'SearchController@delete');
-    WampRoute::command('downloaded.list', 'DownloadedController@list');
-    WampRoute::command('downloaded.remove', 'DownloadedController@remove');
+
+    WampRoute::command('cloud.list', 'CloudController@list');
+    WampRoute::command('cloud.remove', 'CloudController@remove');
 
     WampRoute::command('playlists.list', 'PlaylistsController@list');
     WampRoute::command('playlists.create', 'PlaylistsController@create');

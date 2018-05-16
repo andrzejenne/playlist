@@ -23,7 +23,7 @@ import {Insomnia} from '@ionic-native/insomnia';
 import {AuthError} from "../pages/auth/error";
 
 import {ServicesModule} from "./services.module";
-import {DownloadedPage} from "../pages/downloaded/downloaded";
+import {CloudPage} from "../pages/cloud/cloud";
 import {DownloadQueueComponent} from "../components/download-queue/download-queue.component";
 import {VideoPlayerComponent} from "../components/video-player/video-player.component";
 import {ServerManagerComponent} from "../components/server-manager/server-manager.component";
@@ -41,13 +41,15 @@ import {AlbumsPage} from "../pages/library/tabs/albums/albums";
 import {GenresTab} from "../pages/library/tabs/genres/genres";
 import {MediumComponent} from "../components/medium/medium.component";
 import {YouTubePage} from "../pages/youtube/youtube";
+import {PlayerControlsComponent} from "../components/player-controls/player-controls.component";
+import {PlayerContainerComponent} from "../components/player-container/player-container.component";
 
 @NgModule({
   declarations: [
     ThePlaylist,
     PlaylistsPage,
     SearchPage,
-    DownloadedPage,
+    CloudPage,
     AuthError,
     SplashPage,
     SettingsPage,
@@ -70,6 +72,9 @@ import {YouTubePage} from "../pages/youtube/youtube";
     ServerSwitchComponent,
     ItemComponent,
     MediumComponent,
+    PlayerControlsComponent,
+
+    PlayerContainerComponent,
 
     DurationPipe,
   ],
@@ -92,7 +97,7 @@ import {YouTubePage} from "../pages/youtube/youtube";
     ThePlaylist,
     PlaylistsPage,
     SearchPage,
-    DownloadedPage,
+    CloudPage,
     AuthError,
     SplashPage,
     SettingsPage,
@@ -108,7 +113,8 @@ import {YouTubePage} from "../pages/youtube/youtube";
     ServerManagerComponent,
 
     PlaylistComponent,
-    AddPlaylistComponent
+    AddPlaylistComponent,
+    PlayerControlsComponent
   ],
   providers: [
     StatusBar,

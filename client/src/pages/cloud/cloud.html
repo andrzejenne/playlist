@@ -18,22 +18,7 @@
     <!--Albums-->
     <!--</button>-->
     <!--</ion-buttons>-->
-    <ion-buttons end right>
-      <button ion-button title="More options" class="primary-button" (click)="tools = !tools">
-        <ion-icon name="more"></ion-icon>
-      </button>
-    </ion-buttons>
   </ion-navbar>
-  <ion-toolbar *ngIf="tools">
-    <ion-item>
-      <ion-icon item-start name="search"></ion-icon>
-      <ion-input icon-left type="text" [(ngModel)]="search" (ionChange)="filter()">
-      </ion-input>
-      <button item-end ion-button clear *ngIf="search" (click)="search=''">
-        <ion-icon name="close"></ion-icon>
-      </button>
-    </ion-item>
-  </ion-toolbar>
 </ion-header>
 
 <ion-content #content>
@@ -115,3 +100,16 @@
     </button>
   </ion-fab>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-item>
+      <ion-icon item-start name="search"></ion-icon>
+      <ion-input icon-left type="text" [(ngModel)]="search" (ionChange)="filter()">
+      </ion-input>
+      <button item-end ion-button clear *ngIf="search" (click)="search=''">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

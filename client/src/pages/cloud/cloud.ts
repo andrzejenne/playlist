@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
 import {Content, NavController, NavParams, Platform} from 'ionic-angular';
-import {DownloadedRepository} from "../../repositories/downloaded.repository";
+import {CloudRepository} from "../../repositories/cloud.repository";
 import {Medium} from "../../models/medium";
 import {ErrorReporting} from "../../services/ErrorReporting";
 import {Subscription} from "rxjs/Subscription";
@@ -14,11 +14,11 @@ import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {Playlist} from "../../models/playlist";
 
 @Component({
-  selector: 'page-downloaded',
-  templateUrl: 'downloaded.html',
+  selector: 'page-cloud',
+  templateUrl: 'cloud.html',
   providers: [SelectorService]
 })
-export class DownloadedPage implements OnDestroy {
+export class CloudPage implements OnDestroy {
   public downloaded: Medium[];
 
   public list: Medium[];
@@ -60,7 +60,7 @@ export class DownloadedPage implements OnDestroy {
     public selector: SelectorService<Medium>,
     public mediaManager: MediaManagerService,
     public platform: Platform,
-    private repo: DownloadedRepository,
+    private repo: CloudRepository,
     private plManager: PlaylistsManagerService,
     private auth: AuthService,
     private errorReporter: ErrorReporting,

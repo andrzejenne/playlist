@@ -9,6 +9,7 @@
 namespace BBIT\Playlist\Wamp\Controllers\com;
 
 use BBIT\Playlist\Contracts\MediaProviderContract;
+use BBIT\Playlist\Helpers\Collection\MediaCollection;
 use BBIT\Playlist\Models\Album;
 use BBIT\Playlist\Models\Artist;
 use BBIT\Playlist\Models\MediaFile;
@@ -20,10 +21,10 @@ use Illuminate\Support\Collection;
 use Thruway\ClientSession;
 
 /**
- * Class DownloadedController
+ * Class CloudController
  * @package BBIT\Playlist\Wamp\Controllers\com
  */
-class DownloadedController extends Controller
+class CloudController extends Controller
 {
     /**
      * @var MediaLibraryProvider
@@ -50,40 +51,15 @@ class DownloadedController extends Controller
 
     /**
      * @param $args
-     * @return Medium[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @return array
+     * @throws \Exception
      */
     public function list($args)
     {
-        $data = Medium::with([
-            Medium::REL_PROVIDER,
-            Medium::REL_FILES,
-            Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
-            Medium::REL_ALBUM,
-            Medium::REL_ARTIST
-        ]);
-
-        $search = isset($args[0]->search) ? $args[0]->search : false;
-        $limit = isset($args[0]->limit) ? $args[0]->limit : 100;
-        $offset = isset($args[0]->offset) ? $args[0]->offset : 0;
-//        $limit = 100;
-//        $offset = 0;
-
-        if (!empty($search)) {
-            $data->where(Medium::COL_NAME, 'like', "%$search%")
-                ->orWhereHas(Medium::REL_ALBUM, function ($query) use ($search) {
-                    $query->where(Album::COL_NAME, 'like', "%$search%");
-                })->orWhereHas(Medium::REL_ARTIST, function ($query) use ($search) {
-                    $query->where(Artist::COL_NAME, 'like', "%$search%");
-                });
-        }
-        // @todo - add search for album, artist, ...;
-        // @todo - add search type
-
-        $pagination = $data->paginate($limit, ['*'], 'page', floor($offset / $limit) + 1);
-
-//        return $pagination->items();
-
-        return Collection::make($pagination->items());
+        return MediaCollection::create($args)
+            ->search()
+            ->paginate()
+            ->get();
     }
 
     /**

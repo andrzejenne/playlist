@@ -8,6 +8,32 @@ $dayModeIconColor: $knobColor;
 
   .mode-color {
 
+    player-controls-component {
+      button {
+        color: $primaryButton !important;
+        ion-icon {
+          color: $primaryButton !important;
+        }
+      }
+
+      button:hover {
+        color: lighten($primaryButton, .2) !important;
+        ion-icon {
+          color: lighten($primaryButton, .2) !important;
+        }
+      }
+
+      .range-bar-active,
+      .range-knob {
+        background-color: $knobColor !important;
+      }
+      .range-disabled .range-knob{
+        outline: none !important;
+      }
+
+      ion-icon { font-size: 150%; }
+    }
+
     ion-header {
       .toolbar {
         .text-input { color: $color; }
@@ -33,20 +59,6 @@ $dayModeIconColor: $knobColor;
         color: greenyellow !important;
       }
 
-      .button-primary {
-        color: $primaryButton !important;
-        ion-icon {
-          color: $primaryButton !important;
-        }
-      }
-
-      .button-primary:hover {
-        color: lighten($primaryButton, .2) !important;
-        ion-icon {
-          color: lighten($primaryButton, .2) !important;
-        }
-      }
-
       .remove-button {
         color: $removeButton !important;
         ion-icon {
@@ -54,13 +66,6 @@ $dayModeIconColor: $knobColor;
         }
       }
 
-      .range-bar-active,
-      .range-knob {
-        background-color: $knobColor !important;
-      }
-      .range-disabled .range-knob{
-        outline: none !important;
-      }
 
       .day-mode-icon {
         color: $dayModeIconColor !important;

@@ -15,7 +15,7 @@ import {Subscription} from "rxjs/Subscription";
 import {WampService} from "../../services/WampService";
 import {LibraryPage} from "../../pages/library/library";
 import {YouTubePage} from "../../pages/youtube/youtube";
-import {DownloadedPage} from "../../pages/downloaded/downloaded";
+import {CloudPage} from "../../pages/cloud/cloud";
 
 @Component({
   selector: 'playlist-component',
@@ -48,7 +48,7 @@ export class PlaylistComponent implements OnDestroy {
   @ViewChild('content') contentContainer: Content;
 
   pages = {
-    all: DownloadedPage,
+    all: CloudPage,
     library: LibraryPage,
     youtube: YouTubePage
   };
@@ -90,7 +90,8 @@ export class PlaylistComponent implements OnDestroy {
   ) {
     if (params.data.id) {
       this.playlist = params.data;
-      this.loadPlaylist(params.data);
+      this.plManager.selectPlaylist(params.data);
+      this.preparePlaylist();
 
       this.subs.push(
         this.wamp.serverSwitched.subscribe(servers => {
@@ -110,6 +111,7 @@ export class PlaylistComponent implements OnDestroy {
   ngAfterViewInit() {
     if (!this.params.data.id) {
       this.loadPlaylist(this.playlist);
+      this.preparePlaylist();
     }
 
     this.subs.push(
@@ -122,17 +124,18 @@ export class PlaylistComponent implements OnDestroy {
   }
 
   ionViewDidEnter() {
-    this.menu.enable(true, 'playlistMenu');
+    // this.menu.enable(true, 'playlistMenu');
+    this.preparePlaylist();
   }
 
-  togglePlaylistMenu() {
-    if (this.menu.isOpen('playlistMenu')) {
-      this.menu.close('playlistMenu');
-    }
-    else {
-      this.menu.open('playlistMenu');
-    }
-  }
+  // togglePlaylistMenu() {
+  //   if (this.menu.isOpen('playlistMenu')) {
+  //     this.menu.close('playlistMenu');
+  //   }
+  //   else {
+  //     this.menu.open('playlistMenu');
+  //   }
+  // }
 
   ngOnDestroy() {
     this.subs.forEach(s => s.unsubscribe());
@@ -372,9 +375,13 @@ export class PlaylistComponent implements OnDestroy {
     this.nav.push(this.pages[page], this.playlist);
   }
 
+  /**
+   * @deprecated
+   * @param {Playlist} playlist
+   */
   private loadPlaylist(playlist: Playlist) {
-    this.plManager.selectPlaylist(playlist)
-      .then(media => this.preparePlaylist());
+    this.plManager.selectPlaylist(playlist);
+      // .then(media => this.preparePlaylist());
   }
 
   private autoPlayIfInterrupted() {
@@ -468,8 +475,6 @@ export class PlaylistComponent implements OnDestroy {
     }
 
     this.ready = true;
-
-    this.ref.detectChanges();
   }
 
   private updatePlaylist() {

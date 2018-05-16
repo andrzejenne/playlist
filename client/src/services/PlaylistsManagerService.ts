@@ -22,6 +22,7 @@ export class PlaylistsManagerService {
 
   list(user: User) {
     return this.repo.list(user.id).then(playlists => {
+      PlaylistsManagerService.recalculate(playlists);
       this.playlists = playlists;
       this.playlists$.next(this.playlists);
 
@@ -61,6 +62,8 @@ export class PlaylistsManagerService {
       }
       playlist.media.push(medium);
 
+      PlaylistsManagerService.recalculate([playlist]);
+
       this.playlists$.next(this.playlists);
 
       if (playlist === this.playlist) {
@@ -84,6 +87,8 @@ export class PlaylistsManagerService {
         if (index > -1) {
           playlist.media.splice(index, 1);
         }
+
+        PlaylistsManagerService.recalculate([playlist]);
 
         this.playlists$.next(this.playlists);
 
@@ -112,6 +117,8 @@ export class PlaylistsManagerService {
           else {
             this.selectPlaylist(data[0]);
           }
+
+          PlaylistsManagerService.recalculate(data);
         }
         else {
           this.create(user, 'default')
@@ -135,18 +142,20 @@ export class PlaylistsManagerService {
 
     console.info('selected', playlist);
 
-    if (this.playlist && this.playlist.id) {
-      return this.repo.load(this.playlist.id)
-        .then(media => {
-          playlist.media = media;
-          // this.playlist$.next(playlist);
+    this.playlist$.next(playlist);
 
-          return media;
-        });
-    }
-    else  {
-      this.playlist$.next(playlist);
-    }
+    // if (this.playlist && this.playlist.id) {
+    //   return this.repo.load(this.playlist.id)
+    //     .then(media => {
+    //       playlist.media = media;
+    //       // this.playlist$.next(playlist);
+    //
+    //       return media;
+    //     });
+    // }
+    // else  {
+    //   this.playlist$.next(playlist);
+    // }
   }
 
   clearPlaylists() {
@@ -154,5 +163,18 @@ export class PlaylistsManagerService {
     this.playlist = null;
     this.playlist$.next(null);
     this.playlists$.next([]);
+  }
+
+  private static recalculate(playlists: Playlist[]) {
+    playlists.forEach(playlist => {
+      if (playlist.media) {
+        playlist.count = playlist.media.length;
+        let duration = 0;
+        playlist.media.forEach(medium => duration += medium.duration);
+        playlist.duration = duration;
+      }
+    });
+
+    console.info('PlaylistManagerService@recalculate', playlists);
   }
 }

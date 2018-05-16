@@ -15,7 +15,7 @@
    viewBox="0 0 270.93333 270.93333"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.3 (3ce5693, 2018-03-11)"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="playlist2.svg">
   <defs
      id="defs2">
@@ -130,7 +130,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.49497474"
-     inkscape:cx="1076.3536"
+     inkscape:cx="715.72914"
      inkscape:cy="426.14083"
      inkscape:document-units="mm"
      inkscape:current-layer="g4974"
@@ -149,7 +149,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -164,15 +164,9 @@
          id="g4974"
          transform="translate(2.1166667,-1.5875)"
          style="stroke:#000000;stroke-width:0.34999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
-        <rect
-           style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.90640396;paint-order:normal"
-           id="rect5258"
-           width="341.03592"
-           height="338.89777"
-           x="-38.465324"
-           y="-1.8234503" />
         <g
-           id="g5256">
+           id="g5256"
+           transform="matrix(0.75892369,0,0,0.75892369,32.147513,39.324559)">
           <circle
              r="116.40836"
              cy="163.12083"

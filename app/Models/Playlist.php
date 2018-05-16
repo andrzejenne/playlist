@@ -42,10 +42,12 @@ class Playlist extends BaseModel
     protected $casts = [
     ];
 
+    /**
     protected $appends = [
         self::A_COUNT,
         self::A_DURATION
     ];
+     */
 
     public static $modelRelations = [
         self::REL_MEDIA,
@@ -79,6 +81,7 @@ class Playlist extends BaseModel
 
     /**
      * @return mixed
+     * @deprecated
      */
     public function getCountAttribute()
     {
@@ -87,6 +90,7 @@ class Playlist extends BaseModel
 
     /**
      * @return mixed
+     * @deprecated
      */
     public function getDurationAttribute()
     {

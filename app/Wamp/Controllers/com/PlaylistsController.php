@@ -8,12 +8,10 @@
 
 namespace BBIT\Playlist\Wamp\Controllers\com;
 
-use BBIT\Playlist\Http\Resources\PlaylistCollection;
-use BBIT\Playlist\Models\MediaFile;
-use BBIT\Playlist\Models\Medium;
+use BBIT\Playlist\Helpers\Collection\MediaCollection;
+use BBIT\Playlist\Helpers\Collection\PlaylistCollection;
 use BBIT\Playlist\Models\Playlist;
 use BBIT\Playlist\Models\User;
-use BBIT\Playlist\Models\Views\Playlist\PlaylistView;
 use BBIT\Playlist\Wamp\Controllers\Controller;
 use Thruway\ClientSession;
 
@@ -35,34 +33,30 @@ class PlaylistsController extends Controller
     /**
      * @param $args
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function list($args)
     {
-        $playlists = Playlist::whereUserId($args[0]->uid)
+        return PlaylistCollection::create($args)
+            ->whereUserId($args[0]->uid)
             ->orderBy(Playlist::COL_NAME, 'ASC')
             ->get();
 
-        return $playlists;
     }
 
     /**
      * @param $args
      * @return \Illuminate\Database\Eloquent\Collection
+     * @throws \Exception
+     * @deprecated
      */
     public function media($args)
     {
-        /** @var Playlist $playlist */
-        $playlist = Playlist::whereId($args[0]->pid)
-            ->first();
-
-        return $playlist->media()
-            ->with(
-                Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
-                Medium::REL_ARTIST,
-                Medium::REL_ALBUM,
-                Medium::REL_GENRE,
-                Medium::REL_PROVIDER
-            )->get();
+        return PlaylistCollection::create($args)
+            ->whereId($args[0]->pid)
+            ->first()
+            ->media()
+            ->get();
 
     }
 
@@ -112,6 +106,7 @@ class PlaylistsController extends Controller
     /**
      * @param $args
      * @return bool
+     * @throws \Exception
      */
     public function addMedium($args)
     {
@@ -121,8 +116,9 @@ class PlaylistsController extends Controller
 
         $playlist->media()->attach($args[0]->mid, ['ordering' => isset($args[0]->ordering) ? $args[0]->ordering : 0]);
 
-        return Medium::whereId($args[0]->mid)->with(Medium::REL_PROVIDER,
-            Medium::REL_FILES . '.' . MediaFile::REL_TYPE)->first();
+        return MediaCollection::create($args)
+            ->whereId($args[0]->mid)
+            ->first();
         // @todo - reorder
     }
 

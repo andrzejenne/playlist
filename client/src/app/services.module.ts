@@ -8,7 +8,6 @@ import {BrowserModule} from "@angular/platform-browser";
 import {HttpClientModule} from "@angular/common/http";
 import {DownloadManager} from "../services/DownloadManager";
 import {WampRepository} from "../repositories/wamp.repository";
-import {DownloadedRepository} from "../repositories/downloaded.repository";
 import {PlaylistsRepository} from "../repositories/playlists.repository";
 import {SearchRepository} from "../repositories/search.repository";
 import {ServerManagerService} from "../services/ServerManagerService";
@@ -20,6 +19,8 @@ import {PlaylistsManagerService} from "../services/PlaylistsManagerService";
 import {LibraryManagerService} from "../services/LibraryManagerService";
 import {LibraryRepository} from "../repositories/library.repository";
 import {MediaRepository} from "../repositories/media.repository";
+import {OfflineManagerService} from "../services/OfflineManagerService";
+import {CloudRepository} from "../repositories/cloud.repository";
 
 @NgModule({
   imports: [
@@ -41,10 +42,12 @@ import {MediaRepository} from "../repositories/media.repository";
 
     FullscreenObserverService,
 
+    OfflineManagerService,
+
     // repos
     WampRepository,
     SearchRepository,
-    DownloadedRepository,
+    CloudRepository,
     PlaylistsRepository,
     LibraryRepository,
     MediaRepository,

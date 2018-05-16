@@ -1,0 +1,28 @@
+player-container {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  border-bottom: 98px solid transparent;
+  // @todo - dynamic border bottom
+  transition: border 500ms ease-in-out;
+
+  ion-footer {
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+
+  ion-content {
+    margin-top: 200px;
+  }
+
+  ion-nav.hide-player {
+    border-bottom: 0;
+  }
+}
+
+player-container.hide-player {
+  border-bottom-width: 0;
+}
+

@@ -8,6 +8,7 @@
 
 namespace BBIT\Playlist\Wamp\Controllers\com;
 
+use BBIT\Playlist\Helpers\Collection\MediaCollection;
 use BBIT\Playlist\Models\MediaFile;
 use BBIT\Playlist\Models\MediaProvider;
 use BBIT\Playlist\Models\Medium;
@@ -40,18 +41,8 @@ class MediaController extends Controller
      */
     public function getBySid($args)
     {
-        /** @var Medium $medium */
-        $medium = Medium::whereProviderSid($args[0]->sid)
-            ->with(
-                Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
-                Medium::REL_ARTIST,
-                Medium::REL_ALBUM,
-                Medium::REL_GENRE,
-                Medium::REL_PROVIDER
-            )
-            ->first();
-
-        return $medium;
+        return MediaCollection::create($args)
+            ->find($args[0]->sid);
     }
 
     /**
@@ -60,15 +51,10 @@ class MediaController extends Controller
      */
     public function getByArtist($args)
     {
-        return Medium::whereArtistId($args[0]->aid)
-            ->with(
-                Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
-                Medium::REL_ARTIST,
-                Medium::REL_ALBUM,
-                Medium::REL_GENRE,
-                Medium::REL_PROVIDER
-            )
-            ->get();
+        return MediaCollection::create($args)
+            ->whereArtistId($args[0]->aid)
+            ->search()
+            ->paginate();
     }
 
     /**
@@ -77,15 +63,10 @@ class MediaController extends Controller
      */
     public function getByAlbum($args)
     {
-        return Medium::whereAlbumId($args[0]->aid)
-            ->with(
-                Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
-                Medium::REL_ARTIST,
-                Medium::REL_ALBUM,
-                Medium::REL_GENRE,
-                Medium::REL_PROVIDER
-            )
-            ->get();
+        return MediaCollection::create($args)
+            ->whereAlbumId($args[0]->aid)
+            ->search()
+            ->paginate();
     }
 
     /**
@@ -94,15 +75,10 @@ class MediaController extends Controller
      */
     public function getByGenre($args)
     {
-        return Medium::whereGenreId($args[0]->gid)
-            ->with(
-                Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
-                Medium::REL_ARTIST,
-                Medium::REL_ALBUM,
-                Medium::REL_GENRE,
-                Medium::REL_PROVIDER
-            )
-            ->get();
+        return MediaCollection::create($args)
+            ->whereGenreId($args[0]->gid)
+            ->search()
+            ->paginate();
     }
 
     /**
@@ -118,15 +94,10 @@ class MediaController extends Controller
             $pid =  MediaProvider::whereSlug($args[0]->pSlug)->first()->id;
         }
         if (isset($pid)) {
-            return Medium::whereProviderId($pid)
-                ->with(
-                    Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
-                    Medium::REL_ARTIST,
-                    Medium::REL_ALBUM,
-                    Medium::REL_GENRE,
-                    Medium::REL_PROVIDER
-                )
-                ->get();
+            return MediaCollection::create($args)
+                ->whereProviderId($pid)
+                ->search()
+                ->paginate();
         }
         else {
             return null;
