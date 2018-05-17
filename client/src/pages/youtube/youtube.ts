@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component} from '@angular/core';
 import {MediaManagerService} from "../../services/MediaManagerService";
 import {Medium} from "../../models/medium";
 import {SelectorService} from "../../services/SelectorService";
-import {NavParams, Platform} from "ionic-angular";
+import {NavParams, Platform, ViewController} from "ionic-angular";
 import {Playlist} from "../../models/playlist";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 
@@ -25,11 +25,16 @@ export class YouTubePage {
     private mediaManager: MediaManagerService,
     private plManager: PlaylistsManagerService,
     private ref: ChangeDetectorRef,
-    private params: NavParams
+    private params: NavParams,
+    private viewCtrl: ViewController
   ) {
     if (params.data.id) {
       this.playlist = params.data;
     }
+  }
+
+  dismiss() {
+    this.viewCtrl.dismiss();
   }
 
   ionViewDidLoad() {

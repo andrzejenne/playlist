@@ -1,18 +1,15 @@
 <ng-content></ng-content>
-<!--<ion-content [class.behind]="!playlist">-->
-<ion-content class="playlist-container">
 
-  <div ion-fixed>
-    <div class="video">
-      <video #player [width]="video.width" height="video.height"></video>
-    </div>
-  </div>
-
-  <playlist-component [playlist]="playlist" (hide)="hide($event)" [player]="player"></playlist-component>
-</ion-content>
+<!--<ion-content #video class="video-container">-->
+  <div class="video" ion-fixed [class.hidden]="player.status.audio"><video #playerEl></video></div>
 <!--</ion-content>-->
+
+<ion-content #playlist class="playlist-container">
+  <playlist-component [playlist]="playlist" (hide)="hide($event)"></playlist-component>
+</ion-content>
+
 <ion-footer>
   <ion-toolbar class="mode-color">
-    <player-controls-component [player]="player"></player-controls-component>
+    <player-controls-component></player-controls-component>
   </ion-toolbar>
 </ion-footer>

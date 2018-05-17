@@ -1,6 +1,9 @@
 import {Component, EventEmitter, forwardRef, HostBinding, Input, Output} from "@angular/core";
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
+/**
+ * @deprecated
+ */
 @Component({
   selector: 'simple-select',
   templateUrl: 'select.component.html',

@@ -21,6 +21,7 @@ import {LibraryRepository} from "../repositories/library.repository";
 import {MediaRepository} from "../repositories/media.repository";
 import {OfflineManagerService} from "../services/OfflineManagerService";
 import {CloudRepository} from "../repositories/cloud.repository";
+import {PlayerService} from "../services/PlayerService";
 
 @NgModule({
   imports: [
@@ -41,7 +42,7 @@ import {CloudRepository} from "../repositories/cloud.repository";
     LibraryManagerService,
 
     FullscreenObserverService,
-
+    PlayerService,
     OfflineManagerService,
 
     // repos

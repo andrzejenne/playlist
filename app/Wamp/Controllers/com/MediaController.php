@@ -38,6 +38,7 @@ class MediaController extends Controller
     /**
      * @param $args
      * @return Medium
+     * @throws \Exception
      */
     public function getBySid($args)
     {
@@ -48,6 +49,7 @@ class MediaController extends Controller
     /**
      * @param $args
      * @return Medium[]|Collection
+     * @throws \Exception
      */
     public function getByArtist($args)
     {
@@ -60,6 +62,7 @@ class MediaController extends Controller
     /**
      * @param $args
      * @return Medium[]|Collection
+     * @throws \Exception
      */
     public function getByAlbum($args)
     {
@@ -72,6 +75,7 @@ class MediaController extends Controller
     /**
      * @param $args
      * @return Medium[]|Collection
+     * @throws \Exception
      */
     public function getByGenre($args)
     {
@@ -84,6 +88,7 @@ class MediaController extends Controller
     /**
      * @param $args
      * @return mixed
+     * @throws \Exception
      */
     public function getByProvider($args)
     {
@@ -97,7 +102,8 @@ class MediaController extends Controller
             return MediaCollection::create($args)
                 ->whereProviderId($pid)
                 ->search()
-                ->paginate();
+                ->paginate()
+                ->get();
         }
         else {
             return null;

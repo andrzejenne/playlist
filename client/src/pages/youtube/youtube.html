@@ -1,11 +1,14 @@
-<ion-header class="mode-color">
+<ion-header>
   <ion-navbar>
-    <button ion-button menuToggle="menu">
+    <button ion-button menuToggle="menu" *ngIf="!playlist">
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>
-      YouTube
-    </ion-title>
+    <ion-title left>YouTube</ion-title>
+    <ion-buttons end *ngIf="playlist">
+      <button ion-button (tap)="dismiss()" clear>
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 

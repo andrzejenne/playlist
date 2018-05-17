@@ -1,6 +1,9 @@
 import {Component, Input} from "@angular/core";
 import {NavParams} from "ionic-angular";
 
+/**
+ * @deprecated
+ */
 @Component({
   selector: 'video-player-component',
   templateUrl: 'video-player.component.html'

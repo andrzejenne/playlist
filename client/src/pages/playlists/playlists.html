@@ -40,10 +40,10 @@
         </p>
       </div>
       <ion-buttons item-end>
-        <button ion-button clear>
+        <button ion-button clear (tap)="shuffle(playlist)">
           <ion-icon name="shuffle"></ion-icon>
         </button>
-        <button ion-button clear>
+        <button ion-button clear (tap)="play(playlist)">
           <ion-icon name="play"></ion-icon>
         </button>
       </ion-buttons>

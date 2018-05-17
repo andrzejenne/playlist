@@ -1,6 +1,5 @@
-import {Component, EventEmitter, Input, Output} from "@angular/core";
-import {Medium} from "../../models/medium";
-import {ElementReference} from "../../models/ElementReference";
+import {ChangeDetectorRef, Component} from "@angular/core";
+import {PlayerService} from "../../services/PlayerService";
 
 @Component({
   selector: 'player-controls-component',
@@ -8,38 +7,23 @@ import {ElementReference} from "../../models/ElementReference";
 })
 export class PlayerControlsComponent {
 
-  @Input()
-  medium: Medium;
-
-  @Input()
-  status: {
-    currentTime: number;
-    shuffle: boolean;
-    repeat: boolean;
-    playing: boolean;
-    video: boolean;
-    audio: boolean;
-  };
-
-  @Output()
-  pause = new EventEmitter();
-
-  @Input()
-  player: ElementReference<HTMLVideoElement>;
-
   playIcon = 'play';
+
+  constructor(public player: PlayerService, ref: ChangeDetectorRef) {
+    this.player.addChangeDetector(ref);
+  }
 
   onSliderFocus(event) {
     // this.pause();
-    this.pause.next(true);
+    this.player.pause();
   }
 
   onSliderBlur(event) {
-    if (this.medium) {
-      if (event.value != this.player.nativeElement.currentTime) {
-        this.player.nativeElement.currentTime = +event.value;
+    if (this.player.medium) {
+      if (event.value != this.player.videoElement.currentTime) {
+        this.player.videoElement.currentTime = +event.value;
       }
-      this.player.nativeElement.play();
+      this.player.videoElement.play();
     }
   }
 }

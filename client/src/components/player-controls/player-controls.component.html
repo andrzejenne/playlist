@@ -1,43 +1,41 @@
-<ion-range [(ngModel)]="currentTime" [min]="0" [max]="totalTime"
-           [debounce]="500"
-           [disabled]="!this.current"
+<ion-range [(ngModel)]="player.mediumTime" [min]="0" [max]="player.totalTime"
+           [disabled]="!player.medium"
            (ionFocus)="onSliderFocus($event)"
-           (ionBlur)="onSliderBlur($event)"
-           (ionChange)="onSliderChange($event)">
-  <ion-label range-left>{{currentTime | duration}}</ion-label>
-  <ion-label range-right>{{totalTime | duration}}</ion-label>
+           (ionBlur)="onSliderBlur($event)">
+  <ion-label range-left>{{player.mediumTime | duration}}</ion-label>
+  <ion-label range-right>{{player.totalTime | duration}}</ion-label>
 </ion-range>
 <div>
   <!--<h2 class="title">{{current?.name}}</h2>-->
   <ion-buttons end>
-    <button ion-button clear small (click)="playVideo()" title="Play Video"
-            [class.button-primary]="status.video">
+    <button ion-button clear small (click)="player.playVideo()" title="Play Video"
+            [class.button-primary]="player.status.video">
       <ion-icon name="videocam"></ion-icon>
     </button>
-    <button ion-button clear small (click)="playAudio()" title="Play Audio only"
-            [class.button-primary]="status.audio">
+    <button ion-button clear small (click)="player.playAudio()" title="Play Audio only"
+            [class.button-primary]="player.status.audio">
       <ion-icon name="musical-notes"></ion-icon>
     </button>
-    <button [disabled]="!status.playing || !length" ion-button clear small
-            (click)="playPrev()"
+    <button [disabled]="!player.status.playing || !player.media.length" ion-button clear small
+            (click)="player.playPrev()"
             title="Play previous">
       <ion-icon name="skip-backward"></ion-icon>
     </button>
-    <button ion-button (click)="togglePlay()" clear small title="Play / Pause"
-            [class.button-primary]="status.playing">
+    <button ion-button (click)="player.togglePlay()" clear small title="Play / Pause"
+            [class.button-primary]="player.status.playing">
       <ion-icon [name]="playIcon"></ion-icon>
     </button>
-    <button [disabled]="!status.playing || !length" ion-button clear small
-            (click)="playNext()"
+    <button [disabled]="!player.status.playing || !player.media.length" ion-button clear small
+            (click)="player.playNext()"
             title="Play next">
       <ion-icon name="skip-forward"></ion-icon>
     </button>
-    <button ion-button (click)="toggleShuffle()" clear small title="Toggle Shuffle"
-            [class.button-primary]="status.shuffle">
+    <button ion-button (click)="player.toggleShuffle()" clear small title="Toggle Shuffle"
+            [class.button-primary]="player.status.shuffle">
       <ion-icon name="shuffle"></ion-icon>
     </button>
-    <button ion-button (click)="toggleRepeat()" clear small title="Toggle Repeat"
-            [class.button-primary]="status.repeat">
+    <button ion-button (click)="player.toggleRepeat()" clear small title="Toggle Repeat"
+            [class.button-primary]="player.status.repeat">
       <ion-icon name="repeat"></ion-icon>
     </button>
   </ion-buttons>

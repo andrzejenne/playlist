@@ -22,8 +22,8 @@
   <ion-list class="items" *ngIf="playlist" [reorder]="true" (ionItemReorder)="reorderData($event)">
     <ion-item-sliding *ngFor="let item of playlist.media">
       <ion-item class="item-component"
-                [class.played]="played"
-                [class.current]="current"
+                [class.played]="player.wasPlayed(item)"
+                [class.current]="player.isCurrent(item)"
                 (press)="selector.toggleSelect(item)">
 
         <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
@@ -44,12 +44,12 @@
           </button>
         </ion-buttons>
         <ion-buttons end *ngIf="!current">
-          <button ion-button color="primary" clear (click)="playFirst(item)">
+          <button ion-button color="primary" clear (click)="player.playFirst(item)">
             <ion-icon name="play">
               <sub>1</sub>
             </ion-icon>
           </button>
-          <button ion-button color="primary" clear (click)="play(item)">
+          <button ion-button color="primary" clear (click)="player.playItem(item)">
             <ion-icon name="play"></ion-icon>
           </button>
         </ion-buttons>

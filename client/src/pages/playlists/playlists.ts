@@ -21,6 +21,7 @@ import {WampService} from "../../services/WampService";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {PlaylistComponent} from "../../components/playlist/playlist.component";
 import {Subscription} from "rxjs/Subscription";
+import {PlayerService} from "../../services/PlayerService";
 
 @Component({
   selector: 'page-playlists',
@@ -49,6 +50,7 @@ export class PlaylistsPage implements OnDestroy {
     public selector: SelectorService<Playlist>,
     //    public pages: PagesService,
     public plManager: PlaylistsManagerService,
+    private player: PlayerService,
     private auth: AuthService,
     private servers: ServerManagerService,
     private wamp: WampService,
@@ -212,6 +214,13 @@ export class PlaylistsPage implements OnDestroy {
     this.modalCtrl.create(PlaylistComponent, playlist, {
       showBackdrop: false
     }).present();
+  }
+
+  play(playlist: Playlist) {
+    this.plManager.selectPlaylist(playlist);
+    this.player.onReady().then(
+      media => this.player.playNext()
+    );
   }
 
   private onGetUser = (user: User) => {

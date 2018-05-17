@@ -7,6 +7,9 @@ import {
 import {Playlist} from "../../models/playlist";
 import {User} from "../../models/user";
 
+/**
+ * @deprecated
+ */
 @Component({
   selector: 'playlists-combo',
   templateUrl: 'playlist-combo.component.html'
