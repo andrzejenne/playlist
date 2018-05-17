@@ -35,8 +35,8 @@ $colors: (
         dark: #222
 );
 
-$list-background-color: transparent;
-$list-md-border-color: transparent;
+//$list-background-color: transparent;
+//$list-md-border-color: transparent;
 
 // App iOS Variables
 // --------------------------------------------------
@@ -58,8 +58,8 @@ $list-md-border-color: transparent;
 // default are overridden.
 
 @import "ionic.theme.default";
-@import 'theme.day';
-@import 'theme.night';
+//@import 'theme.day';
+//@import 'theme.night';
 
 // Ionicons
 // --------------------------------------------------

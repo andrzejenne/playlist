@@ -25,7 +25,7 @@
                 (tap)="selector.toggleSelect(playlist)"
                 [name]="selector.isSelected(playlist) ? 'checkbox' : 'square'"></ion-icon>
       <div class="item-content"
-           (tap)="openPlaylist(playlist)">
+           (tap)="plManager.toggleSelectPlaylist(playlist)">
         <h2>
           {{playlist.name}}
         </h2>

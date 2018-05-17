@@ -1,36 +1,33 @@
-<ion-item [class.played]="played" [class.current]="current" (press)="select.emit(true)"
-          (swipe)="onSwipe($event)">
-  <ion-thumbnail item-start [class.selected]="selected" (tap)="select.emit(true)">
-    <img [src]="thumbnail" class="fit-thumbnail">
-    <ion-icon *ngIf="selected" name="checkmark"></ion-icon>
-  </ion-thumbnail>
-  <!--<span class="duration">{{item.duration | duration}}</span>-->
-  <div class="item-content">
-    <h2>{{item.name}}</h2>
-    <p>
-      <ion-icon name="contact" *ngIf="description"></ion-icon>
-      {{description}}
-      <!--<span *ngIf="item.artist">-->
-        <!--{{item.artist.name}}-->
-      <!--</span>-->
-      <!--<span *ngIf="item.album">-->
-        <!--{{item.album.name}}-->
-      <!--</span>-->
-    </p>
-  </div>
-  <ion-buttons end *ngIf="current">
-    <button ion-button clear>
-      <ion-spinner name="dots" color="#2a88bd"></ion-spinner>
-    </button>
-  </ion-buttons>
-  <ion-buttons end *ngIf="!current">
-    <button ion-button color="primary" clear (click)="playFirst.emit(true)">
-      <ion-icon name="play">
-        <sub>1</sub>
-      </ion-icon>
-    </button>
-    <button ion-button color="primary" clear (click)="play.emit(true)">
-      <ion-icon name="play"></ion-icon>
-    </button>
-  </ion-buttons>
-</ion-item>
+<ion-thumbnail item-start [class.selected]="selected" (tap)="select.emit(true)">
+  <img [src]="thumbnail" class="fit-thumbnail">
+  <ion-icon *ngIf="selected" name="checkmark"></ion-icon>
+</ion-thumbnail>
+<!--<span class="duration">{{item.duration | duration}}</span>-->
+<div class="item-content">
+  <h2>{{item.name}}</h2>
+  <p>
+    <ion-icon name="contact" *ngIf="description"></ion-icon>
+    {{description}}
+    <!--<span *ngIf="item.artist">-->
+    <!--{{item.artist.name}}-->
+    <!--</span>-->
+    <!--<span *ngIf="item.album">-->
+    <!--{{item.album.name}}-->
+    <!--</span>-->
+  </p>
+</div>
+<ion-buttons end *ngIf="current">
+  <button ion-button clear>
+    <ion-spinner name="dots" color="#2a88bd"></ion-spinner>
+  </button>
+</ion-buttons>
+<ion-buttons end *ngIf="!current">
+  <button ion-button color="primary" clear (click)="playFirst.emit(true)">
+    <ion-icon name="play">
+      <sub>1</sub>
+    </ion-icon>
+  </button>
+  <button ion-button color="primary" clear (click)="play.emit(true)">
+    <ion-icon name="play"></ion-icon>
+  </button>
+</ion-buttons>

@@ -1,6 +1,6 @@
 import {
   ChangeDetectorRef,
-  Component, Input, OnDestroy,
+  Component, ElementRef, EventEmitter, Input, OnDestroy, Optional, Output,
   ViewChild
 } from "@angular/core";
 import {Medium} from "../../models/medium";
@@ -47,6 +47,11 @@ export class PlaylistComponent implements OnDestroy {
 
   @ViewChild('content') contentContainer: Content;
 
+  @ViewChild('header') header: ElementRef;
+
+  @Output()
+  hide = new EventEmitter();
+
   pages = {
     all: CloudPage,
     library: LibraryPage,
@@ -71,6 +76,10 @@ export class PlaylistComponent implements OnDestroy {
     containerStyle: {width: '100%'}
   };
 
+  hidden = true;
+
+  arrowIcon = 'arrow-up';
+
   ready: boolean;
 
   private interval: number;
@@ -83,12 +92,12 @@ export class PlaylistComponent implements OnDestroy {
     private plManager: PlaylistsManagerService,
     private mediaManager: MediaManagerService,
     private wamp: WampService,
-    private params: NavParams,
-    private nav: NavController,
     private menu: MenuController,
     private ref: ChangeDetectorRef,
+    @Optional() public nav: NavController = null,
+    @Optional() private params: NavParams = null
   ) {
-    if (params.data.id) {
+    if (params && params.data.id) {
       this.playlist = params.data;
       this.plManager.selectPlaylist(params.data);
       this.preparePlaylist();
@@ -101,15 +110,42 @@ export class PlaylistComponent implements OnDestroy {
           // this.playedPlaylist = null;
           // this.mediaPlaylist = null;
           // this.ref.detectChanges();
-          this.nav.pop();
+          this.nav && this.nav.pop();
         }),
         // this.plManager.playlist$.subscribe(playlist => this.ref.detectChanges())
       );
     }
   }
 
+  reorderData(indexes: any) {
+    this.playlist.media = this.reorderArray(this.playlist.media, indexes);
+  }
+
+  reorderArray(array: any[], indexes: {from: number, to: number}): any[] {
+    const element = array[indexes.from];
+    array.splice(indexes.from, 1);
+    array.splice(indexes.to, 0, element);
+    return array;
+  }
+
+  onHide() {
+    this.hide.emit(true);
+  }
+
+  toggleShow() {
+    if (this.hidden) {
+      this.hide.emit(false);
+      this.arrowIcon = 'arrow-down';
+    }
+    else {
+      this.hide.emit(true);
+      this.arrowIcon = 'arrow-up';
+    }
+    this.hidden = !this.hidden;
+  }
+
   ngAfterViewInit() {
-    if (!this.params.data.id) {
+    if (this.params && !this.params.data.id) {
       this.loadPlaylist(this.playlist);
       this.preparePlaylist();
     }
@@ -121,6 +157,11 @@ export class PlaylistComponent implements OnDestroy {
         this.ref.detectChanges();
       })
     );
+
+    console.info(
+      this.header.nativeElement.offsetHeight //.getNativeElement().offsetHeight
+    );
+
   }
 
   ionViewDidEnter() {
@@ -143,7 +184,7 @@ export class PlaylistComponent implements OnDestroy {
 
   onItemSwipe(item: Medium, direction) {
     if ('right' == direction) {
-      this.playItemFirst(item);
+      this.playFirst(item);
     }
     else if ('left' == direction) {
       this.removeItem(item);
@@ -188,7 +229,7 @@ export class PlaylistComponent implements OnDestroy {
     this.removeContentMargin();
   }
 
-  playItemFirst(item: Medium, seek = 0) {
+  playFirst(item: Medium, seek = 0) {
     if (!this.mediaPlaylist) {
       this.preparePlaylist();
     }
@@ -372,7 +413,7 @@ export class PlaylistComponent implements OnDestroy {
   }
 
   open(page: string) {
-    this.nav.push(this.pages[page], this.playlist);
+    this.nav && this.nav.push(this.pages[page], this.playlist);
   }
 
   /**

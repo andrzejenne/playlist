@@ -1,1 +1,11 @@
 <ng-content></ng-content>
+<!--<ion-content [class.behind]="!playlist">-->
+<ion-content class="playlist-container">
+  <playlist-component [playlist]="playlist" (hide)="hide($event)"></playlist-component>
+</ion-content>
+<!--</ion-content>-->
+<ion-footer>
+  <ion-toolbar class="mode-color">
+    <player-controls-component></player-controls-component>
+  </ion-toolbar>
+</ion-footer>

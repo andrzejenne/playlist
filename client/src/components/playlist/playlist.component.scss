@@ -1,5 +1,18 @@
 playlist-component {
+  //position: absolute;
+  //top: 0; left: 0;
+  //bottom: 0; right: 0;
+
   .video { width: 100%; }
 
   .duration { font-size: 200%; }
+
+  ion-title {
+    h2 { display: inline-block; vertical-align: middle; margin: 0;}
+    .close-down {
+      display: inline-block;
+      cursor: pointer; padding: 5px 10px;
+      vertical-align: middle;
+    }
+  }
 }

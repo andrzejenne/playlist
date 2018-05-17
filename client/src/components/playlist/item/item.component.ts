@@ -1,4 +1,13 @@
-import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output} from "@angular/core";
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  HostBinding,
+  HostListener,
+  Input,
+  Output
+} from "@angular/core";
 import {Medium} from "../../../models/medium";
 
 @Component({
@@ -12,9 +21,11 @@ export class ItemComponent implements AfterViewInit {
   @Input()
   selected: boolean;
 
+  @HostBinding('class.played')
   @Input()
   played: boolean;
 
+  @HostBinding('class.current')
   @Input()
   current: boolean;
 
@@ -35,13 +46,17 @@ export class ItemComponent implements AfterViewInit {
 
   description = '';
 
-  onSwipe(event) {
+  @HostListener('swipe') onSwipe(event) {
     if (event.deltaX > 10) {
       this.swipe.emit('right');
     }
     else if (event.deltaX < -10) {
       this.swipe.emit('left');
     }
+  }
+
+  @HostListener('press') onPress() {
+    this.select.emit(true);
   }
 
   constructor(private ref: ChangeDetectorRef) {
