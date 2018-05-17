@@ -19,18 +19,18 @@
 </ion-header>
 
 <ion-content #content>
-  <ion-list class="items" *ngIf="playlist" [reorder]="true" (ionItemReorder)="reorderData($event)">
+  <ion-list class="items" *ngIf="playlist" [reorder]="true" (ionItemReorder)="player.reorderData($event)">
     <ion-item-sliding *ngFor="let item of playlist.media">
       <ion-item class="item-component"
                 [class.played]="player.wasPlayed(item)"
                 [class.current]="player.isCurrent(item)"
                 (press)="selector.toggleSelect(item)">
 
-        <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
+        <div class="thumbnail" item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
           <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
           <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
-        </ion-thumbnail>
-        <span class="duration">{{item.duration | duration}}</span>
+          <span class="duration">{{item.duration | duration}}</span>
+        </div>
         <div class="item-content">
           <h2>{{item.name}}</h2>
           <p>

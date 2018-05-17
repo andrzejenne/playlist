@@ -15,6 +15,24 @@ playlist-component {
       vertical-align: middle;
     }
   }
+  .thumbnail {
+    max-width: 25%;
+    height: 80px;
+    position: relative;;
+
+    img { height: 100%; }
+
+    .duration {
+      position: absolute;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0,0,0,.7);
+      //background: rgba(255,255,255, .5);
+      right: 2px;
+      bottom: 2px;
+      font-size: 12px;
+      padding: 2px 4px;
+    }
+  }
 }
 
 .fullscreen-modal {

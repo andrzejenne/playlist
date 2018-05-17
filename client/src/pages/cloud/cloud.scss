@@ -7,6 +7,12 @@ page-cloud {
     }
   }
 
+  ion-buttons {
+    ion-icon {
+      font-size: 200%;
+    }
+  }
+
   .fit-thumbnail {
     object-fit: cover;
   }

@@ -17,7 +17,11 @@ export class YouTubePage {
 
   media: Medium[] = [];
 
+  list: Medium[] = [];
+
   playlist: Playlist;
+
+  public search = '';
 
   constructor(
     public platform: Platform,
@@ -40,11 +44,19 @@ export class YouTubePage {
   ionViewDidLoad() {
     this.mediaManager.getByProvider('youtube')
       .then(
-        media => (this.media = media) && this.ref.detectChanges()
+        media => {
+          this.media = media;
+          this.list = [].concat(media);
+          this.ref.detectChanges();
+        }
       );
   }
 
   addToPlaylist(item: Medium) {
     this.plManager.addToPlaylist(item, this.playlist);
+  }
+
+  filter() {
+    this.list = this.media.filter(m => m.name.toLowerCase().indexOf(this.search.toLocaleLowerCase()) > -1);
   }
 }

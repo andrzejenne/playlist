@@ -1,3 +1,8 @@
 page-youtube {
   .list-item { width: 100%; }
+  ion-buttons {
+    ion-icon {
+      font-size: 200%;
+    }
+  }
 }

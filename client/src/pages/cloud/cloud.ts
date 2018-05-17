@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, ViewChild} from '@angular/core';
 import {Content, NavController, NavParams, Platform, ViewController} from 'ionic-angular';
 import {CloudRepository} from "../../repositories/cloud.repository";
 import {Medium} from "../../models/medium";
@@ -30,6 +30,9 @@ export class CloudPage implements OnDestroy {
   public tools: boolean;
 
   public playlist: Playlist;
+
+  @Input()
+  provider: string = '';
 
   @ViewChild('content') contentContainer: Content;
 
