@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
-import {Content, NavController, NavParams, Platform} from 'ionic-angular';
+import {Content, NavController, NavParams, Platform, ViewController} from 'ionic-angular';
 import {CloudRepository} from "../../repositories/cloud.repository";
 import {Medium} from "../../models/medium";
 import {ErrorReporting} from "../../services/ErrorReporting";
@@ -67,7 +67,8 @@ export class CloudPage implements OnDestroy {
     // private modalController: ModalController,
     private config: ConfigService,
     private ref: ChangeDetectorRef,
-    private params: NavParams
+    private params: NavParams,
+    private viewCtrl: ViewController
   ) {
     if (params.data.id) {
       this.playlist = params.data;
@@ -90,6 +91,11 @@ export class CloudPage implements OnDestroy {
     this.load();
 
     this.initPlayer();
+  }
+
+
+  dismiss() {
+    this.viewCtrl.dismiss();
   }
 
   private load() {

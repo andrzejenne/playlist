@@ -23,3 +23,10 @@ body {
 }
 
 video { background-color: black !important; }
+
+.item.clear {
+  background: transparent !important;
+  .item-inner {
+    border-color: transparent !important;
+  }
+}

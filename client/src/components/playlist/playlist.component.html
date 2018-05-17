@@ -19,54 +19,47 @@
 </ion-header>
 
 <ion-content #content>
-<!--<pre>{{playlist|json}}</pre>-->
-  <div ion-fixed [hidden]="status.audio || !current">
-    <div class="video">
-      <video #videoPlayer [width]="video.width" [height]="video.height"></video>
-    </div>
-  </div>
-
   <ion-list class="items" *ngIf="playlist" [reorder]="true" (ionItemReorder)="reorderData($event)">
-    <ion-item *ngFor="let item of playlist.media"
-              class="item-component"
-              [class.played]="played"
-              [class.current]="current"
-              (press)="select.emit(true)"
-              (swipe)="onSwipe($event)">
-      <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.select(item)">
-        <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
-        <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
-      </ion-thumbnail>
-      <!--<span class="duration">{{item.duration | duration}}</span>-->
-      <div class="item-content">
-        <h2>{{item.name}}</h2>
-        <p>
-          <ion-icon name="contact" *ngIf="description"></ion-icon>
-          {{description}}
-          <!--<span *ngIf="item.artist">-->
-          <!--{{item.artist.name}}-->
-          <!--</span>-->
-          <!--<span *ngIf="item.album">-->
-          <!--{{item.album.name}}-->
-          <!--</span>-->
-        </p>
-      </div>
-      <ion-buttons end *ngIf="current">
-        <button ion-button clear>
-          <ion-spinner name="dots" color="#2a88bd"></ion-spinner>
+    <ion-item-sliding *ngFor="let item of playlist.media">
+      <ion-item class="item-component"
+                [class.played]="played"
+                [class.current]="current"
+                (press)="selector.toggleSelect(item)">
+
+        <ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
+          <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
+          <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
+        </ion-thumbnail>
+        <span class="duration">{{item.duration | duration}}</span>
+        <div class="item-content">
+          <h2>{{item.name}}</h2>
+          <p>
+            <ion-icon name="contact" *ngIf="description"></ion-icon>
+            {{description}}
+          </p>
+        </div>
+        <ion-buttons end *ngIf="current">
+          <button ion-button clear>
+            <ion-spinner name="dots" color="#2a88bd"></ion-spinner>
+          </button>
+        </ion-buttons>
+        <ion-buttons end *ngIf="!current">
+          <button ion-button color="primary" clear (click)="playFirst(item)">
+            <ion-icon name="play">
+              <sub>1</sub>
+            </ion-icon>
+          </button>
+          <button ion-button color="primary" clear (click)="play(item)">
+            <ion-icon name="play"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button color="danger" (click)="removeItem(item)">
+          <ion-icon name="trash"></ion-icon>
+          Delete
         </button>
-      </ion-buttons>
-      <ion-buttons end *ngIf="!current">
-        <button ion-button color="primary" clear (click)="playFirst(item)">
-          <ion-icon name="play">
-            <sub>1</sub>
-          </ion-icon>
-        </button>
-        <button ion-button color="primary" clear (click)="play(item)">
-          <ion-icon name="play"></ion-icon>
-        </button>
-      </ion-buttons>
-    </ion-item>
+      </ion-item-options>
     <!--<item-component *ngFor="let item of playlist.media"-->
                     <!--[item]="item"-->
                     <!--[selected]="selector.isSelected(item)"-->
@@ -74,6 +67,7 @@
                     <!--[thumbnail]="mediaManager.getThumbnailUrl(item)"-->
                     <!--(swipe)="onItemSwipe(item, $event)" (play)="playItem(item)" (playFirst)="playItemFirst(item)">-->
     <!--</item-component>-->
+    </ion-item-sliding>
   </ion-list>
 
   <ion-fab right bottom *ngIf="selector.length">

@@ -7,7 +7,7 @@
         The Playlist
       </ion-title>
       <ion-buttons end>
-        <button ion-button menuClose="menu" clear detail-none>
+        <button ion-button menuClose="menu" clear detail-none class="clear">
           <ion-icon item-start name="close"></ion-icon>
         </button>
       </ion-buttons>
@@ -15,7 +15,7 @@
     <ion-toolbar class="menu-toolbar">
       <server-switch-component [host]="host" [servers]="servers"
                                (server)="switchServer($event)"></server-switch-component>
-      <ion-item>
+      <ion-item class="clear">
         <ion-label item-right>Day Mode</ion-label>
         <ion-toggle item-right [(ngModel)]="dayMode" (ionChange)="onDayModeChange($event)"></ion-toggle>
         <ion-icon item-end [name]="dayModeIcon" class="day-mode-icon" ion-text></ion-icon>
@@ -25,38 +25,38 @@
 
   <ion-content>
     <ion-list>
-      <button ion-item (click)="setPage('home');menu.close()">
+      <button ion-item (click)="setPage('home');menu.close()" class="clear">
         <ion-icon item-start name="list" color="primary"></ion-icon>
         Playlists
       </button>
-      <button ion-item (click)="setPage('search');menu.close()">
+      <button ion-item (click)="setPage('search');menu.close()" class="clear">
         <ion-icon item-start name="search" color="primary"></ion-icon>
         Search
       </button>
       <hr>
-      <button ion-item (click)="setPage('cloud');menu.close()">
+      <button ion-item (click)="setPage('cloud');menu.close()" class="clear">
         <ion-icon item-start name="cloud-download" color="primary"></ion-icon>
         All
       </button>
-      <button ion-item (click)="setPage('youtube');menu.close()">
+      <button ion-item (click)="setPage('youtube');menu.close()" class="clear">
         <ion-icon item-start name="logo-youtube" color="primary"></ion-icon>
         YouTube
       </button>
-      <button ion-item (click)="setPage('library');menu.close()">
+      <button ion-item (click)="setPage('library');menu.close()" class="clear">
         <ion-icon item-start name="list-box" color="primary"></ion-icon>
         Library
       </button>
       <hr>
-      <button ion-item (click)="setPage('downloadQueue');menu.close()">
+      <button ion-item (click)="setPage('downloadQueue');menu.close()" class="clear">
         <ion-icon item-start name="download" color="primary"></ion-icon>
         Actions Queue
       </button>
-      <button ion-item (click)="goToSettings() && menu.close()">
+      <button ion-item (click)="goToSettings() && menu.close()" class="clear">
         <ion-icon item-start name="settings" color="primary"></ion-icon>
         Settings
       </button>
       <!--<button ion-item (click)="setPage('servers');menu.close()">Servers</button>-->
-      <button ion-item menuClose="menu" detail-none>
+      <button ion-item menuClose="menu" detail-none class="clear">
         <ion-icon item-start name="close"></ion-icon>
         Close Menu
       </button>

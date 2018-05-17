@@ -1,5 +1,6 @@
-import {Component, Input} from "@angular/core";
+import {Component, EventEmitter, Input, Output} from "@angular/core";
 import {Medium} from "../../models/medium";
+import {ElementReference} from "../../models/ElementReference";
 
 @Component({
   selector: 'player-controls-component',
@@ -10,18 +11,36 @@ export class PlayerControlsComponent {
   @Input()
   medium: Medium;
 
-  currentTime: number;
+  @Input()
+  status: {
+    currentTime: number;
+    shuffle: boolean;
+    repeat: boolean;
+    playing: boolean;
+    video: boolean;
+    audio: boolean;
+  };
 
-  shuffle: boolean;
+  @Output()
+  pause = new EventEmitter();
 
-  repeat: boolean;
-
-  playing: boolean;
-
-  video: boolean;
-
-  audio: boolean;
+  @Input()
+  player: ElementReference<HTMLVideoElement>;
 
   playIcon = 'play';
+
+  onSliderFocus(event) {
+    // this.pause();
+    this.pause.next(true);
+  }
+
+  onSliderBlur(event) {
+    if (this.medium) {
+      if (event.value != this.player.nativeElement.currentTime) {
+        this.player.nativeElement.currentTime = +event.value;
+      }
+      this.player.nativeElement.play();
+    }
+  }
 }
 
