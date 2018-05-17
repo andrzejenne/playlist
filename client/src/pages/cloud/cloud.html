@@ -1,23 +1,14 @@
 <ion-header>
   <ion-navbar>
-    <button ion-button menuToggle="menu">
+    <button ion-button menuToggle="menu" *ngIf="!playlist">
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title left>In Cloud</ion-title>
-    <!--<ion-buttons left>-->
-    <!--<button ion-button clear>-->
-    <!--<ion-icon name="musical-notes"></ion-icon>-->
-    <!--Media-->
-    <!--</button>-->
-    <!--<button ion-button clear>-->
-    <!--<ion-icon name="person"></ion-icon>-->
-    <!--Artists-->
-    <!--</button>-->
-    <!--<button ion-button clear>-->
-    <!--<ion-icon name="disc"></ion-icon>-->
-    <!--Albums-->
-    <!--</button>-->
-    <!--</ion-buttons>-->
+    <ion-buttons end *ngIf="playlist">
+      <button ion-button (tap)="dismiss()" clear>
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
@@ -103,9 +94,9 @@
 
 <ion-footer>
   <ion-toolbar>
-    <ion-item>
+    <ion-item class="clear">
       <ion-icon item-start name="search"></ion-icon>
-      <ion-input icon-left type="text" [(ngModel)]="search" (ionChange)="filter()">
+      <ion-input icon-left type="text" placeholder="search" [(ngModel)]="search" (ionChange)="filter()">
       </ion-input>
       <button item-end ion-button clear *ngIf="search" (click)="search=''">
         <ion-icon name="close"></ion-icon>

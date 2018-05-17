@@ -1,6 +1,6 @@
 import {
   ChangeDetectorRef,
-  Component, Input, OnDestroy,
+  Component, ElementRef, EventEmitter, Input, OnDestroy, Optional, Output,
   ViewChild
 } from "@angular/core";
 import {Medium} from "../../models/medium";
@@ -9,7 +9,7 @@ import {Playlist} from "../../models/playlist";
 import {ElementReference} from "../../models/ElementReference";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {MediaManagerService} from "../../services/MediaManagerService";
-import {Content, MenuController, NavController, NavParams} from "ionic-angular";
+import {Content, MenuController, ModalController, NavController, NavParams} from "ionic-angular";
 import {Storage} from "@ionic/storage";
 import {Subscription} from "rxjs/Subscription";
 import {WampService} from "../../services/WampService";
@@ -39,13 +39,16 @@ export class PlaylistComponent implements OnDestroy {
 
   current: Medium;
 
-  @ViewChild('audioPlayer') audioPlayer: ElementReference<HTMLAudioElement>;
-
-  @ViewChild('videoPlayer') videoPlayer: ElementReference<HTMLVideoElement>;
+  @Input() player: ElementReference<HTMLVideoElement>;
 
   @ViewChild('progress') progress: ElementReference<HTMLDivElement>;
 
   @ViewChild('content') contentContainer: Content;
+
+  @ViewChild('header') header: ElementRef;
+
+  @Output()
+  hide = new EventEmitter();
 
   pages = {
     all: CloudPage,
@@ -53,23 +56,9 @@ export class PlaylistComponent implements OnDestroy {
     youtube: YouTubePage
   };
 
-  status = {
-    shuffle: false,
-    repeat: false,
-    playing: false,
-    video: false,
-    audio: true,
-  };
+  hidden = true;
 
-  video: {
-    width: number;
-    height: number;
-    containerStyle: any;
-  } = {
-    width: 0,
-    height: 0,
-    containerStyle: {width: '100%'}
-  };
+  arrowIcon = 'arrow-up';
 
   ready: boolean;
 
@@ -83,12 +72,13 @@ export class PlaylistComponent implements OnDestroy {
     private plManager: PlaylistsManagerService,
     private mediaManager: MediaManagerService,
     private wamp: WampService,
-    private params: NavParams,
-    private nav: NavController,
     private menu: MenuController,
     private ref: ChangeDetectorRef,
+    private modalCtrl: ModalController,
+    @Optional() public nav: NavController = null,
+    @Optional() private params: NavParams = null
   ) {
-    if (params.data.id) {
+    if (params && params.data.id) {
       this.playlist = params.data;
       this.plManager.selectPlaylist(params.data);
       this.preparePlaylist();
@@ -101,15 +91,42 @@ export class PlaylistComponent implements OnDestroy {
           // this.playedPlaylist = null;
           // this.mediaPlaylist = null;
           // this.ref.detectChanges();
-          this.nav.pop();
+          this.nav && this.nav.pop();
         }),
         // this.plManager.playlist$.subscribe(playlist => this.ref.detectChanges())
       );
     }
   }
 
+  reorderData(indexes: any) {
+    this.playlist.media = this.reorderArray(this.playlist.media, indexes);
+  }
+
+  reorderArray(array: any[], indexes: {from: number, to: number}): any[] {
+    const element = array[indexes.from];
+    array.splice(indexes.from, 1);
+    array.splice(indexes.to, 0, element);
+    return array;
+  }
+
+  onHide() {
+    this.hide.emit(true);
+  }
+
+  toggleShow() {
+    if (this.hidden) {
+      this.hide.emit(false);
+      this.arrowIcon = 'arrow-down';
+    }
+    else {
+      this.hide.emit(true);
+      this.arrowIcon = 'arrow-up';
+    }
+    this.hidden = !this.hidden;
+  }
+
   ngAfterViewInit() {
-    if (!this.params.data.id) {
+    if (this.params && !this.params.data.id) {
       this.loadPlaylist(this.playlist);
       this.preparePlaylist();
     }
@@ -121,6 +138,11 @@ export class PlaylistComponent implements OnDestroy {
         this.ref.detectChanges();
       })
     );
+
+    console.info(
+      this.header.nativeElement.offsetHeight //.getNativeElement().offsetHeight
+    );
+
   }
 
   ionViewDidEnter() {
@@ -141,15 +163,15 @@ export class PlaylistComponent implements OnDestroy {
     this.subs.forEach(s => s.unsubscribe());
   }
 
-  onItemSwipe(item: Medium, direction) {
-    if ('right' == direction) {
-      this.playItemFirst(item);
-    }
-    else if ('left' == direction) {
-      this.removeItem(item);
-    }
-    // console.info('item swipe', event);
-  }
+  // onItemSwipe(item: Medium, direction) {
+  //   if ('right' == direction) {
+  //     this.playFirst(item);
+  //   }
+  //   else if ('left' == direction) {
+  //     this.removeItem(item);
+  //   }
+  //   // console.info('item swipe', event);
+  // }
 
   removeItem(medium: Medium) {
     console.info('PlaylistComponent@removeItem', medium);
@@ -158,9 +180,10 @@ export class PlaylistComponent implements OnDestroy {
       this.pause();
       this.current = null;
 
-      let player = this.getPlayer();
-      player.currentTime = 0;
-      player.src = '';
+      console.warn('IMPLEMENT current removal')
+      // let player = this.getPlayer();
+      // player.currentTime = 0;
+      // player.src = '';
     }
 
     return this.plManager.removeFromPlaylist(medium, this.playlist)
@@ -171,167 +194,12 @@ export class PlaylistComponent implements OnDestroy {
       });
   }
 
-  playVideo() {
-    if (this.status.video) {
-      this.requestFullscreen();
-    }
-    this.status.video = true;
-    this.status.audio = false;
-
-    this.setContentMarginIfVideo();
-  }
-
-  playAudio() {
-    this.status.video = false;
-    this.status.audio = true;
-
-    this.removeContentMargin();
-  }
-
-  playItemFirst(item: Medium, seek = 0) {
-    if (!this.mediaPlaylist) {
-      this.preparePlaylist();
-    }
-
-    let index = this.mediaPlaylist.indexOf(item);
-    if (index > -1) {
-      this.mediaPlaylist.splice(index, 1);
-    }
-
-    this.current = item;
-
-    let player = this.getPlayer();
-    player.src = this.mediaManager.getUrl(this.current, this.mediaType);
-
-    player.currentTime = seek;
-
-    this.play();
-  }
-
-  playItem(item: Medium, seek = 0) {
-    this.mediaPlaylist = [].concat(this.playlist.media);
-
-    let index = this.mediaPlaylist.indexOf(item);
-    if (index > -1) {
-      this.playedPlaylist = this.mediaPlaylist.splice(0, index);
-      this.mediaPlaylist.splice(0, 1);
-    }
-
-    this.current = item;
-
-    let player = this.getPlayer();
-    player.src = this.mediaManager.getUrl(this.current, this.mediaType);
-
-    player.currentTime = seek;
-
-    this.play();
-  }
-
-  togglePlay() {
-    if (!this.mediaPlaylist) {
-      this.preparePlaylist();
-    }
-
-    this.status.playing = !this.status.playing;
-
-    let player = this.getPlayer();
-
-    if (!player.src) {
-      player.src = this.getNextSrc();
-    }
-
-    if (this.status.playing) {
-      this.play();
-    }
-    else {
-      this.pause();
-    }
-  }
-
-  toggleRepeat() {
-    this.status.repeat = !this.status.repeat;
-  }
-
-  toggleShuffle() {
-    if (!this.mediaPlaylist) {
-      this.preparePlaylist();
-    }
-    this.status.shuffle = !this.status.shuffle;
-    if (this.status.shuffle) {
-      this.shuffle(this.mediaPlaylist);
-    }
-    else {
-      let playlist = [].concat(this.playlist.media);
-      if (this.playedPlaylist.length) {
-        playlist = playlist.filter(PlaylistComponent.filterPlayed(this.playedPlaylist, this.current));
-      }
-      if (this.current) {
-        playlist.splice(playlist.indexOf(this.current), 1);
-      }
-      this.mediaPlaylist = playlist;
-    }
-  }
-
-  requestFullscreen() {
-    let elem = <any>this.videoPlayer.nativeElement;
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-      elem.msRequestFullscreen();
-    } else if (elem.mozRequestFullScreen) {
-      elem.mozRequestFullScreen();
-    } else if (elem.webkitRequestFullscreen) {
-      elem.webkitRequestFullscreen();
-    }
-    // @todo - disable fullscreen
-  }
-
   isPlaying(item: Medium) {
     return this.current === item;
   }
 
   wasPlayed(item: Medium) {
     return this.playedPlaylist.indexOf(item) > -1;
-  }
-
-  playNext() {
-    if (this.current) {
-      this.playedPlaylist.push(this.current);
-    }
-
-    let nextSrc = this.getNextSrc();
-
-    if (nextSrc) {
-      let player = this.getPlayer();
-
-      player.src = nextSrc;
-
-      this.play();
-    }
-    else {
-      this.current = null;
-      this.storage.remove('currentMedium');
-      this.storage.remove('currentTime');
-    }
-  }
-
-  playPrev() {
-    if (this.current) {
-      this.mediaPlaylist.unshift(this.current);
-    }
-
-    let prevSrc = this.getPrevSrc();
-
-    if (prevSrc) {
-      let player = this.getPlayer();
-
-      player.src = prevSrc;
-
-      this.play();
-    }
-    else {
-      this.current = null;
-    }
   }
 
   removeSelected() {
@@ -356,23 +224,12 @@ export class PlaylistComponent implements OnDestroy {
       });
   }
 
-  onSliderFocus(event) {
-    this.pause();
-  }
-
-  onSliderBlur(event) {
-    if (this.current) {
-      let player = this.getPlayer();
-
-      if (event.value != player.currentTime) {
-        player.currentTime = +event.value;
-      }
-      this.play();
-    }
-  }
-
   open(page: string) {
-    this.nav.push(this.pages[page], this.playlist);
+    // let nav = this.nav || this.subNav;
+    // nav.push(this.pages[page], this.playlist);
+    this.modalCtrl.create(this.pages[page], this.playlist, {
+      cssClass: 'fullscreen-modal'
+    }).present();
   }
 
   /**
@@ -382,88 +239,6 @@ export class PlaylistComponent implements OnDestroy {
   private loadPlaylist(playlist: Playlist) {
     this.plManager.selectPlaylist(playlist);
       // .then(media => this.preparePlaylist());
-  }
-
-  private autoPlayIfInterrupted() {
-    Promise
-      .all([
-        this.storage.get('playlist'),
-        this.storage.get('currentMedium'),
-        this.storage.get('currentTime')
-      ])
-      .then(values => {
-        if (this.playlist.id == values[0]) {
-          let medium = this.playlist.media.filter(item => item.id == values[1])[0];
-          if (medium) {
-            this.playItem(medium, values[2]);
-          }
-        }
-      });
-  }
-
-  private onPlayerPlayEnded = (ev: MediaStreamErrorEvent) => {
-    this.playNext();
-  };
-
-  private onPlayerMetadata = (ev: MediaStreamErrorEvent) => {
-    console.info('loadedMetaData', ev, this.videoPlayer.nativeElement.videoWidth, this.videoPlayer.nativeElement.videoHeight, this.contentContainer.contentWidth, this.contentContainer.contentHeight);
-    let player = this.getPlayer();
-    let aspect = player.videoWidth / player.videoHeight;
-    this.video.width = Math.min(player.videoWidth, this.contentContainer.contentWidth);
-    this.video.height = this.video.width / aspect;
-
-    let contentHeight = this.contentContainer.contentHeight;
-    let halfHeight = contentHeight / 2;
-    if (this.video.height > halfHeight) {
-      this.video.height = halfHeight;
-      this.video.width = aspect * this.video.height;
-    }
-
-    // this.video.containerStyle = {width: '100%', height: this.video.height + "px"};
-
-    this.setContentMarginIfVideo();
-
-    this.ref.detectChanges();
-  };
-
-  private setContentMarginIfVideo() {
-    if (this.status.video && this.video.height) {
-      this.contentContainer.getScrollElement().style.marginTop = (this.video.height + this.contentContainer._hdrHeight) + 'px';
-    }
-  }
-
-  private removeContentMargin() {
-    // this.contentContainer.resize();
-    this.contentContainer.getScrollElement().style.marginTop = (this.contentContainer._hdrHeight) + 'px';
-  }
-
-  private onPlayerProgress = () => {
-    let player = this.getPlayer();
-
-    this.currentTime = player.currentTime;
-    this.totalTime = player.duration;
-    this.storage.set('currentTime', this.currentTime);
-    // this.progress.nativeElement.style.left = ((this.currentTime / this.totalTime) * 100) + '%';
-
-    // this.ref.detectChanges();
-  };
-
-  private getNextSrc() {
-    if (this.mediaPlaylist.length) {
-      this.current = this.mediaPlaylist.shift();
-      return this.mediaManager.getUrl(this.current, this.mediaType);
-    }
-
-    return null;
-  }
-
-  private getPrevSrc() {
-    if (this.playedPlaylist.length) {
-      this.current = this.playedPlaylist.pop();
-      return this.mediaManager.getUrl(this.current, this.mediaType);
-    }
-
-    return null;
   }
 
   private preparePlaylist() {
@@ -569,15 +344,6 @@ export class PlaylistComponent implements OnDestroy {
     return (item: Medium) => {
       return current !== item && played.indexOf(item) === -1;
     };
-  }
-
-  private getPlayer(): HTMLVideoElement { //} | HTMLAudioElement {
-    // if (this.playerStatus.video) {
-    return this.videoPlayer.nativeElement;
-    // }
-    // else {
-    //   return this.audioPlayer.nativeElement;
-    // }
   }
 
   private static removeItemFrom(item: Medium, arr: Medium[]) {

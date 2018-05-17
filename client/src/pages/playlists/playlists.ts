@@ -223,7 +223,7 @@ export class PlaylistsPage implements OnDestroy {
           this.plManager.list(user)
             .then(playlists => {
               this.playlists = playlists;
-              // this.ref.detectChanges();
+              this.ref.detectChanges();
             });
         });
 

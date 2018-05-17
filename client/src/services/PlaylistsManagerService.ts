@@ -137,6 +137,15 @@ export class PlaylistsManagerService {
       .catch(error => console.error(error));
   }
 
+  toggleSelectPlaylist(playlist: Playlist) {
+    if (this.playlist === playlist) {
+      this.selectPlaylist(null);
+    }
+    else {
+      this.selectPlaylist(playlist);
+    }
+  }
+
   selectPlaylist(playlist: Playlist) {
     this.playlist = playlist;
 
