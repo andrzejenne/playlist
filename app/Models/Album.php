@@ -76,7 +76,7 @@ class Album extends BaseModel
      */
     public function media()
     {
-        return $this->hasMany(Medium::class);
+        return $this->hasMany(Medium::class, Medium::COL_ALBUM_ID);
     }
 
     /**

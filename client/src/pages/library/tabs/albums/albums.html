@@ -6,7 +6,7 @@
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let album of albums">
+    <ion-item *ngFor="let album of albums" (click)="openAlbum(album)">
       <h2>{{album.name}}</h2>
     </ion-item>
   </ion-list>

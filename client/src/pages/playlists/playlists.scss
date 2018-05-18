@@ -17,10 +17,15 @@ page-playlists {
         bottom: 10px;
       }
     }
+
+    .item-inner {
+      margin-left: 0 !important;
+    }
   }
 
   .playlist-item.selected {
     background: rgba(0, 0, 0, .1);
+    box-shadow: 1px 1px 1px rgba(0,0,0,.3) inset;
   }
 
   ion-navbar {
@@ -42,10 +47,6 @@ page-playlists {
     margin-left: -6px;
   }
 
-  .fit-thumbnail {
-    object-fit: cover;
-  }
-
   .video {
     text-align: center;
   }
@@ -61,5 +62,17 @@ page-playlists {
     }
   }
 
+  button.fab {
+    transition: opacity 5s ease-in-out;
+    opacity: 1;
+    //margin-left: 0;
+  }
+
+  button.fab.hide {
+    opacity: 0;
+    //margin-left: 100%;
+  }
+
 }
+
 

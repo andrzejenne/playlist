@@ -13,7 +13,6 @@ import {Storage} from "@ionic/storage";
 import {Subscription} from "rxjs/Subscription";
 import {WampService} from "../../services/WampService";
 import {LibraryPage} from "../../pages/library/library";
-import {YouTubePage} from "../../pages/youtube/youtube";
 import {CloudPage} from "../../pages/cloud/cloud";
 import {PlayerService} from "../../services/PlayerService";
 
@@ -34,9 +33,21 @@ export class PlaylistComponent implements OnDestroy {
   hide = new EventEmitter();
 
   pages = { // @todo - into service
-    all: CloudPage,
-    library: LibraryPage,
-    youtube: YouTubePage
+    all: {
+      component: CloudPage,
+      title: 'In Cloud',
+      provider: null
+    },
+    library: {
+      component: LibraryPage,
+      title: 'Library',
+      provider: 'library'
+    },
+    youtube: {
+      component: CloudPage,
+      title: 'YouTube',
+      provider: 'youtube'
+    }
   };
 
   hidden = true;
@@ -67,15 +78,8 @@ export class PlaylistComponent implements OnDestroy {
 
       this.subs.push(
         this.wamp.serverSwitched.subscribe(servers => {
-          console.info('PlaylistComponent.serverSwitched', servers);
-          // this.playlist = null;
-          // this.current = null;
-          // this.playedPlaylist = null;
-          // this.mediaPlaylist = null;
-          // this.ref.detectChanges();
           this.nav && this.nav.pop();
         }),
-        // this.plManager.playlist$.subscribe(playlist => this.ref.detectChanges())
       );
     }
   }
@@ -105,6 +109,7 @@ export class PlaylistComponent implements OnDestroy {
       this.plManager.playlist$.subscribe(playlist => {
         console.info('PlaylistComponent@playlist$', playlist);
         this.playlist = playlist;
+        this.selector.clearSelection();
         this.player.updatePlaylist();
         this.ref.detectChanges();
       })
@@ -117,32 +122,12 @@ export class PlaylistComponent implements OnDestroy {
   }
 
   ionViewDidEnter() {
-    // this.menu.enable(true, 'playlistMenu');
     this.prepare();
   }
-
-  // togglePlaylistMenu() {
-  //   if (this.menu.isOpen('playlistMenu')) {
-  //     this.menu.close('playlistMenu');
-  //   }
-  //   else {
-  //     this.menu.open('playlistMenu');
-  //   }
-  // }
 
   ngOnDestroy() {
     this.subs.forEach(s => s.unsubscribe());
   }
-
-  // onItemSwipe(item: Medium, direction) {
-  //   if ('right' == direction) {
-  //     this.playFirst(item);
-  //   }
-  //   else if ('left' == direction) {
-  //     this.removeItem(item);
-  //   }
-  //   // console.info('item swipe', event);
-  // }
 
   removeItem(medium: Medium) {
     console.info('PlaylistComponent@removeItem', medium);
@@ -184,9 +169,15 @@ export class PlaylistComponent implements OnDestroy {
   }
 
   open(page: string) {
+    let pageOpts = this.pages[page];
+
     // let nav = this.nav || this.subNav;
     // nav.push(this.pages[page], this.playlist);
-    this.modalCtrl.create(this.pages[page], this.playlist, {
+    this.modalCtrl.create(pageOpts.component, {
+      playlist: this.playlist,
+      title: pageOpts.title,
+      provider: pageOpts.provider
+    }, {
       cssClass: 'fullscreen-modal'
     }).present();
   }

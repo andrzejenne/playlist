@@ -1,0 +1,50 @@
+<ion-header class="mode-color">
+  <ion-navbar>
+    <button ion-button menuToggle="menu">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      {{album.name}}
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content #content>
+  <div #fixed ion-fixed padding>
+    <h2>{{album.name}}</h2>
+    <div class="cover" *ngIf="album.cover"></div>
+  </div>
+  <ion-list class="items" *ngIf="album" [reorder]="true" (ionItemReorder)="player.reorderData($event)">
+    <ion-item *ngFor="let item of album.media" class="item-component"
+              [class.played]="player.wasPlayed(item)"
+              [class.current]="player.isCurrent(item)">
+
+      <div class="thumbnail" item-start>
+        <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
+        <span class="duration">{{item.duration | duration}}</span>
+      </div>
+      <div class="item-content">
+        <h2>{{item.name}}</h2>
+        <p>
+          <ion-icon name="contact" *ngIf="description"></ion-icon>
+          {{description}}
+        </p>
+      </div>
+      <ion-buttons end *ngIf="player.isCurrent(item)">
+        <button ion-button clear>
+          <musical-spinner *ngIf="player.status.playing" color="red"></musical-spinner>
+        </button>
+      </ion-buttons>
+      <ion-buttons end *ngIf="!player.isCurrent(item)">
+        <button ion-button color="primary" clear (click)="player.playFirst(item)">
+          <ion-icon name="play">
+            <sub>1</sub>
+          </ion-icon>
+        </button>
+        <button ion-button color="primary" clear (click)="player.playItem(item)">
+          <ion-icon name="play"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+</ion-content>

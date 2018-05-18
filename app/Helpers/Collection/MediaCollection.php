@@ -11,6 +11,7 @@ namespace BBIT\Playlist\Helpers\Collection;
 use BBIT\Playlist\Models\Album;
 use BBIT\Playlist\Models\Artist;
 use BBIT\Playlist\Models\MediaFile;
+use BBIT\Playlist\Models\MediaProvider;
 use BBIT\Playlist\Models\Medium;
 
 /**
@@ -19,6 +20,20 @@ use BBIT\Playlist\Models\Medium;
  */
 class MediaCollection extends AbstractCollection
 {
+    /** @var string */
+    private $provider;
+
+    /**
+     * MediaCollection constructor.
+     * @param $args
+     */
+    public function __construct($args)
+    {
+        parent::__construct($args);
+
+        $this->provider = isset($args->pSlug) ? $args->pSlug : null;
+    }
+
 
     /**
      * @return $this
@@ -35,6 +50,13 @@ class MediaCollection extends AbstractCollection
                 })->orWhereHas(Medium::REL_ARTIST, function ($query) use ($search) {
                     $query->where(Artist::COL_NAME, 'like', "%$search%");
                 });
+        }
+        if (!empty($this->provider)) {
+            $provider = MediaProvider::whereSlug($this->provider)->first();
+            if ($provider) {
+                $this->getBuilder()
+                    ->where(Medium::COL_PROVIDER_ID, '=', $provider->id);
+            }
         }
 
         // @todo - add search for album, artist, ...;

@@ -1,8 +1,8 @@
 <ion-item>
-  <ion-thumbnail item-start [class.selected]="selected" (tap)="select.next($event)">
-    <img [src]="thumbnail" class="fit-thumbnail">
+  <div item-start class="thumbnail" [class.selected]="selected" (tap)="select.next($event)">
+    <img [src]="thumbnail">
     <ion-icon *ngIf="selected" name="checkmark"></ion-icon>
-  </ion-thumbnail>
+  </div>
 
   <div class="item-content">
     <h2>{{item.name}}</h2>
@@ -17,12 +17,12 @@
         <span *ngIf="landscape">Add to playlist</span>
       </button>
       <button *ngIf="hasVideo" ion-button color="primary" small icon-left clear
-              (click)="play.next($event)">
+              (click)="playVideo.next($event)">
         <ion-icon name="videocam"></ion-icon>
         <span *ngIf="landscape">Play video</span>
       </button>
       <button *ngIf="hasAudio" ion-button color="primary" small icon-left clear
-              (click)="play.next($event)">
+              (click)="playAudio.next($event)">
         <ion-icon name="musical-notes"></ion-icon>
         <span *ngIf="landscape">Play audio</span>
       </button>

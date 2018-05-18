@@ -5,8 +5,8 @@ import {Medium} from "../models/medium";
 @Injectable()
 export class CloudRepository extends WampRepository {
 
-  public list(limit: number, offset: number, search?: string) {
-    return this.call<Medium[]>('com.cloud.list', [{limit: limit, offset: offset, search: search}]);
+  public list(limit: number, offset: number, search?: string, provider?: string) {
+    return this.call<Medium[]>('com.cloud.list', [{limit: limit, offset: offset, search: search, pSlug: provider}]);
   }
 
   public remove(item: Medium) {

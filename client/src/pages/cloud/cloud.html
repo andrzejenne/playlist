@@ -3,7 +3,7 @@
     <button ion-button menuToggle="menu" *ngIf="!playlist">
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title left>In Cloud</ion-title>
+    <ion-title left>{{title}}</ion-title>
     <ion-buttons end *ngIf="playlist">
       <button ion-button (tap)="dismiss()" clear>
         <ion-icon name="close"></ion-icon>
@@ -13,18 +13,6 @@
 </ion-header>
 
 <ion-content #content>
-  <div ion-fixed style="width: 100%;">
-    <div [hidden]="!player" class="video">
-      <div [ngStyle]="video?.containerStyle">
-        <video #videoPlayer [width]="video?.width" [height]="video?.height"></video>
-      </div>
-      <button ion-button end clear (click)="closeVideo()">
-        <ion-icon name="close"></ion-icon>
-        Close Video
-      </button>
-    </div>
-  </div>
-
   <ion-list [virtualScroll]="list" approxItemHeight="100px">
     <div *virtualItem="let item" class="list-item">
       <medium-component [item]="item"
@@ -36,7 +24,9 @@
                         [hasAudio]="mediaManager.hasAudio(item)"
                         [thumbnail]="mediaManager.getThumbnailUrl(item)"
                         [landscape]="platform.isLandscape()"
-                        (play)="playMedia(item)"></medium-component>
+                        (playVideo)="playVideo(item)"
+                        (playAudio)="playAudio(item)">
+      </medium-component>
     </div>
     <!--<ion-item *virtualItem="let item">-->
       <!--<ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">-->

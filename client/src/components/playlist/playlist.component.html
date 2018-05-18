@@ -1,13 +1,21 @@
 <ion-header #header>
-  <ion-navbar>
+  <ion-navbar (tap)="toggleShow()">
     <!--<button ion-button menuToggle="menu">-->
       <!--<ion-icon name="menu"></ion-icon>-->
     <!--</button>-->
     <ion-title>
-      <div class="close-down" (tap)="toggleShow()" clear>
+      <div class="close-down" clear>
         <ion-icon [name]="arrowIcon"></ion-icon>
       </div>
-      <h2 style="display: inline-block; vertical-align: middle">{{playlist?.name}}</h2>
+      <h2 style="display: inline-block; vertical-align: middle">
+        {{playlist?.name}}
+        <span *ngIf="player.medium">
+        |
+          {{player?.medium?.name}}
+
+          <musical-spinner *ngIf="player.status.playing" color="red"></musical-spinner>
+        </span>
+      </h2>
     </ion-title>
     <ion-buttons end>
       <span class="duration">
@@ -20,15 +28,19 @@
 
 <ion-content #content>
   <ion-list class="items" *ngIf="playlist" [reorder]="true" (ionItemReorder)="player.reorderData($event)">
-    <ion-item-sliding *ngFor="let item of playlist.media">
-      <ion-item class="item-component"
+    <ion-item-sliding *ngFor="let item of player.mediaList">
+      <ion-item *ngIf="item" class="item-component"
                 [class.played]="player.wasPlayed(item)"
                 [class.current]="player.isCurrent(item)"
                 (press)="selector.toggleSelect(item)">
 
+        <checker item-left
+                 [visible]="selector.length"
+                 [selected]="selector.isSelected(item)"
+                 (tap)="selector.toggleSelect(item)"></checker>
+
         <div class="thumbnail" item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
           <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
-          <ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>
           <span class="duration">{{item.duration | duration}}</span>
         </div>
         <div class="item-content">
@@ -38,12 +50,12 @@
             {{description}}
           </p>
         </div>
-        <ion-buttons end *ngIf="current">
+        <ion-buttons end *ngIf="player.isCurrent(item)">
           <button ion-button clear>
-            <ion-spinner name="dots" color="#2a88bd"></ion-spinner>
+            <musical-spinner *ngIf="player.status.playing" color="red"></musical-spinner>
           </button>
         </ion-buttons>
-        <ion-buttons end *ngIf="!current">
+        <ion-buttons end *ngIf="!player.isCurrent(item)">
           <button ion-button color="primary" clear (click)="player.playFirst(item)">
             <ion-icon name="play">
               <sub>1</sub>

@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnDestroy, ViewChild} from '@angular/core';
-import {Content, NavController, NavParams, Platform, ViewController} from 'ionic-angular';
+import {NavController, NavParams, Platform, ViewController} from 'ionic-angular';
 import {CloudRepository} from "../../repositories/cloud.repository";
 import {Medium} from "../../models/medium";
 import {ErrorReporting} from "../../services/ErrorReporting";
@@ -7,11 +7,11 @@ import {Subscription} from "rxjs/Subscription";
 import {User} from "../../models/user";
 import {AuthService} from "../../services/AuthService";
 import {SelectorService} from "../../services/SelectorService";
-import {ElementReference} from "../../models/ElementReference";
 import {MediaManagerService} from "../../services/MediaManagerService";
 import {ConfigService} from "../../services/ConfigService";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {Playlist} from "../../models/playlist";
+import {PlayerService} from "../../services/PlayerService";
 
 @Component({
   selector: 'page-cloud',
@@ -19,34 +19,19 @@ import {Playlist} from "../../models/playlist";
   providers: [SelectorService]
 })
 export class CloudPage implements OnDestroy {
-  public downloaded: Medium[];
+  public all: Medium[];
 
   public list: Medium[];
 
-  public player = false;
-
   public search = '';
-
-  public tools: boolean;
 
   public playlist: Playlist;
 
   @Input()
+  title: string = 'In Cloud';
+
+  @Input()
   provider: string = '';
-
-  @ViewChild('content') contentContainer: Content;
-
-  @ViewChild('videoPlayer') videoPlayer: ElementReference<HTMLVideoElement>;
-
-  video: {
-    width?: number;
-    height?: number;
-    containerStyle?: any;
-  } = {
-    width: 0,
-    height: 0,
-    containerStyle: {width: '100%'}
-  };
 
   private user: User;
 
@@ -63,6 +48,7 @@ export class CloudPage implements OnDestroy {
     public selector: SelectorService<Medium>,
     public mediaManager: MediaManagerService,
     public platform: Platform,
+    public player: PlayerService,
     private repo: CloudRepository,
     private plManager: PlaylistsManagerService,
     private auth: AuthService,
@@ -73,9 +59,17 @@ export class CloudPage implements OnDestroy {
     private params: NavParams,
     private viewCtrl: ViewController
   ) {
-    if (params.data.id) {
-      this.playlist = params.data;
+    if (params.data.playlist) {
+      this.playlist = <Playlist>params.data.playlist;
     }
+    if (params.data.provider) {
+      this.provider = params.data.provider;
+    }
+    if (params.data.title) {
+      this.title = params.data.title;
+    }
+
+    console.info('CloudPage@constructor', this);
   }
 
   ionViewDidLoad() {
@@ -92,29 +86,45 @@ export class CloudPage implements OnDestroy {
     );
 
     this.load();
-
-    this.initPlayer();
   }
 
+  playVideo(item: Medium) {
+    this.unselectPlaylistIfNotFound(item);
+    this.player.playVideoItem(item);
+  }
+
+  playAudio(item: Medium) {
+    this.unselectPlaylistIfNotFound(item);
+    this.player.playAudioItem(item);
+  }
+
+  private unselectPlaylistIfNotFound(item: Medium) {
+    if (this.plManager.playlist) {
+      let found = this.plManager.playlist.media.filter(medium => medium.id == item.id);
+      if (!found.length) {
+        this.plManager.unselectPlaylist();
+      }
+    }
+  }
 
   dismiss() {
     this.viewCtrl.dismiss();
   }
 
   private load() {
-    return this.repo.list(this.limit, this.offset, this.search)
+    return this.repo.list(this.limit, this.offset, this.search, this.provider)
       .then(data => {
         console.info('DownloadedPage.data', data);
         if (data.length != this.limit) {
           this.end = true;
         }
         if (this.offset) {
-          this.downloaded = this.downloaded.concat(data);
-          this.list = [].concat(this.downloaded);
+          this.all = this.all.concat(data);
+          this.list = [].concat(this.all);
           this.ref.detectChanges();
         }
         else {
-          this.downloaded = data;
+          this.all = data;
           this.list = [].concat(data);
         }
         this.ref.detectChanges();
@@ -143,30 +153,6 @@ export class CloudPage implements OnDestroy {
       .then(result => result);
 // .then(
     // @todo - info, added to playlist
-  }
-
-  playMedia(item: Medium) {
-    this.player = true;
-
-    this.videoPlayer.nativeElement.src = this.mediaManager.getUrl(item, 'video');
-    this.videoPlayer.nativeElement.play();
-
-    this.ref.detectChanges();
-    // let data = {
-    //   src: this.servers.getUrl(item, 'video'),
-    //   thumbnail: this.servers.getUrl(item, 'thumbnail')+'?get',
-    //   type: 'video/mp4',
-    //   title: item.name,
-    //   width: 600// @todo - getter
-    // };
-    // this.modalController.create(VideoPlayerComponent, data).present();
-    this.setContentMarginIfVideo();
-  }
-
-  closeVideo() {
-    this.player = false;
-    this.video = {};
-    this.removeContentMargin();
   }
 
   ngOnDestroy(): void {
@@ -215,47 +201,5 @@ export class CloudPage implements OnDestroy {
         }
         return number;
       });
-  }
-
-  private initPlayer() {
-    this.videoPlayer.nativeElement.onended = this.onPlayerPlayEnded;
-    this.videoPlayer.nativeElement.onloadedmetadata = this.onPlayerMetadata;
-    // this.audioPlayer.nativeElement.onended = this.onPlayerPlayEnded;
-  }
-
-  private onPlayerPlayEnded = (ev: MediaStreamErrorEvent) => {
-    this.closeVideo();
-  };
-
-  private onPlayerMetadata = (ev: MediaStreamErrorEvent) => {
-    console.info('loadedMetaData', ev, this.videoPlayer.nativeElement.videoWidth, this.videoPlayer.nativeElement.videoHeight, this.contentContainer.contentWidth, this.contentContainer.contentHeight);
-    let player = this.videoPlayer.nativeElement;
-    let aspect = player.videoWidth / player.videoHeight;
-    this.video.width = Math.min(player.videoWidth, this.contentContainer.contentWidth);
-    this.video.height = this.video.width / aspect;
-
-    let contentHeight = this.contentContainer.contentHeight;
-    let halfHeight = contentHeight / 2;
-    if (this.video.height > halfHeight) {
-      this.video.height = halfHeight;
-      this.video.width = aspect * this.video.height;
-    }
-
-    this.video.containerStyle = {width: '100%', height: this.video.height + "px"};
-
-    this.setContentMarginIfVideo();
-
-    this.ref.detectChanges();
-  };
-
-  private setContentMarginIfVideo() {
-    if (this.video.height) {
-      this.contentContainer.getScrollElement().style.marginTop = (this.video.height + this.contentContainer._hdrHeight) + 'px';
-    }
-  }
-
-  private removeContentMargin() {
-    // this.contentContainer.resize();
-    this.contentContainer.getScrollElement().style.marginTop = (this.contentContainer._hdrHeight) + 'px';
   }
 }

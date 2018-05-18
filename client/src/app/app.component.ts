@@ -82,12 +82,13 @@ export class ThePlaylist {
 
   }
 
-  setPage(code: string) {
+  setPage(code: string, params?: any) {
     let page = this.pages.get(code);
     let view = this.nav.getActive();
     if (page !== view.component) {
       this.nav.push(
-        page
+        page,
+        params
       );
     }
   }

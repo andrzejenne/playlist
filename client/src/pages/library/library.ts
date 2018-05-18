@@ -6,7 +6,7 @@ import {Genre} from "../../models/genre";
 import {ArtistsTab} from "./tabs/artists/artists";
 import {AlbumsPage} from "./tabs/albums/albums";
 import {GenresTab} from "./tabs/genres/genres";
-import {NavController, Tabs} from "ionic-angular";
+import {NavController} from "ionic-angular";
 
 @Component({
   selector: 'library-page',
@@ -32,25 +32,25 @@ export class LibraryPage implements OnDestroy {
   }
 
   ionViewDidLoad() {
-    this.libManager.ready().then(
-      data => {
-        console.info('LibraryPage@ionViewDidLoad', 'libManager@ready', data);
-        this.artists = data.artists;
-        this.albums = data.albums;
-        this.genres = data.genres;
+    this.libManager.ready()
+      .then(
+        data => {
+          console.info('LibraryPage@ionViewDidLoad', 'libManager@ready', data);
+          this.artists = data.artists;
+          this.albums = data.albums;
+          this.genres = data.genres;
 
-        this.tab1Root = ArtistsTab;
-        this.tab2Root = AlbumsPage;
-        this.tab3Root = GenresTab;
+          this.tab1Root = ArtistsTab;
+          this.tab2Root = AlbumsPage;
+          this.tab3Root = GenresTab;
 
-        console.info(this);
+          console.info(this);
 
-        this.ref.detectChanges();
-      }
-    )
+          this.ref.detectChanges();
+        }
+      )
   }
 
   ngOnDestroy(): void {
   }
-
 }

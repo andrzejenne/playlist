@@ -8,6 +8,7 @@
 
 namespace BBIT\Playlist\Wamp\Controllers\com;
 
+use BBIT\Playlist\Helpers\Collection\AlbumCollection;
 use BBIT\Playlist\Models\Album;
 use BBIT\Playlist\Models\Artist;
 use BBIT\Playlist\Models\Genre;
@@ -47,11 +48,11 @@ class LibraryController extends Controller
     /**
      * @param $args
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function albums($args)
     {
-        return Album::orderBy(Album::COL_NAME, 'ASC')
-            ->with(Album::REL_GENRE)
+        return AlbumCollection::create($args)
             ->get();
     }
 

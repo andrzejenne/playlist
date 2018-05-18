@@ -1,18 +1,18 @@
-medium-component {
-  position: relative;
-  width: 100%;
-  min-height: 100px;
-
-  ion-item {
-    h2 {
-      font-size: 90%;
-    }
+album-page {
+  .duration {
+    font-size: 2rem;
+    color: #bbb;
+    text-shadow: 2px 4px 6px #fff, -1px -1px 1px rgba(0,0,0,.5), 2px 4px 6px #fff;
   }
 
   ion-title {
-    float: left;
+    h2 { display: inline-block; vertical-align: middle; margin: 0;}
+    .close-down {
+      display: inline-block;
+      cursor: pointer; padding: 5px 10px;
+      vertical-align: middle;
+    }
   }
-
   .thumbnail {
     height: 80px;
     width: 142px;
@@ -37,20 +37,5 @@ medium-component {
       font-size: 12px;
       padding: 2px 4px;
     }
-
-    ion-icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      font-size: 200%;
-      color: red;
-      text-shadow: 2px 2px 5px #000;
-      font-weight: bold;
-      margin: -10px 0 0 -10px;
-    }
-  }
-
-  .thumbnail.selected {
-    opacity: .5;
   }
 }

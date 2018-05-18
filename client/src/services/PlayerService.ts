@@ -3,6 +3,7 @@ import {Medium} from "../models/medium";
 import {Storage} from "@ionic/storage";
 import {MediaManagerService} from "./MediaManagerService";
 import {Content} from "ionic-angular";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 @Injectable()
 export class PlayerService {
@@ -46,6 +47,8 @@ export class PlayerService {
   totalTime: number = 0;
 
   mediumTime: number = 0;
+
+  medium$: BehaviorSubject<Medium> = new BehaviorSubject<Medium>(null);
 
   get videoElement() {
     return this.videoEl;
@@ -114,8 +117,8 @@ export class PlayerService {
     return this.playedList.indexOf(medium) > -1;
   }
 
-  playVideo() {
-    if (this.status.video) {
+  playVideo(toggle = true) {
+    if (this.status.video && toggle) {
       this.requestFullscreen();
     }
     this.status.video = true;
@@ -134,11 +137,11 @@ export class PlayerService {
   playFirst(item: Medium, seek = 0) {
     let index = this.mediaList.indexOf(item);
     if (index > -1) {
-      let item = this.mediaList.splice(index, 1);
-      // this.mediaList.unshift(item);
+      this.mediaList.splice(index, 1);
+      this.mediaList.unshift(item);
     }
 
-    this.medium = item;
+    this.setMedium(item);
 
     let player = this.getPlayer();
     player.src = this.mediaManager.getUrl(this.medium, this.mediaType);
@@ -156,16 +159,23 @@ export class PlayerService {
     PlayerService.removeItemFrom(medium, this.mediaList);
   }
 
-  playItem(item: Medium, seek = 0) {
-    this.mediaList = [].concat(this.media);
+  playVideoItem(item: Medium, seek = 0) {
+    this.playVideo(false);
+    this.playItem(item, seek);
+  }
 
+  playAudioItem(item: Medium, seek = 0) {
+    this.playAudio();
+    this.playItem(item, seek);
+  }
+
+  playItem(item: Medium, seek = 0) {
     let index = this.mediaList.indexOf(item);
     if (index > -1) {
-      this.playedList = this.mediaList.splice(0, index);
-      this.mediaList.splice(0, 1);
+      this.playedList = this.mediaList.slice(0, index);
     }
 
-    this.medium = item;
+    this.setMedium(item);
 
     let player = this.getPlayer();
     player.src = this.mediaManager.getUrl(this.medium, this.mediaType);
@@ -180,7 +190,7 @@ export class PlayerService {
 
     let player = this.getPlayer();
 
-    if (!player.src) {
+    if (!player.src || !this.medium) {
       player.src = this.getNextSrc();
     }
 
@@ -196,6 +206,11 @@ export class PlayerService {
 
   toggleRepeat() {
     this.status.repeat = !this.status.repeat;
+  }
+
+  forceShuffle() {
+    this.status.shuffle = false;
+    this.toggleShuffle();
   }
 
   toggleShuffle() {
@@ -244,17 +259,13 @@ export class PlayerService {
       this.play();
     }
     else {
-      this.medium = null;
+      this.setMedium();
       this.storage.remove('currentMedium');
       this.storage.remove('currentTime');
     }
   }
 
   playPrev() {
-    if (this.medium) {
-      this.mediaList.unshift(this.medium);
-    }
-
     let prevSrc = this.getPrevSrc();
 
     if (prevSrc) {
@@ -265,8 +276,15 @@ export class PlayerService {
       this.play();
     }
     else {
-      this.medium = null;
+      this.setMedium();
     }
+  }
+
+  setMedium(medium: Medium = null) {
+    this.medium = medium;
+    this.medium$.next(medium);
+
+    return this;
   }
 
   preparePlaylist() {
@@ -340,8 +358,11 @@ export class PlayerService {
   stop() {
     this.pause();
 
-    this.medium = null;
-    this.videoEl.src = '';
+    this.setMedium();
+
+    this.playStatus();
+
+    this.preparePlaylist();
   }
 
   getPlayer() {
@@ -365,6 +386,10 @@ export class PlayerService {
     this.status.playing = true;
 
     let player = this.getPlayer();
+
+    if (this.medium && this.status.video && !this.mediaManager.hasVideo(this.medium)) {
+      this.playAudio();
+    }
 
     player.play();
 
@@ -422,9 +447,11 @@ export class PlayerService {
 
     // this.video.containerStyle = {width: '100%', height: this.video.height + "px"};
 
-    this.setContentMarginIfVideo();
+    // this.setContentMarginIfVideo();
 
     this.detectChanges();
+
+    console.info('PlayerService@onPlayerMetadata', ev);
   };
 
   private onPlayerProgress = () => {
@@ -441,8 +468,11 @@ export class PlayerService {
 
   private getNextSrc() {
     if (this.mediaList.length) {
-      this.medium = this.mediaList.shift();
-      return this.mediaManager.getUrl(this.medium, this.mediaType);
+      let index = this.mediaList.indexOf(this.medium);
+      if (this.mediaList[index + 1]) {
+        this.setMedium(this.mediaList[index + 1]);
+        return this.mediaManager.getUrl(this.medium, this.mediaType);
+      }
     }
 
     return null;
@@ -450,7 +480,7 @@ export class PlayerService {
 
   private getPrevSrc() {
     if (this.playedList.length) {
-      this.medium = this.playedList.pop();
+      this.setMedium(this.playedList.pop());
       return this.mediaManager.getUrl(this.medium, this.mediaType);
     }
 

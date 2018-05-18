@@ -1,7 +1,7 @@
 <ng-content></ng-content>
 
 <!--<ion-content #video class="video-container">-->
-  <div class="video" ion-fixed [class.hidden]="player.status.audio"><video #playerEl></video></div>
+<div class="video" [class.hidden]="player.status.audio || !player.medium"><video #playerEl></video></div>
 <!--</ion-content>-->
 
 <ion-content #playlist class="playlist-container">

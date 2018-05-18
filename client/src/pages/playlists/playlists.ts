@@ -86,6 +86,7 @@ export class PlaylistsPage implements OnDestroy {
       }),
       this.plManager.playlist$.subscribe(
         playlist => {
+          this.playlist = playlist;
           console.info('PlaylistsPage.plManager.playlist$', playlist);
           // @todo - update playlists count and duration in plManager
           this.ref.detectChanges();
@@ -223,6 +224,16 @@ export class PlaylistsPage implements OnDestroy {
     );
   }
 
+  shuffle(playlist: Playlist) {
+    this.plManager.selectPlaylist(playlist);
+    this.player.onReady().then(
+      media => {
+        this.player.forceShuffle();
+        this.player.playNext();
+      }
+    );
+  }
+
   private onGetUser = (user: User) => {
     this.user = user;
     console.info('PlaylistsPage.onGetUser', user);
@@ -254,6 +265,7 @@ export class PlaylistsPage implements OnDestroy {
       //     this.ref.detectChanges();
       //   }
       // });
+
     }
   };
 }

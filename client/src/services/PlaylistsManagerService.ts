@@ -167,10 +167,14 @@ export class PlaylistsManagerService {
     // }
   }
 
-  clearPlaylists() {
-    this.playlists = [];
+  unselectPlaylist() {
     this.playlist = null;
     this.playlist$.next(null);
+  }
+
+  clearPlaylists() {
+    this.unselectPlaylist();
+    this.playlists = [];
     this.playlists$.next([]);
   }
 

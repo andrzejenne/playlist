@@ -31,7 +31,10 @@ export class MediumComponent implements AfterViewInit {
   select = new EventEmitter();
 
   @Output()
-  play = new EventEmitter();
+  playVideo = new EventEmitter();
+
+  @Output()
+  playAudio = new EventEmitter();
 
   @Output()
   toPlaylist = new EventEmitter();

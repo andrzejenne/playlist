@@ -40,9 +40,11 @@ import {ArtistsTab} from "../pages/library/tabs/artists/artists";
 import {AlbumsPage} from "../pages/library/tabs/albums/albums";
 import {GenresTab} from "../pages/library/tabs/genres/genres";
 import {MediumComponent} from "../components/medium/medium.component";
-import {YouTubePage} from "../pages/youtube/youtube";
 import {PlayerControlsComponent} from "../components/player-controls/player-controls.component";
 import {PlayerContainerComponent} from "../components/player-container/player-container.component";
+import {CheckerComponent} from "../components/checker/checker.component";
+import {MusicalSpinnerComponent} from "../components/musical-spinner/musical-spinner.component";
+import {AlbumPage} from "../pages/album/album";
 
 @NgModule({
   declarations: [
@@ -54,7 +56,8 @@ import {PlayerContainerComponent} from "../components/player-container/player-co
     SplashPage,
     SettingsPage,
     LibraryPage,
-    YouTubePage,
+
+    AlbumPage,
 
     ArtistsTab,
     AlbumsPage,
@@ -75,6 +78,8 @@ import {PlayerContainerComponent} from "../components/player-container/player-co
     PlayerControlsComponent,
 
     PlayerContainerComponent,
+    CheckerComponent,
+    MusicalSpinnerComponent,
 
     DurationPipe,
   ],
@@ -102,7 +107,8 @@ import {PlayerContainerComponent} from "../components/player-container/player-co
     SplashPage,
     SettingsPage,
     LibraryPage,
-    YouTubePage,
+
+    AlbumPage,
 
     ArtistsTab,
     AlbumsPage,
@@ -114,7 +120,9 @@ import {PlayerContainerComponent} from "../components/player-container/player-co
 
     PlaylistComponent,
     AddPlaylistComponent,
-    PlayerControlsComponent
+    PlayerControlsComponent,
+    CheckerComponent,
+    MusicalSpinnerComponent
   ],
   providers: [
     StatusBar,

@@ -53,7 +53,7 @@ abstract class AbstractCollection implements Arrayable
      */
     public static function create($args)
     {
-        return new static($args[0]);
+        return new static(isset($args[0]) ? $args[0] : []);
     }
 
     /**

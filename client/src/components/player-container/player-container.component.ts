@@ -1,5 +1,5 @@
 import {
-  AfterContentInit, AfterViewChecked,
+  AfterContentInit,
   AfterViewInit,
   ChangeDetectorRef,
   Component,
@@ -46,7 +46,6 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
   // private styleSheet: CSSStyleSheet;
 
   // private marginIndex: number;
-
   constructor(
     public player: PlayerService,
     private plManager: PlaylistsManagerService,
@@ -79,16 +78,36 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
           this.down = false;
           this.showToolbar();
           this.showPlaylistTitle();
-
         }
         else {
           this.player.setMedia();
-          this.hideToolbar();
+          if (!this.player.medium) {
+            this.hideToolbar();
+          }
           this.hidePlaylist();
         }
         // this.setContentMargin(200);
       }
       this.ref.detectChanges();
+    });
+
+    this.player.medium$.subscribe(media => {
+      if (!this.playlist) {
+        if (media) {
+          this.hidden = false;
+          this.title = false;
+          this.down = false;
+          this.showToolbar();
+          // this.showPlaylistTitle();
+        }
+        else {
+          this.hidden = true;
+          this.title = false;
+          this.down = false;
+          this.hideToolbar();
+          // this.hidePlaylist();
+        }
+      }
     });
 
   }

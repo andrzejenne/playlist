@@ -118,6 +118,7 @@ class PlaylistsController extends Controller
 
         return MediaCollection::create($args)
             ->whereId($args[0]->mid)
+            ->get()
             ->first();
         // @todo - reorder
     }

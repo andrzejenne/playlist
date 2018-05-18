@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
-import {NavParams} from 'ionic-angular';
+import {NavController, NavParams} from 'ionic-angular';
 import {Album} from "../../../../models/album";
+import {AlbumPage} from "../../../album/album";
 
 @Component({
   selector: 'page-home',
@@ -10,8 +11,12 @@ export class AlbumsPage {
 
   albums: Album[] = [];
 
-  constructor(params: NavParams) {
+  constructor(params: NavParams, private navCtrl: NavController) {
     console.info(params);
     this.albums = params.data || [];
+  }
+
+  openAlbum(album: Album) {
+    this.navCtrl.push(AlbumPage, {album: album});
   }
 }

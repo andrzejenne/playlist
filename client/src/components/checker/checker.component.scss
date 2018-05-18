@@ -1,0 +1,23 @@
+checker.show {
+  overflow: visible;
+  ion-icon {
+    width: 32px;
+    min-width: 0 !important;
+  }
+
+}
+
+checker {
+  font-size: 200%;
+  display: inline-block;
+  margin: 0 !important;
+  overflow: hidden;
+  ion-icon {
+    display: inline-block !important;
+    transition: all 250ms ease-in-out;
+    width: 0;
+    overflow: hidden;
+    margin-right: 0;
+    margin-left: 0;
+  }
+}

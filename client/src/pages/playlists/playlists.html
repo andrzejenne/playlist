@@ -15,15 +15,15 @@
 </ion-header>
 
 <ion-content #content>
+  <!--<pre>{{!selector.length | json}}</pre>-->
   <!--<playlist-component ion-fixed *ngIf="playlist" [playlist]="playlist"></playlist-component>-->
   <ion-list>
     <ion-item *ngFor="let playlist of playlists"
               class="playlist-item"
               (press)="selector.toggleSelect(playlist)"
               [class.selected]="plManager.playlist == playlist">
-      <ion-icon item-start *ngIf="selector.length" color="primary"
-                (tap)="selector.toggleSelect(playlist)"
-                [name]="selector.isSelected(playlist) ? 'checkbox' : 'square'"></ion-icon>
+      <checker item-left (tap)="selector.toggleSelect(playlist)"
+               [selected]="selector.isSelected(playlist)" [visible]="selector.length"></checker>
       <div class="item-content"
            (tap)="plManager.toggleSelectPlaylist(playlist)">
         <h2>
@@ -49,24 +49,19 @@
       </ion-buttons>
     </ion-item>
   </ion-list>
-  <!--<div ion-fixed [hidden]="playerStatus.audio || !current"-->
-       <!--class="video" style="width: 100%;">-->
-    <!--<div [ngStyle]="video.containerStyle">-->
-      <!--<video #videoPlayer [width]="video.width" [height]="video.height"></video>-->
-    <!--</div>-->
-  <!--</div>-->
 
-  <!--<ion-fab right bottom *ngIf="selector.selected.length">-->
-    <!--<button ion-fab color="danger" (tap)="removeSelected()">-->
-      <!--<ion-icon name="trash"></ion-icon>-->
-    <!--</button>-->
-  <!--</ion-fab>-->
   <ion-fab right bottom>
-    <button *ngIf="!selector.length" ion-fab color="secondary" (tap)="createPlaylist($event)">
+    <button *ngIf="!selector.length" ion-fab color="secondary"
+          [class.hide]="plManager.playlist"
+          (tap)="createPlaylist($event)">
       <ion-icon name="add"></ion-icon>
     </button>
-    <button *ngIf="selector.length" ion-fab color="danger" (tap)="removeSelected($event)">
+    <button *ngIf="selector.length" ion-fab color="danger"
+          [class.hide]="plManager.playlist"
+          (tap)="removeSelected($event)">
       <ion-icon name="trash"></ion-icon>
     </button>
   </ion-fab>
+
+  <!--<pre>{{playlist | json}}</pre>-->
 </ion-content>

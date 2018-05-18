@@ -29,14 +29,17 @@ item-component {
     }
   }
 
-  .current {
-    .label, h2 {
-      color: #2a88bd;
-    }
-  }
-
-  .played {
-    opacity: .3;
-  }
-
 }
+
+.item-component.current ,
+item-component.current {
+  .label, h2 {
+    color: #2a88bd;
+  }
+}
+
+.item-component.played,
+item-component.played {
+  opacity: .3;
+}
+
