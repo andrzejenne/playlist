@@ -1,10 +1,10 @@
-<ion-header>
+<ion-header class="mode-color">
   <ion-navbar>
     <ion-title>Albums</ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="mode-color">
   <ion-list [virtualScroll]="list" approxItemHeight="80px">
     <ion-item *virtualItem="let album">
       <div class="thumbnail" item-start (tap)="openAlbum(album)">
@@ -32,7 +32,7 @@
   </ion-infinite-scroll>
 </ion-content>
 
-<ion-footer>
+<ion-footer class="mode-color">
   <ion-toolbar>
     <ion-item class="clear">
       <ion-icon item-start name="search"></ion-icon>

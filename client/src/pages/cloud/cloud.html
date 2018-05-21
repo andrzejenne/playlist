@@ -1,18 +1,21 @@
-<ion-header>
+<ion-header class="mode-color">
   <ion-navbar>
     <button ion-button menuToggle="menu" *ngIf="!playlist">
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title left>{{title}}</ion-title>
-    <ion-buttons end *ngIf="playlist">
-      <button ion-button (tap)="dismiss()" clear>
+    <ion-buttons end>
+      <button *ngIf="download" ion-button clear icon-only (tap)="toDownload()">
+        <ion-icon name="cloud-download" color="primary"></ion-icon>
+      </button>
+      <button ion-button (tap)="dismiss()" clear *ngIf="playlist">
         <ion-icon name="close"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
-<ion-content #content>
+<ion-content #content class="mode-color">
   <ion-list [virtualScroll]="list" approxItemHeight="100px">
     <div *virtualItem="let item" class="list-item">
       <medium-component [item]="item"
@@ -82,7 +85,7 @@
   </ion-fab>
 </ion-content>
 
-<ion-footer>
+<ion-footer class="mode-color">
   <ion-toolbar>
     <ion-item class="clear">
       <ion-icon item-start name="search"></ion-icon>

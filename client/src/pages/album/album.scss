@@ -4,6 +4,10 @@ album-page {
     color: #bbb;
   }
 
+  .cover {
+    max-width: 25%;
+  }
+
   ion-title {
     h2 { display: inline-block; vertical-align: middle; margin: 0;}
     .close-down {

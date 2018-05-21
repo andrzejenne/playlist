@@ -13,6 +13,7 @@ import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {Playlist} from "../../models/playlist";
 import {PlayerService} from "../../services/PlayerService";
 import {Subject} from "rxjs/Subject";
+import {SearchPage} from "../search/search";
 
 @Component({
   selector: 'page-cloud',
@@ -33,6 +34,9 @@ export class CloudPage implements OnDestroy {
 
   @Input()
   provider: string = '';
+
+  @Input()
+  download: boolean;
 
   private user: User;
 
@@ -71,6 +75,9 @@ export class CloudPage implements OnDestroy {
     if (params.data.title) {
       this.title = params.data.title;
     }
+    if (params.data.download) {
+      this.download = params.data.download;
+    }
 
     console.info('CloudPage@constructor', this);
   }
@@ -91,6 +98,10 @@ export class CloudPage implements OnDestroy {
     );
 
     this.load();
+  }
+
+  toDownload() {
+    this.navCtrl.push(SearchPage);
   }
 
   playVideo(item: Medium) {

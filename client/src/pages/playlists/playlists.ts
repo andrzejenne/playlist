@@ -214,7 +214,8 @@ export class PlaylistsPage implements OnDestroy {
 
   openPlaylistModal(playlist: Playlist) {
     this.modalCtrl.create(PlaylistComponent, playlist, {
-      showBackdrop: false
+      showBackdrop: false,
+      cssClass: 'mode-color'
     }).present();
   }
 

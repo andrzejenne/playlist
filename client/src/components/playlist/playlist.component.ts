@@ -36,17 +36,20 @@ export class PlaylistComponent implements OnDestroy {
     all: {
       component: CloudPage,
       title: 'In Cloud',
-      provider: null
+      provider: null,
+      download: false
     },
     library: {
       component: LibraryPage,
       title: 'Library',
-      provider: 'library'
+      provider: 'library',
+      download: false
     },
     youtube: {
       component: CloudPage,
       title: 'YouTube',
-      provider: 'youtube'
+      provider: 'youtube',
+      download: true
     }
   };
 
@@ -74,7 +77,7 @@ export class PlaylistComponent implements OnDestroy {
     if (params && params.data.id) {
       this.playlist = params.data;
       this.plManager.selectPlaylist(params.data);
-      this.player.preparePlaylist();
+      this.player.setMedia(params.data.media);
 
       this.subs.push(
         this.wamp.serverSwitched.subscribe(servers => {
@@ -110,7 +113,9 @@ export class PlaylistComponent implements OnDestroy {
         console.info('PlaylistComponent@playlist$', playlist);
         this.playlist = playlist;
         this.selector.clearSelection();
-        this.player.updatePlaylist();
+        if (playlist) {
+          this.player.setMedia(playlist.media);
+        }
         this.ref.detectChanges();
       })
     );
@@ -176,9 +181,10 @@ export class PlaylistComponent implements OnDestroy {
     this.modalCtrl.create(pageOpts.component, {
       playlist: this.playlist,
       title: pageOpts.title,
-      provider: pageOpts.provider
+      provider: pageOpts.provider,
+      download: pageOpts.download
     }, {
-      cssClass: 'fullscreen-modal'
+      cssClass: 'fullscreen-modal mode-color'
     }).present();
   }
 
@@ -204,6 +210,5 @@ export class PlaylistComponent implements OnDestroy {
       this.player.setMedia(this.playlist.media);
       this.autoPlayIfInterrupted();
     }
-    this.player.preparePlaylist();
   }
 }

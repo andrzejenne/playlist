@@ -1,16 +1,20 @@
 <ion-header class="mode-color">
   <ion-navbar>
-    <button ion-button menuToggle="menu">
+    <button ion-button menuToggle="menu" *ngIf="!playlist">
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>
       Library
     </ion-title>
+    <ion-buttons end>
+      <button ion-button (tap)="dismiss()" clear *ngIf="playlist">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
-<ion-tabs #tabs tabsPlacement="bottom" color="dark" tabsLayout="icon-start" [tabsHighlight]="true" name="library"
-          selectedIndex="1">
+<ion-tabs class="mode-color" #tabs tabsPlacement="bottom" color="dark" tabsLayout="icon-start" [tabsHighlight]="true" name="library">
   <ion-tab tabTitle="Artists" [root]="tab1Root" [rootParams]="artistsCount" tabIcon="person" [tabBadge]="artistsCount">
   </ion-tab>
   <ion-tab tabTitle="Albums" [root]="tab2Root" [rootParams]="albumsCount" tabIcon="disc" [tabBadge]="albumsCount">

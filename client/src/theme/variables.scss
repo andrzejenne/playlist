@@ -58,8 +58,8 @@ $colors: (
 // default are overridden.
 
 @import "ionic.theme.default";
-//@import 'theme.day';
-//@import 'theme.night';
+@import 'theme.day';
+@import 'theme.night';
 
 // Ionicons
 // --------------------------------------------------

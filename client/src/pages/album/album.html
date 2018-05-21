@@ -9,7 +9,7 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content #content>
+<ion-content #content class="mode-color">
   <div padding>
     <h2>
       <span *ngIf="album.artist">{{album.artist?.name}} |</span>
@@ -18,7 +18,7 @@
       <img [src]="mediaManager.getCoverUrl(album)">
     </div>
     <p>
-
+<!-- @todo album description -->
     </p>
   </div>
   <hr>

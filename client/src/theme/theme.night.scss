@@ -3,10 +3,64 @@ $knobColor: #2a88bd;
 $primaryButton: #2a88bd;
 $removeButton: #bd1900;
 $dayModeIconColor: #a58400;
+$bgColor: #111122;
 
 .night-mode {
-
   .mode-color {
+
+    hr {
+      background-color: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .checkbox-md .checkbox-icon,
+    .checkbox-ios .checkbox-icon,
+    .button-md,
+    .button-ios,
+    .button-ion-primary,
+    .button-md-primary {
+      background-color: $primaryButton !important;
+    }
+    .checkbox-md .checkbox-icon,
+    .checkbox-ios .checkbox-icon
+    {
+      border-color: $primaryButton !important;
+    }
+
+    .input-has-focus .item-inner {
+      box-shadow: inset 0 -1px 0 0 $primaryButton !important;
+    }
+
+    .button-clear-ion,
+    .button-clear-md {
+      color: $primaryButton !important;
+      background: transparent !important;
+    }
+
+
+    background: $bgColor !important;
+
+    ion-item {
+      background: $bgColor !important;
+      color: $color !important;
+      .item-inner {
+        border-color: #223 !important;
+      }
+
+      &.selected {
+        background: #223 !important;
+      }
+
+      &.clear {
+        background-color: transparent !important;
+        .item-inner {
+          border-color: transparent !important;
+        }
+      }
+    }
+
+    ion-label {
+      color: $color !important;
+    }
 
     ion-header {
       .toolbar {
@@ -24,7 +78,7 @@ $dayModeIconColor: #a58400;
 
     .toolbar-background {
       border-color: #000022 !important;
-      background: #111122 !important;
+      background: $bgColor !important;
     }
 
     .toolbar {

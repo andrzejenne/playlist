@@ -1,4 +1,4 @@
-<ion-header #header>
+<ion-header #header class="mode-color">
   <ion-navbar (tap)="toggleShow()">
     <!--<button ion-button menuToggle="menu">-->
       <!--<ion-icon name="menu"></ion-icon>-->
@@ -29,7 +29,7 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content #content>
+<ion-content #content class="mode-color">
   <ion-list class="items" *ngIf="playlist" [reorder]="true" (ionItemReorder)="player.reorderData($event)">
     <ion-item-sliding *ngFor="let item of player.mediaList">
       <ion-item *ngIf="item" class="item-component"

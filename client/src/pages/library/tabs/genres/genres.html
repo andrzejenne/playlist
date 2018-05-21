@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header class="mode-color">
   <ion-navbar>
     <button ion-button menuToggle="menu">
       <ion-icon name="menu"></ion-icon>
@@ -8,7 +8,8 @@
     </ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content>
+
+<ion-content class="mode-color">
   <ion-list [virtualScroll]="list" approxItemHeight="80px">
     <ion-item *virtualItem="let genre">
       <h2>{{genre.name}}</h2>

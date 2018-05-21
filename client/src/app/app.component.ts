@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, HostBinding, ViewChild} from '@angular/core';
-import {MenuController, NavController, Platform} from 'ionic-angular';
+import {IonicApp, MenuController, NavController, Platform} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {AndroidFullScreen} from '@ionic-native/android-full-screen';
@@ -33,7 +33,7 @@ export class ThePlaylist {
 
   dayModeIcon: string = 'sunny';
 
-  @HostBinding('class')
+  // @HostBinding('class')
   dayModeClass: string = 'day-mode';
 
   servers: string[] = [];
@@ -41,6 +41,8 @@ export class ThePlaylist {
   private settings: SettingsContract;
 
   private host: string;
+
+  private ionApp: Element;
 
   constructor(
     platform: Platform,
@@ -78,6 +80,8 @@ export class ThePlaylist {
 
       this.prepareAuth();
 
+      this.ionApp = document.getElementsByTagName('ion-app')[0];
+
     });
 
   }
@@ -100,7 +104,11 @@ export class ThePlaylist {
 
   onDayModeChange() {
     this.dayModeIcon = this.dayMode ? 'sunny' : 'moon';
+
+    this.ionApp.classList.remove(this.dayModeClass);
     this.dayModeClass = this.dayMode ? 'day-mode' : 'night-mode';
+    this.ionApp.classList.add(this.dayModeClass);
+
     this.settings.dayMode.value = this.dayMode;
     this.config.save(this.settings);
   }
