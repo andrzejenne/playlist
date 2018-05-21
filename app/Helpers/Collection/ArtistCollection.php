@@ -43,7 +43,7 @@ class ArtistCollection extends AbstractCollection
     {
         if (!$this->builder) {
             $this->builder = Artist::with([
-                Artist::REL_MEDIA . '.' . Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
+//                Artist::REL_MEDIA . '.' . Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
                 Artist::REL_ALBUMS
             ])->orderBy(Album::COL_NAME, 'ASC');
         }

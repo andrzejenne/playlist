@@ -42,7 +42,7 @@ class AlbumCollection extends AbstractCollection
     {
         if (!$this->builder) {
             $this->builder = Album::with([
-                Album::REL_MEDIA . '.' . Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
+//                Album::REL_MEDIA . '.' . Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
                 Album::REL_GENRE,
                 Album::REL_ARTIST
             ])->orderBy(Album::COL_NAME, 'ASC');
