@@ -58,31 +58,26 @@ class MediaDiscoveryService
      */
     public function getFilePath($id, $fid)
     {
-        try {
-            $medium = Medium::whereId($id)->first();
-            if ($medium instanceof Medium) {
-                /** @var MediaProviderContract $providerLibrary */
-                $providerLibrary = $medium->provider->getService();
+        $medium = Medium::whereId($id)->first();
+        if ($medium instanceof Medium) {
+            /** @var MediaProviderContract $providerLibrary */
+            $providerLibrary = $medium->provider->getService();
 
-                /** @var MediaFile $file */
-                $file = $medium->files()
-                    ->whereId($fid)
-                    ->first();
+            /** @var MediaFile $file */
+            $file = $medium->files()
+                ->whereId($fid)
+                ->first();
 
-                if ($file instanceof MediaFile) {
-                    /*                    $path = $this->getMediumDir($medium->provider->slug,
-                                                $medium->provider_sid) . DIRECTORY_SEPARATOR . $file->filename;*/
+            if ($file instanceof MediaFile) {
+                /*                    $path = $this->getMediumDir($medium->provider->slug,
+                                            $medium->provider_sid) . DIRECTORY_SEPARATOR . $file->filename;*/
 
-                    $path = $providerLibrary->getOutDir($medium, $file) . DIRECTORY_SEPARATOR . $file->filename;
+                $path = $providerLibrary->getMediumFilePath($medium, $file);
 
-                    if (\File::exists($path)) {
-                        return $path;
-                    }
+                if (\File::exists($path)) {
+                    return $path;
                 }
             }
-        } catch (\Throwable $t) {
-//            die ($t->getMessage());
-            // @todo - log file not found
         }
 
         return null;
@@ -137,7 +132,7 @@ class MediaDiscoveryService
             })->toArray();
         }
 
-        $dir = $provider->getOutDir($medium, null);
+        $dir = $provider->getMediumDir($medium);
 
         $files = \File::allFiles($dir);
 //        $unknown = MediaType::whereSlug('unknown')->first();
@@ -220,12 +215,11 @@ class MediaDiscoveryService
     /**
      * @param MediaProviderContract $provider
      * @param Medium $medium
-     * @param MediaFile $file
      * @return string
      */
-    public static function getMediumDir(MediaProviderContract $provider, Medium $medium, MediaFile $file)
+    public static function getMediumDir(MediaProviderContract $provider, Medium $medium)
     {
-        return static::getProviderPath($provider, $provider->getMediumDir($medium, $file));
+        return static::getProviderPath($provider, $provider->getMediumDir($medium));
     }
 
     /**

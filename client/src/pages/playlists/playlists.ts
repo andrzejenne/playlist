@@ -177,7 +177,8 @@ export class PlaylistsPage implements OnDestroy {
           text: 'Create',
           handler: data => {
             if (data.name) {
-              this.plManager.create(this.user, data.name);
+              this.plManager.create(this.user, data.name)
+                .then(playlist => this.ref.detectChanges());
             }
           }
         }

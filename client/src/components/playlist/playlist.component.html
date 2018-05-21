@@ -9,7 +9,7 @@
       </div>
       <h2 style="display: inline-block; vertical-align: middle">
         {{playlist?.name}}
-        <span *ngIf="player.medium">
+        <span *ngIf="player.medium && playlist.media.indexOf(player.medium) != -1">
         |
           {{player?.medium?.name}}
 
@@ -18,10 +18,13 @@
       </h2>
     </ion-title>
     <ion-buttons end>
-      <span class="duration">
-        <ion-icon name="time"></ion-icon>
-        {{playlist?.duration | duration}}
-      </span>
+      <button ion-button clear (tap)="plManager.toggleSelectPlaylist(playlist)">
+        <ion-icon name="close"></ion-icon>
+      </button>
+      <!--<span class="duration">-->
+        <!--<ion-icon name="time"></ion-icon>-->
+        <!--{{playlist?.duration | duration}}-->
+      <!--</span>-->
     </ion-buttons>
   </ion-navbar>
 </ion-header>

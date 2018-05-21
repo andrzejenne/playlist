@@ -85,12 +85,11 @@ class YouTubeService extends MediaProviderContract
 
     /**
      * @param Medium $medium
-     * @param MediaFile $file
      * @return string
      */
-    public function getMediumDir(Medium $medium, MediaFile $file)
+    public function getMediumDir(Medium $medium)
     {
-        return $this->getOutDir($medium, $file);
+        return $this->getOutDir($medium->provider_sid);
     }
 
     /**
@@ -100,18 +99,15 @@ class YouTubeService extends MediaProviderContract
      */
     public function getMediumFilePath(Medium $medium, MediaFile $file)
     {
-        return $this->getMediumDir($medium, $file) . DIRECTORY_SEPARATOR . $file->filename;
+        return $this->getMediumDir($medium) . DIRECTORY_SEPARATOR . $file->filename;
     }
 
     /**
-     * @param Medium $medium
-     * @param MediaFile $file
+     * @param string $sid
      * @return string
      */
-    public function getOutDir(Medium $medium, MediaFile $file = null)
+    public function getOutDir(string $sid)
     {
-        $sid = $medium->provider_sid;
-
         return $this->getBasePath()
             . DIRECTORY_SEPARATOR . $sid[0] . $sid[1]
             . DIRECTORY_SEPARATOR . $sid[2] . $sid[3];
