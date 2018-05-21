@@ -26,3 +26,6 @@ Route::get('/oauth/{driver}/callback', 'Auth\SocialAuthController@handleProvider
 
 // Media Streamer
 Route::get('/media/{id}/{fid}', 'MediaStreamController@stream');
+
+Route::get('/covers/{cid}', 'CoversController@get');
+Route::get('/thumbnails/{mid}/{fid}', 'CoversController@getThumbnail');

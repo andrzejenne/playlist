@@ -131,6 +131,38 @@
        fx="162.42467"
        fy="162.42349"
        r="134.57943" />
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter125">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood115" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="out"
+         result="composite1"
+         id="feComposite117" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="0.1"
+         result="blur"
+         id="feGaussianBlur119" />
+      <feOffset
+         dx="0.1"
+         dy="0.1"
+         result="offset"
+         id="feOffset121" />
+      <feComposite
+         in="offset"
+         in2="SourceGraphic"
+         operator="atop"
+         result="composite2"
+         id="feComposite123" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -139,9 +171,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="7.9195959"
-     inkscape:cx="10.235516"
-     inkscape:cy="11.573283"
+     inkscape:zoom="2.8"
+     inkscape:cx="-47.723556"
+     inkscape:cy="-18.355612"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -190,5 +222,11 @@
          inkscape:connector-curvature="0"
          style="fill:url(#radialGradient100);fill-opacity:1;stroke:none;stroke-width:57.6115799;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
+    <circle
+       style="fill:#24bda1;fill-opacity:1;stroke:none;stroke-width:1.37218547;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.12941176"
+       id="path859"
+       cx="-31.220026"
+       cy="26.376484"
+       r="3.3035715" />
   </g>
 </svg>

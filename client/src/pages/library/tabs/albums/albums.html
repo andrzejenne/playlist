@@ -7,6 +7,9 @@
 <ion-content>
   <ion-list [virtualScroll]="list" approxItemHeight="80px">
     <ion-item *virtualItem="let album" (tap)="openAlbum(album)">
+      <div class="thumbnail" item-start>
+        <img [src]="getCover(album)">
+      </div>
       <h2>{{album.name}}</h2>
       <p>
         <span *ngIf="album.artist">
@@ -28,3 +31,16 @@
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-item class="clear">
+      <ion-icon item-start name="search"></ion-icon>
+      <ion-input icon-left type="text" placeholder="search" [(ngModel)]="search" (ionChange)="filter()">
+      </ion-input>
+      <button item-end ion-button clear *ngIf="search" (click)="search=''">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

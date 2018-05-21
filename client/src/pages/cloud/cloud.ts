@@ -12,6 +12,7 @@ import {ConfigService} from "../../services/ConfigService";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {Playlist} from "../../models/playlist";
 import {PlayerService} from "../../services/PlayerService";
+import {Subject} from "rxjs/Subject";
 
 @Component({
   selector: 'page-cloud',
@@ -42,6 +43,8 @@ export class CloudPage implements OnDestroy {
   private offset = 0;
 
   private end = false;
+
+  private filterSubject = new Subject();
 
   constructor(
     public navCtrl: NavController,
@@ -82,7 +85,9 @@ export class CloudPage implements OnDestroy {
               .then(user => this.user = user);
           }
         }
-      )
+      ),
+      this.filterSubject.debounceTime(500)
+        .subscribe(search => this.load())
     );
 
     this.load();
@@ -127,9 +132,7 @@ export class CloudPage implements OnDestroy {
           this.list = [].concat(data);
         }
         this.ref.detectChanges();
-      })
-      .catch(this.errorReporter.report);
-
+      });
   }
 
   doInfinite(infiniteScroll: any) {
@@ -162,7 +165,7 @@ export class CloudPage implements OnDestroy {
     this.offset = 0;
     this.end = false;
 
-    this.load();
+    this.filterSubject.next(this.search);
     /*
     if (this.search) {
       this.list = this.downloaded.filter(item => {

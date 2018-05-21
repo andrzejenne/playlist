@@ -3,6 +3,8 @@ import {ServerManagerService} from "./ServerManagerService";
 import {Medium} from "../models/medium";
 import {MediaFile} from "../models/media-file";
 import {MediaRepository} from "../repositories/media.repository";
+import {Album} from "../models/album";
+import {Cover} from "../models/cover";
 
 @Injectable()
 export class MediaManagerService {
@@ -50,17 +52,28 @@ export class MediaManagerService {
     return null;
   }
 
-  getFileUrl(item: Medium, file: MediaFile, host = this.serverManager.host) {
-    return this.serverManager.getServerUrl(host) + '/media/' + item.id + '/' + file.id;
+  getFileUrl(item: Medium, file: MediaFile, host = this.serverManager.host, type = 'media') {
+    return this.serverManager.getServerUrl(host) + '/' + type + '/' + item.id + '/' + file.id;
   }
 
   getThumbnailUrl(item: Medium, host = this.serverManager.host) {
     let thumb = MediaManagerService.getThumbnail(item);
     if (thumb) {
-      return this.getFileUrl(item, thumb, host);
+      return this.getFileUrl(item, thumb, host, 'thumbnails');
     }
 
     return 'assets/imgs/thumbnail.png';
+  }
+
+  getCoverUrl(album: Album, type = 'front', host = this.serverManager.host) {
+    if (album.covers) {
+      let cover = album.covers.filter(cover => cover.type.slug === type)[0] || null;
+      if (cover) {
+        return this.serverManager.getServerUrl(host) + '/covers/' + cover.id;
+      }
+    }
+
+    return 'assets/imgs/cover.png';
   }
 
   static getThumbnail(item: Medium) {

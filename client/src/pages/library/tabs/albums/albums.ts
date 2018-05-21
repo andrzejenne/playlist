@@ -4,9 +4,10 @@ import {Album} from "../../../../models/album";
 import {AlbumPage} from "../../../album/album";
 import {Artist} from "../../../../models/artist";
 import {LibraryManagerService} from "../../../../services/LibraryManagerService";
+import {MediaManagerService} from "../../../../services/MediaManagerService";
 
 @Component({
-  selector: 'page-home',
+  selector: 'albums-tab',
   templateUrl: 'albums.html'
 })
 export class AlbumsTab {
@@ -17,6 +18,8 @@ export class AlbumsTab {
 
   count: number;
 
+  search = '';
+
   private limit = 30;
 
   private offset = 0;
@@ -25,6 +28,7 @@ export class AlbumsTab {
 
   constructor(params: NavParams,
               private libManager: LibraryManagerService,
+              private mediaManager: MediaManagerService,
               private navCtrl: NavController,
               private ref: ChangeDetectorRef
   ) {
@@ -34,6 +38,10 @@ export class AlbumsTab {
   ngAfterViewInit() {
     this.load()
       .then(data => this.ref.detectChanges());
+  }
+
+  getCover(album: Album) {
+    return this.mediaManager.getCoverUrl(album);
   }
 
   private load() {
@@ -71,5 +79,22 @@ export class AlbumsTab {
 
   openAlbum(album: Album) {
     this.navCtrl.push(AlbumPage, {album: album});
+  }
+
+  filter() {
+    this.offset = 0;
+    this.end = false;
+
+    this.load();
+    /*
+    if (this.search) {
+      this.list = this.downloaded.filter(item => {
+        return item && item.name && item.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
+      });
+    }
+    else {
+      this.list = [].concat(this.downloaded);
+    }
+    */
   }
 }
