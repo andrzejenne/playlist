@@ -4,6 +4,8 @@ import {Storage} from "@ionic/storage";
 import {MediaManagerService} from "./MediaManagerService";
 import {Content} from "ionic-angular";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Album} from "../models/album";
+import {Playlist} from "../models/playlist";
 
 @Injectable()
 export class PlayerService {
@@ -280,14 +282,14 @@ export class PlayerService {
     }
   }
 
-  setMedium(medium: Medium = null) {
+  private setMedium(medium: Medium = null) {
     this.medium = medium;
     this.medium$.next(medium);
 
     return this;
   }
 
-  preparePlaylist() {
+  private preparePlaylist() {
     this.mediaList = [].concat(this.media || []);
     this.playedList = [];
     if (this.status.shuffle) {
@@ -308,7 +310,7 @@ export class PlayerService {
     this.media = PlayerService.reorderArray(this.media, indexes);
   }
 
-  updatePlaylist() {
+  private updatePlaylist() {
     let remove = [];
     let exists = [];
     if (this.playedList) {
@@ -365,7 +367,7 @@ export class PlayerService {
     this.preparePlaylist();
   }
 
-  getPlayer() {
+  private getPlayer() {
     return this.videoEl;
   }
 

@@ -6,8 +6,8 @@
 
 <ion-content>
   <ion-list [virtualScroll]="list" approxItemHeight="80px">
-    <ion-item *virtualItem="let album" (tap)="openAlbum(album)">
-      <div class="thumbnail" item-start>
+    <ion-item *virtualItem="let album">
+      <div class="thumbnail" item-start (tap)="openAlbum(album)">
         <img [src]="getCover(album)">
       </div>
       <h2>{{album.name}}</h2>
@@ -21,13 +21,13 @@
         <ion-icon name="musical-note" title="media"></ion-icon>
       </p>
       <ion-buttons item-end>
-        <button ion-button clear (click)="play(album)">
+        <button ion-button clear (tap)="play(album)">
           <ion-icon name="play"></ion-icon>
         </button>
       </ion-buttons>
     </ion-item>
   </ion-list>
-  <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+  <ion-infinite-scroll *ngIf="!end" (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </ion-content>

@@ -11,8 +11,8 @@ export class LibraryRepository extends WampRepository {
     return this.call<Artist[]>('com.library.artists', [{limit: limit, offset: offset}]);
   }
 
-  public albums(limit: number, offset: number) {
-    return this.call<Album[]>('com.library.albums', [{limit: limit, offset: offset}]);
+  public albums(limit: number, offset: number, search: string) {
+    return this.call<Album[]>('com.library.albums', [{limit: limit, offset: offset, search: search}]);
   }
 
   public genres(limit: number, offset: number) {

@@ -13,4 +13,8 @@ export class MediaRepository extends WampRepository {
     return this.call<Medium[]>('com.media.getByProvider', [{pid: providerId}]);
   }
 
+  public getByAlbum(albumId) {
+    return this.call<Medium[]>('com.media.getByAlbum', [{aid: albumId}]);
+  }
+
 }

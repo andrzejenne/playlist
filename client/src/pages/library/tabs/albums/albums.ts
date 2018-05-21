@@ -1,16 +1,20 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
 import {NavController, NavParams} from 'ionic-angular';
 import {Album} from "../../../../models/album";
 import {AlbumPage} from "../../../album/album";
 import {Artist} from "../../../../models/artist";
 import {LibraryManagerService} from "../../../../services/LibraryManagerService";
 import {MediaManagerService} from "../../../../services/MediaManagerService";
+import {Subject} from "rxjs/Subject";
+import {Subscription} from "rxjs/Subscription";
+import {PlaylistsManagerService} from "../../../../services/PlaylistsManagerService";
+import {PlayerService} from "../../../../services/PlayerService";
 
 @Component({
   selector: 'albums-tab',
   templateUrl: 'albums.html'
 })
-export class AlbumsTab {
+export class AlbumsTab implements OnDestroy {
 
   all: Artist[] = [];
 
@@ -20,13 +24,18 @@ export class AlbumsTab {
 
   search = '';
 
+  end = false;
+
   private limit = 30;
 
   private offset = 0;
 
-  private end = false;
+  private filterSubject = new Subject();
+
+  private subs: Subscription[] = [];
 
   constructor(params: NavParams,
+              private player: PlayerService,
               private libManager: LibraryManagerService,
               private mediaManager: MediaManagerService,
               private navCtrl: NavController,
@@ -38,6 +47,11 @@ export class AlbumsTab {
   ngAfterViewInit() {
     this.load()
       .then(data => this.ref.detectChanges());
+
+    this.subs.push(
+      this.filterSubject.debounceTime(500)
+        .subscribe(search => this.load())
+    )
   }
 
   getCover(album: Album) {
@@ -45,7 +59,7 @@ export class AlbumsTab {
   }
 
   private load() {
-    return this.libManager.albums(this.limit, this.offset)
+    return this.libManager.albums(this.limit, this.offset, this.search)
       .then(data => {
         console.info('AlbumsPage.data', data);
         if (data.length != this.limit) {
@@ -77,6 +91,21 @@ export class AlbumsTab {
     }
   }
 
+  play(album: Album) {
+    if (!album.media) {
+      this.mediaManager.getByAlbum(album)
+        .then(media => {
+          album.media = media;
+          this.player.setMedia(album.media).playNext();
+          this.openAlbum(album)
+        })
+    }
+    else {
+      this.player.setMedia(album.media).playNext();
+      this.openAlbum(album);
+    }
+  }
+
   openAlbum(album: Album) {
     this.navCtrl.push(AlbumPage, {album: album});
   }
@@ -85,16 +114,12 @@ export class AlbumsTab {
     this.offset = 0;
     this.end = false;
 
-    this.load();
-    /*
-    if (this.search) {
-      this.list = this.downloaded.filter(item => {
-        return item && item.name && item.name.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
-      });
-    }
-    else {
-      this.list = [].concat(this.downloaded);
-    }
-    */
+    this.filterSubject.next(this.search);
   }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
+  }
+
+
 }

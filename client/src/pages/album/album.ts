@@ -17,7 +17,10 @@ export class AlbumPage {
 
   @ViewChild('content') content: Content;
 
-  constructor(public player: PlayerService, public mediaManager: MediaManagerService, @Optional() params: NavParams = null) {
+  constructor(
+    public player: PlayerService,
+    public mediaManager: MediaManagerService,
+    @Optional() params: NavParams = null) {
     if (params) {
       if (params.data.album) {
         this.album = params.data.album;
@@ -26,10 +29,12 @@ export class AlbumPage {
   }
 
   ngAfterViewInit() {
-    this.player.setMedia(this.album.media);
-
-    console.info('AlbumPage@ngAfterViewInit', this.content.getFixedElement().offsetHeight, this.fixed.nativeElement.offsetHeight);
-
-    this.content.setScrollElementStyle('marginTop', this.content.getFixedElement().offsetHeight + 'px');
+    if (!this.album.media) {
+      this.mediaManager.getByAlbum(this.album)
+        .then(media => {
+          this.album.media = media;
+          this.player.setMedia(media);
+        });
+    }
   }
 }

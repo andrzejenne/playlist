@@ -10,18 +10,26 @@
 </ion-header>
 
 <ion-content #content>
-  <div #fixed ion-fixed padding>
-    <h2>{{album.name}}</h2>
-    <div class="cover" *ngIf="album.cover"></div>
+  <div padding>
+    <h2>
+      <span *ngIf="album.artist">{{album.artist?.name}} |</span>
+      {{album.name}}</h2>
+    <div class="cover">
+      <img [src]="mediaManager.getCoverUrl(album)">
+    </div>
+    <p>
+
+    </p>
   </div>
+  <hr>
   <ion-list class="items" *ngIf="album" [reorder]="true" (ionItemReorder)="player.reorderData($event)">
     <ion-item *ngFor="let item of album.media" class="item-component"
               [class.played]="player.wasPlayed(item)"
               [class.current]="player.isCurrent(item)">
 
-      <div class="thumbnail" item-start>
-        <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
-        <span class="duration">{{item.duration | duration}}</span>
+      <div item-first class="duration">
+        <ion-icon name="clock"></ion-icon>
+        {{item.duration | duration}}
       </div>
       <div class="item-content">
         <h2>{{item.name}}</h2>

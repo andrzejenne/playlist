@@ -56,7 +56,8 @@ class MediaController extends Controller
         return MediaCollection::create($args)
             ->whereArtistId($args[0]->aid)
             ->search()
-            ->paginate();
+            ->paginate()
+            ->get();
     }
 
     /**
@@ -68,8 +69,10 @@ class MediaController extends Controller
     {
         return MediaCollection::create($args)
             ->whereAlbumId($args[0]->aid)
+            ->orderBy(Medium::COL_ALBUM_TRACK, 'ASC')
             ->search()
-            ->paginate();
+            ->paginate()
+            ->get();
     }
 
     /**
@@ -82,7 +85,8 @@ class MediaController extends Controller
         return MediaCollection::create($args)
             ->whereGenreId($args[0]->gid)
             ->search()
-            ->paginate();
+            ->paginate()
+            ->get();
     }
 
     /**

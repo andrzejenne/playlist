@@ -4,7 +4,6 @@ import {Medium} from "../models/medium";
 import {MediaFile} from "../models/media-file";
 import {MediaRepository} from "../repositories/media.repository";
 import {Album} from "../models/album";
-import {Cover} from "../models/cover";
 
 @Injectable()
 export class MediaManagerService {
@@ -15,6 +14,10 @@ export class MediaManagerService {
 
   getByProvider(provider: string) {
     return this.repo.getByProvider(provider);
+  }
+
+  getByAlbum(album: Album) {
+    return this.repo.getByAlbum(album.id);
   }
 
   hasVideo(item: Medium) {

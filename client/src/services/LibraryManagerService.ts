@@ -34,8 +34,8 @@ export class LibraryManagerService {
       });
   }
 
-  albums(limit = 50, offset = 0) {
-    return this.repo.albums(limit, offset);
+  albums(limit = 50, offset = 0, search = '') {
+    return this.repo.albums(limit, offset, search);
   }
 
   artists(limit = 50, offset = 0) {
