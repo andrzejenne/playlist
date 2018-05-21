@@ -19,7 +19,8 @@ trait HasSlug
      * @param $slug
      * @return mixed
      */
-    public static function getBySlug($slug) {
+    public static function getBySlug($slug)
+    {
         return static::where(self::COL_SLUG, '=', $slug)->first();
     }
 }

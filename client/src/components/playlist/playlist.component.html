@@ -9,7 +9,7 @@
       </div>
       <h2 style="display: inline-block; vertical-align: middle">
         {{playlist?.name}}
-        <span *ngIf="player.medium && playlist.media.indexOf(player.medium) != -1">
+        <span *ngIf="playlist && player.medium && playlist.media.indexOf(player.medium) != -1">
         |
           {{player?.medium?.name}}
 

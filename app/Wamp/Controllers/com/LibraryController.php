@@ -9,13 +9,8 @@
 namespace BBIT\Playlist\Wamp\Controllers\com;
 
 use BBIT\Playlist\Helpers\Collection\AlbumCollection;
-use BBIT\Playlist\Models\Album;
-use BBIT\Playlist\Models\Artist;
-use BBIT\Playlist\Models\Genre;
-use BBIT\Playlist\Models\MediaFile;
-use BBIT\Playlist\Models\Medium;
-use BBIT\Playlist\Models\Playlist;
-use BBIT\Playlist\Models\User;
+use BBIT\Playlist\Helpers\Collection\ArtistCollection;
+use BBIT\Playlist\Helpers\Collection\GenreCollection;
 use BBIT\Playlist\Wamp\Controllers\Controller;
 use Thruway\ClientSession;
 
@@ -37,34 +32,71 @@ class LibraryController extends Controller
 
     /**
      * @param $args
-     * @return \Illuminate\Http\JsonResponse
+     * @return array|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @throws \Exception
      */
     public function artists($args)
     {
-        return Artist::orderBy(Artist::COL_NAME, 'ASC')
+        return ArtistCollection::create($args)
+            ->search()
+            ->paginate()
             ->get();
     }
 
     /**
      * @param $args
-     * @return \Illuminate\Http\JsonResponse
+     * @return int
+     * @throws \Exception
+     */
+    public function artistsCount($args) {
+        return ArtistCollection::create($args)
+            ->count();
+    }
+
+    /**
+     * @param $args
+     * @return array|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      * @throws \Exception
      */
     public function albums($args)
     {
         return AlbumCollection::create($args)
+            ->search()
+            ->paginate()
             ->get();
     }
 
+    /**
+     * @param $args
+     * @return int
+     * @throws \Exception
+     */
+    public function albumsCount($args) {
+        return AlbumCollection::create($args)
+            ->count();
+    }
 
     /**
      * @param $args
-     * @return \Illuminate\Http\JsonResponse
+     * @return array|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @throws \Exception
      */
     public function genres($args)
     {
-        return Genre::orderBy(Genre::COL_NAME, 'ASC')
+        return GenreCollection::create($args)
+            ->search()
+            ->paginate()
             ->get();
+    }
+
+    /**
+     * @param $args
+     * @return int
+     * @throws \Exception
+     */
+    public function genresCount($args) {
+        return GenreCollection::create($args)
+            ->count();
     }
 
 }

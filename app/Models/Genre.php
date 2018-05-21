@@ -8,55 +8,70 @@ namespace BBIT\Playlist\Models;
  */
 class Genre extends BaseModel
 {
-    
+
     const TABLE = 'genres';
 
     const COL_ID = 'id',
-		  COL_NAME = 'name';
+        COL_NAME = 'name';
 
-	const TCOL_ID = self::TABLE . '.' . self::COL_ID,
-		  TCOL_NAME = self::TABLE . '.' . self::COL_NAME;
+    const TCOL_ID = self::TABLE . '.' . self::COL_ID,
+        TCOL_NAME = self::TABLE . '.' . self::COL_NAME;
 
 
     const REL_ALBUMS = 'albums',
-		  REL_MEDIA = 'media';
+        REL_MEDIA = 'media';
 
     protected $table = self::TABLE;
-    
+
     protected $fillable = [
-		self::COL_NAME,
-	];
+        self::COL_NAME,
+    ];
 
     protected $casts = [
-	];
+    ];
 
     public static $modelRelations = [
-		  self::REL_ALBUMS,
-		  self::REL_MEDIA,
-	];
+        self::REL_ALBUMS,
+        self::REL_MEDIA,
+    ];
 
     protected $fields = [
-		self::COL_ID,
-		self::COL_NAME,
-	];
+        self::COL_ID,
+        self::COL_NAME,
+    ];
 
     public $timestamps = false;
 
-    	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
-	 */
-	public function albums()
-	{
-		return $this->hasMany(Album::class);
-	}
+    protected $appends = [
+        'count'
+    ];
 
-	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
-	 */
-	public function media()
-	{
-		return $this->hasMany(Medium::class);
-	}
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function albums()
+    {
+        return $this->hasMany(Album::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function media()
+    {
+        return $this->hasMany(Medium::class);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCountAttribute()
+    {
+        return [
+            'media' => $this->media()->count(),
+            'albums' => $this->albums()->count()
+        ];
+    }
 
 
 }

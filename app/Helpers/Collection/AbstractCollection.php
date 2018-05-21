@@ -57,6 +57,16 @@ abstract class AbstractCollection implements Arrayable
     }
 
     /**
+     * @return int
+     * @throws \Exception
+     */
+    public final function count()
+    {
+        return $this->getBuilder()
+            ->count();
+    }
+
+    /**
      * @return $this
      */
     abstract public function search();
@@ -67,21 +77,40 @@ abstract class AbstractCollection implements Arrayable
      */
     public function paginate()
     {
-        $this->pagination = $this->getBuilder()->paginate(
-            $this->limit, ['*'], 'page', floor($this->offset / $this->limit) + 1);
+        $this->getBuilder()
+            ->limit($this->limit)
+            ->offset($this->offset);
 
         return $this;
     }
 
     /**
-     * @return array
+     * @return LengthAwarePaginator|Builder[]|\Illuminate\Database\Eloquent\Collection
      * @throws \Exception
      */
     public function toArray()
     {
-        return $this->getBuilder()
-            ->get()
-            ->toArray();
+        if ($this->pagination) {
+            return $this->pagination;
+        } else {
+            return $this->getBuilder()
+                ->get();
+        }
+    }
+
+    /**
+     * @param array $columns
+     * @return array|Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @throws \Exception
+     */
+    public function get($columns = ['*']) {
+        if ($this->pagination) {
+            return $this->pagination->items();
+        }
+        else {
+            return $this->getBuilder()
+                ->get($columns);
+        }
     }
 
     /**

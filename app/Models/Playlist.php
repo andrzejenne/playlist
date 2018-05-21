@@ -43,10 +43,10 @@ class Playlist extends BaseModel
     ];
 
     /**
-    protected $appends = [
-        self::A_COUNT,
-        self::A_DURATION
-    ];
+     * protected $appends = [
+     * self::A_COUNT,
+     * self::A_DURATION
+     * ];
      */
 
     public static $modelRelations = [

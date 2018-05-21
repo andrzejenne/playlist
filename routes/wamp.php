@@ -26,6 +26,9 @@ WampRoute::namespace('com')->group(function(){
     WampRoute::command('library.albums', 'LibraryController@albums');
     WampRoute::command('library.artists', 'LibraryController@artists');
     WampRoute::command('library.genres', 'LibraryController@genres');
+    WampRoute::command('library.albumsCount', 'LibraryController@albumsCount');
+    WampRoute::command('library.artistsCount', 'LibraryController@artistsCount');
+    WampRoute::command('library.genresCount', 'LibraryController@genresCount');
 
     WampRoute::command('media.getBySid', 'MediaController@getBySid');
     WampRoute::command('media.getByArtist', 'MediaController@getByArtist');

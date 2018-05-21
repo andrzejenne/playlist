@@ -9,9 +9,21 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let artist of artists">
+  <ion-list [virtualScroll]="list" approxItemHeight="80px">
+    <ion-item *virtualItem="let artist">
       <h2>{{artist.name}}</h2>
+      <p>
+        {{artist.count.albums}}
+        <ion-icon name="disc" title="albums"></ion-icon>
+        |
+        {{artist.count.media}}
+        <ion-icon name="musical-note" title="media"></ion-icon>
+      </p>
+      <ion-buttons item-end>
+        <button ion-button clear (click)="play(artist)">
+          <ion-icon name="play"></ion-icon>
+        </button>
+      </ion-buttons>
     </ion-item>
   </ion-list>
 </ion-content>

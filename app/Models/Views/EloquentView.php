@@ -104,9 +104,10 @@ abstract class EloquentView
                 $result->each(function (BaseModel $record) {
                     $this->mangleRecord($record);
                 });
-            }
-            else if ($result instanceof Builder) {
-                $this->mangleBuilder($result);
+            } else {
+                if ($result instanceof Builder) {
+                    $this->mangleBuilder($result);
+                }
             }
         }
     }

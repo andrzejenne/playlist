@@ -121,7 +121,6 @@ export class CloudPage implements OnDestroy {
         if (this.offset) {
           this.all = this.all.concat(data);
           this.list = [].concat(this.all);
-          this.ref.detectChanges();
         }
         else {
           this.all = data;

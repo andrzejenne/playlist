@@ -5,9 +5,23 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let album of albums" (click)="openAlbum(album)">
+  <ion-list [virtualScroll]="list" approxItemHeight="80px">
+    <ion-item *virtualItem="let album" (tap)="openAlbum(album)">
       <h2>{{album.name}}</h2>
+      <p>
+        <span *ngIf="album.artist">
+          <ion-icon name="person"></ion-icon>
+          {{album.artist?.name}}
+          |
+        </span>
+        {{album.count}}
+        <ion-icon name="musical-note" title="media"></ion-icon>
+      </p>
+      <ion-buttons item-end>
+        <button ion-button clear (click)="play(album)">
+          <ion-icon name="play"></ion-icon>
+        </button>
+      </ion-buttons>
     </ion-item>
   </ion-list>
 </ion-content>

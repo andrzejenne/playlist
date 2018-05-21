@@ -37,7 +37,7 @@ import {ItemComponent} from "../components/playlist/item/item.component";
 import {LibraryPage} from "../pages/library/library";
 import {PlaylistComponent} from "../components/playlist/playlist.component";
 import {ArtistsTab} from "../pages/library/tabs/artists/artists";
-import {AlbumsPage} from "../pages/library/tabs/albums/albums";
+import {AlbumsTab} from "../pages/library/tabs/albums/albums";
 import {GenresTab} from "../pages/library/tabs/genres/genres";
 import {MediumComponent} from "../components/medium/medium.component";
 import {PlayerControlsComponent} from "../components/player-controls/player-controls.component";
@@ -60,7 +60,7 @@ import {AlbumPage} from "../pages/album/album";
     AlbumPage,
 
     ArtistsTab,
-    AlbumsPage,
+    AlbumsTab,
     GenresTab,
 
     DownloadQueueComponent,
@@ -111,7 +111,7 @@ import {AlbumPage} from "../pages/album/album";
     AlbumPage,
 
     ArtistsTab,
-    AlbumsPage,
+    AlbumsTab,
     GenresTab,
 
     DownloadQueueComponent,

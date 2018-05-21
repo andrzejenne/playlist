@@ -71,6 +71,10 @@ class Album extends BaseModel
         self::REL_COVERS
     ];
 
+    protected $appends = [
+        'count'
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -109,6 +113,14 @@ class Album extends BaseModel
     public function covers()
     {
         return $this->hasMany(Cover::class);
+    }
+
+    /**
+     * @return int
+     */
+    public function getCountAttribute()
+    {
+        return $this->media()->count();
     }
 
 }

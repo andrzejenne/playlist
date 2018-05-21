@@ -4,7 +4,7 @@ import {Album} from "../../models/album";
 import {Artist} from "../../models/artist";
 import {Genre} from "../../models/genre";
 import {ArtistsTab} from "./tabs/artists/artists";
-import {AlbumsPage} from "./tabs/albums/albums";
+import {AlbumsTab} from "./tabs/albums/albums";
 import {GenresTab} from "./tabs/genres/genres";
 import {NavController} from "ionic-angular";
 
@@ -14,9 +14,9 @@ import {NavController} from "ionic-angular";
 })
 export class LibraryPage implements OnDestroy {
 
-  artists: Artist[] = [];
-  albums: Album[] = [];
-  genres: Genre[] = [];
+  artistsCount: number = 0;
+  albumsCount: number = 0;
+  genresCount: number = 0;
 
   tab1Root: any;
   tab2Root: any;
@@ -25,9 +25,9 @@ export class LibraryPage implements OnDestroy {
   // @ViewChild('tabs') tabs: Tabs;
 
   constructor(
-    private libManager: LibraryManagerService,
-    private ref: ChangeDetectorRef,
-    public navCtrl: NavController
+    public libManager: LibraryManagerService,
+    public navCtrl: NavController,
+    private ref: ChangeDetectorRef
   ) {
   }
 
@@ -36,15 +36,13 @@ export class LibraryPage implements OnDestroy {
       .then(
         data => {
           console.info('LibraryPage@ionViewDidLoad', 'libManager@ready', data);
-          this.artists = data.artists;
-          this.albums = data.albums;
-          this.genres = data.genres;
+          this.artistsCount = data.artistsCount;
+          this.albumsCount = data.albumsCount;
+          this.genresCount = data.genresCount;
 
           this.tab1Root = ArtistsTab;
-          this.tab2Root = AlbumsPage;
+          this.tab2Root = AlbumsTab;
           this.tab3Root = GenresTab;
-
-          console.info(this);
 
           this.ref.detectChanges();
         }

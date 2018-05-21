@@ -1,17 +1,14 @@
 import {Injectable} from "@angular/core";
 import {LibraryRepository} from "../repositories/library.repository";
-import {Artist} from "../models/artist";
-import {Album} from "../models/album";
-import {Genre} from "../models/genre";
 
 @Injectable()
 export class LibraryManagerService {
 
-  artists: Artist[];
+  albumsCount: number;
 
-  albums: Album[];
+  artistsCount: number;
 
-  genres: Genre[];
+  genresCount: number;
 
   constructor(private repo: LibraryRepository) {
 
@@ -19,17 +16,34 @@ export class LibraryManagerService {
 
   ready() {
     console.info('LibraryManagerService@ready');
-    return Promise.all([this.repo.albums(), this.repo.artists(), this.repo.genres()])
+    return Promise.all([
+      this.repo.albumsCount(),
+      this.repo.artistsCount(),
+      this.repo.genresCount()
+    ])
       .then(data => {
-        this.albums = <Album[]>data[0];
-        this.artists = <Artist[]>data[1];
-        this.genres = <Genre[]>data[2];
+        this.albumsCount = data[0];
+        this.artistsCount = data[1];
+        this.genresCount = data[2];
 
         return {
-          artists: this.artists,
-          albums: this.albums,
-          genres: this.genres
+          artistsCount: this.artistsCount,
+          albumsCount: this.albumsCount,
+          genresCount: this.genresCount
         };
       });
   }
+
+  albums(limit = 50, offset = 0) {
+    return this.repo.albums(limit, offset);
+  }
+
+  artists(limit = 50, offset = 0) {
+    return this.repo.artists(limit, offset);
+  }
+
+  genres(limit = 50, offset = 0) {
+    return this.repo.genres(limit, offset);
+  }
+
 }
