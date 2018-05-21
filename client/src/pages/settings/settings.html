@@ -22,6 +22,11 @@
       <ion-checkbox [(ngModel)]="settings.player.autoplay.lastPosition">
       </ion-checkbox>
     </ion-item>
+    <ion-item>
+      <ion-label>Make playlist available offline</ion-label>
+      <ion-checkbox [(ngModel)]="settings.playlists.offline">
+      </ion-checkbox>
+    </ion-item>
   </ion-list>
 
   <button ion-button color="primary" (tap)="onApplyTap()">

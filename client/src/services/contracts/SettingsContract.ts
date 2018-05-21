@@ -28,5 +28,11 @@ export class SettingsContract {
     auto: false,
     from: 0,
     till: 0
-  }
+  };
+
+  playlist?: {
+    offline?: boolean
+  } = {
+    offline: false
+  };
 }

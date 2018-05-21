@@ -12,6 +12,10 @@ $bgColor: #111122;
       background-color: rgba(255, 255, 255, 0.08) !important;
     }
 
+    ion-item-sliding {
+      background-color: $bgColor !important;
+    }
+
     .checkbox-md .checkbox-icon,
     .checkbox-ios .checkbox-icon,
     .button-md,
