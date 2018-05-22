@@ -1,0 +1,10 @@
+{
+  "oauth": {
+    "googleId": "%PLATFORM%_GOOGLE_ID"
+  },
+  "auth": {
+    "redirectUrl": "WEB_APP_URL",
+    "requestUrl": "/auth/social/",
+    "userUrl": "/api/user/"
+  }
+}
