@@ -33,7 +33,12 @@ gulp.task('config', function (cb) {
   var jsonStr = fs.readFileSync('./src/config.json').toString();
 
   if (!jsonStr) {
-    console.error('invalid config.json');
+    console.error('ERROR:', 'invalid config.json');
+    return cb();
+  }
+
+  if (!process.env.PLATFORM) {
+    console.error('ERROR:', 'PLATFORM not defined');
     return cb();
   }
 

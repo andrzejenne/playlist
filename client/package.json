@@ -10,7 +10,7 @@
     "lint": "ionic-app-scripts lint",
     "ionic:build": "ionic-app-scripts build",
     "ionic:serve": "ionic-app-scripts serve",
-    "build:android:dev": "PLATFORM=android gulp && cordova build android --debug",
+    "build:android:dev": "PLATFORM=android gulp && cordova build android --debug && jarsigner -verbose -keystore ./keystore/android-debug.jks platforms/android/app/build/outputs/apk/debug/app-debug.apk debug",
     "build:android": "PLATFORM=android gulp && cordova build android --release",
     "run:android": "PLATFORM=android gulp && cordova run android --stacktrace --info --debug"
   },
