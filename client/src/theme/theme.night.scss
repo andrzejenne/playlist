@@ -8,6 +8,19 @@ $bgColor: #111122;
 .night-mode {
   .mode-color {
 
+    button.fab {
+      background-color: $knobColor !important;
+    }
+
+    .tabbar {
+      background-color: $bgColor !important;
+      .badge {
+        background-color: $knobColor !important;
+        opacity: .7;
+        color: $bgColor;
+      }
+    }
+
     hr {
       background-color: rgba(255, 255, 255, 0.08) !important;
     }
@@ -73,6 +86,7 @@ $bgColor: #111122;
     }
 
     .content {
+      color: $color !important;
       background: #000011 !important;
       .label,
       ion-icon {

@@ -3,10 +3,25 @@ $knobColor: #ffd000;
 $primaryButton: #ffd000;
 $removeButton: #bd1900;
 $dayModeIconColor: $knobColor;
+$bgColor: #ff6600;
 
 .day-mode {
 
   .mode-color {
+
+    .tabbar {
+      background-color: $bgColor !important;
+
+      .badge {
+        background-color: $knobColor !important;
+        opacity: .7;
+        color: $bgColor;
+      }
+    }
+
+    input {
+      color: $color;
+    }
 
     player-controls-component {
       button {

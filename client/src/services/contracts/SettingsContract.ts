@@ -30,7 +30,7 @@ export class SettingsContract {
     till: 0
   };
 
-  playlist?: {
+  playlists?: {
     offline?: boolean
   } = {
     offline: false

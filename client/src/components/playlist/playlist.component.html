@@ -32,7 +32,7 @@
 <ion-content #content class="mode-color">
   <ion-list class="items" *ngIf="playlist" [reorder]="true" (ionItemReorder)="player.reorderData($event)">
     <ion-item-sliding *ngFor="let item of player.mediaList">
-      <ion-item *ngIf="item" class="item-component"
+      <ion-item *ngIf="item" class="item-component item-small"
                 [class.played]="player.wasPlayed(item)"
                 [class.current]="player.isCurrent(item)"
                 (press)="selector.toggleSelect(item)">
@@ -46,28 +46,26 @@
           <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
           <span class="duration">{{item.duration | duration}}</span>
         </div>
-        <div class="item-content">
+        <ion-label>
           <h2>{{item.name}}</h2>
           <p>
             <ion-icon name="contact" *ngIf="description"></ion-icon>
             {{description}}
           </p>
-        </div>
-        <ion-buttons end *ngIf="player.isCurrent(item)">
-          <button ion-button clear>
+          <ion-buttons end *ngIf="player.isCurrent(item)">
             <musical-spinner *ngIf="player.status.playing" color="red"></musical-spinner>
-          </button>
-        </ion-buttons>
-        <ion-buttons end *ngIf="!player.isCurrent(item)">
-          <button ion-button color="primary" clear (click)="player.playFirst(item)">
-            <ion-icon name="play">
-              <sub>1</sub>
-            </ion-icon>
-          </button>
-          <button ion-button color="primary" clear (click)="player.playItem(item)">
-            <ion-icon name="play"></ion-icon>
-          </button>
-        </ion-buttons>
+          </ion-buttons>
+          <ion-buttons end *ngIf="!player.isCurrent(item)" class="fabs">
+            <button ion-fab color="primary" class="small" (click)="player.playFirst(item)">
+              <ion-icon name="play">
+                <sub>1</sub>
+              </ion-icon>
+            </button>
+            <button ion-fab color="primary" class="small" (click)="player.playItem(item)">
+              <ion-icon name="play"></ion-icon>
+            </button>
+          </ion-buttons>
+        </ion-label>
       </ion-item>
       <ion-item-options side="right">
         <button ion-button color="danger" (click)="removeItem(item)">

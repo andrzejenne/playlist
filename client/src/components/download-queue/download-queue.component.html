@@ -1,7 +1,9 @@
 <ion-header class="mode-color">
   <ion-navbar>
     <ion-buttons start>
-      <button ion-button (click)="dismiss()">Close</button>
+      <button ion-button (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </button>
     </ion-buttons>
     <ion-title>Download Queue</ion-title>
   </ion-navbar>
@@ -23,5 +25,5 @@
     </ion-item>
   </ion-list>
 
-  <button ion-button color="danger" full (click)="dismiss()">Close</button>
+  <!--<button ion-button color="danger" full (click)="dismiss()">Close</button>-->
 </ion-content>

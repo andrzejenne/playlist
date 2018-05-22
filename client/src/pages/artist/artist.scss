@@ -1,18 +1,8 @@
-album-page {
+artist-page {
   .duration {
     font-size: 1.4rem;
     color: #888;
-    position: relative;
-
-    span {
-      position: relative;
-      z-index: 1;
-    }
-    musical-spinner {
-      position: absolute;
-      top: 0; left: 50%;
-      margin-left: -12px;
-    }
+    float: right;
   }
 
   .cover {
@@ -29,8 +19,4 @@ album-page {
     }
   }
 
-  button {
-    display: inline-block;
-    vertical-align: middle;
-  }
 }

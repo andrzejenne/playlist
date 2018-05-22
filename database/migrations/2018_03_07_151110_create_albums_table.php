@@ -17,6 +17,7 @@ class CreateAlbumsTable extends Migration
             $table->increments('id');
             $table->string('name')->index();
             $table->smallInteger('released')->unsigned()->nullable();
+            $table->unsignedInteger('duration')->nullable();
             $table->integer('genre_id')->unsigned()->nullable();
             $table->integer('artist_id')->unsigned()->nullable();
 

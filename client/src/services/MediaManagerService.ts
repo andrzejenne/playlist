@@ -4,6 +4,8 @@ import {Medium} from "../models/medium";
 import {MediaFile} from "../models/media-file";
 import {MediaRepository} from "../repositories/media.repository";
 import {Album} from "../models/album";
+import {Artist} from "../models/artist";
+import {Genre} from "../models/genre";
 
 @Injectable()
 export class MediaManagerService {
@@ -18,6 +20,14 @@ export class MediaManagerService {
 
   getByAlbum(album: Album) {
     return this.repo.getByAlbum(album.id);
+  }
+
+  getByArtist(artist: Artist) {
+    return this.repo.getByArtist(artist.id);
+  }
+
+  getByGenre(genre: Genre) {
+    return this.repo.getByGenre(genre.id);
   }
 
   hasVideo(item: Medium) {
@@ -77,6 +87,10 @@ export class MediaManagerService {
     }
 
     return 'assets/imgs/cover.png';
+  }
+
+  getArtistThumbnailUrl(artist: Artist, host = this.serverManager.host) {
+    return 'assets/imgs/cover.png'; // @todo - add artists image support
   }
 
   static getThumbnail(item: Medium) {

@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {LibraryRepository} from "../repositories/library.repository";
+import {Album} from "../models/album";
 
 @Injectable()
 export class LibraryManagerService {
@@ -38,12 +39,12 @@ export class LibraryManagerService {
     return this.repo.albums(limit, offset, search);
   }
 
-  artists(limit = 50, offset = 0) {
-    return this.repo.artists(limit, offset);
+  artists(limit = 50, offset = 0, search = '') {
+    return this.repo.artists(limit, offset, search);
   }
 
-  genres(limit = 50, offset = 0) {
-    return this.repo.genres(limit, offset);
+  genres(limit = 50, offset = 0, search = '') {
+    return this.repo.genres(limit, offset, search);
   }
 
 }

@@ -10,7 +10,6 @@ namespace BBIT\Playlist\Helpers\Collection;
 
 use BBIT\Playlist\Models\Album;
 use BBIT\Playlist\Models\Artist;
-use BBIT\Playlist\Models\MediaFile;
 use BBIT\Playlist\Models\Medium;
 
 /**

@@ -11,23 +11,44 @@
 
 <ion-content class="mode-color">
   <ion-list [virtualScroll]="list" approxItemHeight="80px">
-    <ion-item *virtualItem="let artist">
-      <h2>{{artist.name}}</h2>
-      <p>
-        {{artist.count.albums}}
-        <ion-icon name="disc" title="albums"></ion-icon>
-        |
-        {{artist.count.media}}
-        <ion-icon name="musical-note" title="media"></ion-icon>
-      </p>
-      <ion-buttons item-end>
-        <button ion-button clear (click)="play(artist)">
-          <ion-icon name="play"></ion-icon>
-        </button>
-      </ion-buttons>
+    <ion-item *virtualItem="let artist" class="item-small" (tap)="openArtist(artist)">
+      <div class="thumbnail" item-start>
+        <img [src]="getCover(artist)">
+        <span class="duration" *ngIf="artist.duration">
+          {{artist.duration | duration}}
+        </span>
+      </div>
+      <ion-label>
+        <h2>{{artist.name}}</h2>
+        <p>
+          {{artist.count.albums}}
+          <ion-icon name="disc" title="albums"></ion-icon>
+          <br>
+          {{artist.count.media}}
+          <ion-icon name="musical-note" title="media"></ion-icon>
+        </p>
+      </ion-label>
+      <!--<ion-buttons item-end>-->
+        <!--<button ion-button clear (click)="play(artist)">-->
+          <!--<ion-icon name="play"></ion-icon>-->
+        <!--</button>-->
+      <!--</ion-buttons>-->
     </ion-item>
   </ion-list>
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </ion-content>
+
+<ion-footer class="mode-color">
+  <ion-toolbar>
+    <ion-item class="clear">
+      <ion-icon item-start name="search"></ion-icon>
+      <ion-input icon-left type="text" placeholder="search" [(ngModel)]="search" (ionChange)="filter()">
+      </ion-input>
+      <button item-end ion-button clear *ngIf="search" (click)="search=''">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

@@ -45,6 +45,7 @@ import {PlayerContainerComponent} from "../components/player-container/player-co
 import {CheckerComponent} from "../components/checker/checker.component";
 import {MusicalSpinnerComponent} from "../components/musical-spinner/musical-spinner.component";
 import {AlbumPage} from "../pages/album/album";
+import {ArtistPage} from "../pages/artist/artist";
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import {AlbumPage} from "../pages/album/album";
     LibraryPage,
 
     AlbumPage,
+    ArtistPage,
 
     ArtistsTab,
     AlbumsTab,
@@ -109,6 +111,7 @@ import {AlbumPage} from "../pages/album/album";
     LibraryPage,
 
     AlbumPage,
+    ArtistPage,
 
     ArtistsTab,
     AlbumsTab,

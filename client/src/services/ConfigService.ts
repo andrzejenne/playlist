@@ -16,7 +16,7 @@ export class ConfigService {
     store.get('settings')
       .then(settings => {
         if (settings) {
-          this.settings$.next(settings);
+          this.settings$.next(new SettingsContract(settings));
         }
         else {
           this.settings$.next(new SettingsContract());

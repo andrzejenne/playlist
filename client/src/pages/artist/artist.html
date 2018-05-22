@@ -1,12 +1,29 @@
 <ion-header class="mode-color">
   <ion-navbar>
-    <ion-title>Albums</ion-title>
+    <button ion-button menuToggle="menu">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      {{artist.name}}
+    </ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content class="mode-color">
-  <ion-list [virtualScroll]="list" approxItemHeight="80px">
-    <ion-item *virtualItem="let album" class="item-small">
+<ion-content #content class="mode-color">
+  <div padding>
+    <h2>
+      {{artist.name}}
+    </h2>
+    <div class="cover">
+      <img [src]="mediaManager.getArtistThumbnailUrl(artist)">
+    </div>
+    <p>
+<!-- @todo artist description -->
+    </p>
+  </div>
+  <hr>
+  <ion-list>
+    <ion-item *ngFor="let album of artist.albums" class="item-small">
       <div class="thumbnail" item-start (tap)="openAlbum(album)">
         <img [src]="getCover(album)">
         <span class="duration" *ngIf="album.duration">
@@ -32,20 +49,4 @@
       </ion-buttons>
     </ion-item>
   </ion-list>
-  <ion-infinite-scroll *ngIf="!end" (ionInfinite)="doInfinite($event)">
-    <ion-infinite-scroll-content></ion-infinite-scroll-content>
-  </ion-infinite-scroll>
 </ion-content>
-
-<ion-footer class="mode-color">
-  <ion-toolbar>
-    <ion-item class="clear">
-      <ion-icon item-start name="search"></ion-icon>
-      <ion-input icon-left type="text" placeholder="search" [(ngModel)]="search" (ionChange)="filter()">
-      </ion-input>
-      <button item-end ion-button clear *ngIf="search" (click)="search=''">
-        <ion-icon name="close"></ion-icon>
-      </button>
-    </ion-item>
-  </ion-toolbar>
-</ion-footer>

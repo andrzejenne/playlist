@@ -68,6 +68,9 @@ export class ThePlaylist {
 
         if (settings.dayMode) {
           this.dayMode = settings.dayMode.value;
+          if (this.ionApp) {
+            this.setDayModeClass();
+          }
         }
       }
     });
@@ -81,7 +84,9 @@ export class ThePlaylist {
       this.prepareAuth();
 
       this.ionApp = document.getElementsByTagName('ion-app')[0];
-
+      if (this.settings) {
+        this.setDayModeClass();
+      }
     });
 
   }
@@ -105,9 +110,7 @@ export class ThePlaylist {
   onDayModeChange() {
     this.dayModeIcon = this.dayMode ? 'sunny' : 'moon';
 
-    this.ionApp.classList.remove(this.dayModeClass);
-    this.dayModeClass = this.dayMode ? 'day-mode' : 'night-mode';
-    this.ionApp.classList.add(this.dayModeClass);
+    this.setDayModeClass();
 
     this.settings.dayMode.value = this.dayMode;
     this.config.save(this.settings);
@@ -116,6 +119,12 @@ export class ThePlaylist {
   switchServer(host: string) {
     this.host = host;
     this.auth.authenticateAndConnectToHost(host);
+  }
+
+  setDayModeClass() {
+    this.dayModeClass && this.ionApp.classList.remove(this.dayModeClass);
+    this.dayModeClass = this.dayMode ? 'day-mode' : 'night-mode';
+    this.ionApp.classList.add(this.dayModeClass);
   }
 
   // private onAuthenticated(response) {

@@ -41,10 +41,22 @@ $colors: (
 // App iOS Variables
 // --------------------------------------------------
 // iOS only Sass variables can go here
+//$item-ios-padding-left: 4px;
+//$item-ios-padding-right: 8px;
+//$item-ios-padding-top: 2px;
+//$item-ios-padding-bottom: 2px;
+$button-ios-padding-end: 4px;
 
 // App Material Design Variables
 // --------------------------------------------------
 // Material Design only Sass variables can go here
+//$item-md-padding-left: 4px;
+//$item-md-padding-right: 8px;
+//$item-md-padding-top: 2px;
+//$item-md-padding-bottom: 2px;
+$button-md-padding-end: 4px;
+
+$range-md-slider-height: 24px;
 
 // App Windows Variables
 // --------------------------------------------------

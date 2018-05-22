@@ -12,4 +12,7 @@ export class Album extends Model {
   genre?: Genre;
   media?: Medium[];
   covers?: Cover[];
+
+  duration?: number;
+
 }

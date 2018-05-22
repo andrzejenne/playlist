@@ -19,13 +19,14 @@
   <!--<playlist-component ion-fixed *ngIf="playlist" [playlist]="playlist"></playlist-component>-->
   <ion-list>
     <ion-item *ngFor="let playlist of playlists"
-              class="playlist-item"
+              class="playlist-item item-small"
               (press)="selector.toggleSelect(playlist)"
               [class.selected]="plManager.playlist == playlist">
-      <checker item-left (tap)="selector.toggleSelect(playlist)"
+      <checker item-start (tap)="selector.toggleSelect(playlist)"
                [selected]="selector.isSelected(playlist)" [visible]="selector.length"></checker>
-      <div class="item-content"
-           (tap)="plManager.toggleSelectPlaylist(playlist)">
+
+      <ion-label
+        (tap)="plManager.toggleSelectPlaylist(playlist)">
         <h2>
           {{playlist.name}}
         </h2>
@@ -38,15 +39,17 @@
             {{playlist.duration | duration}}
           </span>
         </p>
-      </div>
+      </ion-label>
+
       <ion-buttons item-end>
         <button ion-button clear (tap)="shuffle(playlist)">
           <ion-icon name="shuffle"></ion-icon>
         </button>
-        <button ion-button clear (tap)="play(playlist)">
+        <button ion-fab class="small" (tap)="play(playlist)">
           <ion-icon name="play"></ion-icon>
         </button>
       </ion-buttons>
+
     </ion-item>
   </ion-list>
 

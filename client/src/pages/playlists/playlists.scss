@@ -8,7 +8,7 @@ page-playlists {
   .playlist-item {
     ion-buttons {
       ion-icon {
-        font-size: 200%;
+        font-size: 150%;
       }
     }
     h2 {
@@ -21,6 +21,12 @@ page-playlists {
     .item-inner {
       margin-left: 0 !important;
     }
+
+    ion-buttons {
+      button {
+        vertical-align: middle;
+      }
+    }
   }
 
   .playlist-item.selected {
@@ -31,7 +37,7 @@ page-playlists {
   ion-navbar {
     ion-buttons {
       ion-icon {
-        font-size: 200%;
+        font-size: 150%;
       }
     }
   }
@@ -40,11 +46,6 @@ page-playlists {
     h2 {
       font-size: 90%;
     }
-  }
-
-  ion-icon sub {
-    font-size: 66%;
-    margin-left: -6px;
   }
 
   .video {

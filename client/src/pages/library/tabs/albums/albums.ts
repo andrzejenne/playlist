@@ -7,7 +7,6 @@ import {LibraryManagerService} from "../../../../services/LibraryManagerService"
 import {MediaManagerService} from "../../../../services/MediaManagerService";
 import {Subject} from "rxjs/Subject";
 import {Subscription} from "rxjs/Subscription";
-import {PlaylistsManagerService} from "../../../../services/PlaylistsManagerService";
 import {PlayerService} from "../../../../services/PlayerService";
 
 @Component({
@@ -92,22 +91,11 @@ export class AlbumsTab implements OnDestroy {
   }
 
   play(album: Album) {
-    if (!album.media) {
-      this.mediaManager.getByAlbum(album)
-        .then(media => {
-          album.media = media;
-          this.player.setMedia(album.media).playNext();
-          this.openAlbum(album)
-        })
-    }
-    else {
-      this.player.setMedia(album.media).playNext();
-      this.openAlbum(album);
-    }
+    this.openAlbum(album, true);
   }
 
-  openAlbum(album: Album) {
-    this.navCtrl.push(AlbumPage, {album: album});
+  openAlbum(album: Album, play = false) {
+    this.navCtrl.push(AlbumPage, {album: album, play: play});
   }
 
   filter() {

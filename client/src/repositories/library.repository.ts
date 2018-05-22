@@ -7,16 +7,16 @@ import {Genre} from "../models/genre";
 @Injectable()
 export class LibraryRepository extends WampRepository {
 
-  public artists(limit: number, offset: number) {
-    return this.call<Artist[]>('com.library.artists', [{limit: limit, offset: offset}]);
+  public artists(limit: number, offset: number, search: string) {
+    return this.call<Artist[]>('com.library.artists', [{limit: limit, offset: offset, search: search}]);
   }
 
   public albums(limit: number, offset: number, search: string) {
     return this.call<Album[]>('com.library.albums', [{limit: limit, offset: offset, search: search}]);
   }
 
-  public genres(limit: number, offset: number) {
-    return this.call<Genre[]>('com.library.genres', [{limit: limit, offset: offset}]);
+  public genres(limit: number, offset: number, search: string) {
+    return this.call<Genre[]>('com.library.genres', [{limit: limit, offset: offset, search: search}]);
   }
 
   public artistsCount() {

@@ -1,13 +1,19 @@
-import {ChangeDetectorRef, Component} from "@angular/core";
-import {NavParams} from "ionic-angular";
+import {ChangeDetectorRef, Component, OnDestroy} from "@angular/core";
+import {NavController, NavParams} from "ionic-angular";
 import {Artist} from "../../../../models/artist";
 import {LibraryManagerService} from "../../../../services/LibraryManagerService";
+import {Album} from "../../../../models/album";
+import {MediaManagerService} from "../../../../services/MediaManagerService";
+import {Subject} from "rxjs/Subject";
+import {Subscription} from "rxjs/Subscription";
+import {PlayerService} from "../../../../services/PlayerService";
+import {ArtistPage} from "../../../artist/artist";
 
 @Component({
   selector: 'artists-tab',
   templateUrl: 'artists.html'
 })
-export class ArtistsTab {
+export class ArtistsTab implements OnDestroy {
 
   all: Artist[] = [];
 
@@ -15,23 +21,43 @@ export class ArtistsTab {
 
   count: number;
 
+  search = '';
+
   private limit = 30;
 
   private offset = 0;
 
   private end = false;
 
-  constructor(params: NavParams, private libManager: LibraryManagerService, private ref: ChangeDetectorRef) {
+  private filterSubject = new Subject();
+
+  private subs: Subscription[] = [];
+
+  constructor(params: NavParams,
+              private navCtrl: NavController,
+              private player: PlayerService,
+              private mediaManager: MediaManagerService,
+              private libManager: LibraryManagerService,
+              private ref: ChangeDetectorRef) {
     this.count = params.data || [];
   }
 
   ngAfterViewInit() {
     this.load()
       .then(data => this.ref.detectChanges());
+
+    this.subs.push(
+      this.filterSubject.debounceTime(500)
+        .subscribe(search => this.load())
+    )
+  }
+
+  getCover(artist: Artist) {
+    return this.mediaManager.getArtistThumbnailUrl(artist);
   }
 
   private load() {
-    return this.libManager.artists(this.limit, this.offset)
+    return this.libManager.artists(this.limit, this.offset, this.search)
       .then(data => {
         console.info('ArtistsTab.data', data);
         if (data.length != this.limit) {
@@ -49,6 +75,32 @@ export class ArtistsTab {
       });
   }
 
+  // play(artist: Artist) {
+  //   if (!artist.media) {
+  //     this.mediaManager.getByArtist(artist)
+  //       .then(media => {
+  //         artist.media = media;
+  //         this.player.setMedia(artist.media).playNext();
+  //         this.openArtist(artist)
+  //       })
+  //   }
+  //   else {
+  //     this.player.setMedia(artist.media).playNext();
+  //     this.openArtist(artist);
+  //   }
+  // }
+
+  openArtist(artist: Artist) {
+    this.navCtrl.push(ArtistPage, {artist: artist});
+  }
+
+  filter() {
+    this.offset = 0;
+    this.end = false;
+
+    this.filterSubject.next(this.search);
+  }
+
   doInfinite(infiniteScroll: any) {
     console.log('doInfinite, start is currently ' + this.offset);
 
@@ -62,4 +114,9 @@ export class ArtistsTab {
       infiniteScroll.complete();
     }
   }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
+  }
+
 }

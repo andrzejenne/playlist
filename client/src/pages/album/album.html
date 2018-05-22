@@ -13,7 +13,8 @@
   <div padding>
     <h2>
       <span *ngIf="album.artist">{{album.artist?.name}} |</span>
-      {{album.name}}</h2>
+      {{album.name}}
+    </h2>
     <div class="cover">
       <img [src]="mediaManager.getCoverUrl(album)">
     </div>
@@ -22,37 +23,40 @@
     </p>
   </div>
   <hr>
-  <ion-list class="items" *ngIf="album" [reorder]="true" (ionItemReorder)="player.reorderData($event)">
+  <ion-list class="items" *ngIf="album">
     <ion-item *ngFor="let item of album.media" class="item-component"
               [class.played]="player.wasPlayed(item)"
-              [class.current]="player.isCurrent(item)">
-
-      <div item-first class="duration">
-        <ion-icon name="clock"></ion-icon>
-        {{item.duration | duration}}
-      </div>
-      <div class="item-content">
-        <h2>{{item.name}}</h2>
+              [class.current]="player.isCurrent(item)"
+              (tap)="play(item)">
+      <ion-label>
+        <h2>
+          {{item.name}}
+        </h2>
         <p>
           <ion-icon name="contact" *ngIf="description"></ion-icon>
           {{description}}
         </p>
-      </div>
-      <ion-buttons end *ngIf="player.isCurrent(item)">
-        <button ion-button clear>
-          <musical-spinner *ngIf="player.status.playing" color="red"></musical-spinner>
-        </button>
-      </ion-buttons>
-      <ion-buttons end *ngIf="!player.isCurrent(item)">
-        <button ion-button color="primary" clear (click)="player.playFirst(item)">
-          <ion-icon name="play">
-            <sub>1</sub>
-          </ion-icon>
-        </button>
-        <button ion-button color="primary" clear (click)="player.playItem(item)">
-          <ion-icon name="play"></ion-icon>
-        </button>
-      </ion-buttons>
+      </ion-label>
+
+      <span item-end class="duration">
+            <!--<ion-icon name="clock"></ion-icon>-->
+        <span>
+            {{item.duration | duration}}
+        </span>
+
+        <musical-spinner *ngIf="player.isCurrent(item)" color="red"></musical-spinner>
+      </span>
+
     </ion-item>
   </ion-list>
+
+  <ion-fab right bottom>
+    <button ion-fab (click)="play()" *ngIf="!playing">
+      <ion-icon name="play"></ion-icon>
+    </button>
+    <button ion-fab (click)="pause()" *ngIf="playing">
+      <ion-icon name="pause"></ion-icon>
+    </button>
+  </ion-fab>
+
 </ion-content>
