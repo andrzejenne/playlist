@@ -14,6 +14,7 @@ import {WampService} from "../../services/WampService";
 import {LibraryPage} from "../../pages/library/library";
 import {CloudPage} from "../../pages/cloud/cloud";
 import {PlayerService} from "../../services/PlayerService";
+import {MediaManagerService} from "../../services/MediaManagerService";
 
 @Component({
   selector: 'playlist-component',
@@ -60,6 +61,7 @@ export class PlaylistComponent implements OnDestroy {
 
   constructor(
     public selector: SelectorService<Medium>,
+    public mediaManager: MediaManagerService,
     private player: PlayerService,
     private storage: Storage,
     private plManager: PlaylistsManagerService,

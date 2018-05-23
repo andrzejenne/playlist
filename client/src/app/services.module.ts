@@ -22,6 +22,7 @@ import {MediaRepository} from "../repositories/media.repository";
 import {OfflineManagerService} from "../services/OfflineManagerService";
 import {CloudRepository} from "../repositories/cloud.repository";
 import {PlayerService} from "../services/PlayerService";
+import {AppRepository} from "../repositories/app.repository";
 
 @NgModule({
   imports: [
@@ -52,6 +53,7 @@ import {PlayerService} from "../services/PlayerService";
     PlaylistsRepository,
     LibraryRepository,
     MediaRepository,
+    AppRepository,
 
   ],
   exports: [

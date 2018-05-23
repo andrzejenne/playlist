@@ -6,11 +6,16 @@ import {MediaRepository} from "../repositories/media.repository";
 import {Album} from "../models/album";
 import {Artist} from "../models/artist";
 import {Genre} from "../models/genre";
+import {AppRepository} from "../repositories/app.repository";
 
 @Injectable()
 export class MediaManagerService {
 
-  constructor(private serverManager: ServerManagerService, private repo: MediaRepository) {
+  constructor(
+    private serverManager: ServerManagerService,
+    private repo: MediaRepository,
+    private appRepo: AppRepository
+  ) {
 
   }
 
@@ -91,6 +96,10 @@ export class MediaManagerService {
 
   getArtistThumbnailUrl(artist: Artist, host = this.serverManager.host) {
     return 'assets/imgs/artist.png'; // @todo - add artists image support
+  }
+
+  getProviders() {
+    return this.appRepo.providers();
   }
 
   static getThumbnail(item: Medium) {

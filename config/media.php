@@ -23,5 +23,14 @@ return [
     'library' => [
         'ext' => 'mp3,aac,ogg',
         'path' => env('MEDIA_LIBRARY_PATH', null)
+    ],
+
+    'ionic' => [
+        'youtube' => [
+            'component' => 'cloud'
+        ],
+        'library' => [
+            'component' => 'library'
+        ]
     ]
 ];

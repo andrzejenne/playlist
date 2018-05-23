@@ -35,6 +35,8 @@ WampRoute::namespace('com')->group(function(){
     WampRoute::command('media.getByAlbum', 'MediaController@getByAlbum');
     WampRoute::command('media.getByGenre', 'MediaController@getByGenre');
     WampRoute::command('media.getByProvider', 'MediaController@getByProvider');
+
+    WampRoute::command('app.providers', 'AppController@providers');
 });
 
 WampRoute::namespace('sub')->group(function(){

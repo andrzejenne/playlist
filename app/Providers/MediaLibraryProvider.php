@@ -9,7 +9,6 @@
 namespace BBIT\Playlist\Providers;
 
 use BBIT\Playlist\Contracts\MediaProviderContract;
-use BBIT\Playlist\Services\MediaProviders\YouTubeService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
@@ -68,6 +67,18 @@ class MediaLibraryProvider extends ServiceProvider
         }
 
         return $this->services[$alias];
+    }
+
+    /**
+     * @return MediaProviderContract[]
+     */
+    public function getServices() {
+        $services = [];
+        foreach ($this->bindings as $key => $alias) {
+            $services[$key] = $this->getService($key);
+        }
+
+        return $services;
     }
 
     /**

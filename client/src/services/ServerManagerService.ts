@@ -7,6 +7,7 @@ import {ErrorReporting} from "./ErrorReporting";
 import autobahn from 'autobahn';
 import {ConfigService} from "./ConfigService";
 import {SettingsContract} from "./contracts/SettingsContract";
+import {Provider} from "../models/provider";
 
 @Injectable()
 export class ServerManagerService {
@@ -21,6 +22,8 @@ export class ServerManagerService {
   servers: { [index: string]: Server } = {};
 
   servers$ = new BehaviorSubject<{ [index: string]: Server }>(this.servers);
+
+  providers: {[index: string]: Provider[]} = {};
 
   private sessions = {};
 
@@ -90,6 +93,16 @@ export class ServerManagerService {
       this.config.save(this.settings);
     }
     return this;
+  }
+
+  setProviders(providers: Provider[], host = this.host) {
+    this.providers[host] = providers;
+
+    return this;
+  }
+
+  getProviders(host = this.host) {
+    return this.providers[host];
   }
 
   add(server: Server) {

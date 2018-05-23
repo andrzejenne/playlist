@@ -46,7 +46,7 @@
           </p>
         </ion-label>
         <ion-buttons item-end>
-          <button ion-fab *ngIf="playlist" color="secondary" class="small" (click)="addToPlaylist(item)">
+          <button ion-fab *ngIf="playlist && !inPlaylist(item)" color="secondary" class="small" (click)="addToPlaylist(item)">
             <ion-icon name="add"></ion-icon>
           </button>
           <button ion-fab *ngIf="!playlist && !player.isCurrent(item)" color="primary" class="small" (click)="player.playItem(item)">

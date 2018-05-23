@@ -17,7 +17,9 @@ use BBIT\Playlist\Models\Medium;
  */
 abstract class MediaProviderContract
 {
-    const KEY_DELETE = 'delete',
+    const
+        KEY_NAME = 'name',
+        KEY_DELETE = 'delete',
         KEY_SEARCH = 'search';
 
     abstract public function getName();
@@ -27,7 +29,8 @@ abstract class MediaProviderContract
     public final function getConfig()
     {
         return [
-            self::KEY_SEARCH => false,
+            self::KEY_NAME => $this->getName(),
+            self::KEY_SEARCH => $this->canSearch(),
             self::KEY_DELETE => $this->canDelete()
         ];
     }

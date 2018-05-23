@@ -155,6 +155,7 @@ export class WampService {
       if (currentServer) {
         this.serverSwitched.next([currentServer, server]);
       }
+
       this.connected.next(host);
     });
 

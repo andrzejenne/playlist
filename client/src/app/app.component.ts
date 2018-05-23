@@ -17,6 +17,9 @@ import {Insomnia} from "@ionic-native/insomnia";
 import {ServerManagerService} from "../services/ServerManagerService";
 import {ConfigService} from "../services/ConfigService";
 import {SettingsContract} from "../services/contracts/SettingsContract";
+import {MediaManagerService} from "../services/MediaManagerService";
+import {WampService} from "../services/WampService";
+import {Provider} from "../models/provider";
 
 @Component({
   templateUrl: 'app.html'
@@ -38,6 +41,8 @@ export class ThePlaylist {
 
   servers: string[] = [];
 
+  providers: Provider[] = [];
+
   private settings: SettingsContract;
 
   private host: string;
@@ -46,6 +51,7 @@ export class ThePlaylist {
 
   constructor(
     platform: Platform,
+    private wamp: WampService,
     private statusBar: StatusBar,
     private splashScreen: SplashScreen,
     private backgroundMode: BackgroundMode,
@@ -57,6 +63,7 @@ export class ThePlaylist {
     private fullscreenObserver: FullscreenObserverService,
     private insomnia: Insomnia,
     private serverManager: ServerManagerService,
+    private mediaManager: MediaManagerService,
     private config: ConfigService,
     private menuCtrl: MenuController,
     private ref: ChangeDetectorRef
@@ -72,6 +79,7 @@ export class ThePlaylist {
             this.setDayModeClass();
           }
         }
+
       }
     });
 
@@ -181,6 +189,17 @@ export class ThePlaylist {
         console.info('insomnia.sleepAgain');
         // this.alert.create({message: 'not fullscreen'}).present();
       }
+    });
+
+    // loads providers
+    this.wamp.connected.subscribe(host => {
+      this.mediaManager.getProviders()
+        .then(providers => {
+          this.providers = providers;
+          this.serverManager.setProviders(providers, host);
+
+          this.ref.detectChanges();
+        });
     });
 
     this.menuCtrl.enable(false, 'playlistMenu');

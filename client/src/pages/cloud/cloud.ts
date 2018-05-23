@@ -150,6 +150,10 @@ export class CloudPage implements OnDestroy {
     // @todo - info, added to playlist
   }
 
+  inPlaylist(item: Medium) {
+    return this.playlist.media.filter(medium => item.id == medium.id).length > 0;
+  }
+
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
   }
