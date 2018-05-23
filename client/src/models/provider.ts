@@ -4,7 +4,8 @@ export class Provider {
   name: string;
 
   ionic: {
-    component: any;
+    component: string;
+    menuIcon: string;
   };
 
   entity: MediaProvider;

@@ -27,10 +27,12 @@ return [
 
     'ionic' => [
         'youtube' => [
-            'component' => 'cloud'
+            'component' => 'cloud',
+            'menuIcon' => 'logo-youtube'
         ],
         'library' => [
-            'component' => 'library'
+            'component' => 'library',
+            'menuIcon' => 'list-box'
         ]
     ]
 ];

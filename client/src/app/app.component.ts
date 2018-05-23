@@ -51,6 +51,7 @@ export class ThePlaylist {
 
   constructor(
     platform: Platform,
+    private serverManager: ServerManagerService,
     private wamp: WampService,
     private statusBar: StatusBar,
     private splashScreen: SplashScreen,
@@ -62,7 +63,6 @@ export class ThePlaylist {
     private immersive: AndroidFullScreen,
     private fullscreenObserver: FullscreenObserverService,
     private insomnia: Insomnia,
-    private serverManager: ServerManagerService,
     private mediaManager: MediaManagerService,
     private config: ConfigService,
     private menuCtrl: MenuController,
@@ -108,6 +108,15 @@ export class ThePlaylist {
         params
       );
     }
+  }
+
+  setPageByProvider(provider: Provider) {
+    this.setPage(provider.ionic.component, {
+      provider: provider.name,
+      download: provider.search,
+      delete: provider.delete,
+      title: provider.entity.name
+    });
   }
 
   goToSettings() {
@@ -193,13 +202,16 @@ export class ThePlaylist {
 
     // loads providers
     this.wamp.connected.subscribe(host => {
-      this.mediaManager.getProviders()
-        .then(providers => {
-          this.providers = providers;
-          this.serverManager.setProviders(providers, host);
+      if (host) {
+        this.mediaManager.getProviders()
+          .then(providers => {
+            debugger;
+            this.providers = providers;
+            this.serverManager.setProviders(providers, host);
 
-          this.ref.detectChanges();
-        });
+            this.ref.detectChanges();
+          });
+      }
     });
 
     this.menuCtrl.enable(false, 'playlistMenu');

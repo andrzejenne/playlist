@@ -38,14 +38,21 @@
         <ion-icon item-start name="cloud-download" color="primary"></ion-icon>
         All
       </button>
-      <button ion-item (click)="setPage('cloud', {provider: 'youtube', title: 'YouTube', download: true});menu.close()" class="clear">
-        <ion-icon item-start name="logo-youtube" color="primary"></ion-icon>
-        YouTube
+
+      <button *ngFor="let provider of providers" ion-item
+              (click)="setPageByProvider(provider);menu.close()" class="clear">
+        <ion-icon item-start [name]="provider.ionic.menuIcon" color="primary"></ion-icon>
+        {{provider.entity.name}}
       </button>
-      <button ion-item (click)="setPage('library');menu.close()" class="clear">
-        <ion-icon item-start name="list-box" color="primary"></ion-icon>
-        Library
-      </button>
+
+      <!--<button ion-item (click)="setPage('cloud', {provider: 'youtube', title: 'YouTube', download: true});menu.close()" class="clear">-->
+        <!--<ion-icon item-start name="logo-youtube" color="primary"></ion-icon>-->
+        <!--YouTube-->
+      <!--</button>-->
+      <!--<button ion-item (click)="setPage('library');menu.close()" class="clear">-->
+        <!--<ion-icon item-start name="list-box" color="primary"></ion-icon>-->
+        <!--Library-->
+      <!--</button>-->
       <hr>
       <button ion-item (click)="setPage('downloadQueue');menu.close()" class="clear">
         <ion-icon item-start name="download" color="primary"></ion-icon>
