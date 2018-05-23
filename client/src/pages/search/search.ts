@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
-import {Modal, ModalController, NavController, Platform, TextInput} from 'ionic-angular';
+import {ChangeDetectorRef, Component, OnDestroy, Optional, ViewChild} from '@angular/core';
+import {LoadingController, Modal, ModalController, NavController, NavParams, Platform, TextInput} from 'ionic-angular';
 import {SearchRepository} from "../../repositories/search.repository";
 import {SearchItem} from "../../models/search-item";
 import {Search} from "../../models/search";
@@ -9,6 +9,7 @@ import {DownloadQueueComponent} from "../../components/download-queue/download-q
 import {Subscription} from "rxjs/Subscription";
 import {ConfigService} from "../../services/ConfigService";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
+import {Playlist} from "../../models/playlist";
 
 @Component({
   selector: 'page-search',
@@ -16,17 +17,17 @@ import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 })
 export class SearchPage implements OnDestroy {
 
-  public search: string;
+  search: string;
 
-  public history: Search[] = [];
+  history: Search[] = [];
 
-  public list: SearchItem[] = [];
+  list: SearchItem[] = [];
 
-  public focused = false;
+  focused = false;
 
-  public nextPageToken: string;
+  nextPageToken: string;
 
-  public prevPageToken: string;
+  prevPageToken: string;
 
   downloaderColor = 'default';
 
@@ -34,6 +35,10 @@ export class SearchPage implements OnDestroy {
 
   @ViewChild('input')
   input: TextInput;
+
+  searching = false;
+
+  playlist: Playlist;
 
   private allHistory: Search[];
 
@@ -49,11 +54,17 @@ export class SearchPage implements OnDestroy {
     private plManager: PlaylistsManagerService,
     // private alertCtrl: AlertController,
     private modalCtrl: ModalController,
+    private loadingCtrl: LoadingController,
     private config: ConfigService,
     private platform: Platform,
-    private ref: ChangeDetectorRef
+    private ref: ChangeDetectorRef,
+    @Optional() params: NavParams
   ) {
-
+    if (params) {
+      if (params.data.playlist) {
+        this.playlist = params.data.playlist;
+      }
+    }
   }
 
   ionViewDidLoad() {
@@ -161,12 +172,21 @@ export class SearchPage implements OnDestroy {
     args.perPage = 16;
 
     if (this.search && this.search.length) {
+      let loader = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: 'Searching ...'
+      });
+
+      loader.present();
+
       this.repo.search(this.userId, this.search, args)
         .then(response => {
           this.list = response.items;
           console.info('response', response);
           this.nextPageToken = response.next;
           this.prevPageToken = response.prev;
+          loader.dismiss();
+
           this.ref.detectChanges();
         });
 

@@ -18,61 +18,69 @@
 
 <ion-content #content class="mode-color">
   <ion-list [virtualScroll]="list" approxItemHeight="100px">
-    <div *virtualItem="let item" class="list-item">
-      <medium-component [item]="item"
-                        [selected]="selector.isSelected(item)"
-                        (select)="selector.toggleSelect(item)"
-                        (toPlaylist)="addToPlaylist(item)"
-                        [hasPlaylist]="playlist"
-                        [hasVideo]="mediaManager.hasVideo(item)"
-                        [hasAudio]="mediaManager.hasAudio(item)"
-                        [thumbnail]="mediaManager.getThumbnailUrl(item)"
-                        [landscape]="platform.isLandscape()"
-                        (playVideo)="playVideo(item)"
-                        (playAudio)="playAudio(item)">
-      </medium-component>
-    </div>
-    <!--<ion-item *virtualItem="let item">-->
-      <!--<ion-thumbnail item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">-->
-        <!--&lt;!&ndash;<ion-img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail"></ion-img>&ndash;&gt;-->
-        <!--<img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">-->
-        <!--<ion-icon *ngIf="selector.isSelected(item)" name="checkmark"></ion-icon>-->
-      <!--</ion-thumbnail>-->
 
-      <!--<div class="item-content">-->
-        <!--<div *ngIf="item.artist" class="artist">-->
-          <!--<ion-icon name="person"></ion-icon>-->
-          <!--{{item.artist.name}}-->
-        <!--</div>-->
-        <!--<div *ngIf="item.album" class="album">-->
-          <!--<ion-icon name="disc"></ion-icon>-->
-          <!--{{item.album.name}}-->
-        <!--</div>-->
+    <ion-item-sliding *virtualItem="let item">
+      <ion-item *ngIf="item" class="item-component item-small">
+        <checker *ngIf="canDelete(item)" item-left
+                 [visible]="selector.length > 0"
+                 [selected]="selector.isSelected(item)"
+                 (tap)="selector.toggleSelect(item)"></checker>
+
+        <div class="thumbnail" item-start [class.selected]="selector.isSelected(item)" (tap)="toggleSelect(item)">
+          <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
+          <span class="duration">{{item.duration | duration}}</span>
+        </div>
+        <ion-label>
+          <h2>{{item.name}}</h2>
+          <p>
+            <span *ngIf="item.artist">
+              <ion-icon name="person"></ion-icon>
+              {{item.artist.name}}
+              <br>
+            </span>
+            <span *ngIf="item.album">
+              <ion-icon name="disc"></ion-icon>
+              {{item.album.name}}
+            </span>
+              {{description}}
+          </p>
+        </ion-label>
+        <ion-buttons item-end>
+          <button ion-fab *ngIf="playlist" color="secondary" class="small" (click)="addToPlaylist(item)">
+            <ion-icon name="add"></ion-icon>
+          </button>
+          <button ion-fab *ngIf="!playlist && !player.isCurrent(item)" color="primary" class="small" (click)="player.playItem(item)">
+            <ion-icon name="play"></ion-icon>
+          </button>
+          <musical-spinner *ngIf="player.isCurrent(item)" color="red"></musical-spinner>
+        </ion-buttons>
+
+      </ion-item>
+      <ion-item-options side="right">
+        <button *ngIf="canDelete(item)" ion-button color="danger" (click)="removeItem(item)">
+          <ion-icon name="trash"></ion-icon>
+          Delete
+        </button>
+      </ion-item-options>
+
+    </ion-item-sliding>
 
 
-        <!--<h2>{{item.name}}</h2>-->
-        <!--&lt;!&ndash;<p *ngIf="item.description">{{item.description}}</p>&ndash;&gt;-->
-        <!--<ion-buttons end>-->
-          <!--<button ion-button color="primary" small icon-left clear (click)="addToPlaylist(item)">-->
-            <!--<ion-icon name="list"></ion-icon>-->
-            <!--<span *ngIf="isLandscape()">Add to playlist</span>-->
-          <!--</button>-->
-          <!--<button *ngIf="mediaManager.hasVideo(item)" ion-button color="primary" small icon-left clear-->
-                  <!--(click)="playMedia(item)">-->
-            <!--<ion-icon name="videocam"></ion-icon>-->
-            <!--<span *ngIf="isLandscape()">Play video</span>-->
-          <!--</button>-->
-          <!--<button *ngIf="mediaManager.hasAudio(item)" ion-button color="primary" small icon-left clear-->
-                  <!--(click)="playMedia(item)">-->
-            <!--<ion-icon name="musical-notes"></ion-icon>-->
-            <!--<span *ngIf="isLandscape()">Play audio</span>-->
-          <!--</button>-->
-        <!--</ion-buttons>-->
-        <!--&lt;!&ndash;<a [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank" title="preview">&ndash;&gt;-->
-        <!--&lt;!&ndash;<ion-icon name="search"></ion-icon>&ndash;&gt;-->
-        <!--&lt;!&ndash;</a>&ndash;&gt;-->
-      <!--</div>-->
-    <!--</ion-item>-->
+    <!--<div *virtualItem="let item" class="list-item">-->
+      <!--<medium-component [item]="item"-->
+                        <!--[selected]="selector.isSelected(item)"-->
+                        <!--(select)="selector.toggleSelect(item)"-->
+                        <!--(toPlaylist)="addToPlaylist(item)"-->
+                        <!--[hasPlaylist]="playlist"-->
+                        <!--[hasVideo]="mediaManager.hasVideo(item)"-->
+                        <!--[hasAudio]="mediaManager.hasAudio(item)"-->
+                        <!--[thumbnail]="mediaManager.getThumbnailUrl(item)"-->
+                        <!--[landscape]="platform.isLandscape()"-->
+                        <!--(playVideo)="playVideo(item)"-->
+                        <!--(playAudio)="playAudio(item)">-->
+      <!--</medium-component>-->
+    <!--</div>-->
+
   </ion-list>
 
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">

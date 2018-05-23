@@ -35,33 +35,6 @@
          offset="1"
          id="stop1246" />
     </linearGradient>
-    <linearGradient
-       id="linearGradient1240"
-       inkscape:collect="always">
-      <stop
-         id="stop1236"
-         offset="0"
-         style="stop-color:#191920;stop-opacity:1" />
-      <stop
-         style="stop-color:#141419;stop-opacity:1"
-         offset="0.6269775"
-         id="stop1242" />
-      <stop
-         id="stop1238"
-         offset="1"
-         style="stop-color:#08080c;stop-opacity:1" />
-    </linearGradient>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient1240"
-       id="radialGradient1234"
-       cx="6.7090769"
-       cy="290.99963"
-       fx="6.7090769"
-       fy="290.99963"
-       r="8.1737347"
-       gradientTransform="matrix(1.0063327,1.2102508e-6,-1.2099592e-6,1.0060902,-0.2038962,-1.9530021)"
-       gradientUnits="userSpaceOnUse" />
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient1248"
@@ -171,17 +144,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8"
-     inkscape:cx="-47.723556"
-     inkscape:cy="-18.355612"
+     inkscape:zoom="5.6"
+     inkscape:cx="-12.292488"
+     inkscape:cy="11.015105"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      inkscape:window-width="1920"
-     inkscape:window-height="1025"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-height="1172"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata5">
@@ -200,13 +173,6 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-284.3)">
-    <rect
-       style="fill:url(#radialGradient1234);fill-opacity:1;stroke-width:0.22107799"
-       id="rect3855"
-       width="13.659461"
-       height="13.264681"
-       x="-0.28241557"
-       y="284.18652" />
     <g
        id="g3795"
        transform="matrix(0.03253725,0,0,0.03253725,1.004487,285.39838)"

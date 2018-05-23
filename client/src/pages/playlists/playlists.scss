@@ -27,6 +27,10 @@ page-playlists {
         vertical-align: middle;
       }
     }
+
+    .duration {
+      ion-icon { width: 16px; text-align: center; }
+    }
   }
 
   .playlist-item.selected {

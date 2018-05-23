@@ -7,7 +7,6 @@ import {LibraryManagerService} from "../../../../services/LibraryManagerService"
 import {MediaManagerService} from "../../../../services/MediaManagerService";
 import {Subject} from "rxjs/Subject";
 import {Subscription} from "rxjs/Subscription";
-import {PlayerService} from "../../../../services/PlayerService";
 
 @Component({
   selector: 'albums-tab',
@@ -34,7 +33,6 @@ export class AlbumsTab implements OnDestroy {
   private subs: Subscription[] = [];
 
   constructor(params: NavParams,
-              private player: PlayerService,
               private libManager: LibraryManagerService,
               private mediaManager: MediaManagerService,
               private navCtrl: NavController,

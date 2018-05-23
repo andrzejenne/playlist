@@ -7,8 +7,7 @@ import {Medium} from "../../models/medium";
 import {SelectorService} from "../../services/SelectorService";
 import {Playlist} from "../../models/playlist";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
-import {MediaManagerService} from "../../services/MediaManagerService";
-import {Content, MenuController, ModalController, NavController, NavParams} from "ionic-angular";
+import {Content, ModalController, NavController, NavParams} from "ionic-angular";
 import {Storage} from "@ionic/storage";
 import {Subscription} from "rxjs/Subscription";
 import {WampService} from "../../services/WampService";
@@ -64,9 +63,7 @@ export class PlaylistComponent implements OnDestroy {
     private player: PlayerService,
     private storage: Storage,
     private plManager: PlaylistsManagerService,
-    private mediaManager: MediaManagerService,
     private wamp: WampService,
-    private menu: MenuController,
     private ref: ChangeDetectorRef,
     private modalCtrl: ModalController,
     @Optional() public nav: NavController = null,

@@ -11,7 +11,7 @@ import {PlayerControlsComponent} from "../player-controls/player-controls.compon
 import {Content, Footer, Nav, Toolbar} from "ionic-angular";
 import {Playlist} from "../../models/playlist";
 import {PlaylistComponent} from "../playlist/playlist.component";
-import {Storage} from "@ionic/storage";
+// import {Storage} from "@ionic/storage";
 import {PlayerService} from "../../services/PlayerService";
 import {ElementReference} from "../../models/ElementReference";
 
@@ -49,7 +49,7 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
   constructor(
     public player: PlayerService,
     private plManager: PlaylistsManagerService,
-    private storage: Storage,
+    // private storage: Storage,
     private elRef: ElementRef,
     private ref: ChangeDetectorRef) {
     this.hidden = plManager.playlist === null;

@@ -1,13 +1,17 @@
-import {ChangeDetectorRef, Component} from "@angular/core";
-import {NavParams} from "ionic-angular";
+import {ChangeDetectorRef, Component, OnDestroy} from "@angular/core";
+import {LoadingController, NavController, NavParams} from "ionic-angular";
 import {Genre} from "../../../../models/genre";
 import {LibraryManagerService} from "../../../../services/LibraryManagerService";
+import {MediaComponent} from "../../../../components/media/media.component";
+import {MediaManagerService} from "../../../../services/MediaManagerService";
+import {Subscription} from "rxjs/Subscription";
+import {Subject} from "rxjs/Subject";
 
 @Component({
   selector: 'genres-tab',
   templateUrl: 'genres.html'
 })
-export class GenresTab {
+export class GenresTab implements OnDestroy {
 
   all: Genre[] = [];
 
@@ -15,16 +19,25 @@ export class GenresTab {
 
   count: number;
 
+  search = '';
+
   private limit = 30;
 
   private offset = 0;
 
   private end = false;
 
+  private filterSubject = new Subject();
+
+  private subs: Subscription[] = [];
+
   constructor(
     params: NavParams,
+    private nav: NavController,
+    private loaderCtrl: LoadingController,
     private libManager: LibraryManagerService,
-    private ref:ChangeDetectorRef
+    private mediaManager: MediaManagerService,
+    private ref: ChangeDetectorRef
   ) {
     this.count = params.data || [];
   }
@@ -32,10 +45,72 @@ export class GenresTab {
   ngAfterViewInit() {
     this.load()
       .then(data => this.ref.detectChanges());
+
+    this.subs.push(
+      this.filterSubject.debounceTime(500)
+        .subscribe(search => this.load())
+    )
+  }
+
+  filter() {
+    this.offset = 0;
+    this.end = false;
+
+    this.filterSubject.next(this.search);
+  }
+
+  doInfinite(infiniteScroll: any) {
+    console.log('doInfinite, start is currently ' + this.offset);
+
+    if (!this.end) {
+      this.offset += this.limit;
+
+      this.load()
+        .then(data => infiniteScroll.complete());
+    }
+    else {
+      infiniteScroll.complete();
+    }
+  }
+
+  openGenre(genre: Genre, autoplay = false) {
+    if (!genre.media) {
+      let loader = this.loaderCtrl.create({
+        spinner: 'crescent',
+        content: 'Loading ...'
+      });
+      loader.present();
+
+      this.mediaManager.getByGenre(genre)
+        .then(media => {
+          genre.media = media;
+          this.nav.push(MediaComponent, {
+            media: genre.media,
+            title: genre.name,
+            autoplay: autoplay
+          });
+          loader.dismiss();
+        });
+    }
+    else {
+      this.nav.push(MediaComponent, {
+        media: genre.media,
+        title: genre.name,
+        autoplay: autoplay
+      });
+    }
+  }
+
+  play(genre: Genre) {
+    this.openGenre(genre, true);
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
   }
 
   private load() {
-    return this.libManager.genres(this.limit, this.offset)
+    return this.libManager.genres(this.limit, this.offset, this.search)
       .then(data => {
         console.info('GenresTab.data', data);
         if (data.length != this.limit) {
@@ -51,19 +126,5 @@ export class GenresTab {
         }
         this.ref.detectChanges();
       });
-  }
-
-  doInfinite(infiniteScroll: any) {
-    console.log('doInfinite, start is currently ' + this.offset);
-
-    if (!this.end) {
-      this.offset += this.limit;
-
-      this.load()
-        .then(data => infiniteScroll.complete());
-    }
-    else {
-      infiniteScroll.complete();
-    }
   }
 }

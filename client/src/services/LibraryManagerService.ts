@@ -1,6 +1,5 @@
 import {Injectable} from "@angular/core";
 import {LibraryRepository} from "../repositories/library.repository";
-import {Album} from "../models/album";
 
 @Injectable()
 export class LibraryManagerService {

@@ -46,6 +46,7 @@ import {CheckerComponent} from "../components/checker/checker.component";
 import {MusicalSpinnerComponent} from "../components/musical-spinner/musical-spinner.component";
 import {AlbumPage} from "../pages/album/album";
 import {ArtistPage} from "../pages/artist/artist";
+import {MediaComponent} from "../components/media/media.component";
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import {ArtistPage} from "../pages/artist/artist";
     PlayerContainerComponent,
     CheckerComponent,
     MusicalSpinnerComponent,
+    MediaComponent,
 
     DurationPipe,
   ],
@@ -120,6 +122,7 @@ import {ArtistPage} from "../pages/artist/artist";
     DownloadQueueComponent,
     VideoPlayerComponent,
     ServerManagerComponent,
+    MediaComponent,
 
     PlaylistComponent,
     AddPlaylistComponent,

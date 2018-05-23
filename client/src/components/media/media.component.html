@@ -1,35 +1,27 @@
 <ion-header class="mode-color">
-  <ion-navbar>
+  <ion-navbar (tap)="toggleShow()">
     <button ion-button menuToggle="menu">
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>
-      {{album.name}}
+      {{title}}
     </ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content #content class="mode-color">
-  <div padding>
-    <h2>
-      <span *ngIf="album.artist">{{album.artist?.name}} |</span>
-      {{album.name}}
-    </h2>
-    <!--<div class="cover">-->
-      <!--<img [src]="mediaManager.getCoverUrl(album)">-->
-    <!--</div>-->
-    <p>
-<!-- @todo album description -->
-    </p>
-  </div>
-  <hr>
-  <ion-list class="items" *ngIf="album">
-    <ion-item *ngFor="let item of album.media" class="item-component"
+<ion-content class="mode-color">
+  <h2 padding>{{title}}</h2>
+  <ion-list class="items">
+    <ion-item *ngFor="let item of media" class="item-component"
               [class.played]="player.wasPlayed(item)"
               [class.current]="player.isCurrent(item)"
               (tap)="play(item)">
       <ion-label>
         <h2>
+          <span *ngIf="!compact">
+            <span *ngIf="item.artist"><u>{{item.artist.name}}</u> <br> </span>
+            <span *ngIf="item.album"><i>{{item.album.name}}</i> <br> </span>
+          </span>
           {{item.name}}
         </h2>
         <p>
@@ -39,7 +31,6 @@
       </ion-label>
 
       <span item-end class="duration">
-            <!--<ion-icon name="clock"></ion-icon>-->
         <span *ngIf="!player.isPlaying(item)">
             {{item.duration | duration}}
         </span>

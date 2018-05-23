@@ -32,16 +32,16 @@
         </h2>
         <p>
           <span class="duration" *ngIf="playlist.duration">
-            <ion-icon name="list"></ion-icon>
+            <ion-icon name="musical-note"></ion-icon>
             {{playlist.count}}
-            |
+            <br>
             <ion-icon name="time"></ion-icon>
             {{playlist.duration | duration}}
           </span>
         </p>
       </ion-label>
 
-      <ion-buttons item-end>
+      <ion-buttons item-end *ngIf="playlist.media?.length">
         <button ion-button clear (tap)="shuffle(playlist)">
           <ion-icon name="shuffle"></ion-icon>
         </button>

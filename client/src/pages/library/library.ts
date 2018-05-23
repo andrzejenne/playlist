@@ -1,8 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnDestroy, ViewChild} from "@angular/core";
 import {LibraryManagerService} from "../../services/LibraryManagerService";
-import {Album} from "../../models/album";
-import {Artist} from "../../models/artist";
-import {Genre} from "../../models/genre";
 import {ArtistsTab} from "./tabs/artists/artists";
 import {AlbumsTab} from "./tabs/albums/albums";
 import {GenresTab} from "./tabs/genres/genres";

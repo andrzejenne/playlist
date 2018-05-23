@@ -35,7 +35,7 @@
 
 <ion-content class="mode-color">
   <ion-list *ngIf="list && history && !list.length && history.length" class="history">
-    <ion-item *ngFor="let item of history" (click)="searchItems(item.query)">
+    <ion-item *ngFor="let item of history" (tap)="searchItems(item.query)">
       <button ion-button icon-only clear item-start>
         <ion-icon name="eye"></ion-icon>
       </button>
@@ -50,30 +50,30 @@
   </ion-list>
 
   <ion-list class="items" *ngIf="list && list.length">
-    <ion-item *ngFor="let item of list">
+    <ion-item *ngFor="let item of list" class="item-small">
       <div class="thumbnail" item-start>
         <img [src]="item.thumbnail">
         <span class="duration">{{item.duration | duration}}</span>
       </div>
-      <div class="item-content">
+      <ion-title class="item-content">
         <h2>{{item.title}}</h2>
         <!--<p style="max-height: 48px; overflow: hidden;">{{item.description}}</p>-->
-        <ion-buttons end>
-          <button ion-button small clear icon-left (click)="download($event, item)">
-            <ion-icon name="download"></ion-icon>
-            <span *ngIf="isLandscape()">Download</span>
-          </button>
-          <button ion-button small clear icon-left (click)="toPlaylist($event, item)">
-            <ion-icon name="list"></ion-icon>
-            <span *ngIf="isLandscape()">To playlist</span>
-          </button>
-          <a ion-button small clear icon-left [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank"
+        <p>
+          <a ion-button clear small icon-left [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank"
              title="preview">
             <ion-icon name="search"></ion-icon>
-            <span *ngIf="isLandscape()">Preview</span>
+            Preview
           </a>
-        </ion-buttons>
-      </div>
+        </p>
+      </ion-title>
+      <ion-buttons item-end>
+        <button *ngIf="!playlist" ion-fab class="small" (tap)="download($event, item)">
+          <ion-icon name="download"></ion-icon>
+        </button>
+        <button *ngIf="playlist" ion-fab class="small" color="secondary" (tap)="toPlaylist($event, item)">
+          <ion-icon name="add"></ion-icon>
+        </button>
+      </ion-buttons>
     </ion-item>
   </ion-list>
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">

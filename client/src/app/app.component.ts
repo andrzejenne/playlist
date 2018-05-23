@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, HostBinding, ViewChild} from '@angular/core';
-import {IonicApp, MenuController, NavController, Platform} from 'ionic-angular';
+import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {MenuController, NavController, Platform} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {AndroidFullScreen} from '@ionic-native/android-full-screen';

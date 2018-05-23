@@ -11,17 +11,19 @@
 
 <ion-content class="mode-color">
   <ion-list [virtualScroll]="list" approxItemHeight="80px">
-    <ion-item *virtualItem="let genre">
-      <h2>{{genre.name}}</h2>
-      <p>
-        {{genre.count.albums}}
-        <ion-icon name="disc" title="albums"></ion-icon>
-        |
-        {{genre.count.media}}
-        <ion-icon name="musical-note" title="media"></ion-icon>
-      </p>
+    <ion-item *virtualItem="let genre" class="item-small">
+      <ion-title (tap)="openGenre(genre)">
+        <h2>{{genre.name}}</h2>
+        <p>
+          {{genre.count.albums}}
+          <ion-icon name="disc" title="albums"></ion-icon>
+          |
+          {{genre.count.media}}
+          <ion-icon name="musical-note" title="media"></ion-icon>
+        </p>
+      </ion-title>
       <ion-buttons item-end>
-        <button ion-button clear (click)="play(artist)">
+        <button ion-fab class="small" (click)="play(genre)">
           <ion-icon name="play"></ion-icon>
         </button>
       </ion-buttons>
@@ -31,3 +33,16 @@
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
 </ion-content>
+
+<ion-footer class="mode-color">
+  <ion-toolbar>
+    <ion-item class="clear">
+      <ion-icon item-start name="search"></ion-icon>
+      <ion-input icon-left type="text" placeholder="search" [(ngModel)]="search" (ionChange)="filter()">
+      </ion-input>
+      <button item-end ion-button clear *ngIf="search" (click)="search=''">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

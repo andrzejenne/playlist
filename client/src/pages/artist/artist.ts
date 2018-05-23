@@ -6,6 +6,7 @@ import {ElementReference} from "../../models/ElementReference";
 import {Artist} from "../../models/artist";
 import {Album} from "../../models/album";
 import {AlbumPage} from "../album/album";
+import {Medium} from "../../models/medium";
 
 @Component({
   selector: 'artist-page',
@@ -18,6 +19,8 @@ export class ArtistPage {
   @ViewChild('fixed') fixed: ElementReference<HTMLDivElement>;
 
   @ViewChild('content') content: Content;
+
+  private current: Medium;
 
   constructor(
     public player: PlayerService,
@@ -45,6 +48,10 @@ export class ArtistPage {
     return this.mediaManager.getArtistThumbnailUrl(this.artist);
   }
 
+  getAlbumCover(album: Album) {
+    return this.mediaManager.getCoverUrl(album);
+  }
+
   play(album: Album) {
     if (!album.media) {
       this.mediaManager.getByAlbum(album)
@@ -62,5 +69,30 @@ export class ArtistPage {
 
   openAlbum(album: Album) {
     this.navCtrl.push(AlbumPage, {album: album});
+  }
+
+  playItem(item?: Medium) {
+    if (!item) {
+      if (this.current) {
+        item = this.current;
+      }
+      else {
+        item = this.artist.media[0];
+        this.current = item;
+      }
+    }
+    else {
+      this.current = item;
+    }
+
+    this.player.playItem(item);
+  }
+
+  pause() {
+    this.player.pause();
+  }
+
+  isPlaying() {
+    return this.player.isPlaying(this.current);
   }
 }

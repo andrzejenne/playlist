@@ -62,6 +62,16 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
+
+            .release-links {
+                text-align: left;
+            }
+            ul.release-list {
+                list-style: none;
+            }
+            ul.release-list li {
+                font-weight: bold;
+            }
         </style>
     </head>
     <body>

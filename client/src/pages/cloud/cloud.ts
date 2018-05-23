@@ -1,8 +1,8 @@
-import {ChangeDetectorRef, Component, Input, OnDestroy, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, Optional} from '@angular/core';
 import {NavController, NavParams, Platform, ViewController} from 'ionic-angular';
 import {CloudRepository} from "../../repositories/cloud.repository";
 import {Medium} from "../../models/medium";
-import {ErrorReporting} from "../../services/ErrorReporting";
+// import {ErrorReporting} from "../../services/ErrorReporting";
 import {Subscription} from "rxjs/Subscription";
 import {User} from "../../models/user";
 import {AuthService} from "../../services/AuthService";
@@ -59,24 +59,26 @@ export class CloudPage implements OnDestroy {
     private repo: CloudRepository,
     private plManager: PlaylistsManagerService,
     private auth: AuthService,
-    private errorReporter: ErrorReporting,
+    // private errorReporter: ErrorReporting,
     // private modalController: ModalController,
     private config: ConfigService,
     private ref: ChangeDetectorRef,
-    private params: NavParams,
-    private viewCtrl: ViewController
+    private viewCtrl: ViewController,
+    @Optional() params: NavParams = null
   ) {
-    if (params.data.playlist) {
-      this.playlist = <Playlist>params.data.playlist;
-    }
-    if (params.data.provider) {
-      this.provider = params.data.provider;
-    }
-    if (params.data.title) {
-      this.title = params.data.title;
-    }
-    if (params.data.download) {
-      this.download = params.data.download;
+    if (params) {
+      if (params.data.playlist) {
+        this.playlist = <Playlist>params.data.playlist;
+      }
+      if (params.data.provider) {
+        this.provider = params.data.provider;
+      }
+      if (params.data.title) {
+        this.title = params.data.title;
+      }
+      if (params.data.download) {
+        this.download = params.data.download;
+      }
     }
 
     console.info('CloudPage@constructor', this);
@@ -101,7 +103,9 @@ export class CloudPage implements OnDestroy {
   }
 
   toDownload() {
-    this.navCtrl.push(SearchPage);
+    this.navCtrl.push(SearchPage, {
+      playlist: this.playlist
+    });
   }
 
   playVideo(item: Medium) {
@@ -114,36 +118,14 @@ export class CloudPage implements OnDestroy {
     this.player.playAudioItem(item);
   }
 
-  private unselectPlaylistIfNotFound(item: Medium) {
-    if (this.plManager.playlist) {
-      let found = this.plManager.playlist.media.filter(medium => medium.id == item.id);
-      if (!found.length) {
-        this.plManager.unselectPlaylist();
-      }
+  toggleSelect(item: Medium) {
+    if (this.canDelete(item)) {
+      this.selector.toggleSelect(item);
     }
   }
 
   dismiss() {
     this.viewCtrl.dismiss();
-  }
-
-  private load() {
-    return this.repo.list(this.limit, this.offset, this.search, this.provider)
-      .then(data => {
-        console.info('DownloadedPage.data', data);
-        if (data.length != this.limit) {
-          this.end = true;
-        }
-        if (this.offset) {
-          this.all = this.all.concat(data);
-          this.list = [].concat(this.all);
-        }
-        else {
-          this.all = data;
-          this.list = [].concat(data);
-        }
-        this.ref.detectChanges();
-      });
   }
 
   doInfinite(infiniteScroll: any) {
@@ -201,6 +183,38 @@ export class CloudPage implements OnDestroy {
     return Promise.all(removed)
       .then(val => {
         this.selector.clearSelection();
+        this.ref.detectChanges();
+      });
+  }
+
+  canDelete(item: Medium) {
+    return true;
+  }
+
+  private unselectPlaylistIfNotFound(item: Medium) {
+    if (this.plManager.playlist) {
+      let found = this.plManager.playlist.media.filter(medium => medium.id == item.id);
+      if (!found.length) {
+        this.plManager.unselectPlaylist();
+      }
+    }
+  }
+
+  private load() {
+    return this.repo.list(this.limit, this.offset, this.search, this.provider)
+      .then(data => {
+        console.info('DownloadedPage.data', data);
+        if (data.length != this.limit) {
+          this.end = true;
+        }
+        if (this.offset) {
+          this.all = this.all.concat(data);
+          this.list = [].concat(this.all);
+        }
+        else {
+          this.all = data;
+          this.list = [].concat(data);
+        }
         this.ref.detectChanges();
       });
   }

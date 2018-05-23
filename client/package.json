@@ -1,6 +1,6 @@
 {
   "name": "bbit-playlist",
-  "version": "0.1.0",
+  "version": "0.2.0-rc1",
   "author": "Andrzej Heczko",
   "homepage": "http://bigbangit.com/",
   "private": true,
@@ -10,9 +10,10 @@
     "lint": "ionic-app-scripts lint",
     "ionic:build": "ionic-app-scripts build",
     "ionic:serve": "ionic-app-scripts serve",
-    "build:android:dev": "PLATFORM=android gulp && cordova build android --debug && jarsigner -verbose -keystore ./keystore/android-debug.jks platforms/android/app/build/outputs/apk/debug/app-debug.apk debug",
-    "build:android": "PLATFORM=android gulp && cordova build android --release",
-    "run:android": "PLATFORM=android gulp && cordova run android --stacktrace --info --debug"
+    "build:android:dev": "PLATFORM=android gulp && ionic cordova build android --debug",
+    "build:android": "PLATFORM=android gulp && ionic cordova build android --prod --release",
+    "run:android": "PLATFORM=android gulp && ionic cordova run android --stacktrace --info --debug",
+    "sign:android": "jarsigner -verbose -keystore ./keystore/android.jks platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk ThePlaylistKey"
   },
   "config": {
     "ionic_watch": "./watch.config.js"

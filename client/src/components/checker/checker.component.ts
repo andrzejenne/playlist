@@ -10,13 +10,13 @@ export class CheckerComponent {
 
   @HostBinding('class.show')
   @Input()
-  visible: boolean;
+  visible: boolean = false;
 
   @Input()
   color = 'primary';
 
   @Input()
-  selected: boolean;
+  selected: boolean = false;
 
   ngAfterViewInit() {
     console.info('CheckerComponent', this);

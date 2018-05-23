@@ -7,33 +7,6 @@ page-search {
     }
   }
 
-  .fit-thumbnail {
-    object-fit: cover;
-  }
-
-  .thumbnail {
-    position: relative;
-    width: 160px;
-    max-width: 25%;
-    img {
-      width: 100%;
-    }
-
-    .duration {
-      position: absolute;
-      z-index: 1;
-      float: right;
-      background: #000;
-      background: rgba(0, 0, 0, .7);
-      border-radius: 3px;
-      color: #fff;
-      font-size: 90%;
-      padding: 2px 4px;
-      bottom: 5px;
-      right: 5px;
-    }
-  }
-
   .search {
     input[type=search] {
       width: 100%;
@@ -42,5 +15,7 @@ page-search {
       font-size: 150%;
     }
   }
+
+  .fab { display: inline-block; vertical-align: middle; }
 }
 

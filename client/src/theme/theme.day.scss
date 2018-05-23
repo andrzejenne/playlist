@@ -23,32 +23,6 @@ $bgColor: #ff6600;
       color: $color;
     }
 
-    player-controls-component {
-      button {
-        color: $primaryButton !important;
-        ion-icon {
-          color: $primaryButton !important;
-        }
-      }
-
-      button:hover {
-        color: lighten($primaryButton, .2) !important;
-        ion-icon {
-          color: lighten($primaryButton, .2) !important;
-        }
-      }
-
-      .range-bar-active,
-      .range-knob {
-        background-color: $knobColor !important;
-      }
-      .range-disabled .range-knob{
-        outline: none !important;
-      }
-
-      ion-icon { font-size: 150%; }
-    }
-
     ion-header {
       .toolbar {
         .text-input { color: $color; }
@@ -81,9 +55,34 @@ $bgColor: #ff6600;
         }
       }
 
-
       .day-mode-icon {
         color: $dayModeIconColor !important;
+      }
+
+      player-controls-component {
+        button.button-primary {
+          color: $primaryButton !important;
+          ion-icon {
+            color: $primaryButton !important;
+          }
+        }
+
+        button:hover {
+          color: lighten($primaryButton, .2) !important;
+          ion-icon {
+            color: lighten($primaryButton, .2) !important;
+          }
+        }
+
+        .range-bar-active,
+        .range-knob {
+          background-color: $knobColor !important;
+        }
+        .range-disabled .range-knob{
+          outline: none !important;
+        }
+
+        ion-icon { font-size: 150%; }
       }
 
     }

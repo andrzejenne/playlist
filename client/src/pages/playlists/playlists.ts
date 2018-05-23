@@ -2,7 +2,6 @@ import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
 import {Storage} from "@ionic/storage";
 import {
   NavController,
-  PopoverController,
   ModalController,
   AlertController,
 } from 'ionic-angular';
@@ -10,13 +9,11 @@ import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
 import {User} from "../../models/user";
 import {ServerManagerService} from "../../services/ServerManagerService";
-import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {SettingsPage} from "../settings/settings";
 import {SearchPage} from "../search/search";
 import {SettingsContract} from "../../services/contracts/SettingsContract";
 import {ConfigService} from "../../services/ConfigService";
 import {SelectorService} from "../../services/SelectorService";
-import {MediaManagerService} from "../../services/MediaManagerService";
 import {WampService} from "../../services/WampService";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {PlaylistComponent} from "../../components/playlist/playlist.component";
@@ -54,11 +51,8 @@ export class PlaylistsPage implements OnDestroy {
     private auth: AuthService,
     private servers: ServerManagerService,
     private wamp: WampService,
-    private mediaManager: MediaManagerService,
     private storage: Storage,
-    private screenOrientation: ScreenOrientation,
     // private errorReporting: ErrorReporting,
-    private popoverCtrl: PopoverController,
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
     private config: ConfigService,
@@ -93,50 +87,6 @@ export class PlaylistsPage implements OnDestroy {
         }
       )
     );
-
-    // this.wamp.disconnected.subscribe(host => {
-    //   if (host) {
-    //     console.info('PlaylistsPage.wamp.disconnected', host);
-    //     if (host == this.host) {
-    //       this.pause();
-    //       this.media = [];
-    //       this.playlist = null;
-    //       this.current = null;
-    //       this.playedPlaylist = [];
-    //       this.mediaPlaylist = [];
-    //       this.host = null;
-    //       this.plManager.clearPlaylists();
-    //       this.ref.detectChanges();
-    //     }
-    //   }
-    // });
-
-    // this.initPlayers();
-
-    // this.screenOrientation.onChange().subscribe(
-    //   () => {
-    //     console.log("Orientation Changed", this.screenOrientation.type);
-    //     if (this.screenOrientation.type.indexOf('portrait') > -1) {
-    //       if (this.videoPlayer.nativeElement.webkitDisplayingFullscreen) {
-    //         // this.videoPlayer.nativeElement();
-    //       }
-    //     }
-    //     else {
-    //       this.requestFullscreen();
-    //     }
-    //   }
-    // );
-
-    // cleanup on server switch
-    // this.wamp.serverSwitched.subscribe(servers => {
-    //   console.info('PlaylistsPage.serverSwitched', servers);
-    //   this.playlist = null;
-    //   this.media = [];
-    //   this.current = null;
-    //   this.playedPlaylist = null;
-    //   this.mediaPlaylist = null;
-    //   this.ref.detectChanges();
-    // });
   }
 
   goToSearchPage() {

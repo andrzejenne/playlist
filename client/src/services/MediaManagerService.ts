@@ -90,7 +90,7 @@ export class MediaManagerService {
   }
 
   getArtistThumbnailUrl(artist: Artist, host = this.serverManager.host) {
-    return 'assets/imgs/cover.png'; // @todo - add artists image support
+    return 'assets/imgs/artist.png'; // @todo - add artists image support
   }
 
   static getThumbnail(item: Medium) {

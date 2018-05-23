@@ -2,11 +2,9 @@ import {ChangeDetectorRef, Component, OnDestroy} from "@angular/core";
 import {NavController, NavParams} from "ionic-angular";
 import {Artist} from "../../../../models/artist";
 import {LibraryManagerService} from "../../../../services/LibraryManagerService";
-import {Album} from "../../../../models/album";
 import {MediaManagerService} from "../../../../services/MediaManagerService";
 import {Subject} from "rxjs/Subject";
 import {Subscription} from "rxjs/Subscription";
-import {PlayerService} from "../../../../services/PlayerService";
 import {ArtistPage} from "../../../artist/artist";
 
 @Component({
@@ -35,7 +33,6 @@ export class ArtistsTab implements OnDestroy {
 
   constructor(params: NavParams,
               private navCtrl: NavController,
-              private player: PlayerService,
               private mediaManager: MediaManagerService,
               private libManager: LibraryManagerService,
               private ref: ChangeDetectorRef) {

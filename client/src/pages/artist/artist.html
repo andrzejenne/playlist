@@ -14,18 +14,18 @@
     <h2>
       {{artist.name}}
     </h2>
-    <div class="cover">
-      <img [src]="mediaManager.getArtistThumbnailUrl(artist)">
-    </div>
+    <!--<div class="cover">-->
+    <!--<img [src]="mediaManager.getArtistThumbnailUrl(artist)">-->
+    <!--</div>-->
     <p>
-<!-- @todo artist description -->
+      <!-- @todo artist description -->
     </p>
   </div>
   <hr>
   <ion-list>
     <ion-item *ngFor="let album of artist.albums" class="item-small">
       <div class="thumbnail" item-start (tap)="openAlbum(album)">
-        <img [src]="getCover(album)">
+        <img [src]="getAlbumCover(album)">
         <span class="duration" *ngIf="album.duration">
           {{album.duration | duration}}
         </span>
@@ -47,6 +47,32 @@
           <ion-icon name="play"></ion-icon>
         </button>
       </ion-buttons>
+    </ion-item>
+  </ion-list>
+  <hr>
+  <ion-list class="items">
+    <ion-item *ngFor="let item of artist.media" class="item-component"
+              [class.played]="player.wasPlayed(item)"
+              [class.current]="player.isCurrent(item)"
+              (tap)="playItem(item)">
+      <ion-label>
+        <h2>
+          {{item.name}}
+        </h2>
+        <p>
+          <ion-icon name="contact" *ngIf="description"></ion-icon>
+          {{description}}
+        </p>
+      </ion-label>
+
+      <span item-end class="duration">
+        <span *ngIf="!player.isPlaying(item)">
+            {{item.duration | duration}}
+        </span>
+
+        <musical-spinner *ngIf="player.isPlaying(item)" color="red"></musical-spinner>
+      </span>
+
     </ion-item>
   </ion-list>
 </ion-content>

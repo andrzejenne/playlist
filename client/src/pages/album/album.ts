@@ -18,9 +18,9 @@ export class AlbumPage {
 
   @ViewChild('content') content: Content;
 
-  playing = false;
-
   private autoplay = false;
+
+  private current: Medium;
 
   constructor(
     public player: PlayerService,
@@ -50,13 +50,27 @@ export class AlbumPage {
   }
 
   play(item?: Medium) {
-    this.player.playItem(item || this.album.media[0]);
-    this.playing = true;
+    if (!item) {
+      if (this.current) {
+        item = this.current;
+      }
+      else {
+        item = this.album.media[0];
+        this.current = item;
+      }
+    }
+    else {
+      this.current = item;
+    }
+
+    this.player.playItem(item);
   }
 
   pause() {
     this.player.pause();
-    this.playing = false;
-    // @todo - watch player status for pause
+  }
+
+  isPlaying() {
+    return this.player.isPlaying(this.current);
   }
 }

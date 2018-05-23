@@ -24,9 +24,6 @@
                 <a href="https://laravel-news.com">News</a>
                 <a href="https://forge.laravel.com">Forge</a>
                 <a href="https://github.com/laravel/laravel">GitHub</a>
-                <br>
-                Release:
-                <a href="/the-playlist.debug.apk">Debug 0.0.2-rc1</a>
             </div>
         </div>
     </div>

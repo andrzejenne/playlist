@@ -4,8 +4,6 @@ import {Storage} from "@ionic/storage";
 import {MediaManagerService} from "./MediaManagerService";
 import {Content} from "ionic-angular";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {Album} from "../models/album";
-import {Playlist} from "../models/playlist";
 
 @Injectable()
 export class PlayerService {
@@ -115,6 +113,10 @@ export class PlayerService {
     return this.medium === medium;
   }
 
+  getCurrent() {
+    return this.medium;
+  }
+
   wasPlayed(medium: Medium) {
     return this.playedList.indexOf(medium) > -1;
   }
@@ -172,12 +174,9 @@ export class PlayerService {
   }
 
   playItem(item: Medium, seek = 0) {
-    let index = this.mediaList.indexOf(item);
-    if (index > -1) {
-      this.playedList = this.mediaList.slice(0, index);
-    }
-
     this.setMedium(item);
+
+    this.updatePlayed();
 
     let player = this.getPlayer();
     player.src = this.mediaManager.getUrl(this.medium, this.mediaType);
@@ -253,6 +252,10 @@ export class PlayerService {
 
     let nextSrc = this.getNextSrc();
 
+    if (this.status.repeat && !nextSrc) {
+      this.playItem(this.mediaList[0]);
+    }
+
     if (nextSrc) {
       let player = this.getPlayer();
 
@@ -282,6 +285,15 @@ export class PlayerService {
     }
   }
 
+  isPlaying(medium?: Medium) {
+    if (medium) {
+      return this.status.playing && this.getCurrent() === medium;
+    }
+    else {
+      return this.status.playing;
+    }
+  }
+
   private setMedium(medium: Medium = null) {
     this.medium = medium;
     this.medium$.next(medium);
@@ -307,46 +319,47 @@ export class PlayerService {
   }
 
   reorderData(indexes: any) {
-    this.media = PlayerService.reorderArray(this.media, indexes);
+    this.mediaList = PlayerService.reorderArray(this.mediaList, indexes);
+    this.updatePlayed();
   }
 
-  private updatePlaylist() {
-    let remove = [];
-    let exists = [];
-    if (this.playedList) {
-      this.playedList.forEach(item => {
-        let index = this.media.indexOf(item);
-        if (index == -1) {
-          remove.push(item);
-        }
-        else {
-          exists.push(item);
-        }
-      });
-      remove.forEach(item => PlayerService.removeItemFrom(item, this.playedList));
-      remove = [];
-    }
-
-    if (this.mediaList) {
-      this.mediaList.forEach(item => {
-        let index = this.media.indexOf(item);
-        if (index == -1) {
-          remove.push(item);
-        }
-        else {
-          exists.push(item);
-        }
-      });
-      remove.forEach(item => PlayerService.removeItemFrom(item, this.mediaList));
-      remove = [];
-
-      let toAdd = [].concat(this.media).filter(
-        item => exists.indexOf(item) == -1
-      );
-
-      this.mediaList = this.mediaList.concat(toAdd);
-    }
-  }
+  // private updatePlaylist() {
+  //   let remove = [];
+  //   let exists = [];
+  //   if (this.playedList) {
+  //     this.playedList.forEach(item => {
+  //       let index = this.media.indexOf(item);
+  //       if (index == -1) {
+  //         remove.push(item);
+  //       }
+  //       else {
+  //         exists.push(item);
+  //       }
+  //     });
+  //     remove.forEach(item => PlayerService.removeItemFrom(item, this.playedList));
+  //     remove = [];
+  //   }
+  //
+  //   if (this.mediaList) {
+  //     this.mediaList.forEach(item => {
+  //       let index = this.media.indexOf(item);
+  //       if (index == -1) {
+  //         remove.push(item);
+  //       }
+  //       else {
+  //         exists.push(item);
+  //       }
+  //     });
+  //     remove.forEach(item => PlayerService.removeItemFrom(item, this.mediaList));
+  //     remove = [];
+  //
+  //     let toAdd = [].concat(this.media).filter(
+  //       item => exists.indexOf(item) == -1
+  //     );
+  //
+  //     this.mediaList = this.mediaList.concat(toAdd);
+  //   }
+  // }
 
   pause() {
     clearInterval(this.interval);
@@ -371,11 +384,11 @@ export class PlayerService {
     return this.videoEl;
   }
 
-  private preparePlaylistDiff() {
-    this.mediaList.splice(0, this.mediaList.length);
-    this.mediaList.push(...this.media);
-    this.playedList = [];
-  }
+  // private preparePlaylistDiff() {
+  //   this.mediaList.splice(0, this.mediaList.length);
+  //   this.mediaList.push(...this.media);
+  //   this.playedList = [];
+  // }
 
   private playStatus() {
     this.playIcon = this.status.playing ? 'pause' : 'play';
@@ -413,22 +426,22 @@ export class PlayerService {
     // this.audioPlayer.nativeElement.onended = this.onPlayerPlayEnded;
   }
 
-  /**
-   * @deprecated
-   */
-  private setContentMarginIfVideo() {
-    if (this.status.video && this.video.height) {
-      this.contentContainer.getScrollElement().style.marginTop = (this.video.height + this.contentContainer._hdrHeight) + 'px';
-    }
-  }
-
-  /**
-   * @deprecated
-   */
-  private removeContentMargin() {
-    // this.contentContainer.resize();
-    this.contentContainer.getScrollElement().style.marginTop = (this.contentContainer._hdrHeight) + 'px';
-  }
+  // /**
+  //  * @deprecated
+  //  */
+  // private setContentMarginIfVideo() {
+  //   if (this.status.video && this.video.height) {
+  //     this.contentContainer.getScrollElement().style.marginTop = (this.video.height + this.contentContainer._hdrHeight) + 'px';
+  //   }
+  // }
+  //
+  // /**
+  //  * @deprecated
+  //  */
+  // private removeContentMargin() {
+  //   // this.contentContainer.resize();
+  //   this.contentContainer.getScrollElement().style.marginTop = (this.contentContainer._hdrHeight) + 'px';
+  // }
 
   private onPlayerPlayEnded = (ev: MediaStreamErrorEvent) => {
     this.playNext();
@@ -513,5 +526,12 @@ export class PlayerService {
   private resolveReady() {
     this.resolvers.forEach(r => r(this.media));
     this.resolvers = [];
+  }
+
+  private updatePlayed() {
+    let index = this.mediaList.indexOf(this.getCurrent());
+    if (index > -1) {
+      this.playedList = this.mediaList.slice(0, index);
+    }
   }
 }
