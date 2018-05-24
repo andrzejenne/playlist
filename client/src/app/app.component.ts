@@ -205,8 +205,7 @@ export class ThePlaylist {
       if (host) {
         this.mediaManager.getProviders()
           .then(providers => {
-            debugger;
-            this.providers = providers;
+            this.providers = providers['args'] || providers;
             this.serverManager.setProviders(providers, host);
 
             this.ref.detectChanges();

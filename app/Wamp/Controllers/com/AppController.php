@@ -47,6 +47,6 @@ class AppController
                 + ['ionic' => isset($ionicConfig[$key]) ? $ionicConfig[$key] : null];
         }
 
-        return $providers;
+        return [$providers];
     }
 }
