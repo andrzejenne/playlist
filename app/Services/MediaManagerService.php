@@ -165,7 +165,7 @@ class MediaManagerService
      */
     private function getDownloader(MediaProviderContract $provider)
     {
-        $name = $provider->getName();
+        $name = $provider->getSlug();
 
         if (!isset($this->downloaders[$name])) {
             $concrete = config('media.downloaders.' . $name);

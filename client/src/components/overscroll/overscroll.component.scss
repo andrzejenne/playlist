@@ -1,0 +1,13 @@
+overscroll {
+  display: block;
+  .overscroll-wrap {
+    width: 2000px;
+    display: block;
+    .overscroll-content {
+      display: inline-block;
+      position: relative;
+      left: 0;
+      transition: left 1000s ease-in-out;
+    }
+  }
+}

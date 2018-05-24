@@ -18,18 +18,18 @@ use BBIT\Playlist\Models\Medium;
 abstract class MediaProviderContract
 {
     const
-        KEY_NAME = 'name',
+        KEY_SLUG = 'slug',
         KEY_DELETE = 'delete',
         KEY_SEARCH = 'search';
 
-    abstract public function getName();
+    abstract public function getSlug();
 
     abstract public function search($q, $perPage = 24, $pageToken = null);
 
     public final function getConfig()
     {
         return [
-            self::KEY_NAME => $this->getName(),
+            self::KEY_SLUG => $this->getSlug(),
             self::KEY_SEARCH => $this->canSearch(),
             self::KEY_DELETE => $this->canDelete()
         ];
@@ -50,7 +50,7 @@ abstract class MediaProviderContract
      */
     public final function __toString()
     {
-        return $this->getName();
+        return $this->getSlug();
     }
 
 

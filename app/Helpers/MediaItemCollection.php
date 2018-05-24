@@ -52,7 +52,7 @@ class MediaItemCollection implements Arrayable, \JsonSerializable
     public function toArray()
     {
         return [
-            'provider' => $this->provider->getName(),
+            'provider' => $this->provider->getSlug(),
             'items' => $this->items
             // @todo paginated collection
         ];

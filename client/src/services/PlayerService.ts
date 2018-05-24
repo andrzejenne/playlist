@@ -174,6 +174,10 @@ export class PlayerService {
   }
 
   playItem(item: Medium, seek = 0) {
+    if (item === this.getCurrent()) {
+      return;
+    }
+
     this.setMedium(item);
 
     this.updatePlayed();
@@ -220,15 +224,9 @@ export class PlayerService {
       this.shuffle(this.mediaList);
     }
     else {
-      let playlist = [].concat(this.media);
-      if (this.playedList.length) {
-        playlist = playlist.filter(PlayerService.filterPlayed(this.playedList, this.medium));
-      }
-      if (this.medium) {
-        playlist.splice(playlist.indexOf(this.medium), 1);
-      }
-      this.mediaList = playlist;
+      this.mediaList = [].concat(this.media);
     }
+    this.updatePlayed();
   }
 
   requestFullscreen() {

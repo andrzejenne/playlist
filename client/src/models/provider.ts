@@ -1,11 +1,12 @@
 import {MediaProvider} from "./media-provider";
 
 export class Provider {
-  name: string;
+  slug: string;
 
   ionic: {
     component: string;
     menuIcon: string;
+    title: string;
   };
 
   entity: MediaProvider;

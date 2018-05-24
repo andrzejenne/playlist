@@ -94,7 +94,7 @@ class MediaDiscoveryService
 
         $provider = $downloader->getProvider();
 
-        $mediaProvider = $this->getMediaProvider($provider->getName());
+        $mediaProvider = $this->getMediaProvider($provider->getSlug());
 
         $this->discoverMedia($id, $downloader->getName($id), $provider, $mediaProvider);
     }

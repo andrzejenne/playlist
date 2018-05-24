@@ -62,7 +62,7 @@ class YouTubeService extends MediaProviderContract
     /**
      * @return string
      */
-    public function getName()
+    public function getSlug()
     {
         return 'youtube';
     }

@@ -25,7 +25,7 @@ export class DurationPipe implements PipeTransform {
       }
       else {
         if (m) {
-          r.push(m < 10 ? '0' + m : m, s < 10 ? '0' + s.toFixed(1) : s.toFixed(1));
+          r.push(m, s < 10 ? '0' + s.toFixed(1) : s.toFixed(1));
         }
         else {
           r.push(s.toFixed(1));

@@ -47,6 +47,7 @@ import {MusicalSpinnerComponent} from "../components/musical-spinner/musical-spi
 import {AlbumPage} from "../pages/album/album";
 import {ArtistPage} from "../pages/artist/artist";
 import {MediaComponent} from "../components/media/media.component";
+import {OverscrollComponent} from "../components/overscroll/overscroll.component";
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import {MediaComponent} from "../components/media/media.component";
     MusicalSpinnerComponent,
     MediaComponent,
 
+    OverscrollComponent,
     DurationPipe,
   ],
   imports: [

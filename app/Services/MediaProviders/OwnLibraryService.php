@@ -37,7 +37,7 @@ class OwnLibraryService extends MediaProviderContract
     /**
      * @return string
      */
-    public function getName()
+    public function getSlug()
     {
         return 'library';
     }

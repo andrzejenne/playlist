@@ -50,11 +50,13 @@
           </div>
         </div>
         <ion-label (tap)="player.playItem(item)">
-          <h2>{{item.name}}</h2>
-          <p>
-            <ion-icon name="contact" *ngIf="description"></ion-icon>
-            {{description}}
-          </p>
+          <overscroll>
+            <h2>{{item.name}}</h2>
+            <p>
+              <ion-icon name="contact" *ngIf="description"></ion-icon>
+              {{description}}
+            </p>
+          </overscroll>
           <!--<ion-buttons end *ngIf="!player.isCurrent(item)" class="fabs">-->
             <!--<button ion-fab color="primary" class="small" (click)="player.playFirst(item)">-->
               <!--<ion-icon name="play">-->

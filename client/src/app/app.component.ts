@@ -112,10 +112,8 @@ export class ThePlaylist {
 
   setPageByProvider(provider: Provider) {
     this.setPage(provider.ionic.component, {
-      provider: provider.name,
-      download: provider.search,
-      delete: provider.delete,
-      title: provider.entity.name
+      provider: provider.slug,
+      title: provider.ionic.title
     });
   }
 

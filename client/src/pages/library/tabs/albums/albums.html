@@ -14,16 +14,18 @@
         </span>
       </div>
       <ion-label>
-        <h2>{{album.name}}</h2>
-        <p>
-          <span *ngIf="album.artist">
-            <ion-icon name="person"></ion-icon>
-            {{album.artist?.name}}
-            <br>
-          </span>
-          {{album.count}}
-          <ion-icon name="musical-note" title="media"></ion-icon>
-        </p>
+        <overscroll>
+          <h2>{{album.name}}</h2>
+          <p>
+            <span *ngIf="album.artist">
+              <ion-icon name="person"></ion-icon>
+              {{album.artist?.name}}
+              <br>
+            </span>
+            {{album.count}}
+            <ion-icon name="musical-note" title="media"></ion-icon>
+          </p>
+        </overscroll>
       </ion-label>
       <ion-buttons item-end>
         <button ion-fab class="small" (tap)="play(album)">

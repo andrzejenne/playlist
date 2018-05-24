@@ -23,7 +23,7 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content>
+  <ion-content class="menu-content">
     <ion-list>
       <button ion-item (click)="setPage('home');menu.close()" class="clear">
         <ion-icon item-start name="list" color="primary"></ion-icon>
@@ -42,7 +42,7 @@
       <button *ngFor="let provider of providers" ion-item
               (click)="setPageByProvider(provider);menu.close()" class="clear">
         <ion-icon item-start [name]="provider.ionic.menuIcon" color="primary"></ion-icon>
-        {{provider.entity.name}}
+        {{provider.ionic.title}}
       </button>
 
       <!--<button ion-item (click)="setPage('cloud', {provider: 'youtube', title: 'YouTube', download: true});menu.close()" class="clear">-->

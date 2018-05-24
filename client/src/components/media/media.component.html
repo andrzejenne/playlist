@@ -17,17 +17,19 @@
               [class.current]="player.isCurrent(item)"
               (tap)="play(item)">
       <ion-label>
-        <h2>
-          <span *ngIf="!compact">
-            <span *ngIf="item.artist"><u>{{item.artist.name}}</u> <br> </span>
-            <span *ngIf="item.album"><i>{{item.album.name}}</i> <br> </span>
-          </span>
-          {{item.name}}
-        </h2>
-        <p>
-          <ion-icon name="contact" *ngIf="description"></ion-icon>
-          {{description}}
-        </p>
+        <overscroll>
+          <h2>
+            <span *ngIf="!compact">
+              <span *ngIf="item.artist"><u>{{item.artist.name}}</u> <br> </span>
+              <span *ngIf="item.album"><i>{{item.album.name}}</i> <br> </span>
+            </span>
+            {{item.name}}
+          </h2>
+          <p>
+            <ion-icon name="contact" *ngIf="description"></ion-icon>
+            {{description}}
+          </p>
+        </overscroll>
       </ion-label>
 
       <span item-end class="duration">
