@@ -166,6 +166,7 @@ return [
 
         // foreign
         Alaouy\Youtube\YoutubeServiceProvider::class,
+        Vimeo\Laravel\VimeoServiceProvider::class,
 
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
@@ -221,6 +222,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'Youtube' => Alaouy\Youtube\Facades\Youtube::class,
+        'Vimeo' => Vimeo\Laravel\Facades\Vimeo::class,
 
         'WampRoute' => BBIT\Playlist\Facades\WampRoute::class,
 

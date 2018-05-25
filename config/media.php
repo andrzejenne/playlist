@@ -9,7 +9,8 @@
 return [
     'providers' => [
         'youtube' => \BBIT\Playlist\Services\MediaProviders\YouTubeService::class,
-        'library' => \BBIT\Playlist\Services\MediaProviders\OwnLibraryService::class
+        'library' => \BBIT\Playlist\Services\MediaProviders\OwnLibraryService::class,
+        'vimeo' => \BBIT\Playlist\Services\MediaProviders\VimeoService::class
     ],
     'downloaders' => [
         'youtube' => \BBIT\Playlist\Service\Downloader\YouTubeDownloader::class
@@ -30,6 +31,11 @@ return [
             'component' => 'cloud',
             'menuIcon' => 'logo-youtube',
             'title' => 'YouTube'
+        ],
+        'vimeo' => [
+            'component' => 'cloud',
+            'menuIcon' => 'logo-vimeo',
+            'title' => 'Vimeo'
         ],
         'library' => [
             'component' => 'library',
