@@ -28,7 +28,7 @@ class PlaylistController extends Controller
         foreach ($releases as &$release) {
             foreach ($release as &$apps) {
                 usort($apps, function($a, $b) {
-                    return $a[0] > $b[0] ? 1 : ($a[0] < $b[0] ? -1 : 0);
+                    return $a[0] > $b[0] ? -1 : ($a[0] < $b[0] ? 1 : 0);
                 });
             }
         }
