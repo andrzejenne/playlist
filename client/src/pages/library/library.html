@@ -15,10 +15,13 @@
 </ion-header>
 
 <ion-tabs class="mode-color" #tabs tabsPlacement="top" color="dark" tabsLayout="icon-start" [tabsHighlight]="true" name="library">
-  <ion-tab tabTitle="Artists" [root]="tab1Root" [rootParams]="artistsCount" tabIcon="person" [tabBadge]="artistsCount">
+  <ion-tab tabTitle="Artists" [root]="tab1Root"
+           [rootParams]="{count: artistsCount, playlist: playlist}" tabIcon="person" [tabBadge]="artistsCount">
   </ion-tab>
-  <ion-tab tabTitle="Albums" [root]="tab2Root" [rootParams]="albumsCount" tabIcon="disc" [tabBadge]="albumsCount">
+  <ion-tab tabTitle="Albums" [root]="tab2Root"
+           [rootParams]="{count: albumsCount, playlist: playlist}" tabIcon="disc" [tabBadge]="albumsCount">
   </ion-tab>
-  <ion-tab tabTitle="Genres" [root]="tab3Root" [rootParams]="genresCount" tabIcon="musical-note" [tabBadge]="genresCount">
+  <ion-tab tabTitle="Genres" [root]="tab3Root"
+           [rootParams]="{count: genresCount, playlist: playlist}" tabIcon="musical-note" [tabBadge]="genresCount">
   </ion-tab>
 </ion-tabs>

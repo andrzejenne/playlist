@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy} from '@angular/core';
 import {NavController, NavParams} from 'ionic-angular';
 import {Album} from "../../../../models/album";
 import {AlbumPage} from "../../../album/album";
@@ -7,6 +7,7 @@ import {LibraryManagerService} from "../../../../services/LibraryManagerService"
 import {MediaManagerService} from "../../../../services/MediaManagerService";
 import {Subject} from "rxjs/Subject";
 import {Subscription} from "rxjs/Subscription";
+import {Playlist} from "../../../../models/playlist";
 
 @Component({
   selector: 'albums-tab',
@@ -24,6 +25,9 @@ export class AlbumsTab implements OnDestroy {
 
   end = false;
 
+  @Input()
+  playlist: Playlist;
+
   private limit = 30;
 
   private offset = 0;
@@ -38,7 +42,10 @@ export class AlbumsTab implements OnDestroy {
               private navCtrl: NavController,
               private ref: ChangeDetectorRef
   ) {
-    this.count = params.data || [];
+    if (params) {
+      this.count = params.data.count || 0;
+      this.playlist = params.data.playlist;
+    }
   }
 
   ngAfterViewInit() {
@@ -93,7 +100,11 @@ export class AlbumsTab implements OnDestroy {
   }
 
   openAlbum(album: Album, play = false) {
-    this.navCtrl.push(AlbumPage, {album: album, play: play});
+    this.navCtrl.push(AlbumPage, {
+      album: album,
+      play: play,
+      playlist: this.playlist
+    });
   }
 
   filter() {

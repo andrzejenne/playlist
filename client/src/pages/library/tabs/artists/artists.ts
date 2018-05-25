@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy} from "@angular/core";
+import {ChangeDetectorRef, Component, Input, OnDestroy} from "@angular/core";
 import {NavController, NavParams} from "ionic-angular";
 import {Artist} from "../../../../models/artist";
 import {LibraryManagerService} from "../../../../services/LibraryManagerService";
@@ -6,6 +6,7 @@ import {MediaManagerService} from "../../../../services/MediaManagerService";
 import {Subject} from "rxjs/Subject";
 import {Subscription} from "rxjs/Subscription";
 import {ArtistPage} from "../../../artist/artist";
+import {Playlist} from "../../../../models/playlist";
 
 @Component({
   selector: 'artists-tab',
@@ -20,6 +21,9 @@ export class ArtistsTab implements OnDestroy {
   count: number;
 
   search = '';
+
+  @Input()
+  playlist: Playlist;
 
   private limit = 30;
 
@@ -36,7 +40,10 @@ export class ArtistsTab implements OnDestroy {
               private mediaManager: MediaManagerService,
               private libManager: LibraryManagerService,
               private ref: ChangeDetectorRef) {
-    this.count = params.data || [];
+    if (params) {
+      this.count = params.data.count || 0;
+      this.playlist = params.data.playlist;
+    }
   }
 
   ngAfterViewInit() {
@@ -88,7 +95,10 @@ export class ArtistsTab implements OnDestroy {
   // }
 
   openArtist(artist: Artist) {
-    this.navCtrl.push(ArtistPage, {artist: artist});
+    this.navCtrl.push(ArtistPage, {
+      artist: artist,
+      playlist: this.playlist
+    });
   }
 
   filter() {

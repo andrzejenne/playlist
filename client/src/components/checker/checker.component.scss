@@ -20,4 +20,8 @@ checker {
     margin-right: 0;
     margin-left: 0;
   }
+
+  &.disabled {
+    opacity: .5;
+  }
 }

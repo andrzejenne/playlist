@@ -13,21 +13,21 @@
           {{album.duration | duration}}
         </span>
       </div>
-      <ion-label>
+      <ion-label (tap)="openAlbum(album)">
         <overscroll>
           <h2>{{album.name}}</h2>
-          <p>
-            <span *ngIf="album.artist">
-              <ion-icon name="person"></ion-icon>
-              {{album.artist?.name}}
-              <br>
-            </span>
-            {{album.count}}
-            <ion-icon name="musical-note" title="media"></ion-icon>
-          </p>
         </overscroll>
+        <p>
+          <span *ngIf="album.artist">
+            <ion-icon name="person"></ion-icon>
+            {{album.artist?.name}}
+            <br>
+          </span>
+          {{album.count}}
+          <ion-icon name="musical-note" title="media"></ion-icon>
+        </p>
       </ion-label>
-      <ion-buttons item-end>
+      <ion-buttons item-end *ngIf="!playlist">
         <button ion-fab class="small" (tap)="play(album)">
           <ion-icon name="play"></ion-icon>
         </button>

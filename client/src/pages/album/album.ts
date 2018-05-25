@@ -5,6 +5,8 @@ import {Content, NavParams} from "ionic-angular";
 import {MediaManagerService} from "../../services/MediaManagerService";
 import {ElementReference} from "../../models/ElementReference";
 import {Medium} from "../../models/medium";
+import {Playlist} from "../../models/playlist";
+import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 
 @Component({
   selector: 'album-page',
@@ -14,17 +16,19 @@ export class AlbumPage {
   @Input()
   album: Album;
 
+  @Input()
+  playlist: Playlist;
+
   @ViewChild('fixed') fixed: ElementReference<HTMLDivElement>;
 
   @ViewChild('content') content: Content;
 
   private autoplay = false;
 
-  private current: Medium;
-
   constructor(
     public player: PlayerService,
     public mediaManager: MediaManagerService,
+    public plManager: PlaylistsManagerService,
     @Optional() params: NavParams = null) {
     if (params) {
       if (params.data.album) {
@@ -33,6 +37,7 @@ export class AlbumPage {
       if (params.data.play) {
         this.autoplay = params.data.play;
       }
+      this.playlist = params.data.playlist;
     }
   }
 
@@ -41,36 +46,21 @@ export class AlbumPage {
       this.mediaManager.getByAlbum(this.album)
         .then(media => {
           this.album.media = media;
-          this.player.setMedia(media);
-          if (this.autoplay) {
-            this.play();
+          if (!this.playlist) {
+            this.player.setMedia(media);
+            if (this.autoplay) {
+              this.player.togglePlayItem();
+            }
           }
         });
     }
-  }
-
-  play(item?: Medium) {
-    if (!item) {
-      if (this.current) {
-        item = this.current;
-      }
-      else {
-        item = this.album.media[0];
-        this.current = item;
-      }
-    }
     else {
-      this.current = item;
+      if (!this.playlist) {
+        this.player.setMedia(this.album.media);
+        if (this.autoplay) {
+          this.player.togglePlayItem();
+        }
+      }
     }
-
-    this.player.playItem(item);
-  }
-
-  pause() {
-    this.player.pause();
-  }
-
-  isPlaying() {
-    return this.player.isPlaying(this.current);
   }
 }

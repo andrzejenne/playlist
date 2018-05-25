@@ -1,13 +1,23 @@
-import {AfterContentInit, AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild} from "@angular/core";
+import {
+  AfterContentInit,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy, SimpleChanges,
+  ViewChild
+} from "@angular/core";
 import {Content} from "ionic-angular";
 import {Subscription} from "rxjs/Subscription";
 import {ElementReference} from "../../models/ElementReference";
+import {ConfigService} from "../../services/ConfigService";
 
 @Component({
   selector: 'overscroll',
   templateUrl: 'overscroll.component.html'
 })
-export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterViewInit {
+export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterViewInit, OnChanges {
 
   @Input()
   maxWidth = 2000;
@@ -18,7 +28,14 @@ export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterVi
   @Input()
   delay = '2s';
 
+  @Input()
+  disabled = false;
+
   private visible = false;
+
+  private scrolling = false;
+
+  private tout: number;
 
   private sub: Subscription;
 
@@ -28,12 +45,29 @@ export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterVi
   @ViewChild('content')
   private wrapContent: ElementReference<HTMLDivElement>;
 
-  constructor(private content: Content, private ref: ElementRef) {
+  constructor(
+    private content: Content,
+    private config: ConfigService,
+    private ref: ElementRef
+  ) {
 
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['disabled']) {
+      this.visible = this.isVisible();
+
+      this.decideToScroll();
+
+      console.info('OverscrollComponent@ngOnChanges', changes['disabled']);
+    }
+  }
+
+
+
   ngAfterContentInit(): void {
     this.sub = this.content.ionScrollEnd.subscribe(data => this.onScrollEnd(data));
+    // @todo - sub to config.settings$
   }
 
   ngOnDestroy(): void {
@@ -45,13 +79,37 @@ export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterVi
 
     this.visible = this.isVisible();
 
-    this.visible && this.scroll();
+    this.decideToScroll();
   }
 
   private onScrollEnd(data) {
-    console.info('OnScrollEnd', data);
+    // console.info('OnScrollEnd', data);
 
     this.visible = this.isVisible();
+
+    this.decideToScroll();
+  }
+
+  private decideToScroll() {
+    if (this.config.settings && this.config.settings.ui.scrollOverflowed) {
+      if (this.disabled) {
+        if (this.scrolling) {
+          this.stopScroll();
+        }
+      }
+      else {
+        if (this.visible) {
+          if (!this.scrolling) {
+            this.scroll();
+          }
+        }
+        else {
+          if (this.scrolling) {
+            this.stopScroll();
+          }
+        }
+      }
+    }
   }
 
   private scroll() {
@@ -70,14 +128,27 @@ export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterVi
       this.wrapContent.nativeElement.style.transitionDelay = this.delay;
 
       // @todo - optimize, add cancelation when not visible
-      setTimeout(() => {
+      this.tout = setTimeout(() => {
         this.wrapContent.nativeElement.style.left = 0 + 'px';
-        setTimeout(() => {
+        this.tout = setTimeout(() => {
           this.visible && this.scroll();
         }, (duration + delay) * 1000)
       }, (duration + delay) * 1000);
+
+      this.scrolling = true;
       // this.ref.nativeElement.style.
     }
+  }
+
+  private stopScroll() {
+    if (this.tout) {
+      clearTimeout(this.tout);
+    }
+
+    this.wrapContent.nativeElement.style.left = 0 + 'px';
+    this.wrapContent.nativeElement.style.transitionDuration = 0 + 's';
+
+    this.scrolling = false;
   }
 
   private isVisible() {
@@ -85,12 +156,7 @@ export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterVi
     let cbrect = this.content.getElementRef().nativeElement.getBoundingClientRect();
     // let cbrect  = document.body.getBoundingClientRect();
 
-    console.info('is', brect, cbrect, brect.top >= cbrect.top
-      // && brect.left >= cbrect.left
-      // && brect.right <= cbrect.right
-      );
-
-    let is = (
+    return (
         brect.top <= cbrect.bottom
         || brect.top >= cbrect.top
       )
@@ -112,6 +178,6 @@ export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterVi
 
     // console.info(is);
 
-    return is;
+    // return is;
   }
 }

@@ -18,39 +18,40 @@
   <!--<pre>{{!selector.length | json}}</pre>-->
   <!--<playlist-component ion-fixed *ngIf="playlist" [playlist]="playlist"></playlist-component>-->
   <ion-list>
-    <ion-item *ngFor="let playlist of playlists"
-              class="playlist-item item-small"
-              (press)="selector.toggleSelect(playlist)"
-              [class.selected]="plManager.playlist == playlist">
-      <checker item-start (tap)="selector.toggleSelect(playlist)"
-               [selected]="selector.isSelected(playlist)" [visible]="selector.length"></checker>
+    <ion-item-sliding *ngFor="let playlist of playlists">
+      <ion-item class="playlist-item clear" [class.selected]="isSelected(playlist)">
+        <ion-label (tap)="plManager.toggleSelectPlaylist(playlist)">
+          <h2>
+            {{playlist.name}}
+          </h2>
+          <p>
+            <span class="duration" *ngIf="playlist.duration">
+              <ion-icon name="musical-note"></ion-icon>
+              {{playlist.count}}
+              <br>
+              <ion-icon name="time"></ion-icon>
+              {{playlist.duration | duration}}
+            </span>
+          </p>
+        </ion-label>
 
-      <ion-label
-        (tap)="plManager.toggleSelectPlaylist(playlist)">
-        <h2>
-          {{playlist.name}}
-        </h2>
-        <p>
-          <span class="duration" *ngIf="playlist.duration">
-            <ion-icon name="musical-note"></ion-icon>
-            {{playlist.count}}
-            <br>
-            <ion-icon name="time"></ion-icon>
-            {{playlist.duration | duration}}
-          </span>
-        </p>
-      </ion-label>
+        <ion-buttons item-end *ngIf="playlist.media?.length">
+          <!--<button ion-button clear (tap)="shuffle(playlist)">-->
+            <!--<ion-icon name="shuffle"></ion-icon>-->
+          <!--</button>-->
+          <button ion-fab class="small" (tap)="play(playlist)">
+            <ion-icon name="play"></ion-icon>
+          </button>
+        </ion-buttons>
 
-      <ion-buttons item-end *ngIf="playlist.media?.length">
-        <button ion-button clear (tap)="shuffle(playlist)">
-          <ion-icon name="shuffle"></ion-icon>
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button color="danger" (click)="removePlaylist(playlist)">
+          <ion-icon name="trash"></ion-icon>
+          Delete
         </button>
-        <button ion-fab class="small" (tap)="play(playlist)">
-          <ion-icon name="play"></ion-icon>
-        </button>
-      </ion-buttons>
-
-    </ion-item>
+      </ion-item-options>
+    </ion-item-sliding>
   </ion-list>
 
   <ion-fab right bottom>
@@ -59,11 +60,11 @@
           (tap)="createPlaylist($event)">
       <ion-icon name="add"></ion-icon>
     </button>
-    <button *ngIf="selector.length" ion-fab color="danger"
-          [class.hide]="plManager.playlist"
-          (tap)="removeSelected($event)">
-      <ion-icon name="trash"></ion-icon>
-    </button>
+    <!--<button *ngIf="selector.length" ion-fab color="danger"-->
+          <!--[class.hide]="plManager.playlist"-->
+          <!--(tap)="removeSelected($event)">-->
+      <!--<ion-icon name="trash"></ion-icon>-->
+    <!--</button>-->
   </ion-fab>
 
   <!--<pre>{{playlist | json}}</pre>-->

@@ -103,13 +103,12 @@ export class PlaylistsPage implements OnDestroy {
     this.storage.set('playlist', playlist.id);
   }
 
+  isSelected(playlist: Playlist) {
+    return this.playlist === playlist;
+  }
 
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
-  }
-
-  removePlaylist(playlist: Playlist) {
-    this.plManager.remove(playlist);
   }
 
   createPlaylist($event) {
@@ -154,6 +153,16 @@ export class PlaylistsPage implements OnDestroy {
 
     Promise.all(actions)
       .then(ready => this.ref.detectChanges());
+  }
+
+  removePlaylist(playlist: Playlist) {
+    this.plManager.remove(playlist)
+      .then(num => {
+        let index = this.playlists.indexOf(playlist);
+        if (index > -1) {
+          this.playlists.splice(index, 1);
+        }
+      })
   }
 
   openPlaylist(playlist: Playlist) {

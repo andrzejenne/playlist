@@ -34,15 +34,9 @@
     <ion-item-sliding *ngFor="let item of player.mediaList">
       <ion-item *ngIf="item" class="item-component item-small"
                 [class.played]="player.wasPlayed(item)"
-                [class.current]="player.isCurrent(item)"
-                (press)="selector.toggleSelect(item)">
+                [class.current]="player.isCurrent(item)">
 
-        <checker item-left
-                 [visible]="selector.length > 0"
-                 [selected]="selector.isSelected(item)"
-                 (tap)="selector.toggleSelect(item)"></checker>
-
-        <div class="thumbnail" item-start [class.selected]="selector.isSelected(item)" (tap)="selector.toggleSelect(item)">
+        <div class="thumbnail" item-start>
           <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
           <span class="duration">{{item.duration | duration}}</span>
           <div class="playing" *ngIf="player.isCurrent(item)">
@@ -50,7 +44,7 @@
           </div>
         </div>
         <ion-label (tap)="player.playItem(item)">
-          <overscroll>
+          <overscroll [disabled]="!player.isPlaying(item)">
             <h2>{{item.name}}</h2>
             <p>
               <ion-icon name="contact" *ngIf="description"></ion-icon>

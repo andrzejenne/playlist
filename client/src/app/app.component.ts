@@ -20,6 +20,7 @@ import {SettingsContract} from "../services/contracts/SettingsContract";
 import {MediaManagerService} from "../services/MediaManagerService";
 import {WampService} from "../services/WampService";
 import {Provider} from "../models/provider";
+import {AppRepository} from "../repositories/app.repository";
 
 @Component({
   templateUrl: 'app.html'
@@ -66,6 +67,7 @@ export class ThePlaylist {
     private mediaManager: MediaManagerService,
     private config: ConfigService,
     private menuCtrl: MenuController,
+    private appRepo: AppRepository,
     private ref: ChangeDetectorRef
   ) {
 
@@ -201,9 +203,9 @@ export class ThePlaylist {
     // loads providers
     this.wamp.connected.subscribe(host => {
       if (host) {
-        this.mediaManager.getProviders()
+        this.appRepo.providers()
           .then(providers => {
-            this.providers = providers['args'] || providers;
+            this.providers = providers;
             this.serverManager.setProviders(providers, host);
 
             this.ref.detectChanges();

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy} from "@angular/core";
+import {ChangeDetectorRef, Component, Input, OnDestroy} from "@angular/core";
 import {LoadingController, NavController, NavParams} from "ionic-angular";
 import {Genre} from "../../../../models/genre";
 import {LibraryManagerService} from "../../../../services/LibraryManagerService";
@@ -6,6 +6,7 @@ import {MediaComponent} from "../../../../components/media/media.component";
 import {MediaManagerService} from "../../../../services/MediaManagerService";
 import {Subscription} from "rxjs/Subscription";
 import {Subject} from "rxjs/Subject";
+import {Playlist} from "../../../../models/playlist";
 
 @Component({
   selector: 'genres-tab',
@@ -20,6 +21,9 @@ export class GenresTab implements OnDestroy {
   count: number;
 
   search = '';
+
+  @Input()
+  playlist: Playlist;
 
   private limit = 30;
 
@@ -39,7 +43,10 @@ export class GenresTab implements OnDestroy {
     private mediaManager: MediaManagerService,
     private ref: ChangeDetectorRef
   ) {
-    this.count = params.data || [];
+    if (params) {
+      this.count = params.data.count || 0;
+      this.playlist = params.data.playlist;
+    }
   }
 
   ngAfterViewInit() {
@@ -87,7 +94,8 @@ export class GenresTab implements OnDestroy {
           this.nav.push(MediaComponent, {
             media: genre.media,
             title: genre.name,
-            autoplay: autoplay
+            autoplay: autoplay,
+            playlist: this.playlist
           });
           loader.dismiss();
         });
@@ -96,7 +104,8 @@ export class GenresTab implements OnDestroy {
       this.nav.push(MediaComponent, {
         media: genre.media,
         title: genre.name,
-        autoplay: autoplay
+        autoplay: autoplay,
+        playlist: this.playlist
       });
     }
   }

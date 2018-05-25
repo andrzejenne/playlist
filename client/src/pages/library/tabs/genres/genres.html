@@ -15,17 +15,17 @@
       <ion-title (tap)="openGenre(genre)">
         <overscroll>
           <h2>{{genre.name}}</h2>
-          <p>
-            {{genre.count.albums}}
-            <ion-icon name="disc" title="albums"></ion-icon>
-            |
-            {{genre.count.media}}
-            <ion-icon name="musical-note" title="media"></ion-icon>
-          </p>
         </overscroll>
+        <p>
+          {{genre.count.albums}}
+          <ion-icon name="disc" title="albums"></ion-icon>
+          |
+          {{genre.count.media}}
+          <ion-icon name="musical-note" title="media"></ion-icon>
+        </p>
       </ion-title>
       <ion-buttons item-end>
-        <button ion-fab class="small" (click)="play(genre)">
+        <button ion-fab *ngIf="!playlist" class="small" (click)="play(genre)">
           <ion-icon name="play"></ion-icon>
         </button>
       </ion-buttons>

@@ -75,6 +75,18 @@ $bgColor: #111122;
       }
     }
 
+    ion-list {
+      ion-item.item-input:last-child {
+        border-color: #223 !important;
+      }
+    }
+
+    ion-list-header {
+      background: $bgColor;
+      color: $color;
+      border-top-color: #223;
+    }
+
     ion-label {
       color: $color !important;
     }

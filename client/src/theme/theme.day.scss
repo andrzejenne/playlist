@@ -19,10 +19,6 @@ $bgColor: #ff6600;
       }
     }
 
-    input {
-      color: $color;
-    }
-
     ion-header {
       .toolbar {
         .text-input { color: $color; }
@@ -38,10 +34,15 @@ $bgColor: #ff6600;
     .toolbar {
       color: $color !important;
       .toolbar-title,
+      button,
       ion-icon,
       ion-select,
       ion-label {
         color: $color !important;
+      }
+
+      input {
+        color: $color;
       }
 
       ion-icon.connected {

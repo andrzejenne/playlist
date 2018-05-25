@@ -1,4 +1,4 @@
-import {Component, HostBinding, Input} from "@angular/core";
+import {Component, EventEmitter, HostBinding, HostListener, Input, Output} from "@angular/core";
 
 @Component({
   selector: 'checker',
@@ -12,6 +12,20 @@ export class CheckerComponent {
   @Input()
   visible: boolean = false;
 
+  @HostBinding('class.disabled')
+  @Input()
+  disabled: boolean = false;
+
+  @HostListener('tap')
+  onTap() {
+    if (!this.disabled) {
+      this.check.next(true);
+    }
+  }
+
+  @Output()
+  check = new EventEmitter<boolean>();
+
   @Input()
   color = 'primary';
 
@@ -19,7 +33,7 @@ export class CheckerComponent {
   selected: boolean = false;
 
   ngAfterViewInit() {
-    console.info('CheckerComponent', this);
+    // console.info('CheckerComponent', this);
     this.visible = false;
   }
 }

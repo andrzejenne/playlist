@@ -6,7 +6,8 @@ import {ElementReference} from "../../models/ElementReference";
 import {Artist} from "../../models/artist";
 import {Album} from "../../models/album";
 import {AlbumPage} from "../album/album";
-import {Medium} from "../../models/medium";
+import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
+import {Playlist} from "../../models/playlist";
 
 @Component({
   selector: 'artist-page',
@@ -16,21 +17,25 @@ export class ArtistPage {
   @Input()
   artist: Artist;
 
+  @Input()
+  playlist: Playlist;
+
   @ViewChild('fixed') fixed: ElementReference<HTMLDivElement>;
 
   @ViewChild('content') content: Content;
 
-  private current: Medium;
-
   constructor(
     public player: PlayerService,
     public mediaManager: MediaManagerService,
+    public plManager: PlaylistsManagerService,
     private navCtrl: NavController,
     @Optional() params: NavParams = null) {
     if (params) {
       if (params.data.artist) {
         this.artist = params.data.artist;
       }
+
+      this.playlist = params.data.playlist;
     }
   }
 
@@ -39,8 +44,17 @@ export class ArtistPage {
       this.mediaManager.getByArtist(this.artist)
         .then(media => {
           this.artist.media = media;
-          this.player.setMedia(media);
+          if (!this.playlist) {
+            this.player.setMedia(media);
+          }
         });
+    }
+    else {
+      if (!this.playlist) {
+        if (!this.playlist) {
+          this.player.setMedia(this.artist.media);
+        }
+      }
     }
   }
 
@@ -68,31 +82,9 @@ export class ArtistPage {
   }
 
   openAlbum(album: Album) {
-    this.navCtrl.push(AlbumPage, {album: album});
-  }
-
-  playItem(item?: Medium) {
-    if (!item) {
-      if (this.current) {
-        item = this.current;
-      }
-      else {
-        item = this.artist.media[0];
-        this.current = item;
-      }
-    }
-    else {
-      this.current = item;
-    }
-
-    this.player.playItem(item);
-  }
-
-  pause() {
-    this.player.pause();
-  }
-
-  isPlaying() {
-    return this.player.isPlaying(this.current);
+    this.navCtrl.push(AlbumPage, {
+      album: album,
+      playlist: this.playlist
+    });
   }
 }

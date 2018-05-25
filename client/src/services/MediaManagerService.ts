@@ -99,7 +99,15 @@ export class MediaManagerService {
   }
 
   getProviders() {
-    return this.appRepo.providers();
+    return this.serverManager.getProviders();
+  }
+
+  getMediumProvider(medium: Medium) {
+    return this.serverManager.getProviderBySlug(medium.provider.slug);
+  }
+
+  canDelete(medium: Medium) {
+    return this.getMediumProvider(medium).delete === true;
   }
 
   static getThumbnail(item: Medium) {

@@ -190,6 +190,31 @@ export class PlayerService {
     this.play();
   }
 
+  togglePlayItem(item: Medium = null, seek = 0) {
+    if (item) {
+      if (item == this.getCurrent()) {
+        this.setMedium();
+        this.status.playing = false;
+        this.updatePlayed();
+      }
+      else {
+        this.playItem(item, seek);
+      }
+    }
+    else {
+      item = this.mediaList[0] || null;
+
+      if (item) {
+        this.playItem(item, seek);
+      }
+      else {
+        this.updatePlayed();
+      }
+    }
+
+    return this.getCurrent();
+  }
+
   togglePlay() {
     this.status.playing = !this.status.playing;
 
@@ -378,21 +403,7 @@ export class PlayerService {
     this.preparePlaylist();
   }
 
-  private getPlayer() {
-    return this.videoEl;
-  }
-
-  // private preparePlaylistDiff() {
-  //   this.mediaList.splice(0, this.mediaList.length);
-  //   this.mediaList.push(...this.media);
-  //   this.playedList = [];
-  // }
-
-  private playStatus() {
-    this.playIcon = this.status.playing ? 'pause' : 'play';
-  }
-
-  private play() {
+  public play() {
     if (this.interval) {
       clearInterval(this.interval);
     }
@@ -411,6 +422,20 @@ export class PlayerService {
     this.playStatus();
 
     this.storage.set('currentMedium', this.medium.id);
+  }
+
+  private getPlayer() {
+    return this.videoEl;
+  }
+
+  // private preparePlaylistDiff() {
+  //   this.mediaList.splice(0, this.mediaList.length);
+  //   this.mediaList.push(...this.media);
+  //   this.playedList = [];
+  // }
+
+  private playStatus() {
+    this.playIcon = this.status.playing ? 'pause' : 'play';
   }
 
   private shuffle(arr: any[]) {
@@ -511,11 +536,11 @@ export class PlayerService {
     return Math.round(Math.random() * 2) - 1;
   };
 
-  private static filterPlayed(played: Medium[], current: Medium) {
-    return (item: Medium) => {
-      return current !== item && played.indexOf(item) === -1;
-    };
-  }
+  // private static filterPlayed(played: Medium[], current: Medium) {
+  //   return (item: Medium) => {
+  //     return current !== item && played.indexOf(item) === -1;
+  //   };
+  // }
 
   private detectChanges() {
     this.refs.forEach(r => r.detectChanges());
@@ -530,6 +555,9 @@ export class PlayerService {
     let index = this.mediaList.indexOf(this.getCurrent());
     if (index > -1) {
       this.playedList = this.mediaList.slice(0, index);
+    }
+    else {
+      this.playedList = [];
     }
   }
 }

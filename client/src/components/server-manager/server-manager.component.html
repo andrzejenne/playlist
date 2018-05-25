@@ -12,9 +12,9 @@
       <ion-icon name="close"></ion-icon>
     </button>
   </ion-item>
-  <ion-item>
+  <ion-item class="clear">
     <ion-label item-start>Host</ion-label>
     <ion-input [(ngModel)]="newServer.host"></ion-input>
-    <button ion-button item-end (click)="onAddClick()">Add</button>
+    <button [disabled]="!newServer.host" ion-button item-end (click)="onAddClick()">Add</button>
   </ion-item>
 </ion-list>

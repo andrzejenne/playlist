@@ -56,8 +56,8 @@ export class CloudPage implements OnDestroy {
     public mediaManager: MediaManagerService,
     public platform: Platform,
     public player: PlayerService,
+    public plManager: PlaylistsManagerService,
     private repo: CloudRepository,
-    private plManager: PlaylistsManagerService,
     private auth: AuthService,
     // private errorReporter: ErrorReporting,
     // private modalController: ModalController,
@@ -119,9 +119,10 @@ export class CloudPage implements OnDestroy {
   }
 
   toggleSelect(item: Medium) {
-    if (this.canDelete(item)) {
+    if (this.mediaManager.canDelete(item)) {
       this.selector.toggleSelect(item);
     }
+    this.ref.detectChanges();
   }
 
   dismiss() {
@@ -141,17 +142,6 @@ export class CloudPage implements OnDestroy {
       infiniteScroll.complete();
     }
 
-  }
-
-  addToPlaylist(item: Medium) {
-    this.plManager.addToPlaylist(item, this.playlist)
-      .then(result => result);
-// .then(
-    // @todo - info, added to playlist
-  }
-
-  inPlaylist(item: Medium) {
-    return this.playlist.media.filter(medium => item.id == medium.id).length > 0;
   }
 
   ngOnDestroy(): void {
@@ -189,10 +179,6 @@ export class CloudPage implements OnDestroy {
         this.selector.clearSelection();
         this.ref.detectChanges();
       });
-  }
-
-  canDelete(item: Medium) {
-    return true;
   }
 
   private unselectPlaylistIfNotFound(item: Medium) {

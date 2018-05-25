@@ -4,6 +4,7 @@ import {User} from "../models/user";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Playlist} from "../models/playlist";
 import {Medium} from "../models/medium";
+import {ToastController} from "ionic-angular";
 
 @Injectable()
 export class PlaylistsManagerService {
@@ -16,7 +17,8 @@ export class PlaylistsManagerService {
 
   playlist$ = new BehaviorSubject<Playlist>(null);
 
-  constructor(private repo: PlaylistsRepository) {
+  constructor(private repo: PlaylistsRepository,
+              private toastCtrl: ToastController) {
 
   }
 
@@ -38,6 +40,12 @@ export class PlaylistsManagerService {
           this.playlists.splice(index, 1);
           this.playlists$.next(this.playlists);
 
+          this.toastCtrl.create({
+            message: 'Playlist ' + playlist.name + ' removed',
+            position: 'top',
+            duration: 2000
+          }).present();
+
           return num;
         }
       });
@@ -50,6 +58,12 @@ export class PlaylistsManagerService {
         this.playlist$.next(this.playlist);
         this.playlists.push(this.playlist);
         this.playlists$.next(this.playlists);
+
+        this.toastCtrl.create({
+          message: 'Playlist ' + playlist.name + ' created',
+          position: 'top',
+          duration: 2000
+        }).present();
 
         return playlist;
       });
@@ -70,14 +84,25 @@ export class PlaylistsManagerService {
         this.playlist$.next(playlist);
       }
 
+      // @todo - reconsider
+      this.toastCtrl.create({
+        duration: 1000,
+        position: 'top',
+        message: 'Added ' + medium.name + ' to ' + this.playlist.name
+      }).present();
+
       return medium;
-    });
+    })
   }
 
   addToPlaylistBySid(sid: string, playlist: Playlist) {
     return this.repo.getMediaBySid(sid).then(medium => {
       return this.addToPlaylist(medium, playlist);
     });
+  }
+
+  inPlaylist(item: Medium, playlist = this.playlist) {
+    return playlist.media.filter(medium => item.id == medium.id).length > 0;
   }
 
   removeFromPlaylist(item: Medium, playlist: Playlist) {

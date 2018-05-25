@@ -31,8 +31,14 @@ export class SettingsContract {
   };
 
   playlists?: {
-    offline?: boolean
+    offline?: boolean;
   } = {
     offline: false
   };
+
+  ui?: {
+    scrollOverflowed?: boolean;
+  } = {
+    scrollOverflowed: true
+  }
 }

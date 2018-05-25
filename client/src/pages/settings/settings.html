@@ -6,31 +6,51 @@
 
 </ion-header>
 
-<ion-content padding class="mode-color">
-  <ion-label>
+<ion-content class="mode-color">
+  <ion-label padding>
     Server Settings
   </ion-label>
   <server-manager-component></server-manager-component>
 
-  <ion-label>
-    Player Settings
+  <ion-label padding>
+    App Settings
   </ion-label>
+  <ng-template [ngIf]="settings">
+    <ion-list>
+      <ion-list-header>Player</ion-list-header>
+      <ion-item>
+        <ion-label>Auto play from last known position</ion-label>
+        <ion-checkbox [(ngModel)]="settings.player.autoplay.lastPosition">
+        </ion-checkbox>
+      </ion-item>
+    </ion-list>
+    <ion-list>
+      <ion-list-header>Playlist</ion-list-header>
+      <ion-item>
+        <ion-label>Make playlist available offline</ion-label>
+        <ion-checkbox [(ngModel)]="settings.playlists.offline">
+        </ion-checkbox>
+      </ion-item>
+    </ion-list>
+    <ion-list>
+      <ion-list-header>Ui</ion-list-header>
+      <ion-item>
+        <ion-label>Scroll overflowed titles</ion-label>
+        <ion-checkbox [(ngModel)]="settings.ui.scrollOverflowed">
+        </ion-checkbox>
+      </ion-item>
+    </ion-list>
 
-  <ion-list *ngIf="settings">
-    <ion-item>
-      <ion-label>Auto play from last known position</ion-label>
-      <ion-checkbox [(ngModel)]="settings.player.autoplay.lastPosition">
-      </ion-checkbox>
-    </ion-item>
-    <ion-item>
-      <ion-label>Make playlist available offline</ion-label>
-      <ion-checkbox [(ngModel)]="settings.playlists.offline">
-      </ion-checkbox>
-    </ion-item>
-  </ion-list>
-
-  <button ion-button color="primary" (tap)="onApplyTap()">
-    Apply Changes
-  </button>
+  </ng-template>
 
 </ion-content>
+
+<ion-footer class="mode-color">
+  <ion-toolbar>
+    <ion-buttons end>
+      <button ion-button color="primary" (tap)="onApplyTap()">
+        Apply Changes
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

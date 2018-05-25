@@ -25,6 +25,8 @@ export class ServerManagerService {
 
   providers: {[index: string]: Provider[]} = {};
 
+  providersMap: {[index: string]: {[index: string]: Provider}} = {};
+
   private sessions = {};
 
   private connecting = {};
@@ -103,6 +105,10 @@ export class ServerManagerService {
 
   getProviders(host = this.host) {
     return this.providers[host];
+  }
+
+  getProviderBySlug(slug: string, host = this.host) {
+    return this.getProvidersMap(host)[slug] || null;
   }
 
   add(server: Server) {
@@ -198,6 +204,16 @@ export class ServerManagerService {
     else {
       this.readyResolvers.push(resolve);
     }
-  }
+  };
 
+  private getProvidersMap(host: string) {
+    if (!this.providersMap[host]) {
+      this.providersMap[host] = {};
+      this.providers[host].forEach(
+        provider => this.providersMap[host][provider.slug] = provider
+      );
+    }
+
+    return this.providersMap[host];
+  }
 }
