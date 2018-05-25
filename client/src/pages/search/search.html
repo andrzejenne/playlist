@@ -56,7 +56,9 @@
         <span class="duration">{{item.duration | duration}}</span>
       </div>
       <ion-title class="item-content">
-        <h2>{{item.title}}</h2>
+        <overscroll>
+          <h2>{{item.title}}</h2>
+        </overscroll>
         <!--<p style="max-height: 48px; overflow: hidden;">{{item.description}}</p>-->
         <p>
           <a ion-button clear small icon-left [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank"

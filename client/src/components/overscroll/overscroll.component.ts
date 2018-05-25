@@ -58,7 +58,7 @@ export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterVi
     let containerWidth = this.ref.nativeElement.clientWidth;
     let contentWidth = this.wrapContent.nativeElement.clientWidth;
 
-    console.info(containerWidth, contentWidth);
+    // console.info(containerWidth, contentWidth);
 
     let missingWidth = contentWidth - containerWidth;
     let delay = this.delay.indexOf('ms') > -1 ? parseInt(this.delay) / 1000 : parseInt(this.delay);
@@ -69,6 +69,7 @@ export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterVi
       this.wrapContent.nativeElement.style.transitionDuration = duration + 's';
       this.wrapContent.nativeElement.style.transitionDelay = this.delay;
 
+      // @todo - optimize, add cancelation when not visible
       setTimeout(() => {
         this.wrapContent.nativeElement.style.left = 0 + 'px';
         setTimeout(() => {
@@ -82,11 +83,35 @@ export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterVi
   private isVisible() {
     let brect = this.ref.nativeElement.getBoundingClientRect();
     let cbrect = this.content.getElementRef().nativeElement.getBoundingClientRect();
-    // console.info('is', brect, cbrect, document.body.getBoundingClientRect());
+    // let cbrect  = document.body.getBoundingClientRect();
 
-    return brect.top >= cbrect.top
-      && brect.left >= cbrect.left
-      && brect.right <= cbrect.right
-      && brect.bottom <= cbrect.bottom;
+    console.info('is', brect, cbrect, brect.top >= cbrect.top
+      // && brect.left >= cbrect.left
+      // && brect.right <= cbrect.right
+      );
+
+    let is = (
+        brect.top <= cbrect.bottom
+        || brect.top >= cbrect.top
+      )
+      &&
+      (
+        brect.bottom >= cbrect.top
+        || brect.bottom <= cbrect.bottom
+      )
+      &&
+      (
+        brect.left <= cbrect.right
+        || brect.left >= cbrect.left
+      )
+      &&
+      (
+        brect.right >= cbrect.left
+        || brect.right <= cbrect.right
+      );
+
+    // console.info(is);
+
+    return is;
   }
 }

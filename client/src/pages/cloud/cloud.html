@@ -31,7 +31,9 @@
           <span class="duration">{{item.duration | duration}}</span>
         </div>
         <ion-label>
-          <h2>{{item.name}}</h2>
+          <overscroll>
+            <h2>{{item.name}}</h2>
+          </overscroll>
           <p>
             <span *ngIf="item.artist">
               <ion-icon name="person"></ion-icon>

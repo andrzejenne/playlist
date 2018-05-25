@@ -100,6 +100,10 @@ export class PlaylistComponent implements OnDestroy {
       this.arrowIcon = 'arrow-up';
     }
     this.hidden = !this.hidden;
+
+
+    // @todo - is it safe to emit no value ?
+    this.contentContainer.ionScrollEnd.emit();
   }
 
   ngAfterViewInit() {
