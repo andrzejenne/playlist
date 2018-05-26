@@ -44,6 +44,8 @@ export class ThePlaylist {
 
   providers: Provider[] = [];
 
+  searchableProviders: Provider[] = [];
+
   private settings: SettingsContract;
 
   private host: string;
@@ -206,6 +208,7 @@ export class ThePlaylist {
         this.appRepo.providers()
           .then(providers => {
             this.providers = providers;
+            this.searchableProviders = providers.filter(provider => provider.search);
             this.serverManager.setProviders(providers, host);
 
             this.ref.detectChanges();

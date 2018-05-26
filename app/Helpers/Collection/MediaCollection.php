@@ -41,22 +41,29 @@ class MediaCollection extends AbstractCollection
      */
     public function search()
     {
-        if (!empty($this->search)) {
-            $search = $this->search;
-            $this->getBuilder()
-                ->where(Medium::COL_NAME, 'like', "%$search%")
-                ->orWhereHas(Medium::REL_ALBUM, function ($query) use ($search) {
-                    $query->where(Album::COL_NAME, 'like', "%$search%");
-                })->orWhereHas(Medium::REL_ARTIST, function ($query) use ($search) {
-                    $query->where(Artist::COL_NAME, 'like', "%$search%");
-                });
-        }
+        $builder = $this->getBuilder();
+
         if (!empty($this->provider)) {
             $provider = MediaProvider::whereSlug($this->provider)->first();
             if ($provider) {
-                $this->getBuilder()
+                $builder
                     ->where(Medium::COL_PROVIDER_ID, '=', $provider->id);
             }
+        }
+
+        if (!empty($this->search)) {
+            $search = $this->search;
+            $builder
+                ->where(
+                    function ($q) use ($search) {
+                        $q->where(Medium::COL_NAME, 'like', "%$search%")
+                            ->orWhereHas(Medium::REL_ALBUM, function ($query) use ($search) {
+                                $query->where(Album::COL_NAME, 'like', "%$search%");
+                            })->orWhereHas(Medium::REL_ARTIST, function ($query) use ($search) {
+                                $query->where(Artist::COL_NAME, 'like', "%$search%");
+                            });
+
+                    });
         }
 
         // @todo - add search for album, artist, ...;

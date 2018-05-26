@@ -104,7 +104,8 @@ export class CloudPage implements OnDestroy {
 
   toDownload() {
     this.navCtrl.push(SearchPage, {
-      playlist: this.playlist
+      playlist: this.playlist,
+      provider: this.provider
     });
   }
 

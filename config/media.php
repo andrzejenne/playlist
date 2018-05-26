@@ -9,11 +9,12 @@
 return [
     'providers' => [
         'youtube' => \BBIT\Playlist\Services\MediaProviders\YouTubeService::class,
+        'vimeo' => \BBIT\Playlist\Services\MediaProviders\VimeoService::class,
         'library' => \BBIT\Playlist\Services\MediaProviders\OwnLibraryService::class,
-        'vimeo' => \BBIT\Playlist\Services\MediaProviders\VimeoService::class
     ],
     'downloaders' => [
-        'youtube' => \BBIT\Playlist\Service\Downloader\YouTubeDownloader::class
+        'youtube' => \BBIT\Playlist\Service\Downloader\YouTubeDownloader::class,
+        'vimeo' => \BBIT\Playlist\Service\Downloader\VimeoDownloader::class
 //    'youtube' => \BBIT\Playlist\Service\Downloader\DummyDownloader::class
     ],
 

@@ -111,6 +111,16 @@ class OwnLibraryService extends MediaProviderContract
     }
 
     /**
+     * @param $sid
+     * @throws \Exception
+     */
+    public function getMediumOriginUrl($sid)
+    {
+        throw new \Exception('Own Library has no origin');
+    }
+
+
+    /**
      * @param $pathInLib
      * @param $libPath
      * @return string

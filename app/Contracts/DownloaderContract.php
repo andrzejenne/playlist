@@ -37,37 +37,42 @@ abstract class DownloaderContract
 
 
     /**
+     * @param $url
      * @param $sid
      * @param $outDir
      * @return Process
      */
-    abstract public function download($sid, $outDir);
+    abstract public function download($url, $sid, $outDir);
 
     /**
+     * @param $url
      * @param $sid
      * @param $outDir
      * @param string $format
      * @return string
      */
-    abstract public function downloadAudio($sid, $outDir, $format = 'mp3');
+    abstract public function downloadAudio($url, $sid, $outDir, $format = 'mp3');
 
     /**
+     * @param $url
      * @param $sid
      * @return Collection
      */
-    abstract public function getVideos($sid);
+    abstract public function getVideos($url, $sid);
 
     /**
+     * @param $url
      * @param $sid
      * @return Collection
      */
-    abstract public function getAudios($sid);
+    abstract public function getAudios($url, $sid);
 
     /**
+     * @param $url
      * @param $sid
      * @return string
      */
-    abstract public function getName($sid);
+    abstract public function getName($url, $sid);
 
     /**
      * @return void

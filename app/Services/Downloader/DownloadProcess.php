@@ -61,11 +61,18 @@ class DownloadProcess
                 $request->getSid()
             );
 
+        $sid = $request->getSid();
+
         if ('video' == $request->getType()) {
-            $proc = $downloader->download($request->getSid(), $outDir);
+            $proc = $downloader->download(
+                $request->getProvider()
+                    ->getMediumOriginUrl($sid), $sid, $outDir);
         }
         else {
-            $proc = $downloader->downloadAudio($request->getSid(), $outDir, $request->getFormat());
+            $proc = $downloader->downloadAudio(
+                $request->getProvider()
+                    ->getMediumOriginUrl($sid), $sid, $outDir, $request->getFormat()
+            );
         }
 
         return new static($proc, $request, $downloader);

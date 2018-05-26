@@ -6,8 +6,8 @@ import {WampRepository} from "./wamp.repository";
 @Injectable()
 export class SearchRepository extends WampRepository {
 
-  public search(uid: number, q: string, args: any = {}) {
-    return this.wamp.call<SearchItemCollection>('com.search', [{uid: uid, q: q, ...args}]);
+  public search(uid: number, q: string, provider: string, args: any = {}) {
+    return this.wamp.call<SearchItemCollection>('com.search', [{uid: uid, q: q, provider: provider, ...args}]);
   }
 
   public getSearchHistory(uid: number) {

@@ -14,7 +14,7 @@ use BBIT\Playlist\Helpers\MediaItemCollection;
 use BBIT\Playlist\Helpers\MediaItemPaginatedCollection;
 use BBIT\Playlist\Models\MediaFile;
 use BBIT\Playlist\Models\Medium;
-use Vimeo\Laravel\VimeoManager;
+use function GuzzleHttp\Psr7\parse_query;
 use Vimeo\Vimeo;
 
 /**
@@ -26,16 +26,16 @@ class VimeoService extends MediaProviderContract
     /**
      * @var Vimeo
      */
-    private $service;
+    private $vimeo;
 
 
     /**
      * YouTubeService constructor.
-     * @param VimeoManager $manager
      */
-    public function __construct(Vimeo $manager)
+    public function __construct()
     {
-        $this->service = $manager;
+        $this->vimeo = new Vimeo(config('vimeo.client_id'), config('vimeo.client_secret'));
+        $this->vimeo->setToken(config('vimeo.access_token'));
     }
 
 
@@ -50,16 +50,16 @@ class VimeoService extends MediaProviderContract
     {
         if (!$pageToken) {
             $pageToken = 1;
+        } else {
+            $query = parse_query($pageToken);
+            $pageToken = $query['page'];
         }
 
         $args = ['query' => $q, 'page' => $pageToken, 'per_page' => $perPage];
 
-        $search = $this->service->request('/videos', $args, 'GET');
+        $search = $this->vimeo->request('/videos', $args, 'GET');
 
-        $details = $this->getDetails($search['results']);
-
-        // @todo - create media list collection
-        return $this->transformResults($details, $search['info']['prevPageToken'], $search['info']['nextPageToken']);
+        return $this->transformResults($search['body']['data'], $search['body']['paging']['previous'], $search['body']['paging']['next']);
     }
 
     /**
@@ -116,6 +116,11 @@ class VimeoService extends MediaProviderContract
             . DIRECTORY_SEPARATOR . $sid[2] . $sid[3];
     }
 
+    public function getMediumOriginUrl($sid)
+    {
+        return 'https://vimeo.com/' . $sid;
+    }
+
     /**
      * @return string
      */
@@ -127,93 +132,32 @@ class VimeoService extends MediaProviderContract
     }
 
     /**
-     * @param $sid
-     * @param bool $immediately
-     * @return mixed
-     * @throws \Exception
-     * @deprecated
-     */
-    public function info($sid, $immediately = true)
-    {
-        throw new \Exception('not implemented ');
-
-        $info = \Cache::get('info.vimeo.' . $sid);
-        if (!$info && $immediately) {
-            try {
-                $info = $this->service->getVideoInfo($sid);
-                if ($info) {
-                    \Cache::forever('info.vimeo.' . $sid, $info);
-                }
-            } catch (\Exception $e) {
-                $info = null;
-            }
-        }
-
-        return $info;
-    }
-
-
-    /**
-     * @param $results
-     * @return \StdClass
-     * @throws \Exception
-     * @deprecated
-     */
-    private function getDetails($results)
-    {
-        $ids = [];
-        $cached = [];
-        $retrieved = [];
-        foreach ($results as $result) {
-//            if (isset($result->id->videoId)) {
-            $sid = $result->id->videoId;
-            $info = $this->info($sid, false);
-            if ($info) {
-                $cached[] = $info;
-            } else {
-                $ids[] = $sid;
-            }
-//            }
-        }
-
-        if (count($ids)) {
-            $retrieved = $this->service->getVideoInfo($ids);
-            foreach ($retrieved as $item) {
-                \Cache::forever('info.youtube.' . $item->id, $item);
-            }
-        }
-
-        return array_merge($cached, $retrieved);
-    }
-
-    /**
      * @param $results
      * @param $prevPageToken
      * @param $nextPageToken
      * @return MediaItemCollection
      * @throws \Exception
-     * @deprecated
      */
     private function transformResults($results, $prevPageToken, $nextPageToken)
     {
         $collection = new MediaItemPaginatedCollection($prevPageToken, $nextPageToken, [], $this);
 
         foreach ($results as $result) {
-            if (isset($result->id)) {
-                $duration = null;
-                try {
-                    $duration = $this->getDuration($result->contentDetails->duration);
-                } finally {
-                    $collection->add(
-                        MediaItem::create(
-                            $result->id,
-                            $result->snippet->title,
-                            $result->snippet->description,
-                            $result->snippet->thumbnails->medium->url, // @todo configurable size
-                            $duration
-                        )
-                    );
-                }
+            $matches = [];
+            preg_match('/(\d+)/', $result['uri'], $matches);
+            if (isset($matches[1])) {
+                $id = $matches[1];
+
+                $collection->add(
+                    MediaItem::create(
+                        $id,
+                        $result['name'],
+                        !empty($result['description']) ? $result['description'] : '',
+                        static::getClosestToWidth($result['pictures']['sizes'], $result['width']),
+                        $result['link'],
+                        $result['duration']
+                    )
+                );
             }
         }
 
@@ -221,16 +165,22 @@ class VimeoService extends MediaProviderContract
     }
 
     /**
-     * @param $duration
-     * @return float|int
-     * @throws \Exception
-     * @deprecated
+     * @param $links
+     * @param $width
+     * @return null
      */
-    private function getDuration($duration)
+    private static function getClosestToWidth($links, $width)
     {
-        $interval = new \DateInterval($duration);
+        $closest = null;
+        foreach ($links as $link) {
+            if ($closest === null) {
+                $closest = $link;
+            } else if (abs($link['width'] - $width) < abs($closest['width'] - $width)) {
+                $closest = $link;
+            }
+        }
 
-        return $interval->h * 3600 + $interval->i * 60 + $interval->s;
+        return $closest['link'];
     }
 
 

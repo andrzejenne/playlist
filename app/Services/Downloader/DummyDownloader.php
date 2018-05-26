@@ -40,10 +40,11 @@ class DummyDownloader extends DownloaderContract
     }
 
     /**
+     * @param $url
      * @param $sid
      * @return string
      */
-    public function getName($sid) {
+    public function getName($url, $sid) {
         return 'dummy.mkv';
     }
 
@@ -57,11 +58,12 @@ class DummyDownloader extends DownloaderContract
 
 
     /**
+     * @param $url
      * @param $sid
      * @param $outDir
      * @return Process
      */
-    public function download($sid, $outDir)
+    public function download($url, $sid, $outDir)
     {
         if ($this->reporter) {
             $this->reporter->restart();
@@ -77,31 +79,34 @@ class DummyDownloader extends DownloaderContract
     }
 
     /**
+     * @param $url
      * @param $sid
      * @param $outDir
      * @param string $format
      * @return string
      * @throws \Exception
      */
-    public function downloadAudio($sid, $outDir, $format = 'mp3')
+    public function downloadAudio($url, $sid, $outDir, $format = 'mp3')
     {
         throw new \Exception('not implemented');
     }
 
     /**
+     * @param $url
      * @param $sid
      * @return Collection
      */
-    public function getVideos($sid)
+    public function getVideos($url, $sid)
     {
         return Collection::make([]);
     }
 
     /**
+     * @param $url
      * @param $sid
      * @return Collection
      */
-    public function getAudios($sid)
+    public function getAudios($url, $sid)
     {
         return Collection::make([]);
     }

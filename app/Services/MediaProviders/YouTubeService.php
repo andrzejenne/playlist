@@ -114,6 +114,16 @@ class YouTubeService extends MediaProviderContract
     }
 
     /**
+     * @param $sid
+     * @return string
+     */
+    public function getMediumOriginUrl($sid)
+    {
+        return 'https://youtube.com/watch?v=' . $sid;
+    }
+
+
+    /**
      * @return string
      */
     public function getBasePath()
@@ -191,6 +201,7 @@ class YouTubeService extends MediaProviderContract
 
         foreach ($results as $result) {
             if (isset($result->id)) {
+
                 $duration = null;
                 try {
                     $duration = $this->getDuration($result->contentDetails->duration);
@@ -201,6 +212,7 @@ class YouTubeService extends MediaProviderContract
                             $result->snippet->title,
                             $result->snippet->description,
                             $result->snippet->thumbnails->medium->url, // @todo configurable size
+                            $this->getMediumOriginUrl($result->id),
                             $duration
                         )
                     );

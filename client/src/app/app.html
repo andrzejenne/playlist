@@ -29,7 +29,7 @@
         <ion-icon item-start name="list" color="primary"></ion-icon>
         Playlists
       </button>
-      <button ion-item (click)="setPage('search');menu.close()" class="clear">
+      <button ion-item (click)="setPage('search', {providers: searchableProviders});menu.close()" class="clear">
         <ion-icon item-start name="search" color="primary"></ion-icon>
         Search
       </button>

@@ -45,20 +45,27 @@ class MediaProvider extends BaseModel
         self::COL_SLUG,
     ];
 
+    /** @var MediaLibraryProvider */
+    private $_provider;
+
     /**
      * @return MediaProviderContract
      */
     public function getService()
     {
-        return \App::make(MediaLibraryProvider::getAlias($this->slug));
+        return $this->getProvider()
+            ->getService($this->slug);
     }
 
-//    public function toArray()
-//    {
-//        return parent::toArray() + [
-//            'url' => config('app.url') . '/media/' . $this->slug
-//        ];
-//    }
+    /**
+     * @return MediaLibraryProvider
+     */
+    private function getProvider() {
+        if (!$this->_provider) {
+            $this->_provider = \App::make(MediaLibraryProvider::class);
+        }
 
+        return $this->_provider;
+    }
 
 }

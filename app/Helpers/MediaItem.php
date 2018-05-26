@@ -27,20 +27,24 @@ class MediaItem implements Arrayable, \JsonSerializable
 
     private $duration;
 
+    private $previewUrl;
+
     /**
      * MediaItem constructor.
      * @param string $sid
      * @param string $title
      * @param string $description
      * @param string $thumbnail
+     * @param string $previewUrl
      * @param string $duration
      */
-    public function __construct(string $sid, string $title, string $description, string $thumbnail, string $duration)
+    public function __construct(string $sid, string $title, string $description, string $thumbnail, string $previewUrl, string $duration)
     {
         $this->sid = $sid;
         $this->title = $title;
         $this->description = $description;
         $this->thumbnail = $thumbnail;
+        $this->previewUrl = $previewUrl;
         $this->duration = $duration;
     }
 
@@ -49,12 +53,13 @@ class MediaItem implements Arrayable, \JsonSerializable
      * @param string $title
      * @param string $description
      * @param string $thumbnail
+     * @param string $previewUrl
      * @param string $duration
      * @return MediaItem
      */
-    public static function create(string $sid, string $title, string $description, string $thumbnail, string $duration)
+    public static function create(string $sid, string $title, string $description, string $thumbnail, string $previewUrl, string $duration)
     {
-        return new static($sid, $title, $description, $thumbnail, $duration);
+        return new static($sid, $title, $description, $thumbnail, $previewUrl, $duration);
     }
 
     /**
@@ -89,6 +94,14 @@ class MediaItem implements Arrayable, \JsonSerializable
         return $this->thumbnail;
     }
 
+    /**
+     * @return string
+     */
+    public function getPreviewUrl()
+    {
+        return $this->previewUrl;
+    }
+
 
     /**
      * @return array
@@ -100,6 +113,7 @@ class MediaItem implements Arrayable, \JsonSerializable
             'title' => $this->title,
             'description' => $this->description,
             'thumbnail' => $this->thumbnail,
+            'previewUrl' => $this->previewUrl,
             'duration' => $this->duration
         ];
     }

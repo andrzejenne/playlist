@@ -23,7 +23,7 @@ export class DownloadManager {
     this.subscribeWamp();
   }
 
-  download(uid: number, item: SearchItem, provider = 'youtube') {
+  download(uid: number, item: SearchItem, provider: string) {
     if (!this.isDownloading(item.sid)) {
       this.downloads.push({
         ...item,

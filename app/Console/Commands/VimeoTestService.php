@@ -61,5 +61,6 @@ class VimeoTestService extends Command
 
         $results = $service->search('top gun');
 
+        print_r($results);
     }
 }

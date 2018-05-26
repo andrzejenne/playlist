@@ -3,4 +3,5 @@ export class SearchItem {
   title: string;
   description: string;
   thumbnail: string;
+  previewUrl: string;
 }

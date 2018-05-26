@@ -15,6 +15,8 @@ import {LibraryPage} from "../../pages/library/library";
 import {CloudPage} from "../../pages/cloud/cloud";
 import {PlayerService} from "../../services/PlayerService";
 import {MediaManagerService} from "../../services/MediaManagerService";
+import {ServerManagerService} from "../../services/ServerManagerService";
+import {Provider} from "../../models/provider";
 
 @Component({
   selector: 'playlist-component',
@@ -38,30 +40,26 @@ export class PlaylistComponent implements OnDestroy {
       title: 'In Cloud',
       provider: null,
       download: false
-    },
-    library: {
-      component: LibraryPage,
-      title: 'Library',
-      provider: 'library',
-      download: false
-    },
-    youtube: {
-      component: CloudPage,
-      title: 'YouTube',
-      provider: 'youtube',
-      download: true
     }
+  };
+
+  components = {
+    library: LibraryPage,
+    cloud: CloudPage
   };
 
   hidden = true;
 
   arrowIcon = 'arrow-up';
 
+  providers: Provider[];
+
   private subs: Subscription[] = [];
 
   constructor(
     public selector: SelectorService<Medium>,
     public mediaManager: MediaManagerService,
+    private serverManager: ServerManagerService,
     private player: PlayerService,
     private storage: Storage,
     private plManager: PlaylistsManagerService,
@@ -107,6 +105,7 @@ export class PlaylistComponent implements OnDestroy {
   }
 
   ngAfterViewInit() {
+
     if (this.params && !this.params.data.id) {
       this.prepare();
     }
@@ -120,6 +119,11 @@ export class PlaylistComponent implements OnDestroy {
           this.player.setMedia(playlist.media);
         }
         this.ref.detectChanges();
+      }),
+      this.serverManager.providers$.subscribe(providers => {
+        if (providers) {
+          this.providers = this.serverManager.getProviders();
+        }
       })
     );
 
@@ -176,17 +180,31 @@ export class PlaylistComponent implements OnDestroy {
       });
   }
 
-  open(page: string) {
+  open(page: string, provider?: Provider) {
     let pageOpts = this.pages[page];
+    let data;
+    let component;
 
-    // let nav = this.nav || this.subNav;
-    // nav.push(this.pages[page], this.playlist);
-    this.modalCtrl.create(pageOpts.component, {
-      playlist: this.playlist,
-      title: pageOpts.title,
-      provider: pageOpts.provider,
-      download: pageOpts.download
-    }, {
+    if (provider) {
+      data = {
+        playlist: this.playlist,
+        title: provider.ionic.title,
+        provider: provider.slug,
+        download: provider.search
+      };
+      component = this.components[provider.ionic.component];
+    }
+    else {
+      data = {
+        playlist: this.playlist,
+        title: pageOpts.title,
+        provider: pageOpts.provider,
+        download: pageOpts.download
+      };
+      component = this.pages[page].component;
+    }
+
+    this.modalCtrl.create(component, data, {
       cssClass: 'fullscreen-modal mode-color'
     }).present();
   }

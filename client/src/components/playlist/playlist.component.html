@@ -93,12 +93,15 @@
       <button ion-fab (tap)="open('all')">
         A
       </button>
-      <button ion-fab (tap)="open('library')">
-        <ion-icon name="list"></ion-icon>
+      <button ion-fab *ngFor="let provider of providers" (tap)="open(provider.slug, provider)">
+        <ion-icon [name]="provider.ionic.menuIcon"></ion-icon>
       </button>
-      <button ion-fab (tap)="open('youtube')">
-        <ion-icon name="logo-youtube"></ion-icon>
-      </button>
+      <!--<button ion-fab (tap)="open('library')">-->
+        <!--<ion-icon name="list"></ion-icon>-->
+      <!--</button>-->
+      <!--<button ion-fab (tap)="open('youtube')">-->
+        <!--<ion-icon name="logo-youtube"></ion-icon>-->
+      <!--</button>-->
     </ion-fab-list>
   </ion-fab>
 

@@ -45,6 +45,8 @@ abstract class MediaProviderContract
 
     abstract public function getOutDir(string $sid);
 
+    abstract public function getMediumOriginUrl($sid);
+
     /**
      * @return mixed
      */

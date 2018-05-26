@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, Optional, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, Optional, ViewChild} from '@angular/core';
 import {LoadingController, Modal, ModalController, NavController, NavParams, Platform, TextInput} from 'ionic-angular';
 import {SearchRepository} from "../../repositories/search.repository";
 import {SearchItem} from "../../models/search-item";
@@ -10,6 +10,7 @@ import {Subscription} from "rxjs/Subscription";
 import {ConfigService} from "../../services/ConfigService";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {Playlist} from "../../models/playlist";
+import {Provider} from "../../models/provider";
 
 @Component({
   selector: 'page-search',
@@ -35,6 +36,12 @@ export class SearchPage implements OnDestroy {
 
   @ViewChild('input')
   input: TextInput;
+
+  @Input()
+  providers: Provider[];
+
+  @Input()
+  provider: string = null;
 
   searching = false;
 
@@ -63,6 +70,13 @@ export class SearchPage implements OnDestroy {
     if (params) {
       if (params.data.playlist) {
         this.playlist = params.data.playlist;
+      }
+      if (params.data.provider) {
+        this.provider = params.data.provider;
+      }
+      this.providers = params.data.providers || [];
+      if (!this.provider) {
+        this.provider = this.providers[0] ? this.providers[0].slug : '';
       }
     }
   }
@@ -113,7 +127,7 @@ export class SearchPage implements OnDestroy {
   }
 
   public doInfinite(infiniteScroll) {
-    this.repo.search(this.userId, this.search, {pageToken: this.nextPageToken})
+    this.repo.search(this.userId, this.search, this.provider || null, {pageToken: this.nextPageToken})
       .then(response => {
         this.list = this.list.concat(response.items);
         console.info('response', response);
@@ -152,11 +166,11 @@ export class SearchPage implements OnDestroy {
   }
 
   public download(event: MouseEvent, item: SearchItem) {
-    this.downloadManager.download(this.userId, item, 'youtube');
+    this.downloadManager.download(this.userId, item, this.provider);
   }
 
   public toPlaylist(event: MouseEvent, item: SearchItem) {
-    this.downloadManager.downloadToPlaylist(this.userId, item, this.plManager.playlist, 'youtube');
+    this.downloadManager.downloadToPlaylist(this.userId, item, this.plManager.playlist, this.provider);
   }
 
   public searchItems(query?: string, args?: any) {
@@ -179,7 +193,7 @@ export class SearchPage implements OnDestroy {
 
       loader.present();
 
-      this.repo.search(this.userId, this.search, args)
+      this.repo.search(this.userId, this.search, this.provider, args)
         .then(response => {
           this.list = response.items;
           console.info('response', response);

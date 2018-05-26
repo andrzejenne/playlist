@@ -43,8 +43,9 @@ class SearchController extends Controller
      */
     public function search($args)
     {
-        // @todo - provider arg
-        $service = $this->libraryProvider->getService();
+        $provider = isset($args[0]->provider) ? $args[0]->provider : null;
+
+        $service = $this->libraryProvider->getService($provider);
 
         $query = $args[0]->q;
         $pageToken = getValue($args[0]->pageToken);

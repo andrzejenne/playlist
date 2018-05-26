@@ -25,6 +25,8 @@ export class ServerManagerService {
 
   providers: {[index: string]: Provider[]} = {};
 
+  providers$ = new BehaviorSubject<{[index: string]: Provider[]}>(null);
+
   providersMap: {[index: string]: {[index: string]: Provider}} = {};
 
   private sessions = {};
@@ -99,6 +101,7 @@ export class ServerManagerService {
 
   setProviders(providers: Provider[], host = this.host) {
     this.providers[host] = providers;
+    this.providers$.next(this.providers);
 
     return this;
   }

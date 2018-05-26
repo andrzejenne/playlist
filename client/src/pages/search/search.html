@@ -61,7 +61,7 @@
         </overscroll>
         <!--<p style="max-height: 48px; overflow: hidden;">{{item.description}}</p>-->
         <p>
-          <a ion-button clear small icon-left [href]="'https://www.youtube.com/watch?v='+item.sid" target="_blank"
+          <a ion-button clear small icon-left [href]="item.previewUrl" target="_blank"
              title="preview">
             <ion-icon name="search"></ion-icon>
             Preview
@@ -85,3 +85,11 @@
   <!--<button ion-button *ngIf="prevPageToken" (click)="onPrevClick()" style="float:left;">Prev</button>-->
   <!--<button ion-button *ngIf="nextPageToken" (click)="onNextClick()" style="float:right;">Next</button>-->
 </ion-content>
+<pre>{{providers | json}}</pre>
+<ion-footer *ngIf="providers && providers.length">
+  <ion-toolbar>
+    <select [(ngModel)]="provider">
+      <option *ngFor="let provider of providers" [value]="provider.slug">{{provider.ionic.title}}</option>
+    </select>
+  </ion-toolbar>
+</ion-footer>

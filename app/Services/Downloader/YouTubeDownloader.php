@@ -61,30 +61,38 @@ class YouTubeDownloader extends DownloaderContract
     }
 
     /**
+     * @param $url
      * @param $sid
      * @return string
      */
-    public function getName($sid)
+    public function getName($url, $sid)
     {
-        $info = $this->getInfo($sid);
+        $info = $this->getInfo($url, $sid);
 
         return $info->title;
     }
 
 
     /**
+     * @param $url
      * @param $sid
      * @param $outDir
      * @return string
      */
-    public function download($sid, $outDir)
+    public function download($url, $sid, $outDir)
     {
-        $videos = $this->getVideos($sid);
-        $audios = $this->getAudios($sid);
+        $videos = $this->getVideos($url, $sid);
+        $audios = $this->getAudios($url, $sid);
 
-        if ($videos->count() && $audios->count()) {
+        if ($videos->count()) {
             $vcode = $videos->first()->format_id;
-            $acode = $audios->first()->format_id;
+            if ($audios->count()) {
+                $acode = $audios->first()->format_id;
+                $fCode = "$vcode+$acode";
+            }
+            else {
+                $fCode = $vcode;
+            }
             if ($this->reporter) {
                 $this->reporter->restart();
                 $this->reporter->setUrl($sid);
@@ -98,7 +106,7 @@ class YouTubeDownloader extends DownloaderContract
 //            \Storage::put('/tmp/test', "youtube-dl --newline -f $vcode+$acode $sid --keep-fragments --write-all-thumbnails -f mp4 --recode-video mp4 -o '$outDir/%(id)s.%(ext)s'");
 
             return static::run(
-                static::getProcess("--newline -f $vcode+$acode $sid --keep-fragments --write-all-thumbnails -f mp4 --recode-video mp4 -o '$outDir/%(id)s.%(ext)s'"),
+                static::getProcess("--newline -f $fCode $url --keep-fragments --write-all-thumbnails -f mp4 --recode-video mp4 -o '$outDir/%(id)s.%(ext)s'"),
                 $this->reporter);
         } else {
             $this->reporter->readErrorOutput('Cannot download, missing mandatory streams');
@@ -109,19 +117,20 @@ class YouTubeDownloader extends DownloaderContract
     }
 
     /**
+     * @param $url
      * @param $sid
      * @param $outDir
      * @param string $format
      * @return string
      * @throws \Exception
      */
-    public function downloadAudio($sid, $outDir, $format = 'mp3')
+    public function downloadAudio($url, $sid, $outDir, $format = 'mp3')
     {
         if (!static::isAudioFormatValid($format)) {
             throw new \Exception("Invalid audio format $format");
         }
 
-        $audios = $this->getAudios($sid);
+        $audios = $this->getAudios($url, $sid);
 
         if ($audios->count()) {
             $acode = $audios->first()->format_id;
@@ -134,7 +143,7 @@ class YouTubeDownloader extends DownloaderContract
             }
 
             return static::run(
-                static::getProcess("--extract-audio --newline --audio-format $format -f $acode $sid -o '$outDir/%(id)s.%(ext)s'"),
+                static::getProcess("--extract-audio --newline --audio-format $format -f $acode $url -o '$outDir/%(id)s.%(ext)s'"),
                 $this->reporter
             );
         } else {
@@ -145,12 +154,13 @@ class YouTubeDownloader extends DownloaderContract
     }
 
     /**
+     * @param $url
      * @param $sid
      * @return Collection
      */
-    public function getVideos($sid)
+    public function getVideos($url, $sid)
     {
-        $info = $this->getInfo($sid);
+        $info = $this->getInfo($url, $sid);
 
         $collection = collect($info->formats);
 
@@ -166,12 +176,13 @@ class YouTubeDownloader extends DownloaderContract
     }
 
     /**
+     * @param $url
      * @param $sid
      * @return Collection
      */
-    public function getAudios($sid)
+    public function getAudios($url, $sid)
     {
-        $info = $this->getInfo($sid);
+        $info = $this->getInfo($url, $sid);
 
         $collection = collect($info->formats);
 
@@ -182,7 +193,8 @@ class YouTubeDownloader extends DownloaderContract
 
             return false;
         })->sortByDesc(function ($item) {
-            return $item->abr;
+            return isset($item->abr) ? $item->abr : 0;
+            // @todo - vimeo differs
         }, SORT_NUMERIC);
     }
 
@@ -196,16 +208,6 @@ class YouTubeDownloader extends DownloaderContract
         }
     }
 
-    /**
-     * @param $id
-     * @return string
-     * @deprecated
-     */
-    public function getOutDir($id)
-    {
-        return storage_path('app/media/youtube/' . $id[0] . $id[1] . '/' . $id[2] . $id[3]);
-    }
-
 
     /**
      * @return string
@@ -217,15 +219,16 @@ class YouTubeDownloader extends DownloaderContract
 
 
     /**
+     * @param $url
      * @param $sid
      * @return bool|mixed
      */
-    private function getInfo($sid)
+    protected function getInfo($url, $sid)
     {
         if (!isset($this->_infoCache[$sid])) {
             try {
                 $cmd = static::run(
-                    static::getProcess("-J $sid")
+                    static::getProcess("-J $url")
                 );
 
                 $cmd->wait(); // @todo - make async, we have to return Promise
@@ -245,7 +248,7 @@ class YouTubeDownloader extends DownloaderContract
      * @param $args
      * @return Process
      */
-    private static function getProcess($args)
+    protected static function getProcess($args)
     {
         if (is_string($args)) {
             $args = [$args];
@@ -258,7 +261,7 @@ class YouTubeDownloader extends DownloaderContract
      * @param $format
      * @return bool
      */
-    private static function isAudioFormatValid($format)
+    protected static function isAudioFormatValid($format)
     {
         return in_array($format, static::$audioTranscodeFormats);
     }
