@@ -48,6 +48,7 @@ import {AlbumPage} from "../pages/album/album";
 import {ArtistPage} from "../pages/artist/artist";
 import {MediaComponent} from "../components/media/media.component";
 import {OverscrollComponent} from "../components/overscroll/overscroll.component";
+import {ConnectionHelperComponent} from "../components/connection-helper/connection-helper.component";
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import {OverscrollComponent} from "../components/overscroll/overscroll.component
     CheckerComponent,
     MusicalSpinnerComponent,
     MediaComponent,
+    ConnectionHelperComponent,
 
     OverscrollComponent,
     DurationPipe,
@@ -130,7 +132,8 @@ import {OverscrollComponent} from "../components/overscroll/overscroll.component
     AddPlaylistComponent,
     PlayerControlsComponent,
     CheckerComponent,
-    MusicalSpinnerComponent
+    MusicalSpinnerComponent,
+    ConnectionHelperComponent
   ],
   providers: [
     StatusBar,

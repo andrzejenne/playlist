@@ -18,7 +18,10 @@ export class ServerManagerComponent implements AfterViewInit, OnDestroy {
 
   private subs: Subscription[] = [];
 
-  constructor(private serverManager: ServerManagerService, private wamp: WampService, private ref: ChangeDetectorRef) {
+  constructor(
+    public serverManager: ServerManagerService,
+    private wamp: WampService,
+    private ref: ChangeDetectorRef) {
 
   }
 

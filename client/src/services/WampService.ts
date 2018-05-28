@@ -7,6 +7,8 @@ import {WampQueue} from "./wamp/Queue";
 import {ServerManagerService} from "./ServerManagerService";
 import {Server} from "../models/server";
 import {Subject} from "rxjs/Subject";
+import {Modal, ModalController} from "ionic-angular";
+import {ConnectionHelperComponent} from "../components/connection-helper/connection-helper.component";
 
 export interface SessionSubScriptionFunction {
   (session: autobahn.Session): void;
@@ -35,7 +37,24 @@ export class WampService {
   public connected = new BehaviorSubject<string>(null);
   public disconnected = new BehaviorSubject<string>(null);
 
-  constructor(private serversManager: ServerManagerService) {
+  private onConnectionLost = (host: string) => {
+    this.openReconnectModal('Connection Lost', 'Connection to ' + host + ' has been lost.', host);
+  };
+
+  private onConnectionUnreachable = (host: string) => {
+    this.openReconnectModal('Server Unreachable', host + ' is unreachable.', host);
+  };
+
+  private closeReasonHandlers = {
+    lost: this.onConnectionLost,
+    unreachable: this.onConnectionUnreachable
+  };
+
+  connectionModalComponent: ConnectionHelperComponent;
+
+  private connectionModal: Modal;
+
+  constructor(private serversManager: ServerManagerService, private modalCtrl: ModalController) {
 
     this.subj = new BehaviorSubject<autobahn.Session>(null);
 
@@ -156,6 +175,10 @@ export class WampService {
         this.serverSwitched.next([currentServer, server]);
       }
 
+      if (this.connectionModal) {
+        this.connectionModal.dismiss();
+      }
+
       this.connected.next(host);
     });
 
@@ -164,6 +187,16 @@ export class WampService {
       this.onClose.next({server, reason});
       this.serversManager.close(host);
       this.disconnected.next(host);
+
+      if (this.connectionModal) {
+        this.connectionModalComponent.resetCounter();
+      }
+      else {
+        if (this.closeReasonHandlers[reason]) {
+          this.closeReasonHandlers[reason](host);
+        }
+      }
+
       return true;
     });
 
@@ -199,6 +232,27 @@ export class WampService {
       url: Server.getWampHost(
         this.serversManager.getServer(host)
       ), realm: 'playlist'
+    }
+  }
+
+  /**
+   *
+   * @param {string} title
+   * @param {string} message
+   * @param {string} host
+   */
+  openReconnectModal(title: string, message: string, host: string) {
+    if (!this.connectionModal) {
+      this.connectionModal = this.modalCtrl.create(ConnectionHelperComponent, {
+        title: title,
+        message: message,
+        host: host,
+        wamp: this
+      });
+
+      this.connectionModal.onDidDismiss(() => this.connectionModal = null);
+
+      this.connectionModal.present();
     }
   }
 

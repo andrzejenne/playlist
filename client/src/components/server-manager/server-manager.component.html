@@ -1,11 +1,11 @@
 <ion-list>
-  <ion-item *ngFor="let host of hosts">
+  <ion-item *ngFor="let host of hosts" [class.connected]="serverManager.isConnected(host)">
     {{host}}
-    <ion-icon item-end [color]="servers[host].connected ? 'secondary': 'primary'" name="wifi" [title]="servers[host].connected ? 'connected' : 'disconnected'"></ion-icon>
-    <button *ngIf="!servers[host].connected" clear ion-button color="primary" item-end (click)="onConnectClick(host)">
+    <ion-icon class="status" item-end name="wifi" [title]="servers[host].connected ? 'connected' : 'disconnected'"></ion-icon>
+    <button clear ion-button item-end (click)="onConnectClick(host)" class="connect">
       <ion-icon name="log-in"></ion-icon>
     </button>
-    <button *ngIf="servers[host].connected" clear ion-button color="danger" item-end (click)="onDisconnectClick(host)">
+    <button clear ion-button item-end (click)="onDisconnectClick(host)" class="disconnect">
       <ion-icon name="log-out"></ion-icon>
     </button>
     <button ion-button color="danger" clear item-end (click)="onRemoveClick(host)">

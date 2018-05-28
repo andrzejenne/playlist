@@ -176,10 +176,13 @@ export class ThePlaylist {
     this.splashScreen.hide();
 
     // @todo - enable background mode only when playing something
-    this.backgroundMode.enable();
-    this.backgroundMode.configure({
+    this.backgroundMode.setDefaults({
+      title: 'The Playlist',
+      text: 'Waiting for interaction',
       silent: true
-    });
+    }).then(
+      result => this.backgroundMode.enable()
+    );
 
     this.immersive.isImmersiveModeSupported()
       .then(
