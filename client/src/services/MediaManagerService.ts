@@ -57,6 +57,15 @@ export class MediaManagerService {
     return null;
   }
 
+  getFileOrDefault(item: Medium, type: string) {
+    let file = this.getFile(item, type);
+    if (!file) {
+      return this.getFile(item, 'video');
+    }
+
+    return file;
+  }
+
   getUrl(item: Medium, type: string, host = this.serverManager.host) {
     let file = this.getFile(item, type);
     if (!file && type != 'video') {

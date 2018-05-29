@@ -86,10 +86,14 @@
   <!--<button ion-button *ngIf="nextPageToken" (click)="onNextClick()" style="float:right;">Next</button>-->
 </ion-content>
 <!--<pre>{{providers | json}}</pre>-->
-<ion-footer *ngIf="providers && providers.length">
+<ion-footer *ngIf="providers && providers.length" class="mode-color">
   <ion-toolbar>
-    <select [(ngModel)]="provider">
-      <option *ngFor="let provider of providers" [value]="provider.slug">{{provider.ionic.title}}</option>
-    </select>
+    <ion-segment [(ngModel)]="provider">
+      <ion-segment-button *ngFor="let p of providers" color="primary"
+               [value]="p.slug">
+        <ion-icon [name]="p.ionic.menuIcon" color="primary"></ion-icon>
+        {{p.ionic.title}}
+      </ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 </ion-footer>

@@ -26,11 +26,20 @@ class AliveController extends Controller
      * @return array
      */
     public function discover() {
-        $host = parse_url(config('app.url'));
+        $host = parse_url(
+            config('app.url')
+        );
+
+        if ($host['scheme'] === 'https') {
+            $defPort = 443;
+        }
+        else {
+            $defPort = 80;
+        }
 
         return response()->json([
             'host' => $host['host'],
-            'port' => $host['port'],
+            'port' => isset($host['port']) ? $host['port'] : $defPort,
             'scheme' => $host['scheme'],
             'wampPort' => config('ratchet.port'),
             'wampScheme' => config('ratchet.scheme')

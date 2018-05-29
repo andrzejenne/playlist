@@ -39,7 +39,8 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
   @ViewChild(PlaylistComponent) playlistComponent: PlaylistComponent;
   @ViewChild(Footer) footer: Footer;
   @ViewChild(Toolbar) footerToolbar: Toolbar;
-  @ViewChild('playerEl') playerRef: ElementReference<HTMLVideoElement>;
+  @ViewChild('videoPlayerEl') videoPlayerRef: ElementReference<HTMLVideoElement>;
+  @ViewChild('audioPlayerEl') audioPlayerRef: ElementReference<HTMLAudioElement>;
 
   playlist: Playlist;
 
@@ -64,7 +65,7 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
 
   ngAfterViewInit() {
     this.hideToolbar();
-    this.player.setVideoElement(this.playerRef.nativeElement)
+    this.player.setPlayerElements(this.videoPlayerRef.nativeElement, this.audioPlayerRef.nativeElement)
       .addChangeDetector(this.ref)
       .setContent(this.playlistContainer);
 

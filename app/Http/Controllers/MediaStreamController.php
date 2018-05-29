@@ -127,12 +127,13 @@ class MediaStreamController
 //                    return response($request->has('get') ? \File::get($path) : null, 200, $headers + [
 //                            'Content-Length' => $size
 //                        ]);
-                    return response(\File::get($path), 200, [
-                        'Content-Type' => \File::mimeType($path),
-                        'Cache-Control' => 'max-age=2592000, public',
-                        'Expires' => gmdate('D, d M Y H:i:s', time() + 2592000) . ' GMT',
-                        'Last-Modified' => gmdate('D, d M Y H:i:s', \File::lastModified($path)) . ' GMT',
-                    ]);
+//                    return response(\File::get($path), 200, [
+//                        'Content-Type' => \File::mimeType($path),
+//                        'Cache-Control' => 'max-age=2592000, public',
+//                        'Expires' => gmdate('D, d M Y H:i:s', time() + 2592000) . ' GMT',
+//                        'Last-Modified' => gmdate('D, d M Y H:i:s', \File::lastModified($path)) . ' GMT',
+//                    ]);
+                    return response()->file($path);
                 }
             } else {
                 return response('Unknown file type for ' . $path);

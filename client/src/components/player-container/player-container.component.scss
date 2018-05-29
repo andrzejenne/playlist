@@ -18,7 +18,7 @@ player-container {
     border-bottom: 0;
   }
 
-  .video {
+  .media-player {
     width: 25%;
     z-index: 999;
     position: fixed;
@@ -32,7 +32,7 @@ player-container {
     }
   }
 
-  .video.hidden {
+  .media-player.hidden {
     display: none;
   }
 

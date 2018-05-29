@@ -141,7 +141,7 @@ export class ThePlaylist {
   }
 
   setDayModeClass() {
-    this.dayModeClass && this.ionApp.classList.remove(this.dayModeClass);
+    this.dayModeClass && this.ionApp && this.ionApp.classList.remove(this.dayModeClass);
     this.dayModeClass = this.dayMode ? 'day-mode' : 'night-mode';
     this.ionApp.classList.add(this.dayModeClass);
   }

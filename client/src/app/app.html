@@ -29,12 +29,12 @@
         <ion-icon item-start name="list" color="primary"></ion-icon>
         Playlists
       </button>
-      <button ion-item (click)="setPage('search', {providers: searchableProviders});menu.close()" class="clear">
+      <button *ngIf="searchableProviders.length > 0" ion-item (click)="setPage('search', {providers: searchableProviders});menu.close()" class="clear">
         <ion-icon item-start name="search" color="primary"></ion-icon>
         Search
       </button>
       <hr>
-      <button ion-item (click)="setPage('cloud');menu.close()" class="clear">
+      <button *ngIf="providers.length > 1" ion-item (click)="setPage('cloud');menu.close()" class="clear">
         <ion-icon item-start name="cloud-download" color="primary"></ion-icon>
         All
       </button>

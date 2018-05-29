@@ -17,5 +17,13 @@ page-search {
   }
 
   .fab { display: inline-block; vertical-align: middle; }
+
+  ion-segment-button {
+    ion-icon {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+  }
 }
 
