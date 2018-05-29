@@ -52,7 +52,7 @@ export class PlaylistComponent implements OnDestroy {
 
   arrowIcon = 'arrow-up';
 
-  providers: Provider[];
+  providers: Provider[] = [];
 
   private subs: Subscription[] = [];
 
