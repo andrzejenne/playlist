@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
-import {MenuController, NavController, Platform} from 'ionic-angular';
+import {Keyboard, MenuController, NavController, Platform} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {AndroidFullScreen} from '@ionic-native/android-full-screen';
@@ -21,6 +21,7 @@ import {MediaManagerService} from "../services/MediaManagerService";
 import {WampService} from "../services/WampService";
 import {Provider} from "../models/provider";
 import {AppRepository} from "../repositories/app.repository";
+import {Observable} from "rxjs/Observable";
 
 @Component({
   templateUrl: 'app.html'
@@ -45,6 +46,8 @@ export class ThePlaylist {
   providers: Provider[] = [];
 
   searchableProviders: Provider[] = [];
+
+  bottomMargin: number = 0;
 
   private settings: SettingsContract;
 
@@ -219,6 +222,14 @@ export class ThePlaylist {
       }
     });
 
+    Observable.fromEvent(window, 'keyboardWillShow').subscribe((e) => {
+      this.setBottomMargin(e['keyboardHeight'] || 0);
+    });
+
+    Observable.fromEvent(window, 'keyboardWillHide').subscribe((e) => {
+      this.setBottomMargin(0);
+    });
+
     this.menuCtrl.enable(false, 'playlistMenu');
   }
 
@@ -245,6 +256,10 @@ export class ThePlaylist {
         this.serverManager.servers$.subscribe(servers => servers && (this.servers = Object.keys(servers)));
 
       });
+  }
+
+  private setBottomMargin(height: number) {
+    this.bottomMargin = height;
   }
 }
 

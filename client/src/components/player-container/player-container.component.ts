@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   ContentChild, ElementRef,
-  HostBinding, OnChanges, SimpleChanges, ViewChild
+  HostBinding, Input, OnChanges, SimpleChanges, ViewChild
 } from "@angular/core";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {PlayerControlsComponent} from "../player-controls/player-controls.component";
@@ -41,6 +41,11 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
   @ViewChild(Toolbar) footerToolbar: Toolbar;
   @ViewChild('videoPlayerEl') videoPlayerRef: ElementReference<HTMLVideoElement>;
   @ViewChild('audioPlayerEl') audioPlayerRef: ElementReference<HTMLAudioElement>;
+
+  @Input()
+  bottomMargin: number;
+
+  currentBottomMargin: number;
 
   playlist: Playlist;
 
@@ -119,9 +124,9 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
 
 
   ngOnChanges(changes: SimpleChanges): void {
-    // if (changes['playlist']) {
-
-    // }
+    if (changes['bottomMargin']) {
+      this.setBottomMargin(changes['bottomMargin'].currentValue || 0);
+    }
   }
 
   hide(event) {
@@ -152,35 +157,45 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
   private hideToolbar(el = this.footer.getNativeElement()) {
     el.style.top = 'auto';
     el.style.bottom = '-' + this.footerToolbar.getNativeElement().offsetHeight + 'px';
-    this.elRef.nativeElement.style.borderBottomWidth = 0;
+    this.currentBottomMargin = 0;
+
+    this.setBottomMargin();
   }
 
   private showToolbar(el = this.footer.getNativeElement()) {
     el.style.bottom = '0px'; //this.footerToolbar.getNativeElement().offsetHeight + 'px';
-    this.elRef.nativeElement.style.borderBottomWidth = this.footerToolbar.getNativeElement().offsetHeight + 'px';
+    this.currentBottomMargin = this.footerToolbar.getNativeElement().offsetHeight;
+
+    this.setBottomMargin();
   }
 
   private showPlaylistTitle(el = this.playlistContainer.getNativeElement()) {
     el.style.marginTop = '0px'; //-this.playlistComponent.header.nativeElement.offsetHeight + 'px';
     el.style.top = '100%';
 
-    this.elRef.nativeElement.style.borderBottomWidth =
-      (this.footerToolbar.getNativeElement().offsetHeight + this.playlistComponent.header.nativeElement.offsetHeight) + 'px';
+    this.currentBottomMargin = (this.footerToolbar.getNativeElement().offsetHeight + this.playlistComponent.header.nativeElement.offsetHeight);
 
+    this.setBottomMargin();
   }
 
   private showPlaylist(el = this.playlistContainer.getNativeElement()) {
     el.style.top = '0';
 
-    this.elRef.nativeElement.style.borderBottomWidth = 0;
-    // this.footerToolbar.getNativeElement().offsetHeight + 'px';
+    this.currentBottomMargin = 0;
 
+    this.setBottomMargin();
   }
 
   private hidePlaylist(el = this.playlistContainer.getNativeElement()) {
     el.style.top = '100%';
 
-    this.elRef.nativeElement.style.borderBottomWidth = 0;
+    this.currentBottomMargin = 0;
+
+    this.setBottomMargin();
     // this.footerToolbar.getNativeElement().offsetHeight + 'px';
+  }
+
+  private setBottomMargin(margin = this.bottomMargin) {
+    this.elRef.nativeElement.style.borderBottomWidth = (this.currentBottomMargin + margin) + 'px';
   }
 }
