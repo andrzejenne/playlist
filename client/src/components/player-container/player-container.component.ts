@@ -32,6 +32,9 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
   @HostBinding('class.title')
   title: boolean = false;
 
+  @HostBinding('class.fx-enabled')
+  fx: boolean = true;
+
   @ViewChild(PlayerControlsComponent) playerControls: PlayerControlsComponent;
   @ContentChild(Nav) nav: Nav;
 
@@ -153,6 +156,7 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
   //   this.styleSheet.insertRule('player-container ion-content { transition: margin 5s ease-in-out; }');
   //   this.styleSheet.insertRule('player-container.hide-player ion-content { margin-top: 0; }');
   // }
+  // @todo - refactor
 
   private hideToolbar(el = this.footer.getNativeElement()) {
     el.style.top = 'auto';
