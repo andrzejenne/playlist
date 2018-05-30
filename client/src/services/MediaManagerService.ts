@@ -83,20 +83,20 @@ export class MediaManagerService {
     return this.serverManager.getServerUrl(host) + '/' + type + '/' + item.id + '/' + file.id;
   }
 
-  getThumbnailUrl(item: Medium, host = this.serverManager.host, crop = '80x80') {
+  getThumbnailUrl(item: Medium, host = this.serverManager.host, fit = '80x80') {
     let thumb = MediaManagerService.getThumbnail(item);
     if (thumb) {
-      return this.getFileUrl(item, thumb, host, 'thumbnails') + '/?crop=' + crop;
+      return this.getFileUrl(item, thumb, host, 'thumbnails') + '/?fit=' + fit;
     }
 
     return 'assets/imgs/thumbnail.png';
   }
 
-  getCoverUrl(album: Album, type = 'front', host = this.serverManager.host) {
+  getCoverUrl(album: Album, type = 'front', host = this.serverManager.host, fit = '80x80') {
     if (album.covers) {
       let cover = album.covers.filter(cover => cover.type.slug === type)[0] || null;
       if (cover) {
-        return this.serverManager.getServerUrl(host) + '/covers/' + cover.id;
+        return this.serverManager.getServerUrl(host) + '/covers/' + cover.id + '/?fit=' + fit;
       }
     }
 
