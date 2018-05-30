@@ -38,7 +38,6 @@ class MediaStreamController
      * @param $fid
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function stream($id, $fid, Request $request)
     {

@@ -83,10 +83,10 @@ export class MediaManagerService {
     return this.serverManager.getServerUrl(host) + '/' + type + '/' + item.id + '/' + file.id;
   }
 
-  getThumbnailUrl(item: Medium, host = this.serverManager.host) {
+  getThumbnailUrl(item: Medium, host = this.serverManager.host, crop = '80x80') {
     let thumb = MediaManagerService.getThumbnail(item);
     if (thumb) {
-      return this.getFileUrl(item, thumb, host, 'thumbnails');
+      return this.getFileUrl(item, thumb, host, 'thumbnails') + '/?crop=' + crop;
     }
 
     return 'assets/imgs/thumbnail.png';

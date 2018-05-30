@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
-import {Keyboard, MenuController, NavController, Platform} from 'ionic-angular';
+import {MenuController, NavController, Platform} from 'ionic-angular';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {AndroidFullScreen} from '@ionic-native/android-full-screen';
@@ -24,7 +24,7 @@ import {AppRepository} from "../repositories/app.repository";
 import {Observable} from "rxjs/Observable";
 
 @Component({
-  templateUrl: 'app.html'
+  templateUrl: 'app.component.html'
 })
 export class ThePlaylist {
   rootPage: any = SplashPage;
@@ -56,7 +56,7 @@ export class ThePlaylist {
   private ionApp: Element;
 
   constructor(
-    platform: Platform,
+    private platform: Platform,
     private serverManager: ServerManagerService,
     private wamp: WampService,
     private statusBar: StatusBar,
@@ -175,38 +175,41 @@ export class ThePlaylist {
   // };
 
   private prepareApp() {
-    this.statusBar.styleDefault();
     this.splashScreen.hide();
 
-    // @todo - enable background mode only when playing something
-    this.backgroundMode.setDefaults({
-      title: 'The Playlist',
-      text: 'Waiting for interaction',
-      silent: true
-    }).then(
-      result => this.backgroundMode.enable()
-    );
+    if (this.platform.is('cordova')) {
+      this.statusBar.styleDefault();
 
-    this.immersive.isImmersiveModeSupported()
-      .then(
-        response => this.immersive.immersiveMode()
-      )
-      .catch(error => {
-        console.error(error);
+      // @todo - enable background mode only when playing something
+      this.backgroundMode.setDefaults({
+        title: 'The Playlist',
+        text: 'Waiting for interaction',
+        silent: true
+      }).then(
+        result => this.backgroundMode.enable()
+      );
+
+      this.immersive.isImmersiveModeSupported()
+        .then(
+          response => this.immersive.immersiveMode()
+        )
+        .catch(error => {
+          console.error(error);
+        });
+
+      this.fullscreenObserver.change$.subscribe(is => {
+        if (is) {
+          this.insomnia.keepAwake();
+          console.info('insomnia.keepAwake');
+          // this.alert.create({message: 'is fullscreen'}).present();
+        }
+        else {
+          this.insomnia.allowSleepAgain();
+          console.info('insomnia.sleepAgain');
+          // this.alert.create({message: 'not fullscreen'}).present();
+        }
       });
-
-    this.fullscreenObserver.change$.subscribe(is => {
-      if (is) {
-        this.insomnia.keepAwake();
-        console.info('insomnia.keepAwake');
-        // this.alert.create({message: 'is fullscreen'}).present();
-      }
-      else {
-        this.insomnia.allowSleepAgain();
-        console.info('insomnia.sleepAgain');
-        // this.alert.create({message: 'not fullscreen'}).present();
-      }
-    });
+    }
 
     // loads providers
     this.wamp.connected.subscribe(host => {

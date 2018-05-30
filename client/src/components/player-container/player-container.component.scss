@@ -5,11 +5,9 @@ player-container {
   position: absolute;
   border-bottom: solid transparent;
   // @todo - dynamic border bottom
-  transition: border 500ms ease-in-out;
 
   ion-footer.player {
     top: 100%;
-    transition: bottom 500ms ease-in-out;
     position: fixed;
     left: 0;
   }
@@ -37,37 +35,38 @@ player-container {
   }
 
   .playlist-container {
-  //  z-index: 999;
-    transition: all 500ms ease-in-out;
+
     box-shadow: 0 0 5px rgba(0,0,0, .9);
   }
-  //
-  //.video-container {
-  //  //background: transparent !important;
-  //  position: absolute;
-  //  top: 0;
-  //  left: 0;
-  //  right: 0;
-  //  bottom: 0;
-  //  z-index: 0;
-  //}
-}
 
-player-container.hide-player {
-  border-bottom-width: 0;
-}
-
-player-container.open {
-  > ion-content > .scroll-content {
-    overflow-y: hidden;
+  &.hide-player {
+    border-bottom-width: 0;
   }
-  .playlist-container {
-    top: 0;
-  }
-}
 
-player-container.down {
-  .playlist-container {
-    top: 100%;
+  &.open {
+    > ion-content > .scroll-content {
+      overflow-y: hidden;
+    }
+    .playlist-container {
+      top: 0;
+    }
+  }
+
+  &.down {
+    .playlist-container {
+      top: 100%;
+    }
+  }
+
+  &.fx-enabled {
+    transition: border 500ms ease-in-out;
+
+    .playlist-container {
+      transition: all 500ms ease-in-out;
+    }
+
+    ion-footer.player {
+      transition: bottom 500ms ease-in-out;
+    }
   }
 }
