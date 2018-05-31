@@ -171,7 +171,7 @@ export class ServerManagerService {
     this.connected[host] = false;
   }
 
-  isConnected(host: string) {
+  isConnected(host: string = this.host) {
     if (this.connected[host]) {
       return this.connected[host] === true;
     }

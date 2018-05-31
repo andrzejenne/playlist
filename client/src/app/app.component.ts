@@ -21,6 +21,7 @@ import {MediaManagerService} from "../services/MediaManagerService";
 import {WampService} from "../services/WampService";
 import {Provider} from "../models/provider";
 import {AppRepository} from "../repositories/app.repository";
+import {OfflineManagerService} from "../services/OfflineManagerService";
 
 @Component({
   templateUrl: 'app.html'
@@ -70,6 +71,7 @@ export class ThePlaylist {
     private config: ConfigService,
     private menuCtrl: MenuController,
     private appRepo: AppRepository,
+    private offline: OfflineManagerService,
     private ref: ChangeDetectorRef
   ) {
 
@@ -217,6 +219,14 @@ export class ThePlaylist {
     });
 
     this.menuCtrl.enable(false, 'playlistMenu');
+
+    if (this.offline.enabled) {
+      this.offline.test();
+    }
+    else {
+      console.warn('offline mode not avail')
+    }
+
   }
 
   private prepareAuth() {

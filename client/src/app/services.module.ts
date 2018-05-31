@@ -23,6 +23,7 @@ import {OfflineManagerService} from "../services/OfflineManagerService";
 import {CloudRepository} from "../repositories/cloud.repository";
 import {PlayerService} from "../services/PlayerService";
 import {AppRepository} from "../repositories/app.repository";
+import {File} from "@ionic-native/file";
 
 @NgModule({
   imports: [
@@ -45,6 +46,8 @@ import {AppRepository} from "../repositories/app.repository";
     FullscreenObserverService,
     PlayerService,
     OfflineManagerService,
+
+    File,
 
     // repos
     WampRepository,
