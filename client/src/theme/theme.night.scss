@@ -6,6 +6,12 @@ $dayModeIconColor: #a58400;
 $bgColor: #111122;
 
 .night-mode {
+  ion-menu.mode-color {
+    .item {
+      background: transparent !important;
+    }
+  }
+
   .mode-color {
 
     button.fab {
@@ -60,25 +66,6 @@ $bgColor: #111122;
 
     background: $bgColor !important;
 
-    ion-item {
-      background: $bgColor !important;
-      color: $color !important;
-      .item-inner {
-        border-color: #223 !important;
-      }
-
-      &.selected {
-        background: #223 !important;
-      }
-
-      &.clear {
-        background-color: transparent !important;
-        .item-inner {
-          border-color: transparent !important;
-        }
-      }
-    }
-
     ion-list {
       ion-item.item-input:last-child {
         border-color: #223 !important;
@@ -115,6 +102,24 @@ $bgColor: #111122;
       background: $bgColor !important;
     }
 
+    .item {
+      background: $bgColor !important;
+      color: $color !important;
+      .item-inner {
+        border-color: #223 !important;
+      }
+
+      &.selected {
+        background: #223 !important;
+      }
+
+      &.clear {
+        .item-inner {
+          border-color: transparent !important;
+        }
+      }
+    }
+
     .toolbar {
       color: $color !important;
       .toolbar-title,
@@ -122,6 +127,16 @@ $bgColor: #111122;
       ion-select,
       ion-label {
         color: $color !important;
+      }
+
+      ion-segment-button {
+        &.segment-activated {
+          border-color: $knobColor !important;
+        }
+        color: $knobColor;
+        ion-icon {
+          color: $knobColor !important;
+        }
       }
 
       ion-icon.connected {

@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnDestroy, Optional} from '@angular/core';
-import {NavController, NavParams, Platform, ViewController} from 'ionic-angular';
+import {LoadingController, NavController, NavParams, Platform, ViewController} from 'ionic-angular';
 import {CloudRepository} from "../../repositories/cloud.repository";
 import {Medium} from "../../models/medium";
 // import {ErrorReporting} from "../../services/ErrorReporting";
@@ -59,6 +59,7 @@ export class CloudPage implements OnDestroy {
     public plManager: PlaylistsManagerService,
     private repo: CloudRepository,
     private auth: AuthService,
+    private loadingCtrl: LoadingController,
     // private errorReporter: ErrorReporting,
     // private modalController: ModalController,
     private config: ConfigService,
@@ -136,7 +137,7 @@ export class CloudPage implements OnDestroy {
     if (!this.end) {
       this.offset += this.limit;
 
-      this.load()
+      this.load(false)
         .then(data => infiniteScroll.complete());
     }
     else {
@@ -191,7 +192,18 @@ export class CloudPage implements OnDestroy {
     }
   }
 
-  private load() {
+  private load(showLoader = true) {
+
+    let loader;
+    if (showLoader) {
+      loader = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: this.search ? 'Searching ...' : 'Loading ...'
+      });
+
+      loader.present();
+    }
+
     return this.repo.list(this.limit, this.offset, this.search, this.provider)
       .then(data => {
         console.info('DownloadedPage.data', data);
@@ -206,6 +218,8 @@ export class CloudPage implements OnDestroy {
           this.all = data;
           this.list = [].concat(data);
         }
+        loader && loader.dismiss();
+
         this.ref.detectChanges();
       });
   }

@@ -21,10 +21,11 @@ import {MediaManagerService} from "../services/MediaManagerService";
 import {WampService} from "../services/WampService";
 import {Provider} from "../models/provider";
 import {AppRepository} from "../repositories/app.repository";
+import {Observable} from "rxjs/Observable";
 import {OfflineManagerService} from "../services/OfflineManagerService";
 
 @Component({
-  templateUrl: 'app.html'
+  templateUrl: 'app.component.html'
 })
 export class ThePlaylist {
   rootPage: any = SplashPage;
@@ -47,6 +48,8 @@ export class ThePlaylist {
 
   searchableProviders: Provider[] = [];
 
+  bottomMargin: number = 0;
+
   private settings: SettingsContract;
 
   private host: string;
@@ -54,7 +57,7 @@ export class ThePlaylist {
   private ionApp: Element;
 
   constructor(
-    platform: Platform,
+    private platform: Platform,
     private serverManager: ServerManagerService,
     private wamp: WampService,
     private statusBar: StatusBar,
@@ -143,7 +146,7 @@ export class ThePlaylist {
   }
 
   setDayModeClass() {
-    this.dayModeClass && this.ionApp.classList.remove(this.dayModeClass);
+    this.dayModeClass && this.ionApp && this.ionApp.classList.remove(this.dayModeClass);
     this.dayModeClass = this.dayMode ? 'day-mode' : 'night-mode';
     this.ionApp.classList.add(this.dayModeClass);
   }
@@ -174,35 +177,41 @@ export class ThePlaylist {
   // };
 
   private prepareApp() {
-    this.statusBar.styleDefault();
     this.splashScreen.hide();
 
-    // @todo - enable background mode only when playing something
-    this.backgroundMode.enable();
-    this.backgroundMode.configure({
-      silent: true
-    });
+    if (this.platform.is('cordova')) {
+      this.statusBar.styleDefault();
 
-    this.immersive.isImmersiveModeSupported()
-      .then(
-        response => this.immersive.immersiveMode()
-      )
-      .catch(error => {
-        console.error(error);
+      // @todo - enable background mode only when playing something
+      this.backgroundMode.setDefaults({
+        title: 'The Playlist',
+        text: 'Waiting for interaction',
+        silent: true
+      }).then(
+        result => this.backgroundMode.enable()
+      );
+
+      this.immersive.isImmersiveModeSupported()
+        .then(
+          response => this.immersive.immersiveMode()
+        )
+        .catch(error => {
+          console.error(error);
+        });
+
+      this.fullscreenObserver.change$.subscribe(is => {
+        if (is) {
+          this.insomnia.keepAwake();
+          console.info('insomnia.keepAwake');
+          // this.alert.create({message: 'is fullscreen'}).present();
+        }
+        else {
+          this.insomnia.allowSleepAgain();
+          console.info('insomnia.sleepAgain');
+          // this.alert.create({message: 'not fullscreen'}).present();
+        }
       });
-
-    this.fullscreenObserver.change$.subscribe(is => {
-      if (is) {
-        this.insomnia.keepAwake();
-        console.info('insomnia.keepAwake');
-        // this.alert.create({message: 'is fullscreen'}).present();
-      }
-      else {
-        this.insomnia.allowSleepAgain();
-        console.info('insomnia.sleepAgain');
-        // this.alert.create({message: 'not fullscreen'}).present();
-      }
-    });
+    }
 
     // loads providers
     this.wamp.connected.subscribe(host => {
@@ -216,6 +225,14 @@ export class ThePlaylist {
             this.ref.detectChanges();
           });
       }
+    });
+
+    Observable.fromEvent(window, 'keyboardWillShow').subscribe((e) => {
+      this.setBottomMargin(e['keyboardHeight'] || 0);
+    });
+
+    Observable.fromEvent(window, 'keyboardWillHide').subscribe((e) => {
+      this.setBottomMargin(0);
     });
 
     this.menuCtrl.enable(false, 'playlistMenu');
@@ -252,6 +269,10 @@ export class ThePlaylist {
         this.serverManager.servers$.subscribe(servers => servers && (this.servers = Object.keys(servers)));
 
       });
+  }
+
+  private setBottomMargin(height: number) {
+    this.bottomMargin = height;
   }
 }
 

@@ -38,7 +38,7 @@ export class GenresTab implements OnDestroy {
   constructor(
     params: NavParams,
     private nav: NavController,
-    private loaderCtrl: LoadingController,
+    private loadingCtrl: LoadingController,
     private libManager: LibraryManagerService,
     private mediaManager: MediaManagerService,
     private ref: ChangeDetectorRef
@@ -72,7 +72,7 @@ export class GenresTab implements OnDestroy {
     if (!this.end) {
       this.offset += this.limit;
 
-      this.load()
+      this.load(false)
         .then(data => infiniteScroll.complete());
     }
     else {
@@ -82,7 +82,7 @@ export class GenresTab implements OnDestroy {
 
   openGenre(genre: Genre, autoplay = false) {
     if (!genre.media) {
-      let loader = this.loaderCtrl.create({
+      let loader = this.loadingCtrl.create({
         spinner: 'crescent',
         content: 'Loading ...'
       });
@@ -118,7 +118,18 @@ export class GenresTab implements OnDestroy {
     this.subs.forEach(s => s.unsubscribe());
   }
 
-  private load() {
+  private load(showLoader = true) {
+
+    let loader;
+    if (showLoader) {
+      loader = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: this.search ? 'Searching ...' : 'Loading ...'
+      });
+
+      loader.present();
+    }
+
     return this.libManager.genres(this.limit, this.offset, this.search)
       .then(data => {
         console.info('GenresTab.data', data);
@@ -133,6 +144,8 @@ export class GenresTab implements OnDestroy {
           this.all = data;
           this.list = [].concat(data);
         }
+        loader && loader.dismiss();
+
         this.ref.detectChanges();
       });
   }

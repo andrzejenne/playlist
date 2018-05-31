@@ -25,6 +25,11 @@ $bgColor: #ff6600;
       }
     }
 
+    ion-menu {
+      .item {
+        background: transparent !important;
+      }
+    }
 
     .toolbar-background {
       border-color: #cc4400 !important;
@@ -39,6 +44,16 @@ $bgColor: #ff6600;
       ion-select,
       ion-label {
         color: $color !important;
+      }
+
+      ion-segment-button {
+        &.segment-activated {
+          border-color: $knobColor !important;
+        }
+        color: $knobColor;
+        ion-icon {
+          color: $knobColor !important;
+        }
       }
 
       input {
@@ -60,6 +75,25 @@ $bgColor: #ff6600;
         color: $dayModeIconColor !important;
       }
 
+      .item {
+        background: $bgColor !important;
+        //color: $color !important;
+        .item-inner {
+          border-color: #223 !important;
+        }
+
+        &.selected {
+          background: #223 !important;
+        }
+
+        &.clear {
+          background: transparent !important;
+          .item-inner {
+            border-color: transparent !important;
+          }
+        }
+      }
+      
       player-controls-component {
         button.button-primary {
           color: $primaryButton !important;
@@ -89,5 +123,4 @@ $bgColor: #ff6600;
     }
 
   }
-
 }

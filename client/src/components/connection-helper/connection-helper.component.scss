@@ -1,0 +1,17 @@
+connection-helper-component {
+  .counter {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    ion-spinner {
+      vertical-align: middle;
+    }
+    .number {
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: -28px;
+      width: 28px;
+      text-align: center;
+    }
+  }
+}

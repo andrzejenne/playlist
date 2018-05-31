@@ -24,6 +24,9 @@
         <div class="thumbnail" item-start (tap)="player.togglePlayItem(item)">
           <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
           <span class="duration">{{item.duration | duration}}</span>
+          <div class="playing" *ngIf="player.isCurrent(item)">
+            <musical-spinner *ngIf="player.status.playing" color="red"></musical-spinner>
+          </div>
         </div>
         <ion-label (tap)="player.togglePlayItem(item)">
           <overscroll [disabled]="!playlist || !player.isCurrent(item)">
@@ -51,7 +54,6 @@
                   (tap)="player.playItem(item)">
             <ion-icon name="play"></ion-icon>
           </button>
-          <musical-spinner *ngIf="player.isCurrent(item)" color="red"></musical-spinner>
         </ion-buttons>
 
       </ion-item>

@@ -20,33 +20,41 @@
   <ion-list>
     <ion-item-sliding *ngFor="let playlist of playlists">
       <ion-item class="playlist-item clear" [class.selected]="isSelected(playlist)">
+
+        <div item-start class="badge">
+          <ion-badge color="primary">
+            <ion-icon name="musical-note"></ion-icon>
+            {{playlist.count}}
+          </ion-badge>
+        </div>
+
         <ion-label (tap)="plManager.toggleSelectPlaylist(playlist)">
-          <h2>
-            {{playlist.name}}
-          </h2>
-          <p>
-            <span class="duration" *ngIf="playlist.duration">
-              <ion-icon name="musical-note"></ion-icon>
-              {{playlist.count}}
-              <br>
-              <ion-icon name="time"></ion-icon>
-              {{playlist.duration | duration}}
-            </span>
-          </p>
+          {{playlist.name}}
         </ion-label>
 
-        <ion-buttons item-end *ngIf="playlist.media?.length">
+        <div item-end class="duration" *ngIf="playlist.duration">
+          {{playlist.duration | duration}}
+          <ion-icon name="time"></ion-icon>
+        </div>
+
+        <!--<ion-buttons item-end *ngIf="playlist.media?.length">-->
           <!--<button ion-button clear (tap)="shuffle(playlist)">-->
             <!--<ion-icon name="shuffle"></ion-icon>-->
           <!--</button>-->
-          <button ion-fab class="small" (tap)="play(playlist)">
-            <ion-icon name="play"></ion-icon>
-          </button>
-        </ion-buttons>
+          <!--<button ion-fab class="small" (tap)="play(playlist)">-->
+            <!--<ion-icon name="play"></ion-icon>-->
+          <!--</button>-->
+        <!--</ion-buttons>-->
 
       </ion-item>
+      <ion-item-options side="left">
+        <button ion-button color="primary" (tap)="play(playlist)">
+          <ion-icon name="play"></ion-icon>
+          Play
+        </button>
+      </ion-item-options>
       <ion-item-options side="right">
-        <button ion-button color="danger" (click)="removePlaylist(playlist)">
+        <button ion-button color="danger" (tap)="removePlaylist(playlist)">
           <ion-icon name="trash"></ion-icon>
           Delete
         </button>

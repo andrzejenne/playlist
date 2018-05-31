@@ -1,0 +1,67 @@
+server-manager-component {
+  ion-item {
+    .connect {
+      display: inline-block;
+    }
+    .disconnect {
+      display: none;
+    }
+
+    &.connected {
+      .connect {
+        display: none;
+      }
+      .disconnect {
+        display: inline-block;
+      }
+    }
+  }
+}
+
+.day-mode {
+  server-manager-component {
+    ion-item {
+      .status {
+        color: rgba(0,0,0, .5);
+      }
+
+      .connect {
+        color: darkgreen;
+      }
+
+      .disconnect {
+        color: royalblue;
+      }
+
+      &.connected {
+        .status {
+          color: yellowgreen;
+        }
+      }
+    }
+  }
+}
+
+.night-mode {
+  server-manager-component {
+    ion-item {
+      .status {
+        color: rgba(255, 255, 255, .3);
+      }
+
+      .connect {
+        color: darkgreen;
+      }
+
+      .disconnect {
+        color: royalblue;
+      }
+
+      &.connected {
+        .status {
+          color: #2a88bd;
+        }
+      }
+    }
+  }
+}

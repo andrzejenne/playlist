@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.andrzejheczko.playlist" version="0.2.0-rc5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.andrzejheczko.playlist" version="0.2.0-rc9" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>The Playlist</name>
     <description>Manage and Play various medias</description>
     <author email="andrzej.heczko@gmail.com" href="http://playlist.andrzejheczko.com/">Andrzej Heczko, The Playlist</author>
@@ -97,5 +97,7 @@
     <plugin name="cordova-plugin-file" spec="^6.0.1" />
     <plugin name="cordova-plugin-filepath" spec="^1.3.0" />
     <plugin name="cordova-plugin-shake" spec="^0.6.0" />
+    <allow-navigation href="http://10.10.3.26:8100" />
     <engine name="android" spec="^7.1.0" />
+    <engine name="browser" spec="5.0.3" />
 </widget>

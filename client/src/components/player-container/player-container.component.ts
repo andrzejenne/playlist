@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   ContentChild, ElementRef,
-  HostBinding, OnChanges, SimpleChanges, ViewChild
+  HostBinding, Input, OnChanges, SimpleChanges, ViewChild
 } from "@angular/core";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {PlayerControlsComponent} from "../player-controls/player-controls.component";
@@ -32,6 +32,9 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
   @HostBinding('class.title')
   title: boolean = false;
 
+  @HostBinding('class.fx-enabled')
+  fx: boolean = true;
+
   @ViewChild(PlayerControlsComponent) playerControls: PlayerControlsComponent;
   @ContentChild(Nav) nav: Nav;
 
@@ -39,7 +42,13 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
   @ViewChild(PlaylistComponent) playlistComponent: PlaylistComponent;
   @ViewChild(Footer) footer: Footer;
   @ViewChild(Toolbar) footerToolbar: Toolbar;
-  @ViewChild('playerEl') playerRef: ElementReference<HTMLVideoElement>;
+  @ViewChild('videoPlayerEl') videoPlayerRef: ElementReference<HTMLVideoElement>;
+  @ViewChild('audioPlayerEl') audioPlayerRef: ElementReference<HTMLAudioElement>;
+
+  @Input()
+  bottomMargin: number;
+
+  currentBottomMargin: number;
 
   playlist: Playlist;
 
@@ -64,7 +73,7 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
 
   ngAfterViewInit() {
     this.hideToolbar();
-    this.player.setVideoElement(this.playerRef.nativeElement)
+    this.player.setPlayerElements(this.videoPlayerRef.nativeElement, this.audioPlayerRef.nativeElement)
       .addChangeDetector(this.ref)
       .setContent(this.playlistContainer);
 
@@ -118,9 +127,9 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
 
 
   ngOnChanges(changes: SimpleChanges): void {
-    // if (changes['playlist']) {
-
-    // }
+    if (changes['bottomMargin']) {
+      this.setBottomMargin(changes['bottomMargin'].currentValue || 0);
+    }
   }
 
   hide(event) {
@@ -147,39 +156,50 @@ export class PlayerContainerComponent implements AfterViewInit, AfterContentInit
   //   this.styleSheet.insertRule('player-container ion-content { transition: margin 5s ease-in-out; }');
   //   this.styleSheet.insertRule('player-container.hide-player ion-content { margin-top: 0; }');
   // }
+  // @todo - refactor
 
   private hideToolbar(el = this.footer.getNativeElement()) {
     el.style.top = 'auto';
     el.style.bottom = '-' + this.footerToolbar.getNativeElement().offsetHeight + 'px';
-    this.elRef.nativeElement.style.borderBottomWidth = 0;
+    this.currentBottomMargin = 0;
+
+    this.setBottomMargin();
   }
 
   private showToolbar(el = this.footer.getNativeElement()) {
     el.style.bottom = '0px'; //this.footerToolbar.getNativeElement().offsetHeight + 'px';
-    this.elRef.nativeElement.style.borderBottomWidth = this.footerToolbar.getNativeElement().offsetHeight + 'px';
+    this.currentBottomMargin = this.footerToolbar.getNativeElement().offsetHeight;
+
+    this.setBottomMargin();
   }
 
   private showPlaylistTitle(el = this.playlistContainer.getNativeElement()) {
     el.style.marginTop = '0px'; //-this.playlistComponent.header.nativeElement.offsetHeight + 'px';
     el.style.top = '100%';
 
-    this.elRef.nativeElement.style.borderBottomWidth =
-      (this.footerToolbar.getNativeElement().offsetHeight + this.playlistComponent.header.nativeElement.offsetHeight) + 'px';
+    this.currentBottomMargin = (this.footerToolbar.getNativeElement().offsetHeight + this.playlistComponent.header.nativeElement.offsetHeight);
 
+    this.setBottomMargin();
   }
 
   private showPlaylist(el = this.playlistContainer.getNativeElement()) {
     el.style.top = '0';
 
-    this.elRef.nativeElement.style.borderBottomWidth = 0;
-    // this.footerToolbar.getNativeElement().offsetHeight + 'px';
+    this.currentBottomMargin = 0;
 
+    this.setBottomMargin();
   }
 
   private hidePlaylist(el = this.playlistContainer.getNativeElement()) {
     el.style.top = '100%';
 
-    this.elRef.nativeElement.style.borderBottomWidth = 0;
+    this.currentBottomMargin = 0;
+
+    this.setBottomMargin();
     // this.footerToolbar.getNativeElement().offsetHeight + 'px';
+  }
+
+  private setBottomMargin(margin = this.bottomMargin) {
+    this.elRef.nativeElement.style.borderBottomWidth = (this.currentBottomMargin + margin) + 'px';
   }
 }

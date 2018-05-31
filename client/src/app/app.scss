@@ -24,13 +24,6 @@ body {
 
 video { background-color: black !important; }
 
-.item.clear {
-  background: transparent !important;
-  .item-inner {
-    border-color: transparent !important;
-  }
-}
-
 .button-primary {
   color: indianred;
 }
@@ -111,3 +104,23 @@ ion-item {
     //font-size: 3rem;
   //}
 //}
+
+.mode-color {
+  button.fab,
+  .tabbar,
+  .tabbar .badge,
+  .toolbar-background
+  {
+    //transition: background-color ease-in-out 250ms;
+  }
+
+  .tabbar .badge {
+    //transition: color ease-in-out 250ms;
+  }
+}
+
+.item.clear {
+  .item-inner {
+    border-color: transparent !important;
+  }
+}

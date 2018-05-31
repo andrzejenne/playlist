@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnDestroy} from "@angular/core";
-import {NavController, NavParams} from "ionic-angular";
+import {LoadingController, NavController, NavParams} from "ionic-angular";
 import {Artist} from "../../../../models/artist";
 import {LibraryManagerService} from "../../../../services/LibraryManagerService";
 import {MediaManagerService} from "../../../../services/MediaManagerService";
@@ -39,6 +39,7 @@ export class ArtistsTab implements OnDestroy {
               private navCtrl: NavController,
               private mediaManager: MediaManagerService,
               private libManager: LibraryManagerService,
+              private loadingCtrl: LoadingController,
               private ref: ChangeDetectorRef) {
     if (params) {
       this.count = params.data.count || 0;
@@ -60,7 +61,18 @@ export class ArtistsTab implements OnDestroy {
     return this.mediaManager.getArtistThumbnailUrl(artist);
   }
 
-  private load() {
+  private load(showLoader = true) {
+
+    let loader;
+    if (showLoader) {
+      loader = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: this.search ? 'Searching ...' : 'Loading ...'
+      });
+
+      loader.present();
+    }
+
     return this.libManager.artists(this.limit, this.offset, this.search)
       .then(data => {
         console.info('ArtistsTab.data', data);
@@ -75,6 +87,8 @@ export class ArtistsTab implements OnDestroy {
           this.all = data;
           this.list = [].concat(data);
         }
+        loader && loader.dismiss();
+
         this.ref.detectChanges();
       });
   }
@@ -114,7 +128,7 @@ export class ArtistsTab implements OnDestroy {
     if (!this.end) {
       this.offset += this.limit;
 
-      this.load()
+      this.load(false)
         .then(data => infiniteScroll.complete());
     }
     else {

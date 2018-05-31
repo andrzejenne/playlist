@@ -169,6 +169,7 @@ export class ServerManagerService {
   close(host: string) {
     this.sessions[host] = null;
     this.connected[host] = false;
+    this.connecting[host] = false;
   }
 
   isConnected(host: string = this.host) {

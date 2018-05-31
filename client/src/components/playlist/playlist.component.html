@@ -90,7 +90,7 @@
       <ion-icon name="add"></ion-icon>
     </button>
     <ion-fab-list side="left">
-      <button ion-fab (tap)="open('all')">
+      <button ion-fab *ngIf="providers.length > 1" (tap)="open('all')">
         A
       </button>
       <button ion-fab *ngFor="let provider of providers" (tap)="open(provider.slug, provider)">

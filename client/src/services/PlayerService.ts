@@ -4,6 +4,7 @@ import {Storage} from "@ionic/storage";
 import {MediaManagerService} from "./MediaManagerService";
 import {Content} from "ionic-angular";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {MediaFile} from "../models/media-file";
 
 @Injectable()
 export class PlayerService {
@@ -38,6 +39,8 @@ export class PlayerService {
 
   medium: Medium;
 
+  file: MediaFile;
+
   ready: boolean;
 
   mediaType: string = 'audio';
@@ -56,6 +59,8 @@ export class PlayerService {
 
   private videoEl: HTMLVideoElement;
 
+  private audioEl: HTMLAudioElement;
+
   private contentContainer: Content;
 
   private refs: ChangeDetectorRef[] = [];
@@ -70,10 +75,12 @@ export class PlayerService {
   ) {
   }
 
-  setVideoElement(el: HTMLVideoElement) {
-    this.videoEl = el;
-    this.initPlayer();
-
+  setPlayerElements(video: HTMLVideoElement, audio: HTMLAudioElement) {
+    this.videoEl = video;
+    this.audioEl = audio;
+    this.initEvents(video);
+    this.initEvents(audio);
+      // this.audioPlayer.nativeElement.onended = this.onPlayerPlayEnded;
     this.resolveReady();
 
     return this;
@@ -100,7 +107,7 @@ export class PlayerService {
 
   onReady() {
     return new Promise((resolve, reject) => {
-      if (this.videoEl) {
+      if (this.videoEl && this.audioEl) {
         resolve(this.media);
       }
       else {
@@ -145,12 +152,7 @@ export class PlayerService {
       this.mediaList.unshift(item);
     }
 
-    this.setMedium(item);
-
-    let player = this.getPlayer();
-    player.src = this.mediaManager.getUrl(this.medium, this.mediaType);
-
-    player.currentTime = seek;
+    this.setCurrent(item, seek);
 
     this.play();
 
@@ -178,14 +180,9 @@ export class PlayerService {
       return;
     }
 
-    this.setMedium(item);
+    this.setCurrent(item, seek);
 
     this.updatePlayed();
-
-    let player = this.getPlayer();
-    player.src = this.mediaManager.getUrl(this.medium, this.mediaType);
-
-    player.currentTime = seek;
 
     this.play();
   }
@@ -193,8 +190,8 @@ export class PlayerService {
   togglePlayItem(item: Medium = null, seek = 0) {
     if (item) {
       if (item == this.getCurrent()) {
-        this.setMedium();
-        this.status.playing = false;
+        this.setCurrent();
+
         this.updatePlayed();
       }
       else {
@@ -221,7 +218,7 @@ export class PlayerService {
     let player = this.getPlayer();
 
     if (!player.src || !this.medium) {
-      player.src = this.getNextSrc();
+      this.getNext();
     }
 
     if (this.status.playing) {
@@ -273,38 +270,28 @@ export class PlayerService {
       this.playedList.push(this.medium);
     }
 
-    let nextSrc = this.getNextSrc();
+    let next = this.getNext();
 
-    if (this.status.repeat && !nextSrc) {
+    if (this.status.repeat && !next) {
       this.playItem(this.mediaList[0]);
     }
 
-    if (nextSrc) {
-      let player = this.getPlayer();
-
-      player.src = nextSrc;
-
+    if (next) {
       this.play();
     }
     else {
-      this.setMedium();
+      this.setCurrent();
       this.storage.remove('currentMedium');
       this.storage.remove('currentTime');
     }
   }
 
   playPrev() {
-    let prevSrc = this.getPrevSrc();
-
-    if (prevSrc) {
-      let player = this.getPlayer();
-
-      player.src = prevSrc;
-
+    if (this.getPrev()) {
       this.play();
     }
     else {
-      this.setMedium();
+      this.setCurrent();
     }
   }
 
@@ -317,8 +304,21 @@ export class PlayerService {
     }
   }
 
-  private setMedium(medium: Medium = null) {
+  private setCurrent(medium: Medium = null, seek = 0) {
     this.medium = medium;
+    if (medium) {
+      this.file = this.mediaManager.getFileOrDefault(medium, this.mediaType);
+
+      let player = this.getPlayer();
+      player.src = this.mediaManager.getFileUrl(this.medium, this.file);
+
+      player.currentTime = seek;
+
+    }
+    else {
+      this.file = null;
+      this.status.playing = false;
+    }
     this.medium$.next(medium);
 
     return this;
@@ -396,7 +396,7 @@ export class PlayerService {
   stop() {
     this.pause();
 
-    this.setMedium();
+    this.setCurrent();
 
     this.playStatus();
 
@@ -424,8 +424,16 @@ export class PlayerService {
     this.storage.set('currentMedium', this.medium.id);
   }
 
-  private getPlayer() {
-    return this.videoEl;
+  private getPlayer(file: MediaFile = this.file) {
+    if (file) {
+      if ('audio' === file.type.slug) {
+        return this.audioEl;
+      }
+      else {
+        return this.videoEl;
+      }
+    }
+    return null;
   }
 
   // private preparePlaylistDiff() {
@@ -440,13 +448,6 @@ export class PlayerService {
 
   private shuffle(arr: any[]) {
     arr.sort(PlayerService.shuffleCallback);
-  }
-
-  private initPlayer() {
-    let player = this.getPlayer();
-    player.onended = this.onPlayerPlayEnded;
-    player.onloadedmetadata = this.onPlayerMetadata;
-    // this.audioPlayer.nativeElement.onended = this.onPlayerPlayEnded;
   }
 
   // /**
@@ -472,54 +473,69 @@ export class PlayerService {
 
   private onPlayerMetadata = (ev: MediaStreamErrorEvent) => {
     let player = this.getPlayer();
-    let aspect = player.videoWidth / player.videoHeight;
-    this.video.width = Math.min(player.videoWidth, this.contentContainer.contentWidth);
-    this.video.height = this.video.width / aspect;
+    if (player instanceof HTMLVideoElement) {
+      let aspect = player.videoWidth / player.videoHeight;
+      this.video.width = Math.min(player.videoWidth, this.contentContainer.contentWidth);
+      this.video.height = this.video.width / aspect;
 
-    let contentHeight = this.contentContainer.contentHeight;
-    let halfHeight = contentHeight / 2;
-    if (this.video.height > halfHeight) {
-      this.video.height = halfHeight;
-      this.video.width = aspect * this.video.height;
+      let contentHeight = this.contentContainer.contentHeight;
+      let halfHeight = contentHeight / 2;
+      if (this.video.height > halfHeight) {
+        this.video.height = halfHeight;
+        this.video.width = aspect * this.video.height;
+      }
+
+      // this.video.containerStyle = {width: '100%', height: this.video.height + "px"};
+
+      // this.setContentMarginIfVideo();
+
+      this.detectChanges();
     }
-
-    // this.video.containerStyle = {width: '100%', height: this.video.height + "px"};
-
-    // this.setContentMarginIfVideo();
-
-    this.detectChanges();
-
     console.info('PlayerService@onPlayerMetadata', ev);
   };
 
   private onPlayerProgress = () => {
     let player = this.getPlayer();
 
-    this.mediumTime = player.currentTime;
-    this.totalTime = player.duration;
-    this.storage.set('currentTime', this.mediumTime);
-    // this.progress.nativeElement.style.left = ((this.mediumTime / this.totalTime) * 100) + '%';
+    if (player) {
+      this.mediumTime = player.currentTime;
+      this.totalTime = player.duration;
+      this.storage.set('currentTime', this.mediumTime);
+      // this.progress.nativeElement.style.left = ((this.mediumTime / this.totalTime) * 100) + '%';
 
-    // this.ref.detectChanges();
-    this.detectChanges();
+      // this.ref.detectChanges();
+      this.detectChanges();
+    }
+    else {
+      clearInterval(this.interval);
+    }
+
   };
 
-  private getNextSrc() {
+  private getNext() {
     if (this.mediaList.length) {
       let index = this.mediaList.indexOf(this.medium);
       if (this.mediaList[index + 1]) {
-        this.setMedium(this.mediaList[index + 1]);
-        return this.mediaManager.getUrl(this.medium, this.mediaType);
+        let medium = this.mediaList[index + 1];
+        this.setCurrent(medium);
+        return {
+          medium: medium,
+          file: this.mediaManager.getFile(medium, this.mediaType)
+        };
       }
     }
 
     return null;
   }
 
-  private getPrevSrc() {
+  private getPrev() {
     if (this.playedList.length) {
-      this.setMedium(this.playedList.pop());
-      return this.mediaManager.getUrl(this.medium, this.mediaType);
+      let medium = this.playedList.pop();
+      this.setCurrent(medium);
+      return {
+        medium: medium,
+        file: this.mediaManager.getFile(medium, this.mediaType)
+      };
     }
 
     return null;
@@ -558,6 +574,13 @@ export class PlayerService {
     }
     else {
       this.playedList = [];
+    }
+  }
+
+  private initEvents(el: HTMLVideoElement | HTMLAudioElement) {
+    el.onended = this.onPlayerPlayEnded;
+    if (el instanceof HTMLVideoElement) {
+      el.onloadedmetadata = this.onPlayerMetadata;
     }
   }
 }

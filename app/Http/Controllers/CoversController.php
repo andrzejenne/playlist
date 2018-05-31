@@ -8,12 +8,11 @@
 
 namespace BBIT\Playlist\Http\Controllers;
 
-use BBIT\Playlist\Helpers\Str;
 use BBIT\Playlist\Models\Cover;
 use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Services\CoversService;
+use BBIT\Playlist\Services\ImageRequestProcessor;
 use BBIT\Playlist\Services\MediaDiscoveryService;
-use function GuzzleHttp\Psr7\mimetype_from_extension;
 use function GuzzleHttp\Psr7\mimetype_from_filename;
 use Illuminate\Http\Request;
 
@@ -29,25 +28,35 @@ class CoversController
 
     /** @var MediaDiscoveryService */
     private $discoverService;
+    /**
+     * @var ImageRequestProcessor
+     */
+    private $imageRequestProcessor;
 
     /**
      * MediaStreamController constructor.
      * @param CoversService $coversService
      * @param MediaDiscoveryService $discoveryService
+     * @param ImageRequestProcessor $imageRequestProcessor
      */
-    public function __construct(CoversService $coversService, MediaDiscoveryService $discoveryService)
+    public function __construct(
+        CoversService $coversService,
+        MediaDiscoveryService $discoveryService,
+        ImageRequestProcessor $imageRequestProcessor
+    )
     {
         $this->coversService = $coversService;
         $this->discoverService = $discoveryService;
+        $this->imageRequestProcessor = $imageRequestProcessor;
     }
 
 
     /**
      * @param $cid
+     * @param Request $request
      * @return bool|string
-     * @throws \Exception
      */
-    public function get($cid)
+    public function get($cid, Request $request)
     {
         $cover = Cover::whereId($cid)->first();
         if (!$cover) {
@@ -59,7 +68,8 @@ class CoversController
         $path = $this->coversService->getCoverPath($album, $cover->type);
 
         if (\File::exists($path)) {
-            return response(\File::get($path), 200, $this->getHeadersForPath($path));
+            return $this->imageRequestProcessor->process($path, $request);
+//            return response(\File::get($path), 200, $this->getHeadersForPath($path));
         }
 
         return response('File Not Found', 404);
@@ -68,10 +78,11 @@ class CoversController
     /**
      * @param $mid
      * @param $fid
+     * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function getThumbnail($mid, $fid)
+    public function getThumbnail($mid, $fid, Request $request)
     {
         $medium = Medium::whereId($mid)->first();
         if (!$medium) {
@@ -89,17 +100,10 @@ class CoversController
         $path = $this->discoverService->getFilePath($mid, $fid);
 
         if (\File::exists($path)) {
-            return response(\File::get($path), 200, $this->getHeadersForPath($path));
+            return $this->imageRequestProcessor->process($path, $request);
+//            return response(\File::get($path), 200, $this->getHeadersForPath($path));
         }
 
         return response('File not found', 404);
-    }
-
-    private function getHeadersForPath($path) {
-        return [
-            'Content-Type' => mimetype_from_filename($path),
-            'Content-Length' => \File::size($path)
-            // @todo - expiration
-        ];
     }
 }

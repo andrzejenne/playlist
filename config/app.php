@@ -171,6 +171,8 @@ return [
 
         Laravel\Socialite\SocialiteServiceProvider::class,
 
+        Intervention\Image\ImageServiceProvider::class,
+
     ],
 
     /*
@@ -225,6 +227,8 @@ return [
         'WampRoute' => BBIT\Playlist\Facades\WampRoute::class,
 
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+
+        'Image' => Intervention\Image\Facades\Image::class,
     ],
 
     'models' => [
