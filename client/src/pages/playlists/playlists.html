@@ -21,20 +21,22 @@
     <ion-item-sliding *ngFor="let playlist of playlists">
       <ion-item class="playlist-item clear" [class.selected]="isSelected(playlist)">
 
-        <div item-start class="badge">
-          <ion-badge color="primary">
-            <ion-icon name="musical-note"></ion-icon>
-            {{playlist.count}}
-          </ion-badge>
+        <div item-start class="duration">
+          <!--<template [ngIf]="playlist.duration">-->
+            {{playlist.duration | duration}}
+            <ion-icon name="time"></ion-icon>
+          <!--</template>-->
         </div>
 
         <ion-label (tap)="plManager.toggleSelectPlaylist(playlist)">
           {{playlist.name}}
         </ion-label>
 
-        <div item-end class="duration" *ngIf="playlist.duration">
-          {{playlist.duration | duration}}
-          <ion-icon name="time"></ion-icon>
+        <div item-end class="badge">
+          <ion-badge color="primary">
+            <ion-icon name="musical-note"></ion-icon>
+            {{playlist.count}}
+          </ion-badge>
         </div>
 
         <!--<ion-buttons item-end *ngIf="playlist.media?.length">-->
