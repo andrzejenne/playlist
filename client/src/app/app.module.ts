@@ -49,6 +49,7 @@ import {ArtistPage} from "../pages/artist/artist";
 import {MediaComponent} from "../components/media/media.component";
 import {OverscrollComponent} from "../components/overscroll/overscroll.component";
 import {ConnectionHelperComponent} from "../components/connection-helper/connection-helper.component";
+import {Network} from "@ionic-native/network";
 
 @NgModule({
   declarations: [
@@ -145,7 +146,8 @@ import {ConnectionHelperComponent} from "../components/connection-helper/connect
     ScreenOrientation,
     Keyboard,
     AndroidFullScreen,
-    Insomnia
+    Insomnia,
+    Network
   ]
 })
 export class AppModule {

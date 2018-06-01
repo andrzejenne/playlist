@@ -206,7 +206,12 @@ export class ThePlaylist {
     if (this.platform.is('cordova')) {
       this.statusBar.styleDefault();
 
-      // @todo - enable background mode only when playing something
+      // @todo - enable background mode only when playing something ???
+      this.backgroundMode.on('activate')
+        .subscribe(() => {
+          this.backgroundMode.disableWebViewOptimizations();
+        });
+
       this.backgroundMode.setDefaults({
         title: 'The Playlist',
         text: 'Waiting for interaction',
@@ -214,6 +219,7 @@ export class ThePlaylist {
       }).then(
         result => this.backgroundMode.enable()
       );
+
 
       this.immersive.isImmersiveModeSupported()
         .then(
@@ -277,10 +283,11 @@ export class ThePlaylist {
     this.menuCtrl.enable(false, 'playlistMenu');
 
     if (this.offline.enabled) {
+      console.info('Oflline is enabled');
       this.offline.test();
     }
     else {
-      console.warn('offline mode not avail')
+      console.warn('offline mode not avail');
     }
 
   }

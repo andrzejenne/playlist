@@ -7,14 +7,14 @@ import {Album} from "../models/album";
 import {Artist} from "../models/artist";
 import {Genre} from "../models/genre";
 import {AppRepository} from "../repositories/app.repository";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable()
 export class MediaManagerService {
 
   constructor(
     private serverManager: ServerManagerService,
-    private repo: MediaRepository,
-    private appRepo: AppRepository
+    private repo: MediaRepository
   ) {
 
   }
