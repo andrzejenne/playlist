@@ -1,4 +1,13 @@
-import {AfterViewInit, ChangeDetectorRef, Component, Input, OnDestroy} from "@angular/core";
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  HostBinding,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Optional, SimpleChanges
+} from "@angular/core";
 import {NavParams, Platform} from "ionic-angular";
 import {WampService} from "../../services/WampService";
 import {ServerManagerService} from "../../services/ServerManagerService";
@@ -7,7 +16,7 @@ import {ServerManagerService} from "../../services/ServerManagerService";
   selector: 'connection-helper-component',
   templateUrl: 'connection-helper.component.html'
 })
-export class ConnectionHelperComponent implements AfterViewInit, OnDestroy {
+export class ConnectionHelperComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input()
   title: string;
 
@@ -17,44 +26,59 @@ export class ConnectionHelperComponent implements AfterViewInit, OnDestroy {
   @Input()
   host: string;
 
+  @Input()
+  @HostBinding('class.hidden')
+  hidden: boolean;
+
   counter = 10;
 
   servers: string[] = [];
-
-  private wamp: WampService;
 
   private _counter: number;
 
   private tout: number;
 
-  constructor(params: NavParams,
-              public platform: Platform,
+  constructor(public platform: Platform,
               private serverManager: ServerManagerService,
-              private ref: ChangeDetectorRef
+              private wamp: WampService,
+              private ref: ChangeDetectorRef,
+              @Optional() params: NavParams
   ) {
     if (params) {
       this.title = params.data.title;
       this.message = params.data.message;
       this.host = params.data.host;
-
-      // @todo - circular dependency workaround, maybe not best practice, component is wired to service
-      this.wamp = params.data.wamp;
-
-      this.wamp.connectionModalComponent = this;
     }
 
-    this.servers = Object.keys(this.serverManager.servers);
+    this.serverManager.servers$.subscribe(servers => this.servers = Object.keys(servers));
   }
 
   ngAfterViewInit() {
     this._counter = this.counter;
-    this.reconnectCountdown();
+    if (!this.hidden) {
+      this.reconnectCountdown();
+    }
   }
 
   ngOnDestroy() {
-    if (this.tout) {
-      clearTimeout(this.tout);
+    console.info('destroyed');
+    this.clearTimeout();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['hidden']) {
+      if (!changes['hidden'].currentValue) {
+        this.resetCounter();
+      }
+      else {
+        this.clearTimeout();
+      }
     }
+  }
+
+  reconnect() {
+    this.clearTimeout();
+    this.wamp.connect(this.host);
   }
 
   resetCounter() {
@@ -69,6 +93,8 @@ export class ConnectionHelperComponent implements AfterViewInit, OnDestroy {
   }
 
   private reconnectCountdown() {
+    this.clearTimeout();
+
     this.tout = setTimeout(() => {
       this.counter--;
       this.ref.detectChanges();
@@ -81,7 +107,10 @@ export class ConnectionHelperComponent implements AfterViewInit, OnDestroy {
     }, 1000);
   }
 
-  private reconnect() {
-    this.wamp.connect(this.host);
+  private clearTimeout() {
+    if (this.tout) {
+      clearTimeout(this.tout);
+      this.tout = null;
+    }
   }
 }

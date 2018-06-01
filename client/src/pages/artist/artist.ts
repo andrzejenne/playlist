@@ -1,6 +1,6 @@
 import {Component, Input, Optional, ViewChild} from "@angular/core";
 import {PlayerService} from "../../services/PlayerService";
-import {Content, NavController, NavParams} from "ionic-angular";
+import {Content, LoadingController, NavController, NavParams} from "ionic-angular";
 import {MediaManagerService} from "../../services/MediaManagerService";
 import {ElementReference} from "../../models/ElementReference";
 import {Artist} from "../../models/artist";
@@ -29,6 +29,7 @@ export class ArtistPage {
     public mediaManager: MediaManagerService,
     public plManager: PlaylistsManagerService,
     private navCtrl: NavController,
+    private loadingCtrl: LoadingController,
     @Optional() params: NavParams = null) {
     if (params) {
       if (params.data.artist) {
@@ -41,12 +42,21 @@ export class ArtistPage {
 
   ngAfterViewInit() {
     if (!this.artist.media) {
+      let loading = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: 'Loading ...'
+      });
+
+      loading.present();
+
       this.mediaManager.getByArtist(this.artist)
         .then(media => {
           this.artist.media = media;
           if (!this.playlist) {
             this.player.setMedia(media);
           }
+
+          loading.dismiss();
         });
     }
     else {

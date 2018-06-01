@@ -1,7 +1,7 @@
 import {Component, Input, Optional, ViewChild} from "@angular/core";
 import {Album} from "../../models/album";
 import {PlayerService} from "../../services/PlayerService";
-import {Content, NavParams} from "ionic-angular";
+import {Content, LoadingController, NavParams} from "ionic-angular";
 import {MediaManagerService} from "../../services/MediaManagerService";
 import {ElementReference} from "../../models/ElementReference";
 import {Medium} from "../../models/medium";
@@ -29,6 +29,7 @@ export class AlbumPage {
     public player: PlayerService,
     public mediaManager: MediaManagerService,
     public plManager: PlaylistsManagerService,
+    private loadingCtrl: LoadingController,
     @Optional() params: NavParams = null) {
     if (params) {
       if (params.data.album) {
@@ -43,6 +44,13 @@ export class AlbumPage {
 
   ngAfterViewInit() {
     if (!this.album.media) {
+      let loading = this.loadingCtrl.create({
+        spinner: 'crescent',
+        content: 'Loading ...'
+      });
+
+      loading.present();
+
       this.mediaManager.getByAlbum(this.album)
         .then(media => {
           this.album.media = media;
@@ -52,6 +60,7 @@ export class AlbumPage {
               this.player.togglePlayItem();
             }
           }
+          loading.dismiss();
         });
     }
     else {

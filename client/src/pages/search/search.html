@@ -10,8 +10,8 @@
         <ion-icon name="search"></ion-icon>
       </button>
       <ion-input #input type="text" [(ngModel)]="search"
-                 (blur)="focused = false" (keyup.enter)="searchItems()"
-                 (focus)="getSearchHistory(); focused = true;">
+                 (ionBlur)="focused = false" (keyup.enter)="searchItems()"
+                 (ionFocus)="getSearchHistory(); focused = true;">
       </ion-input>
       <div item-right>
         <button ion-button *ngIf="search" (click)="clearSearch()" clear>
@@ -35,11 +35,13 @@
 
 <ion-content class="mode-color">
   <ion-list *ngIf="list && history && !list.length && history.length" class="history">
-    <ion-item *ngFor="let item of history" (tap)="searchItems(item.query)">
-      <button ion-button icon-only clear item-start>
+    <ion-item *ngFor="let item of history">
+      <button ion-button icon-only clear item-start (tap)="searchItems(item.query)">
         <ion-icon name="eye"></ion-icon>
       </button>
-      {{ item.query }}
+      <ion-title (tap)="searchItems(item.query)">
+        {{ item.query }}
+      </ion-title>
       <button ion-button icon-only clear item-end (click)="openSearchHistory($event, item)">
         <ion-icon name="open"></ion-icon>
       </button>
@@ -55,7 +57,7 @@
         <img [src]="item.thumbnail">
         <span class="duration">{{item.duration | duration}}</span>
       </div>
-      <ion-title class="item-content">
+      <ion-label class="item-content">
         <overscroll>
           <h2>{{item.title}}</h2>
         </overscroll>
@@ -67,7 +69,7 @@
             Preview
           </a>
         </p>
-      </ion-title>
+      </ion-label>
       <ion-buttons item-end>
         <button *ngIf="!playlist" ion-fab class="small" (tap)="download($event, item)">
           <ion-icon name="download"></ion-icon>
@@ -84,16 +86,21 @@
 
   <!--<button ion-button *ngIf="prevPageToken" (click)="onPrevClick()" style="float:left;">Prev</button>-->
   <!--<button ion-button *ngIf="nextPageToken" (click)="onNextClick()" style="float:right;">Next</button>-->
+
 </ion-content>
 <!--<pre>{{providers | json}}</pre>-->
-<ion-footer *ngIf="providers && providers.length" class="mode-color">
+<ion-footer *ngIf="providers && providers.length > 0" class="mode-color">
   <ion-toolbar>
-    <ion-segment [(ngModel)]="provider">
-      <ion-segment-button *ngFor="let p of providers" color="primary"
-               [value]="p.slug">
-        <ion-icon [name]="p.ionic.menuIcon" color="primary"></ion-icon>
-        {{p.ionic.title}}
-      </ion-segment-button>
-    </ion-segment>
+    <ion-grid>
+      <ion-row>
+        <ion-col *ngFor="let p of providers" [class.active]="provider == p.slug">
+          <button ion-button clear full color="primary" icon-left
+                  (tap)="provider = p.slug">
+            <ion-icon [name]="p.ionic.menuIcon" color="primary"></ion-icon>
+            {{p.ionic.title}}
+          </button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-toolbar>
 </ion-footer>

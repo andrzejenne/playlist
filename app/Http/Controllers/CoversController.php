@@ -13,7 +13,6 @@ use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Services\CoversService;
 use BBIT\Playlist\Services\ImageRequestProcessor;
 use BBIT\Playlist\Services\MediaDiscoveryService;
-use function GuzzleHttp\Psr7\mimetype_from_filename;
 use Illuminate\Http\Request;
 
 /**
@@ -55,6 +54,7 @@ class CoversController
      * @param $cid
      * @param Request $request
      * @return bool|string
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function get($cid, Request $request)
     {

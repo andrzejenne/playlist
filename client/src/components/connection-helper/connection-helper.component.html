@@ -1,25 +1,26 @@
-<ion-header class="mode-color">
+<ion-content class="mode-color">
   <ion-navbar>
     <ion-title>{{title}}</ion-title>
   </ion-navbar>
-</ion-header>
-<ion-content padding class="mode-color">
-  <p *ngIf="message">{{message}}</p>
+  <div padding>
+    <p *ngIf="message">{{message}}</p>
+    <p>
+      Reconnecting in
+      <span class="counter">
+        <ion-spinner color="primary"></ion-spinner><span class="number">{{counter}}</span>
+      </span>.
+    </p>
 
-  <p>
-    Reconnecting in
-    <span class="counter">
-      <ion-spinner></ion-spinner><span class="number">{{counter}}</span>
-    </span>.
-  </p>
+    <ion-list radio-group [(ngModel)]="host" *ngIf="servers.length > 1">
+      <ion-list-header>Select server you want to connect to.</ion-list-header>
+      <ion-item *ngFor="let host of servers">
+        <ion-label>{{host}}</ion-label>
+        <ion-radio [value]="host"></ion-radio>
+      </ion-item>
+    </ion-list>
 
-  <ion-list radio-group [(ngModel)]="host" *ngIf="servers.length > 1">
-    <ion-list-header>Select server you want to connect to.</ion-list-header>
-    <ion-item *ngFor="let host of servers">
-      <ion-label>{{host}}</ion-label>
-      <ion-radio [value]="host"></ion-radio>
-    </ion-item>
-  </ion-list>
+    <button ion-button (tap)="reconnect()" small>Reconnect</button>
 
-  <button *ngIf="platform.is('cordova')" ion-button full color="danger" (click)="closeApp()">Close Playlist completely</button>
+    <button *ngIf="platform.is('cordova')" ion-button full color="danger" (click)="closeApp()">Close Playlist completely</button>
+  </div>
 </ion-content>
