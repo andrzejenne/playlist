@@ -43,6 +43,8 @@ export class SearchPage implements OnDestroy {
   @Input()
   provider: string = null;
 
+  test: string = null;
+
   searching = false;
 
   playlist: Playlist;

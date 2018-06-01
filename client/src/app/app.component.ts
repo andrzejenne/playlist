@@ -23,6 +23,7 @@ import {Provider} from "../models/provider";
 import {AppRepository} from "../repositories/app.repository";
 import {Observable} from "rxjs/Observable";
 import {OfflineManagerService} from "../services/OfflineManagerService";
+import {ConnectionHelperComponent} from "../components/connection-helper/connection-helper.component";
 
 @Component({
   templateUrl: 'app.component.html'
@@ -50,11 +51,34 @@ export class ThePlaylist {
 
   bottomMargin: number = 0;
 
+  closed: {
+    title?: string,
+    host?: string,
+    message?: string,
+  } = {};
+
+  connectionClosed = false;
+
+  @ViewChild(ConnectionHelperComponent) connectionHelper;
+
   private settings: SettingsContract;
 
   private host: string;
 
   private ionApp: Element;
+
+  private onConnectionLost = (host: string) => {
+    this.openReconnectModal('Connection Lost', 'Connection to ' + host + ' has been lost.', host);
+  };
+
+  private onConnectionUnreachable = (host: string) => {
+    this.openReconnectModal('Server Unreachable', host + ' is unreachable.', host);
+  };
+
+  private closeReasonHandlers = {
+    lost: this.onConnectionLost,
+    unreachable: this.onConnectionUnreachable
+  };
 
   constructor(
     private platform: Platform,
@@ -215,17 +239,32 @@ export class ThePlaylist {
 
     // loads providers
     this.wamp.connected.subscribe(host => {
-      if (host) {
-        this.appRepo.providers()
-          .then(providers => {
-            this.providers = providers;
-            this.searchableProviders = providers.filter(provider => provider.search);
-            this.serverManager.setProviders(providers, host);
 
-            this.ref.detectChanges();
-          });
+      this.connectionClosed = false;
+
+      this.ref.detectChanges();
+
+      this.appRepo.providers()
+        .then(providers => {
+          this.providers = providers;
+          this.searchableProviders = providers.filter(provider => provider.search);
+          this.serverManager.setProviders(providers, host);
+
+          this.ref.detectChanges();
+        });
+    });
+
+    this.wamp.onClose.subscribe(({server, reason}) => {
+      if (this.connectionClosed) {
+        this.connectionHelper.resetCounter();
+      }
+      else {
+        if (this.closeReasonHandlers[reason]) {
+          this.closeReasonHandlers[reason](server.host);
+        }
       }
     });
+
 
     Observable.fromEvent(window, 'keyboardWillShow').subscribe((e) => {
       this.setBottomMargin(e['keyboardHeight'] || 0);
@@ -269,6 +308,23 @@ export class ThePlaylist {
         this.serverManager.servers$.subscribe(servers => servers && (this.servers = Object.keys(servers)));
 
       });
+  }
+
+  /**
+   *
+   * @param {string} title
+   * @param {string} message
+   * @param {string} host
+   */
+  openReconnectModal(title: string, message: string, host: string) {
+    this.closed = {
+      title: title,
+      message: message,
+      host: host,
+    };
+    this.connectionClosed = true;
+
+    this.ref.detectChanges();
   }
 
   private setBottomMargin(height: number) {

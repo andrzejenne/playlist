@@ -16,14 +16,58 @@ page-search {
     }
   }
 
-  .fab { display: inline-block; vertical-align: middle; }
+  .fab {
+    display: inline-block;
+    vertical-align: middle;
+  }
 
-  ion-segment-button {
+  ion-grid {
+    padding: 0 !important;
+    ion-row {
+      padding: 0 !important;
+      ion-col {
+        padding: 0 !important;
+      }
+    }
     ion-icon {
       display: inline-block;
       vertical-align: middle;
       margin-right: 10px;
     }
+    .button-inner {
+      border-bottom: 2px solid transparent !important;
+    }
   }
 }
 
+.day-mode {
+  .toolbar {
+    ion-grid {
+      ion-col.active {
+        .button-inner {
+          border-bottom-color: #ffd000 !important
+        }
+        ion-icon,
+        button {
+          color: #ffd000 !important;
+        }
+      }
+    }
+  }
+}
+
+.night-mode {
+  .toolbar {
+    ion-grid {
+      ion-col.active {
+        .button-inner {
+          border-bottom-color: #2a88bd !important
+        }
+        ion-icon,
+        button {
+          color: #2a88bd !important;
+        }
+      }
+    }
+  }
+}

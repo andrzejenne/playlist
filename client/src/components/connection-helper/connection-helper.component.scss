@@ -1,4 +1,8 @@
 connection-helper-component {
+  &.hidden {
+    display: none;
+  }
+
   .counter {
     position: relative;
     display: inline-block;
