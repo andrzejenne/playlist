@@ -19,6 +19,7 @@ import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {PlaylistComponent} from "../../components/playlist/playlist.component";
 import {Subscription} from "rxjs/Subscription";
 import {PlayerService} from "../../services/PlayerService";
+import {OfflineManagerService} from "../../services/OfflineManagerService";
 
 @Component({
   selector: 'page-playlists',
@@ -47,6 +48,7 @@ export class PlaylistsPage implements OnDestroy {
     public selector: SelectorService<Playlist>,
     //    public pages: PagesService,
     public plManager: PlaylistsManagerService,
+    public offline: OfflineManagerService,
     private player: PlayerService,
     private auth: AuthService,
     private servers: ServerManagerService,

@@ -52,6 +52,9 @@
           <ion-icon name="play"></ion-icon>
           Play
         </button>
+        <button ion-button color="secondary" (tap)="offline.makePlaylistOffline(playlist)">
+          Make Offline
+        </button>
       </ion-item-options>
       <ion-item-options side="right">
         <button ion-button color="danger" (tap)="removePlaylist(playlist)">

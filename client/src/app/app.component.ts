@@ -284,7 +284,6 @@ export class ThePlaylist {
 
     if (this.offline.enabled) {
       console.info('Oflline is enabled');
-      this.offline.test();
     }
     else {
       console.warn('offline mode not avail');
