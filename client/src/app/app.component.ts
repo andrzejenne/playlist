@@ -215,11 +215,10 @@ export class ThePlaylist {
       this.backgroundMode.setDefaults({
         title: 'The Playlist',
         text: 'Waiting for interaction',
-        silent: true
+        // silent: true
       }).then(
         result => this.backgroundMode.enable()
       );
-
 
       this.immersive.isImmersiveModeSupported()
         .then(

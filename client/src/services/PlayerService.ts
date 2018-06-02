@@ -5,6 +5,8 @@ import {MediaManagerService} from "./MediaManagerService";
 import {Content} from "ionic-angular";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {MediaFile} from "../models/media-file";
+import {ServerManagerService} from "./ServerManagerService";
+import {OfflineManagerService} from "./OfflineManagerService";
 
 @Injectable()
 export class PlayerService {
@@ -71,7 +73,9 @@ export class PlayerService {
 
   constructor(
     private storage: Storage,
-    private mediaManager: MediaManagerService
+    private mediaManager: MediaManagerService,
+    private serverManager: ServerManagerService,
+    private offline: OfflineManagerService
   ) {
   }
 
@@ -305,12 +309,16 @@ export class PlayerService {
   }
 
   private setCurrent(medium: Medium = null, seek = 0) {
+    if (this.status.playing) {
+      this.getPlayer().pause();
+    }
+
     this.medium = medium;
     if (medium) {
       this.file = this.mediaManager.getFileOrDefault(medium, this.mediaType);
 
       let player = this.getPlayer();
-      player.src = this.mediaManager.getFileUrl(this.medium, this.file);
+      player.src = this.getOfflineUrlIfFound(this.medium, this.file);
 
       player.currentTime = seek;
 
@@ -322,6 +330,19 @@ export class PlayerService {
     this.medium$.next(medium);
 
     return this;
+  }
+
+  private getOfflineUrlIfFound(item: Medium, file: MediaFile, host = this.serverManager.host, type = 'media') {
+    let offlineUrl = this.offline.getMediaFileUrl(item, file);
+
+    if (!offlineUrl) {
+      console.warn('File not offline', item, file, host, type);
+      return this.mediaManager.getFileUrl(item, file, host, type);
+    }
+
+    console.info('File is offline', item, file, host, type);
+
+    return offlineUrl;
   }
 
   private preparePlaylist() {

@@ -21,6 +21,12 @@ export class OfflineManagerService {
 
   onDownloadFinish = new Subject();
 
+  playlist: {
+    [index: string]: { // host
+      [index: number]: boolean // id
+    }
+  } = {};
+
   private rootDir: string;
 
   private dir: string;
@@ -37,7 +43,9 @@ export class OfflineManagerService {
 
   private downloading = false;
 
-  private offlineFiles = [];
+  private offlineFiles: {
+    [index: string]: { file: MediaFile, path: string }[]
+  } = {};
 
   constructor(
     private storage: Storage,
@@ -91,13 +99,25 @@ export class OfflineManagerService {
       });
   }
 
-  public isPlaylistOffline(playlist: Playlist) {
-    return this.getPlaylistFilesStats(playlist)
-      .then(stats => stats.filter(stat => !stat.offline).length > 0)
-      .then(offline => {
-        console.info('Offline@isPlaylistOffline', offline);
-        return offline;
-      });
+  public isPlaylistOffline(playlist: Playlist, host = this.servers.host) {
+    return this.playlist[host] ? this.playlist[host][playlist.id] || false : false;
+    // return this.getPlaylistFilesStats(playlist)
+    //   .then(stats => stats.filter(stat => !stat.offline).length > 0)
+    //   .then(offline => {
+    //     console.info('Offline@isPlaylistOffline', offline);
+    //     return offline;
+    //   });
+  }
+
+  public getMediaFileUrl(medium: Medium, file: MediaFile) {
+    if (this.offlineFiles[medium.provider_sid]) {
+      let stats = this.offlineFiles[medium.provider_sid].filter(stat => stat.file.id == file.id);
+      if (stats.length) {
+        return stats[0].path;
+      }
+    }
+
+    return null;
   }
 
   private preparePlaylistDir(playlist: Playlist) {
@@ -124,30 +144,45 @@ export class OfflineManagerService {
       });
   }
 
-  /**
-   * @deprecated
-   */
   private managePlaylists() {
     this.plManager.playlists$.subscribe(
       playlists => {
         if (playlists && playlists.length) {
-          let promises = [];
+
+          let host = this.servers.host;
+          if (!host) {
+            console.warn('Offline@managePlaylists', 'no host found');
+          }
+          if (!this.playlist[host]) {
+            this.playlist[host] = {};
+          }
+
           playlists.forEach(playlist => {
-            promises.push(
-              this.preparePlaylistDir(playlist)
-                .then(result => this.addPlaylistMediaToOfflineQueue(playlist))
-            );
+            this.playlist[host][playlist.id] = false;
+
+            this.getPlaylistFilesStats(playlist)
+              .then(stats => {
+                let offline = true;
+                stats.forEach(stat => {
+                  if (stat.offline) {
+                    if (!this.offlineFiles[stat.medium.provider_sid]) {
+                      this.offlineFiles[stat.medium.provider_sid] = [];
+                    }
+                    if (this.offlineFiles[stat.medium.provider_sid].filter(file => stat.file.id == file.file.id).length === 0) {
+                      this.offlineFiles[stat.medium.provider_sid].push({
+                        file: stat.file,
+                        path: this.getPlaylistDir(playlist) + stat.file.filename
+                      });
+                    }
+                  }
+                  else {
+                    offline = false;
+                  }
+                });
+
+                this.playlist[host][playlist.id] = offline;
+              });
           });
-
-          Promise.all(promises).then(
-            results => {
-              console.info('Offline@queue', this.offlineQueue);
-
-              // if (this.canDownload) {
-              this.startDownloading();
-              // }
-            }
-          );
         }
       }
     );
@@ -165,13 +200,6 @@ export class OfflineManagerService {
     playlist.media.forEach(medium => {
       promises.push(
         this.isMediumOffline(slug, medium)
-          .then(results => {
-            // results.forEach(result => {
-            //   console.info('Offline@isMediumFileOffline', result[1], result[0]);
-            // });
-
-            return results;
-          })
       );
     });
 
@@ -253,15 +281,23 @@ export class OfflineManagerService {
 
   private isMediumFileOffline(dir: string, medium: Medium, file: MediaFile) {
     console.info('Offline@isMediumFileOffline', this.rootDir + this.dir + '/' + dir, file.filename);
-    return this.file.checkFile(this.rootDir + this.dir + '/' + dir + '/', file.filename)
+    return this.file.checkFile(this.getDir(dir), file.filename)
       .then(result => {
-        console.info('isMediumOfflineResult', result);
+        console.info('isOffline', result, file.filename);
         return {offline: true, medium: medium, file: file};
       })
       .catch(error => {
-        console.error('isMediumOfflineError', error);
+        console.info('notOffline', error, file.filename);
         return ({offline: false, medium: medium, file: file});
       });
+  }
+
+  private getDir(dir: string) {
+    return this.rootDir + this.dir + '/' + dir + '/';
+  }
+
+  private getPlaylistDir(playlist: Playlist) {
+    return this.getDir(this.slug.slugify(playlist.name));
   }
 
   private startDownloading() {
@@ -306,7 +342,7 @@ export class OfflineManagerService {
 
     this.downloading = true;
 
-    return this.downloadChunkTo(url, this.rootDir + this.dir + '/' + dir, file.filename, 0);
+    return this.downloadChunkTo(url, this.getDir(dir), file.filename, 0);
 
     // this.file.writeFile(this.rootDir + this.dir + dir, file.filename, false)
     //   .then(result => {
@@ -385,19 +421,14 @@ export class OfflineManagerService {
       }
       else if (this.platform.is('android')) {
         this.rootDir = this.file.externalRootDirectory || this.file.dataDirectory;
-
-        // @todo - only for debug
-        if (!this.rootDir) {
-          this.rootDir = 'file:///tmp/';
-        }
       }
 
       if (this.rootDir) {
         // @todo - settings
         this.dir = 'ThePlaylist.shared';
 
-        this.prepareDir();
-        // .then(result => this.managePlaylists());
+        this.prepareDir()
+          .then(result => this.managePlaylists());
       }
     }
 

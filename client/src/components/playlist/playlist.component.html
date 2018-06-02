@@ -46,6 +46,17 @@
         <ion-label (tap)="player.playItem(item)">
           <overscroll [disabled]="!player.isPlaying(item)">
             <h2>{{item.name}}</h2>
+          </overscroll>
+          <overscroll>
+            <p *ngIf="item.artist">
+              <u>{{item.artist.name}}</u>
+              <i *ngIf="item.album">
+                <ion-icon name="disc"></ion-icon>
+                {{item.album.name}}
+              </i>
+            </p>
+          </overscroll>
+          <overscroll>
             <p>
               <ion-icon name="contact" *ngIf="description"></ion-icon>
               {{description}}
