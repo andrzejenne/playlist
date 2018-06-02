@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.andrzejheczko.playlist" version="0.2.0-rc10" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.andrzejheczko.playlist" version="0.2.0-rc11" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>The Playlist</name>
     <description>Manage and Play various medias</description>
     <author email="andrzej.heczko@gmail.com" href="http://playlist.andrzejheczko.com/">Andrzej Heczko, The Playlist</author>
@@ -87,6 +87,7 @@
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
     <plugin name="cordova-plugin-googleplus" spec="https://github.com/EddyVerbruggen/cordova-plugin-googleplus">
         <variable name="REVERSED_CLIENT_ID" value="com.googleusercontent.apps.744265825715-4qemakkaiodqunirslls04hbl7p0l6j0" />
+        <variable name="WEB_APPLICATION_CLIENT_ID" value="744265825715-0gnjdoapqolit4trgtlu0qvhuakodhgj.apps.googleusercontent.com" />
     </plugin>
     <plugin name="cordova-plugin-background-mode" spec="^0.7.2" />
     <allow-navigation href="http://192.168.1.148:8101" />

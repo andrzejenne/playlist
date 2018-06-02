@@ -19,6 +19,8 @@ export class OfflineManagerService {
 
   onDownloadStart = new Subject();
 
+  onDownloadProgress = new Subject<{filename: string, progress: number}>();
+
   onDownloadFinish = new Subject();
 
   playlist: {
@@ -370,6 +372,11 @@ export class OfflineManagerService {
   private downloadChunkTo(url: string, dir: string, filename: string, from: number = 0, maxSize = -1) {
     console.info('Offline@downloadChunkTo', url, dir, filename, from);
 
+    this.onDownloadProgress.next({
+      filename: filename,
+      progress: from / maxSize
+    });
+
     return this.getFileChunk(url, from)
       .then(
         response => {
@@ -397,6 +404,10 @@ export class OfflineManagerService {
                 }
                 // }
                 else {
+                  this.onDownloadProgress.next({
+                    filename: filename,
+                    progress: 1
+                  });
                   return true;
                 }
               });

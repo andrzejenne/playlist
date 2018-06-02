@@ -221,7 +221,7 @@ export class PlayerService {
 
     let player = this.getPlayer();
 
-    if (!player.src || !this.medium) {
+    if (!player || !player.src || !this.medium) {
       this.getNext();
     }
 
@@ -309,7 +309,7 @@ export class PlayerService {
   }
 
   private setCurrent(medium: Medium = null, seek = 0) {
-    if (this.status.playing) {
+    if (this.status.playing && this.getPlayer()) {
       this.getPlayer().pause();
     }
 
