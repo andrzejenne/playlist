@@ -1,9 +1,7 @@
 import {Injectable, Optional} from "@angular/core";
-import {Storage} from "@ionic/storage";
 import {ServerManagerService} from "./ServerManagerService";
-import {WampService} from "./WampService";
 import {Platform} from "ionic-angular";
-import {File, FileError} from "@ionic-native/file";
+import {File} from "@ionic-native/file";
 import {Playlist} from "../models/playlist";
 import {Slug} from 'ng2-slugify';
 import {PlaylistsManagerService} from "./PlaylistsManagerService";
@@ -50,9 +48,7 @@ export class OfflineManagerService {
   } = {};
 
   constructor(
-    private storage: Storage,
     private servers: ServerManagerService,
-    private wamp: WampService,
     private platform: Platform,
     private plManager: PlaylistsManagerService,
     private network: Network,
@@ -215,58 +211,6 @@ export class OfflineManagerService {
         });
 
         return stats;
-      });
-  }
-
-  /**
-   * @deprecated
-   * @param {Playlist} playlist
-   * @returns {Promise<any[]>}
-   */
-  private addPlaylistMediaToOfflineQueue(playlist: Playlist) {
-    let slug = this.slug.slugify(playlist.name);
-
-    return this.file.listDir(this.rootDir + this.dir, slug)
-      .then(result => {
-        // console.info('Offline@addPlaylistMediaToOfflineQueue', result);
-
-        let promises = [];
-
-        playlist.media.forEach(medium => {
-          promises.push(
-            this.isMediumOffline(slug, medium)
-              .then(results => {
-                // results.forEach(result => {
-                //   console.info('Offline@isMediumFileOffline', result[1], result[0]);
-                // });
-
-                return results;
-              })
-          );
-        });
-
-        return Promise.all(promises);
-      })
-      .then(result => {
-        console.info('Offline@big-result', result);
-        result.forEach(mediumResult => {
-          mediumResult.forEach(mediumFileResult => {
-            console.info('Offline@medium', mediumFileResult);
-            if (false === mediumFileResult[0]) {
-              this.offlineQueue.push({
-                medium: mediumFileResult[1],
-                file: mediumFileResult[2],
-                dir: slug,
-                url: this.mediaManager.getFileUrl(mediumFileResult[1], mediumFileResult[2])
-              });
-            }
-            else {
-              console.warn('is offline');
-            }
-          });
-        });
-
-        return result;
       });
   }
 

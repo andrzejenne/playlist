@@ -17,7 +17,6 @@ import {Insomnia} from "@ionic-native/insomnia";
 import {ServerManagerService} from "../services/ServerManagerService";
 import {ConfigService} from "../services/ConfigService";
 import {SettingsContract} from "../services/contracts/SettingsContract";
-import {MediaManagerService} from "../services/MediaManagerService";
 import {WampService} from "../services/WampService";
 import {Provider} from "../models/provider";
 import {AppRepository} from "../repositories/app.repository";
@@ -94,7 +93,6 @@ export class ThePlaylist {
     private immersive: AndroidFullScreen,
     private fullscreenObserver: FullscreenObserverService,
     private insomnia: Insomnia,
-    private mediaManager: MediaManagerService,
     private config: ConfigService,
     private menuCtrl: MenuController,
     private appRepo: AppRepository,

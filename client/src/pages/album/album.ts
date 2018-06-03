@@ -4,7 +4,6 @@ import {PlayerService} from "../../services/PlayerService";
 import {Content, LoadingController, NavParams} from "ionic-angular";
 import {MediaManagerService} from "../../services/MediaManagerService";
 import {ElementReference} from "../../models/ElementReference";
-import {Medium} from "../../models/medium";
 import {Playlist} from "../../models/playlist";
 import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 
