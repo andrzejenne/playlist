@@ -8,13 +8,10 @@
         <ion-icon [name]="arrowIcon"></ion-icon>
       </div>
       <!--<h2>-->
-        <overscroll [decide]="player.medium">
-          {{playlist?.name}}
-          <span *ngIf="playlist && player.medium && playlist.media.indexOf(player.medium) != -1">
-          |
+        {{playlist?.name}}
+        <overscroll [decide]="player.medium" *ngIf="playlist && player.medium && playlist.media.indexOf(player.medium) != -1">
             <!--<musical-spinner *ngIf="player.status.playing" color="red"></musical-spinner>-->
             {{player?.medium?.name}}
-          </span>
         </overscroll>
       <!--</h2>-->
     </ion-title>

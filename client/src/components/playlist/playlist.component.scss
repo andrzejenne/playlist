@@ -6,7 +6,7 @@ playlist-component {
   .video { width: 100%; }
 
   ion-title {
-    overscroll { display: inline-block; vertical-align: middle; }
+    overscroll { font-size: 75%; }
     //h2 { display: inline-block; vertical-align: middle; margin: 0;}
     .close-down {
       display: inline-block;
