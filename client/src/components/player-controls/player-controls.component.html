@@ -36,7 +36,7 @@
             title="Stop">
       <ion-icon name="square"></ion-icon>
     </button>
-    <button ion-button (click)="player.toggleShuffle()" clear small title="Toggle Shuffle"
+    <button ion-button (click)="player.forceShuffle()" (press)="player.unshuffle()" clear small title="Toggle Shuffle"
             [class.button-primary]="player.status.shuffle">
       <ion-icon name="shuffle"></ion-icon>
     </button>

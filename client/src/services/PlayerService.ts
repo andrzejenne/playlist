@@ -84,7 +84,7 @@ export class PlayerService {
     this.audioEl = audio;
     this.initEvents(video);
     this.initEvents(audio);
-      // this.audioPlayer.nativeElement.onended = this.onPlayerPlayEnded;
+    // this.audioPlayer.nativeElement.onended = this.onPlayerPlayEnded;
     this.resolveReady();
 
     return this;
@@ -255,6 +255,12 @@ export class PlayerService {
     this.updatePlayed();
   }
 
+  unshuffle() {
+    this.status.shuffle = false;
+    this.mediaList = [].concat(this.media);
+    this.updatePlayed();
+  }
+
   requestFullscreen() {
     let elem = <any>this.videoEl;
     if (elem.requestFullscreen) {
@@ -349,7 +355,8 @@ export class PlayerService {
     this.mediaList = [].concat(this.media || []);
     this.playedList = [];
     if (this.status.shuffle) {
-      this.shuffle(this.mediaList);
+      this.status.shuffle = false;
+      // this.shuffle(this.mediaList);
     }
 
     this.ready = true;
