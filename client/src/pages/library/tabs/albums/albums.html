@@ -7,16 +7,14 @@
 <ion-content class="mode-color">
   <ion-list [virtualScroll]="list" approxItemHeight="80px">
     <ion-item *virtualItem="let album" class="item-small">
-      <div class="thumbnail" item-start (tap)="openAlbum(album)">
+      <div class="thumbnail" item-start (click)="openAlbum(album)">
         <img [src]="getCover(album)">
         <span class="duration" *ngIf="album.duration">
           {{album.duration | duration}}
         </span>
       </div>
-      <ion-label (tap)="openAlbum(album)">
-        <overscroll>
-          <h2>{{album.name}}</h2>
-        </overscroll>
+      <ion-label (click)="openAlbum(album)">
+        <h2>{{album.name}}</h2>
         <p>
           <span *ngIf="album.artist">
             <ion-icon name="person"></ion-icon>
@@ -28,7 +26,7 @@
         </p>
       </ion-label>
       <ion-buttons item-end *ngIf="!playlist">
-        <button ion-fab class="small" (tap)="play(album)">
+        <button ion-fab class="small" (click)="play(album)">
           <ion-icon name="play"></ion-icon>
         </button>
       </ion-buttons>

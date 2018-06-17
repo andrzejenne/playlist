@@ -11,6 +11,8 @@ namespace BBIT\Playlist\Wamp\Controllers\com;
 use BBIT\Playlist\Wamp\Controllers\Controller;
 use BBIT\Playlist\Providers\MediaLibraryProvider;
 use BBIT\Playlist\Models\Search;
+use BBIT\Playlist\Wamp\WampRequest;
+use BBIT\Playlist\Wamp\WampResponse;
 use Thruway\ClientSession;
 
 /**
@@ -38,18 +40,19 @@ class SearchController extends Controller
 
 
     /**
-     * @param $args
-     * @return array
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function search($args)
+    public function search(WampRequest $request, WampResponse $response)
     {
-        $provider = isset($args[0]->provider) ? $args[0]->provider : null;
+        $provider = $request->getArgument('provider');
 
         $service = $this->libraryProvider->getService($provider);
 
-        $query = $args[0]->q;
-        $pageToken = getValue($args[0]->pageToken);
-        $perPage = getValue($args[0]->perPage, 8);
+        $query = $request->getArgument('q');
+        $pageToken = $request->getArgument('pageToken');
+        $perPage = $request->getArgument('perPage', 8);
 
         $results = [];
 
@@ -61,35 +64,43 @@ class SearchController extends Controller
             if (!$search) {
                 $search = new Search();
                 $search->fill(['query' => $query]);
-                $search->user_id = $args[0]->uid;
+                $search->user_id = $request->getArgument('uid');
             }
             $search->save();
         }
 
-        return $results;
+        return $response->withJson($results);
     }
 
     /**
-     * @param $args
-     * @return \Illuminate\Http\JsonResponse
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function list($args)
+    public function list(WampRequest $request, WampResponse $response)
     {
         // @todo - implement authentication, id should be authenticated user id
         // @todo - repository
-        return Search::whereUserId($args[0]->uid)
+        // @todo - test for required arguments
+        return $response->withJson(
+            Search::whereUserId($request->getArgument('uid'))
             ->orderBy(Search::COL_UPDATED_AT, 'DESC')
-            ->get();
+            ->get()
+        );
     }
 
     /**
-     * @param $args
-     * @return \Illuminate\Http\JsonResponse
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function delete($args)
+    public function delete(WampRequest $request, WampResponse $response)
     {
-        $result = Search::whereId($args[0]->id)->delete();
+        // @todo - test for required arguments
+        $result = Search::whereId(
+            $request->getArgument('id')
+        )->delete();
 
-        return $result;
+        return $response->withJson($result);
     }
 }

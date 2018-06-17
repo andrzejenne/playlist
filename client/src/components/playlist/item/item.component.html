@@ -1,4 +1,4 @@
-<ion-thumbnail item-start [class.selected]="selected" (tap)="select.emit(true)">
+<ion-thumbnail item-start [class.selected]="selected" (click)="select.emit(true)">
   <img [src]="thumbnail" class="fit-thumbnail">
   <ion-icon *ngIf="selected" name="checkmark"></ion-icon>
 </ion-thumbnail>

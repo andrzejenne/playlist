@@ -12,6 +12,8 @@ use BBIT\Playlist\Helpers\Collection\AlbumCollection;
 use BBIT\Playlist\Helpers\Collection\ArtistCollection;
 use BBIT\Playlist\Helpers\Collection\GenreCollection;
 use BBIT\Playlist\Wamp\Controllers\Controller;
+use BBIT\Playlist\Wamp\WampRequest;
+use BBIT\Playlist\Wamp\WampResponse;
 use Thruway\ClientSession;
 
 /**
@@ -31,72 +33,93 @@ class LibraryController extends Controller
     }
 
     /**
-     * @param $args
-     * @return array|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      * @throws \Exception
      */
-    public function artists($args)
+    public function artists(WampRequest $request, WampResponse $response)
     {
-        return ArtistCollection::create($args)
-            ->search()
-            ->paginate()
-            ->get();
+        return $response->withJson(
+            ArtistCollection::create($request->getArguments())
+                ->search()
+                ->paginate()
+                ->get()
+        );
     }
 
     /**
-     * @param $args
-     * @return int
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      * @throws \Exception
      */
-    public function artistsCount($args) {
-        return ArtistCollection::create($args)
-            ->count();
-    }
-
-    /**
-     * @param $args
-     * @return array|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
-     * @throws \Exception
-     */
-    public function albums($args)
+    public function artistsCount(WampRequest $request, WampResponse $response)
     {
-        return AlbumCollection::create($args)
-            ->search()
-            ->paginate()
-            ->get();
+        return $response->withJson(
+            ArtistCollection::create($request->getArguments())
+                ->count()
+        );
     }
 
     /**
-     * @param $args
-     * @return int
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      * @throws \Exception
      */
-    public function albumsCount($args) {
-        return AlbumCollection::create($args)
-            ->count();
-    }
-
-    /**
-     * @param $args
-     * @return array|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
-     * @throws \Exception
-     */
-    public function genres($args)
+    public function albums(WampRequest $request, WampResponse $response)
     {
-        return GenreCollection::create($args)
-            ->search()
-            ->paginate()
-            ->get();
+        return $response->withJson(
+            AlbumCollection::create($request->getArguments())
+                ->search()
+                ->paginate()
+                ->get()
+        );
     }
 
     /**
-     * @param $args
-     * @return int
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      * @throws \Exception
      */
-    public function genresCount($args) {
-        return GenreCollection::create($args)
-            ->count();
+    public function albumsCount(WampRequest $request, WampResponse $response)
+    {
+        return $response->withJson(
+            AlbumCollection::create($request->getArguments())
+                ->count()
+        );
+    }
+
+    /**
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
+     * @throws \Exception
+     */
+    public function genres(WampRequest $request, WampResponse $response)
+    {
+        return $response->withJson(
+            GenreCollection::create($request->getArguments())
+                ->search()
+                ->paginate()
+                ->get()
+        );
+    }
+
+    /**
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
+     * @throws \Exception
+     */
+    public function genresCount(WampRequest $request, WampResponse $response)
+    {
+        return $response->withJson(
+            GenreCollection::create($request->getArguments())
+                ->count()
+        );
     }
 
 }

@@ -28,7 +28,7 @@
           <!--</template>-->
         </div>
 
-        <ion-label (tap)="plManager.toggleSelectPlaylist(playlist)">
+        <ion-label (click)="plManager.toggleSelectPlaylist(playlist)">
           {{playlist.name}}
         </ion-label>
 
@@ -40,26 +40,26 @@
         </div>
 
         <!--<ion-buttons item-end *ngIf="playlist.media?.length">-->
-          <!--<button ion-button clear (tap)="shuffle(playlist)">-->
+          <!--<button ion-button clear (click)="shuffle(playlist)">-->
             <!--<ion-icon name="shuffle"></ion-icon>-->
           <!--</button>-->
-          <!--<button ion-fab class="small" (tap)="play(playlist)">-->
+          <!--<button ion-fab class="small" (click)="play(playlist)">-->
             <!--<ion-icon name="play"></ion-icon>-->
           <!--</button>-->
         <!--</ion-buttons>-->
 
       </ion-item>
       <ion-item-options side="left">
-        <button ion-button color="primary" (tap)="play(playlist)">
+        <button ion-button color="primary" (click)="play(playlist)">
           <ion-icon name="play"></ion-icon>
           Play
         </button>
-        <button ion-button color="secondary" (tap)="offline.makePlaylistOffline(playlist)">
+        <button ion-button color="secondary" (click)="offline.makePlaylistOffline(playlist)">
           Make Offline
         </button>
       </ion-item-options>
       <ion-item-options side="right">
-        <button ion-button color="danger" (tap)="removePlaylist(playlist)">
+        <button ion-button color="danger" (click)="removePlaylist(playlist)">
           <ion-icon name="trash"></ion-icon>
           Delete
         </button>
@@ -70,12 +70,12 @@
   <ion-fab right bottom>
     <button *ngIf="!selector.length" ion-fab color="secondary"
           [class.hide]="plManager.playlist"
-          (tap)="createPlaylist($event)">
+          (click)="createPlaylist($event)">
       <ion-icon name="add"></ion-icon>
     </button>
     <!--<button *ngIf="selector.length" ion-fab color="danger"-->
           <!--[class.hide]="plManager.playlist"-->
-          <!--(tap)="removeSelected($event)">-->
+          <!--(click)="removeSelected($event)">-->
       <!--<ion-icon name="trash"></ion-icon>-->
     <!--</button>-->
   </ion-fab>

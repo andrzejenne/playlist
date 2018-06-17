@@ -1,5 +1,5 @@
 <ion-item class="item-small">
-  <div item-start class="thumbnail" [class.selected]="selected" (tap)="select.next($event)">
+  <div item-start class="thumbnail" [class.selected]="selected" (click)="select.next($event)">
     <img [src]="thumbnail">
     <ion-icon *ngIf="selected" name="checkmark"></ion-icon>
   </div>

@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+# Installation
+# - Move this to /etc/init.d/myservice
+# - chmod +x this
+#
+# Starting and stopping
+# - Start: `service myservice start` or `/etc/init.d/myservice start`
+# - Stop: `service myservice stop` or `/etc/init.d/myservice stop`
+
+#ref http://till.klampaeckel.de/blog/archives/94-start-stop-daemon,-Gearman-and-a-little-PHP.html
+#ref http://unix.stackexchange.com/questions/85033/use-start-stop-daemon-for-a-php-server/85570#85570
+#ref http://serverfault.com/questions/229759/launching-a-php-daemon-from-an-lsb-init-script-w-start-stop-daemon
+
+NAME="Playlist"
+DESC="Daemon for my magnificent PHP CLI script"
+PIDFILE1="/var/run/wamp-serve.pid"
+LOGFILE1="/var/log/wamp-serve.log"
+PIDFILE2="/var/run/media-manage.pid"
+LOGFILE2="/var/log/media-manage.log"
+
+DAEMON="/var/www/playlist/artisan"
+
+START_OPTS1="--start --background --make-pidfile --pidfile ${PIDFILE1} --exec ${DAEMON} wamp:serve"
+STOP_OPTS1="--stop --pidfile ${PIDFILE1}"
+
+START_OPTS2="--start --background --make-pidfile --pidfile ${PIDFILE2} --exec ${DAEMON} media:manage"
+STOP_OPTS2="--stop --pidfile ${PIDFILE2}"
+
+test -x $DAEMON || exit 0
+
+set -e
+
+case "$1" in
+    start)
+        echo -n "Starting ${DESC}: "
+        start-stop-daemon $START_OPTS1
+        sleep 1
+        start-stop-daemon $START_OPTS2
+        echo "$NAME."
+        ;;
+    stop)
+        echo -n "Stopping $DESC: "
+        start-stop-daemon $STOP_OPTS2
+        sleep 1
+        start-stop-daemon $STOP_OPTS1
+        echo "$NAME."
+        rm -f $PIDFILE1
+        rm -f $PIDFILE2
+        ;;
+    restart|force-reload)
+        echo -n "Restarting $DESC: "
+        start-stop-daemon $STOP_OPTS2
+        sleep 1
+        start-stop-daemon $STOP_OPTS1
+        sleep 1
+        start-stop-daemon $START_OPTS1 >> $LOGFILE1
+        sleep 1
+        start-stop-daemon $START_OPTS2 >> $LOGFILE2
+        echo "$NAME."
+        ;;
+    *)
+        N=/etc/init.d/playlist-wamp
+        echo "Usage: $N {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0

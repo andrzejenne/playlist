@@ -1,5 +1,5 @@
 <ion-header #header class="mode-color">
-  <ion-navbar (tap)="toggleShow()">
+  <ion-navbar (click)="toggleShow()">
     <!--<button ion-button menuToggle="menu">-->
       <!--<ion-icon name="menu"></ion-icon>-->
     <!--</button>-->
@@ -11,14 +11,15 @@
         {{playlist?.name}}
         <span *ngIf="playlist && player.medium && playlist.media.indexOf(player.medium) != -1">
         |
+          <overscroll>
           {{player?.medium?.name}}
-
+          </overscroll>
           <musical-spinner *ngIf="player.status.playing" color="red"></musical-spinner>
         </span>
       </h2>
     </ion-title>
     <ion-buttons end>
-      <button ion-button clear (tap)="plManager.toggleSelectPlaylist(playlist)">
+      <button ion-button clear (click)="plManager.toggleSelectPlaylist(playlist)">
         <ion-icon name="close"></ion-icon>
       </button>
       <!--<span class="duration">-->
@@ -43,25 +44,19 @@
             <musical-spinner *ngIf="player.status.playing" color="red"></musical-spinner>
           </div>
         </div>
-        <ion-label (tap)="player.playItem(item)">
-          <overscroll [disabled]="!player.isPlaying(item)">
-            <h2>{{item.name}}</h2>
-          </overscroll>
-          <overscroll>
-            <p *ngIf="item.artist">
-              <u>{{item.artist.name}}</u>
-              <i *ngIf="item.album">
-                <ion-icon name="disc"></ion-icon>
-                {{item.album.name}}
-              </i>
-            </p>
-          </overscroll>
-          <overscroll>
-            <p>
-              <ion-icon name="contact" *ngIf="description"></ion-icon>
-              {{description}}
-            </p>
-          </overscroll>
+        <ion-label (click)="player.playItem(item)">
+          <h2>{{item.name}}</h2>
+          <p *ngIf="item.artist">
+            <u>{{item.artist.name}}</u>
+            <i *ngIf="item.album">
+              <ion-icon name="disc"></ion-icon>
+              {{item.album.name}}
+            </i>
+          </p>
+          <p>
+            <ion-icon name="contact" *ngIf="description"></ion-icon>
+            {{description}}
+          </p>
           <!--<ion-buttons end *ngIf="!player.isCurrent(item)" class="fabs">-->
             <!--<button ion-fab color="primary" class="small" (click)="player.playFirst(item)">-->
               <!--<ion-icon name="play">-->
@@ -91,7 +86,7 @@
   </ion-list>
 
   <ion-fab right bottom *ngIf="selector.length">
-    <button ion-fab color="danger" (tap)="removeSelected()">
+    <button ion-fab color="danger" (click)="removeSelected()">
       <ion-icon name="trash"></ion-icon>
     </button>
   </ion-fab>
@@ -101,16 +96,16 @@
       <ion-icon name="add"></ion-icon>
     </button>
     <ion-fab-list side="left">
-      <button ion-fab *ngIf="providers.length > 1" (tap)="open('all')">
+      <button ion-fab *ngIf="providers.length > 1" (click)="open('all')">
         A
       </button>
-      <button ion-fab *ngFor="let provider of providers" (tap)="open(provider.slug, provider)">
+      <button ion-fab *ngFor="let provider of providers" (click)="open(provider.slug, provider)">
         <ion-icon [name]="provider.ionic.menuIcon"></ion-icon>
       </button>
-      <!--<button ion-fab (tap)="open('library')">-->
+      <!--<button ion-fab (click)="open('library')">-->
         <!--<ion-icon name="list"></ion-icon>-->
       <!--</button>-->
-      <!--<button ion-fab (tap)="open('youtube')">-->
+      <!--<button ion-fab (click)="open('youtube')">-->
         <!--<ion-icon name="logo-youtube"></ion-icon>-->
       <!--</button>-->
     </ion-fab-list>

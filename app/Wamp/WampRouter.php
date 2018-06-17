@@ -139,12 +139,21 @@ class WampRouter extends Client
         return function (...$args) use ($cls, $method) {
             $instance = $this->getController($cls);
 
+            $response = WampResponse::create();
             try {
-                return $instance->$method(...$args);
+              // @todo - detect args by reflection
+                $result = $instance->$method(WampRequest::create(...$args), $response);
+
+                if ($result instanceof WampResponse) {
+                    return $result->toArray();
+                }
+                else {
+                    return $result;
+                }
             } catch (\Throwable $t) {
                 // @todo - display error
                 Log::error('WampRouterError: ' . $t->getMessage());
-                $this->session->publish('wamp.error', [['message' => $t->getMessage()]]);
+                $this->session->publish('wamp.error', $response->withJson(['message' => $t->getMessage()]));
 
                 return false;
             }

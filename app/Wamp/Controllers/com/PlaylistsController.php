@@ -13,6 +13,8 @@ use BBIT\Playlist\Helpers\Collection\PlaylistCollection;
 use BBIT\Playlist\Models\Playlist;
 use BBIT\Playlist\Models\User;
 use BBIT\Playlist\Wamp\Controllers\Controller;
+use BBIT\Playlist\Wamp\WampRequest;
+use BBIT\Playlist\Wamp\WampResponse;
 use Thruway\ClientSession;
 
 /**
@@ -31,123 +33,153 @@ class PlaylistsController extends Controller
     }
 
     /**
-     * @param $args
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function list($args)
+    public function list(WampRequest $request, WampResponse $response)
     {
-        return PlaylistCollection::create($args)
-            ->whereUserId($args[0]->uid)
-            ->orderBy(Playlist::COL_NAME, 'ASC')
-            ->get();
+        return $response->withJson(
+            PlaylistCollection::create($request->getArguments())
+                ->whereUserId($request->getArgument('uid'))
+                ->orderBy(Playlist::COL_NAME, 'ASC')
+                ->get()
+        );
 
     }
 
     /**
-     * @param $args
-     * @return \Illuminate\Database\Eloquent\Collection
-     * @throws \Exception
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      * @deprecated
      */
-    public function media($args)
+    public function media(WampRequest $request, WampResponse $response)
     {
-        return PlaylistCollection::create($args)
-            ->whereId($args[0]->pid)
-            ->first()
-            ->media()
-            ->get();
+        return $response->withJson(
+            PlaylistCollection::create($request->getArguments())
+                ->whereId(
+                    $request->getArgument('pid')
+                )
+                ->first()
+                ->media()
+                ->get()
+        );
 
     }
 
     /**
-     * @param $args
-     * @return Playlist|null
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function create($args)
+    public function create(WampRequest $request, WampResponse $response)
     {
-        $user = User::whereId($args[0]->uid)->first();
+        $user = User::whereId(
+            $request->getArgument('uid')
+        )->first();
 
         if ($user) {
             $playlist = new Playlist([
-                Playlist::COL_NAME => $args[0]->name
+                Playlist::COL_NAME => $request->getArgument('name')
             ]);
 
             $playlist->user()->associate($user);
 
             $playlist->save();
 
-            return $playlist;
+            return $response->withJson(
+                $playlist
+            );
         }
 
-        return null;
+        return $response->withJson();
     }
 
     /**
-     * @param $args
-     * @return int
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      * @throws \Exception
      */
-    public function remove($args)
+    public function remove(WampRequest $request, WampResponse $response)
     {
         /** @var Playlist $playlist */
-        $playlist = Playlist::whereId($args[0]->pid)
+        $playlist = Playlist::whereId(
+            $request->getArgument('pid')
+        )
             ->first();
 
-//        try {
-        return $playlist->delete();
-//        } catch (\Exception $e) {
-//            return ['error' => true, 'message' => $e->getMessage()];
-//        }
+        return $response->withJson(
+            $playlist->delete()
+        );
         // @todo - reorder
     }
 
 
     /**
-     * @param $args
-     * @return bool
-     * @throws \Exception
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function addMedium($args)
+    public function addMedium(WampRequest $request, WampResponse $response)
     {
         /** @var Playlist $playlist */
-        $playlist = Playlist::whereId($args[0]->pid)
+        $playlist = Playlist::whereId($request->getArgument('pid'))
             ->first();
 
-        $playlist->media()->attach($args[0]->mid, ['ordering' => isset($args[0]->ordering) ? $args[0]->ordering : 0]);
+        $playlist->media()
+            ->attach(
+                $request->getArgument('mid'),
+                [
+                    'ordering' => isset($args[0]->ordering) ? $request->getArgument('ordering') : 0
+                ]);
 
-        return MediaCollection::create($args)
-            ->whereId($args[0]->mid)
-            ->get()
-            ->first();
+        return $response->withJson(
+            MediaCollection::create($request->getArguments())
+                ->whereId(
+                    $request->getArgument('mid')
+                )
+                ->get()
+                ->first()
+        );
         // @todo - reorder
     }
 
     /**
-     * @param $args
-     * @return int
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function removeMedium($args)
+    public function removeMedium(WampRequest $request, WampResponse $response)
     {
         /** @var Playlist $playlist */
-        $playlist = Playlist::whereId($args[0]->pid)
+        $playlist = Playlist::whereId($request->getArgument('pid'))
             ->first();
 
-        return $playlist->media()->detach($args[0]->mid);
+        return $response->withJson(
+            $playlist->media()->detach($request->getArgument('pid'))
+        );
 
         // @todo - reorder
     }
 
     /**
-     * @param $args
-     * @return int
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function order($args)
+    public function order(WampRequest $request, WampResponse $response)
     {
         /** @var Playlist $playlist */
-        $playlist = Playlist::whereId($args[0]->pid)
+        $playlist = Playlist::whereId($request->getArgument('pid'))
             ->first();
 
-        return $playlist->media()->updateExistingPivot($args[0]->mid, ['ordering' => $args[0]->ordering]);
+        return $response->withJson(
+            $playlist->media()
+                ->updateExistingPivot($request->getArgument('mid'), [
+                    'ordering' => $request->getArgument('ordering')
+                ])
+        );
     }
 }
