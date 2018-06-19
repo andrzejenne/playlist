@@ -9,6 +9,8 @@
 namespace BBIT\Playlist\Wamp\Controllers\sub;
 
 use BBIT\Playlist\Wamp\Controllers\Controller;
+use BBIT\Playlist\Wamp\WampRequest;
+use BBIT\Playlist\Wamp\WampResponse;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -17,15 +19,13 @@ use Illuminate\Support\Facades\Log;
  */
 class HelloController extends Controller
 {
-    /**
-     * @param $args
-     * @param $argsKw
-     * @param $details
-     * @param $id
-     * @return void
-     */
-    public function salute($args, $argsKw, $details, $id) {
-        Log::info('salute:' . $args[0]->message);
+  /**
+   * @param WampRequest $request
+   * @param WampResponse $response
+   * @return void
+   */
+    public function salute(WampRequest $request, WampResponse $response) {
+        Log::info('salute:' . $request->getArgument('message'));
     }
 
 }

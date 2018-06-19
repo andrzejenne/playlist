@@ -19,7 +19,7 @@
       </ion-item>
     </ion-list>
 
-    <button ion-button (tap)="reconnect()" small>Reconnect</button>
+    <button ion-button (click)="reconnect()" small>Reconnect</button>
 
     <button *ngIf="platform.is('cordova')" ion-button full color="danger" (click)="closeApp()">Close Playlist completely</button>
   </div>

@@ -6,10 +6,10 @@
     <ion-title left>{{title}}</ion-title>
 
     <ion-buttons end>
-      <button *ngIf="download" ion-button clear icon-only (tap)="toDownload()">
+      <button *ngIf="download" ion-button clear icon-only (click)="toDownload()">
         <ion-icon name="cloud-download" color="primary"></ion-icon>
       </button>
-      <button ion-button (tap)="dismiss()" clear *ngIf="playlist">
+      <button ion-button (click)="dismiss()" clear *ngIf="playlist">
         <ion-icon name="close"></ion-icon>
       </button>
     </ion-buttons>
@@ -21,37 +21,31 @@
 
     <ion-item-sliding *virtualItem="let item">
       <ion-item *ngIf="item" class="item-component item-small">
-        <div class="thumbnail" item-start (tap)="player.togglePlayItem(item)">
+        <div class="thumbnail" item-start (click)="player.togglePlayItem(item)">
           <img [src]="mediaManager.getThumbnailUrl(item)" class="fit-thumbnail">
           <span class="duration">{{item.duration | duration}}</span>
           <div class="playing" *ngIf="player.isCurrent(item)">
             <musical-spinner *ngIf="player.status.playing" color="red"></musical-spinner>
           </div>
         </div>
-        <ion-label (tap)="player.togglePlayItem(item)">
-          <overscroll [disabled]="!playlist || !player.isCurrent(item)">
-            <h2>{{item.name}}</h2>
-          </overscroll>
+        <ion-label (click)="player.togglePlayItem(item)">
+          <h2>{{item.name}}</h2>
           <p>
-            <overscroll *ngIf="item.artist" [disabled]="!playlist || !player.isCurrent(item)">
-              <ion-icon name="person"></ion-icon>
-              {{item.artist.name}}
-              <br>
-            </overscroll>
-            <overscroll *ngIf="item.album" [disabled]="!playlist || !player.isCurrent(item)">
-              <ion-icon name="disc"></ion-icon>
-              {{item.album.name}}
-            </overscroll>
+            <ion-icon name="person"></ion-icon>
+            {{item.artist.name}}
+            <br>
+            <ion-icon name="disc"></ion-icon>
+            {{item.album.name}}
             {{description}}
           </p>
         </ion-label>
         <ion-buttons item-end>
           <button ion-fab *ngIf="playlist && !plManager.inPlaylist(item, playlist)" color="secondary" class="small"
-                  (tap)="plManager.addToPlaylist(item, playlist)">
+                  (click)="plManager.addToPlaylist(item, playlist)">
             <ion-icon name="add"></ion-icon>
           </button>
           <button ion-fab *ngIf="!playlist && !player.isCurrent(item)" color="primary" class="small"
-                  (tap)="player.playItem(item)">
+                  (click)="player.playItem(item)">
             <ion-icon name="play"></ion-icon>
           </button>
         </ion-buttons>
@@ -89,7 +83,7 @@
   </ion-infinite-scroll>
 
   <ion-fab right bottom *ngIf="selector.selected.length">
-    <button ion-fab color="danger" (tap)="removeSelected()">
+    <button ion-fab color="danger" (click)="removeSelected()">
       <ion-icon name="trash"></ion-icon>
     </button>
   </ion-fab>

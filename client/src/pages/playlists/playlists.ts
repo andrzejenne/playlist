@@ -3,7 +3,7 @@ import {Storage} from "@ionic/storage";
 import {
   NavController,
   ModalController,
-  AlertController,
+  AlertController, LoadingController, Loading,
 } from 'ionic-angular';
 import {AuthService} from "../../services/AuthService";
 import {Playlist} from "../../models/playlist";
@@ -19,6 +19,7 @@ import {PlaylistsManagerService} from "../../services/PlaylistsManagerService";
 import {PlaylistComponent} from "../../components/playlist/playlist.component";
 import {Subscription} from "rxjs/Subscription";
 import {PlayerService} from "../../services/PlayerService";
+import {OfflineManagerService} from "../../services/OfflineManagerService";
 
 @Component({
   selector: 'page-playlists',
@@ -40,6 +41,8 @@ export class PlaylistsPage implements OnDestroy {
 
   private subs: Subscription[] = [];
 
+  private loader: Loading;
+
   // @ViewChild('playlistSelect') select: Select;
 
   constructor(
@@ -47,6 +50,7 @@ export class PlaylistsPage implements OnDestroy {
     public selector: SelectorService<Playlist>,
     //    public pages: PagesService,
     public plManager: PlaylistsManagerService,
+    public offline: OfflineManagerService,
     private player: PlayerService,
     private auth: AuthService,
     private servers: ServerManagerService,
@@ -55,6 +59,7 @@ export class PlaylistsPage implements OnDestroy {
     // private errorReporting: ErrorReporting,
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController,
     private config: ConfigService,
     private ref: ChangeDetectorRef,
     private nav: NavController
@@ -85,7 +90,23 @@ export class PlaylistsPage implements OnDestroy {
           // @todo - update playlists count and duration in plManager
           this.ref.detectChanges();
         }
-      )
+      ),
+      this.offline.onDownloadStart.subscribe(() => {
+        if (!this.loader) {
+          this.loader = this.loadingCtrl.create({spinner: 'crescent', content: 'Downloading ...'});
+          this.loader.present();
+        }
+      }),
+      this.offline.onDownloadFinish.subscribe(() => {
+        if (this.loader) {
+          this.loader.dismiss();
+        }
+      }),
+      this.offline.onDownloadProgress.subscribe(progress => {
+        if (this.loader) {
+          this.loader.setContent('Downloading<br>' + progress.filename + ' ' + (progress.progress * 100).toFixed(1));
+        }
+      })
     );
   }
 

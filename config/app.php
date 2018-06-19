@@ -233,6 +233,7 @@ return [
 
     'models' => [
         'location' => [app_path('Models')]
-    ]
+    ],
+    'registrationOpen' => 'open' === env('APP_REGISTRATION', 'closed')
 
 ];

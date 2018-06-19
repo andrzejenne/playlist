@@ -17,6 +17,8 @@ use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Services\MediaDiscoveryService;
 use BBIT\Playlist\Wamp\Controllers\Controller;
 use BBIT\Playlist\Providers\MediaLibraryProvider;
+use BBIT\Playlist\Wamp\WampRequest;
+use BBIT\Playlist\Wamp\WampResponse;
 use Illuminate\Support\Collection;
 use Thruway\ClientSession;
 
@@ -50,45 +52,46 @@ class CloudController extends Controller
     }
 
     /**
-     * @param $args
-     * @return array
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      * @throws \Exception
      */
-    public function list($args)
+    public function list(WampRequest $request, WampResponse $response)
     {
-        return MediaCollection::create($args)
-            ->search()
-            ->paginate()
-            ->get();
+        return $response->withJson(
+            MediaCollection::create($request->getArguments())
+                ->search()
+                ->paginate()
+                ->get()
+        );
     }
 
     /**
-     * @param $args
-     * @return int
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      * @throws \Exception
      */
-    public function remove($args)
+    public function remove(WampRequest $request, WampResponse $response)
     {
         /** @var Medium $medium */
-        $medium = Medium::whereId($args[0]->mid)
+        $medium = Medium::whereId($request->getArgument('mid'))
             ->first();
 
         /** @var MediaProviderContract $provider */
         $provider = $medium->provider->getService();
-//        try {
+
         if ($provider->canDelete()) {
             $outDir = $this->mediaDiscovery->getMediumDir($provider, $medium, null);
             if (true === \File::deleteDirectory($outDir)) {
                 if (!\File::exists($outDir)) {
-                    return $medium->delete();
+                    return $response->withJson($medium->delete());
                 }
             }
         }
 
-        return 0;
-//        } catch (\Exception $e) {
-//            return ['error' => true, 'message' => $e->getMessage()];
-//        }
+        return $response->withJson(0);
         // @todo - reorder
     }
 

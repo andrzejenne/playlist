@@ -40,11 +40,11 @@ abstract class AbstractCollection implements Arrayable
      * MediaCollection constructor.
      * @param $args
      */
-    public function __construct($args)
+    public function __construct(array $args)
     {
-        $this->search = isset($args->search) ? $args->search : false;
-        $this->limit = isset($args->limit) ? $args->limit : 100;
-        $this->offset = isset($args->offset) ? $args->offset : 0;
+        $this->search = isset($args['search']) ? $args['search'] : false;
+        $this->limit = isset($args['limit']) ? $args['limit'] : 100;
+        $this->offset = isset($args['offset']) ? $args['offset'] : 0;
     }
 
     /**
@@ -53,7 +53,7 @@ abstract class AbstractCollection implements Arrayable
      */
     public static function create($args)
     {
-        return new static(isset($args[0]) ? $args[0] : []);
+        return new static($args);
     }
 
     /**

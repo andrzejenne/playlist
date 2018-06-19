@@ -1,5 +1,5 @@
 <ion-header class="mode-color">
-  <ion-navbar (tap)="toggleShow()">
+  <ion-navbar (click)="toggleShow()">
     <button ion-button menuToggle="menu">
       <ion-icon name="menu"></ion-icon>
     </button>
@@ -15,21 +15,17 @@
     <ion-item *ngFor="let item of media" class="item-component"
               [class.played]="player.wasPlayed(item)"
               [class.current]="player.isCurrent(item)">
-      <ion-label (tap)="player.togglePlayItem(item)">
+      <ion-label (click)="player.togglePlayItem(item)">
         <div *ngIf="!compact">
-          <overscroll *ngIf="item.artist" [disabled]="!player.isCurrent(item)">
-            <u>{{item.artist.name}}</u>
-            <span *ngIf="item.album">
-              <ion-icon name="disc"></ion-icon>
-              <i>{{item.album.name}}</i>
-            </span>
-          </overscroll>
+          <u>{{item.artist.name}}</u>
+          <span *ngIf="item.album">
+            <ion-icon name="disc"></ion-icon>
+            <i>{{item.album.name}}</i>
+          </span>
         </div>
-        <overscroll [disabled]="!player.isCurrent(item)">
-          <h2>
-            {{item.name}}
-          </h2>
-        </overscroll>
+        <h2>
+          {{item.name}}
+        </h2>
         <p>
           <ion-icon name="contact" *ngIf="description"></ion-icon>
           {{description}}
@@ -44,7 +40,7 @@
         <musical-spinner *ngIf="player.isPlaying(item)" color="red"></musical-spinner>
 
         <button ion-fab *ngIf="playlist && !plManager.inPlaylist(item, playlist)" color="secondary" class="small"
-                (tap)="plManager.addToPlaylist(item, playlist)">
+                (click)="plManager.addToPlaylist(item, playlist)">
           <ion-icon name="add"></ion-icon>
         </button>
 
@@ -54,10 +50,10 @@
   </ion-list>
 
   <ion-fab right bottom *ngIf="!playlist">
-    <button ion-fab (tap)="player.togglePlayItem()" *ngIf="!player.isPlaying()">
+    <button ion-fab (click)="player.togglePlayItem()" *ngIf="!player.isPlaying()">
       <ion-icon name="play"></ion-icon>
     </button>
-    <button ion-fab (tap)="player.pause()" *ngIf="player.isPlaying()">
+    <button ion-fab (click)="player.pause()" *ngIf="player.isPlaying()">
       <ion-icon name="pause"></ion-icon>
     </button>
   </ion-fab>

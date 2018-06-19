@@ -31,6 +31,9 @@ export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterVi
   @Input()
   disabled = false;
 
+  @Input()
+  decide: any;
+
   private visible = false;
 
   private scrolling = false;
@@ -54,12 +57,16 @@ export class OverscrollComponent implements OnDestroy, AfterContentInit, AfterVi
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['disabled']) {
-      this.visible = this.isVisible();
+    if (changes['disabled'] || changes['decide']) {
 
-      this.decideToScroll();
+      setTimeout(() => {
+        this.visible = this.isVisible();
 
-      console.info('OverscrollComponent@ngOnChanges', changes['disabled']);
+        this.decideToScroll();
+
+        console.info('OverscrollComponent@ngOnChanges', changes['disabled']);
+
+      }, 100);
     }
   }
 

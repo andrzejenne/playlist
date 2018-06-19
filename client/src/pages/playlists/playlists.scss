@@ -39,6 +39,9 @@ page-playlists {
     }
 
     .duration {
+      display: inline-block;
+      width: 70px;
+      text-align: right;
       color: #aaa;
       font-size: 75%;
       ion-icon { width: 16px; text-align: center; }

@@ -17,7 +17,10 @@ use Laravel\Socialite\Two\AbstractProvider;
  */
 class SocialAuthController extends Controller
 {
-    /**
+  /** @var bool */
+  private $registrationOpen;
+
+  /**
      * SocialAuthController constructor.
      */
     public function __construct()
@@ -25,6 +28,8 @@ class SocialAuthController extends Controller
 //        parent::__construct();
 
         $this->middleware('guest');
+
+        $this->registrationOpen = config('app.registrationOpen');
     }
 
     /**
@@ -151,18 +156,23 @@ class SocialAuthController extends Controller
                 'access_token' => $providerUser->token
             ]);
         } else {
+          if ($this->registrationOpen) {
             // create a new user
             /** @var User $user */
             $user = User::create([
-                'name' => $providerUser->getName(),
-                'email' => $providerUser->getEmail(),
-                'avatar' => $providerUser->getAvatar(),
-                'provider' => $driver,
-                'provider_id' => $providerUser->getId(),
-                'access_token' => $providerUser->token,
-                // user can use reset password to create a password
-                'password' => ''
+              'name' => $providerUser->getName(),
+              'email' => $providerUser->getEmail(),
+              'avatar' => $providerUser->getAvatar(),
+              'provider' => $driver,
+              'provider_id' => $providerUser->getId(),
+              'access_token' => $providerUser->token,
+              // user can use reset password to create a password
+              'password' => ''
             ]);
+          }
+          else {
+            return $this->sendFailedResponse('Registration is forbidden');
+          }
         }
 
         // login the user

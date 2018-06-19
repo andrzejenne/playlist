@@ -11,7 +11,7 @@
 
 <ion-content class="mode-color">
   <ion-list [virtualScroll]="list" approxItemHeight="80px">
-    <ion-item *virtualItem="let artist" class="item-small" (tap)="openArtist(artist)">
+    <ion-item *virtualItem="let artist" class="item-small" (click)="openArtist(artist)">
       <div class="thumbnail" item-start>
         <img [src]="getCover(artist)">
         <span class="duration" *ngIf="artist.duration">
@@ -19,9 +19,7 @@
         </span>
       </div>
       <ion-label>
-        <overscroll>
-          <h2>{{artist.name}}</h2>
-        </overscroll>
+        <h2>{{artist.name}}</h2>
         <p>
           {{artist.count.albums}}
           <ion-icon name="disc" title="albums"></ion-icon>

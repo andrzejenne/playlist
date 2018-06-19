@@ -15,6 +15,8 @@ use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Models\Playlist;
 use BBIT\Playlist\Models\User;
 use BBIT\Playlist\Wamp\Controllers\Controller;
+use BBIT\Playlist\Wamp\WampRequest;
+use BBIT\Playlist\Wamp\WampResponse;
 use Illuminate\Database\Eloquent\Collection;
 use Thruway\ClientSession;
 
@@ -36,80 +38,88 @@ class MediaController extends Controller
 
 
     /**
-     * @param $args
-     * @return Medium
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      * @throws \Exception
      */
-    public function getBySid($args)
+    public function getBySid(WampRequest $request, WampResponse $response)
     {
-        return MediaCollection::create($args)
-            ->find($args[0]->sid);
+        return $response->withJson(
+            MediaCollection::create($request->getArguments())
+                ->find($request->getArgument('sid')
+                )
+        );
     }
 
     /**
-     * @param $args
-     * @return Medium[]|Collection
-     * @throws \Exception
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function getByArtist($args)
+    public function getByArtist(WampRequest $request, WampResponse $response)
     {
-        return MediaCollection::create($args)
-            ->whereArtistId($args[0]->aid)
-            ->search()
-            ->paginate()
-            ->get();
+        return $response->withJson(
+            MediaCollection::create($request->getArguments())
+                ->whereArtistId($request->getArgument('aid'))
+                ->search()
+                ->paginate()
+                ->get()
+        );
     }
 
     /**
-     * @param $args
-     * @return Medium[]|Collection
-     * @throws \Exception
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function getByAlbum($args)
+    public function getByAlbum(WampRequest $request, WampResponse $response)
     {
-        return MediaCollection::create($args)
-            ->whereAlbumId($args[0]->aid)
-            ->orderBy(Medium::COL_ALBUM_TRACK, 'ASC')
-            ->search()
-            ->paginate()
-            ->get();
+        return $response->withJson(
+            MediaCollection::create($request->getArguments())
+                ->whereAlbumId($request->getArgument('aid'))
+                ->orderBy(Medium::COL_ALBUM_TRACK, 'ASC')
+                ->search()
+                ->paginate()
+                ->get()
+        );
     }
 
     /**
-     * @param $args
-     * @return Medium[]|Collection
-     * @throws \Exception
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function getByGenre($args)
+    public function getByGenre(WampRequest $request, WampResponse $response)
     {
-        return MediaCollection::create($args)
-            ->whereGenreId($args[0]->gid)
-            ->search()
-            ->paginate()
-            ->get();
+        return $response->withJson(
+            MediaCollection::create($request->getArguments())
+                ->whereGenreId($request->getArgument('gid'))
+                ->search()
+                ->paginate()
+                ->get()
+        );
     }
 
     /**
-     * @param $args
+     * @param WampRequest $request
+     * @param WampResponse $response
      * @return mixed
-     * @throws \Exception
      */
-    public function getByProvider($args)
+    public function getByProvider(WampRequest $request, WampResponse $response)
     {
-        if (isset($args[0]->pid)) {
-            $pid = $args[0]->pid;
-        }
-        else if (isset($args[0]->pSlug)) {
-            $pid =  MediaProvider::whereSlug($args[0]->pSlug)->first()->id;
+        if ($request->hasArgument('pid')) {
+            $pid = $request->getArgument('pid');
+        } else if ($request->hasArgument('pSlug')) {
+            $pid = MediaProvider::whereSlug($request->getArgument('pSlug'))->first()->id;
         }
         if (isset($pid)) {
-            return MediaCollection::create($args)
+            return MediaCollection::create($request->getArguments())
                 ->whereProviderId($pid)
                 ->search()
                 ->paginate()
                 ->get();
-        }
-        else {
+        } else {
             return null;
         }
     }

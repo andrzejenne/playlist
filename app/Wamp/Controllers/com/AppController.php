@@ -10,6 +10,8 @@ namespace BBIT\Playlist\Wamp\Controllers\com;
 
 use BBIT\Playlist\Models\MediaProvider;
 use BBIT\Playlist\Providers\MediaLibraryProvider;
+use BBIT\Playlist\Wamp\WampRequest;
+use BBIT\Playlist\Wamp\WampResponse;
 
 
 /**
@@ -30,10 +32,11 @@ class AppController
     }
 
     /**
-     * @param $args
-     * @return array
+     * @param WampRequest $request
+     * @param WampResponse $response
+     * @return WampResponse
      */
-    public function providers($args)
+    public function providers(WampRequest $request, WampResponse $response)
     {
         $services = $this->mediaLibraryProvider->getServices();
 
@@ -47,6 +50,6 @@ class AppController
                 + ['ionic' => isset($ionicConfig[$key]) ? $ionicConfig[$key] : null];
         }
 
-        return [$providers];
+        return $response->withJson($providers);
     }
 }

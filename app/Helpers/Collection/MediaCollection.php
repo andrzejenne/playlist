@@ -27,11 +27,11 @@ class MediaCollection extends AbstractCollection
      * MediaCollection constructor.
      * @param $args
      */
-    public function __construct($args)
+    public function __construct(array $args)
     {
         parent::__construct($args);
 
-        $this->provider = isset($args->pSlug) ? $args->pSlug : null;
+        $this->provider = isset($args['pSlug']) ? $args['pSlug'] : null;
     }
 
 

@@ -33,6 +33,6 @@ class PlaylistController extends Controller
             }
         }
 
-        return view('playlist-welcome', $releases);
+        return view('playlist-welcome', $releases + ['debug' => [], 'signed' => []]);
     }
 }
