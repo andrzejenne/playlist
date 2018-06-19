@@ -157,8 +157,9 @@ class LibraryDiscover extends Command
             });
 
 
-        $ui->progressStart(count($list));
+        $ui->writeln('Catalogizing');
 
+        $ui->progressStart(count($list));
         $dirs = [];
         foreach ($list as $file) {
             $dir = dirname($file[1]);
@@ -171,8 +172,14 @@ class LibraryDiscover extends Command
                 $dirs[$dir][$album] = [];
             }
             $dirs[$dir][$album][] = $fileData;
+            $ui->progressAdvance();
 //            $this->identifyMedia($file, $id3);
         }
+        $ui->progressFinish();
+
+        $ui->writeln('Importing');
+
+        $ui->progressStart(count($list));
 
         foreach ($dirs as $dir => $albums) {
             $albumName = count($albums) > 1 ? dirname($dir) : key($albums);
