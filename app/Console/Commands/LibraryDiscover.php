@@ -197,20 +197,23 @@ class LibraryDiscover extends Command
         }
         $ui->progressFinish();
 
-        $ui->writeln('Cleanup');
 
         $emptyAlbums = Album::has('media', '=', 0)->get();
-        $ui->progressStart(count($emptyAlbums));
-        /** @var Album $album */
-        try {
-            foreach ($emptyAlbums as $album) {
-                $album->delete();
-                $ui->progressAdvance();
+        if (count($emptyAlbums)) {
+            $ui->writeln('Cleanup');
+
+            $ui->progressStart(count($emptyAlbums));
+            /** @var Album $album */
+            try {
+                foreach ($emptyAlbums as $album) {
+                    $album->delete();
+                    $ui->progressAdvance();
+                }
+            } catch (\Exception $e) {
+                $ui->warning('Cannot clear empty albums: ' . $e->getMessage());
             }
-        } catch (\Exception $e) {
-            $ui->warning('Cannot clear empty albums: ' . $e->getMessage());
+            $ui->progressFinish();
         }
-        $ui->progressFinish();
 
         $this->info('Finished');
 
