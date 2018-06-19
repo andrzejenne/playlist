@@ -158,8 +158,33 @@ class LibraryDiscover extends Command
 
 
         $ui->progressStart(count($list));
+
+        $dirs = [];
         foreach ($list as $file) {
-            $this->identifyMedia($file, $id3);
+            $dir = dirname($file[1]);
+            if (!isset($dirs[$dir])) {
+                $dirs[$dir] = [];
+            }
+            $fileData = $this->getFileData($file, $id3);
+            $album = $fileData['album'];
+            if (!isset($dirs[$dir][$album])) {
+                $dirs[$dir][$album] = [];
+            }
+            $dirs[$dir][$album][] = $fileData;
+//            $this->identifyMedia($file, $id3);
+        }
+
+        foreach ($dirs as $dir => $albums) {
+            $albumName = count($albums) > 1 ? dirname($dir) : key($albums);
+            foreach ($albums as $album => $filesData) {
+                foreach ($filesData as $fileData) {
+                    try {
+                        $this->importMedia($fileData, $albumName);
+                    } catch (\Exception $e) {
+                        $ui->warning('cannot import ' . $fileData['name'] . ', ' . $e->getMessage());
+                    }
+                }
+            }
             $ui->progressAdvance();
         }
         $ui->progressFinish();
@@ -192,8 +217,9 @@ class LibraryDiscover extends Command
     /**
      * @param $file
      * @param getID3 $id3
+     * @return array
      */
-    private function identifyMedia($file, getID3 $id3)
+    private function getFileData($file, getID3 $id3)
     {
         $analyze = $id3->analyze($file[1]);
 
@@ -205,14 +231,13 @@ class LibraryDiscover extends Command
         $year = static::getID3String('year', $analyze);
         $genre = static::getID3String('genre', $analyze);
         $track = static::getID3String('track', $analyze);
+        $duration = isset($analyze['playtime_seconds']) ? $analyze['playtime_seconds'] : null;
 
         $filename = $analyze['filename'];
         if (!$name) {
             $name = $filename;
         }
         $filePath = $analyze['filepath'];
-        $dirInLib = Str::substr($filePath, Str::length($file[0]) + 1);
-        $pathInLib = $dirInLib . DIRECTORY_SEPARATOR . $filename;
 
         if (isset($analyze['comments']['picture'])) {
             $thumbnail = reset($analyze['comments']['picture']);
@@ -223,6 +248,56 @@ class LibraryDiscover extends Command
         if (!$album) {
             $album = \File::name($analyze['filepath']);
         }
+
+        $dirInLib = Str::substr($filePath, Str::length($file[0]) + 1);
+        $pathInLib = $dirInLib . DIRECTORY_SEPARATOR . $filename;
+
+        if (!isset($dir[$album])) {
+            $dir[$album] = [];
+        }
+
+        return [
+            'name' => $name,
+            'artist' => $artist,
+            'album' => $album,
+            'year' => $year,
+            'genre' => $genre,
+            'track' => $track,
+            'duration' => $duration,
+            'filename' => $filename,
+            'filePath' => $filePath,
+            'thumbnail' => $thumbnail,
+            'dirInLib' => $dirInLib,
+            'pathInLib' => $pathInLib,
+            'file' => $file,
+            'mimeType' => isset($analyze['mime_type']) ? $analyze['mime_type'] : null,
+            'filenamepath' => $analyze['filenamepath']
+        ];
+    }
+
+    /**
+     * @param $fileData
+     * @param $albumName
+     * @throws \Exception
+     */
+    private function importMedia($fileData, $albumName)
+    {
+        /** @var $genre */
+        /** @var $artist */
+        /** @var $album */
+        /** @var $year */
+        /** @var $thumbnail */
+        /** @var $pathInLib */
+        /** @var $file */
+        /** @var $dirInLib */
+        /** @var $duration */
+        /** @var $name */
+        /** @var $track */
+        /** @var $filename */
+        /** @var $filePath */
+        /** @var $filenamepath */
+        /** @var $mimeType */
+        extract($fileData);
 
         if ($genre) {
             $lGenre = Str::lower($genre);
@@ -252,12 +327,12 @@ class LibraryDiscover extends Command
             $artistEntity = null;
         }
 
-        if ($album) {
-            $lAlbum = Str::lower($album);
+        if ($albumName) {
+            $lAlbum = Str::lower($albumName);
             $albumEntity = $this->albums->get($lAlbum);
             if (!$albumEntity) {
                 $albumEntity = new Album([
-                    'name' => $album,
+                    'name' => $albumName,
                     'year' => $year ? $year : null,
                 ]);
 
@@ -298,7 +373,7 @@ class LibraryDiscover extends Command
 
             $libSid = Str::substr($sid, 6, 6);
 
-            $libraryAlbum = $paths->filter(function(LibraryAlbum $libraryAlbum) use ($libSid, $dirInLib){
+            $libraryAlbum = $paths->filter(function (LibraryAlbum $libraryAlbum) use ($libSid, $dirInLib) {
                 return $libraryAlbum->sid == $libSid && $libraryAlbum->path == $dirInLib;
             })->first();
 
@@ -314,7 +389,7 @@ class LibraryDiscover extends Command
         if (!$medium) {
             $medium = new Medium([
                 Medium::COL_NAME => $name,
-                Medium::COL_DURATION => isset($analyze['playtime_seconds']) ? $analyze['playtime_seconds'] : null,
+                Medium::COL_DURATION => $duration,
                 Medium::COL_RELEASED => null, // @todo - exact date of release ? or refactor to int just year,
                 Medium::COL_PROVIDER_SID => $sid
             ]);
@@ -347,13 +422,13 @@ class LibraryDiscover extends Command
                 'filename' => $filename,
                 'size' => \File::size($filePath),
             ]);
-            if (!isset($analyze['mime_type'])) {
-                $analyze['mime_type'] = \File::mimeType($analyze['filenamepath']);
-                if (!$analyze['mime_type']) {
+            if (!$mimeType) {
+                $mimeType = \File::mimeType($filenamepath);
+                if (!$mimeType) {
                     return false;
                 }
             }
-            $mediaFileType = $this->getMediaFileType($analyze['mime_type']);
+            $mediaFileType = $this->getMediaFileType($mimeType);
 
             if ($mediaFileType) {
                 $file->type()->associate($mediaFileType);
@@ -361,7 +436,7 @@ class LibraryDiscover extends Command
 
                 $files->push($file);
             } else {
-                $this->warn('Invalid mime type ' . $analyze['mime_type'] . ' for ' . $analyze['filenamepath']);
+                $this->warn('Invalid mime type ' . $mimeType . ' for ' . $filenamepath);
             }
         }
 
