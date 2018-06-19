@@ -182,7 +182,7 @@ class LibraryDiscover extends Command
         $ui->progressStart(count($list));
 
         foreach ($dirs as $dir => $albums) {
-            $albumName = count($albums) > 1 ? dirname($dir) : key($albums);
+            $albumName = count($albums) > 1 ? basename($dir) : key($albums);
             foreach ($albums as $album => $filesData) {
                 foreach ($filesData as $fileData) {
                     try {
@@ -195,6 +195,16 @@ class LibraryDiscover extends Command
             }
         }
         $ui->progressFinish();
+
+        /** @var Album $album */
+        try {
+            foreach (Album::has('media', '=', 0)->get() as $album) {
+                $album->delete();
+            }
+        } catch (\Exception $e) {
+            $ui->warning('Cannot clear empty albums: ' . $e->getMessage());
+        }
+
 
         $this->info('Finished');
 
