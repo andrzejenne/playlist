@@ -103,6 +103,7 @@ class LibraryDiscover extends Command
 
         $this->info('Preparing');
 
+        /** @var OwnLibraryService provider */
         $this->provider = $this->libraryProvider->getService('library');
 
         if (!$this->provider) {
@@ -111,7 +112,7 @@ class LibraryDiscover extends Command
             return;
         }
 
-        $this->providerEntity = MediaProvider::whereSlug($this->provider->getName())->first();
+        $this->providerEntity = MediaProvider::whereSlug($this->provider->getSlug())->first();
 
         if (!$this->provider) {
             $this->error('ProviderEntity `library` not found');
