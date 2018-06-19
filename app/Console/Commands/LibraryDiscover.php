@@ -182,11 +182,12 @@ class LibraryDiscover extends Command
         $ui->progressStart(count($list));
 
         foreach ($dirs as $dir => $albums) {
-            $albumName = count($albums) > 1 ? basename($dir) : key($albums);
+            $isFolderAlbum = count($albums) > 1;
+            $albumName = $isFolderAlbum ? basename($dir) : key($albums);
             foreach ($albums as $album => $filesData) {
                 foreach ($filesData as $fileData) {
                     try {
-                        $this->importMedia($fileData, $albumName);
+                        $this->importMedia($fileData, $albumName, $isFolderAlbum);
                     } catch (\Exception $e) {
                         $ui->warning('cannot import ' . $fileData['name'] . ', ' . $e->getMessage());
                     }
@@ -196,15 +197,20 @@ class LibraryDiscover extends Command
         }
         $ui->progressFinish();
 
+        $ui->writeln('Cleanup');
+
+        $emptyAlbums = Album::has('media', '=', 0)->get();
+        $ui->progressStart(count($emptyAlbums));
         /** @var Album $album */
         try {
-            foreach (Album::has('media', '=', 0)->get() as $album) {
+            foreach ($emptyAlbums as $album) {
                 $album->delete();
+                $ui->progressAdvance();
             }
         } catch (\Exception $e) {
             $ui->warning('Cannot clear empty albums: ' . $e->getMessage());
         }
-
+        $ui->progressFinish();
 
         $this->info('Finished');
 
@@ -295,9 +301,10 @@ class LibraryDiscover extends Command
     /**
      * @param $fileData
      * @param $albumName
+     * @param bool $isFolderAlbum
      * @throws \Exception
      */
-    private function importMedia($fileData, $albumName)
+    private function importMedia($fileData, $albumName, $isFolderAlbum = false)
     {
         /** @var $genre */
         /** @var $artist */
@@ -350,17 +357,19 @@ class LibraryDiscover extends Command
             if (!$albumEntity) {
                 $albumEntity = new Album([
                     'name' => $albumName,
-                    'year' => $year ? $year : null,
+                    'year' => $year && !$isFolderAlbum ? $year : null,
                 ]);
 
                 $this->albums[$lAlbum] = $albumEntity;
             }
 
-            if ($genreEntity) {
-                $albumEntity->genre()->associate($genreEntity);
-            }
-            if ($artistEntity) {
-                $albumEntity->artist()->associate($artistEntity);
+            if (!$isFolderAlbum) {
+                if ($genreEntity) {
+                    $albumEntity->genre()->associate($genreEntity);
+                }
+                if ($artistEntity) {
+                    $albumEntity->artist()->associate($artistEntity);
+                }
             }
             $albumEntity->save();
 
