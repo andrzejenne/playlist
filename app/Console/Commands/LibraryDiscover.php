@@ -183,9 +183,9 @@ class LibraryDiscover extends Command
                     } catch (\Exception $e) {
                         $ui->warning('cannot import ' . $fileData['name'] . ', ' . $e->getMessage());
                     }
+                    $ui->progressAdvance();
                 }
             }
-            $ui->progressAdvance();
         }
         $ui->progressFinish();
 
