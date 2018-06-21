@@ -25,8 +25,6 @@ class SocialAuthController extends Controller
      */
     public function __construct()
     {
-//        parent::__construct();
-
         $this->middleware('guest');
 
         $this->registrationOpen = config('app.registrationOpen');
@@ -67,7 +65,7 @@ class SocialAuthController extends Controller
     /**
      * Redirect to provider for authentication
      *
-     * @param $driver
+     * @param string $driver
      * @return mixed
      */
     public function redirectToProvider($driver)
@@ -96,7 +94,7 @@ class SocialAuthController extends Controller
     /**
      * Handle response of authentication redirect callback
      *
-     * @param $driver
+     * @param string $driver
      * @return \Illuminate\Http\RedirectResponse
      */
     public function handleProviderCallback($driver)
@@ -126,7 +124,7 @@ class SocialAuthController extends Controller
     /**
      * Send a failed response with a msg
      *
-     * @param null $msg
+     * @param null|string $msg
      * @return \Illuminate\Http\RedirectResponse
      */
     protected function sendFailedResponse($msg = null)
@@ -136,8 +134,8 @@ class SocialAuthController extends Controller
     }
 
     /**
-     * @param $providerUser
-     * @param $driver
+     * @param User $providerUser
+     * @param string $driver
      * @return \Illuminate\Http\RedirectResponse
      */
     protected function loginOrCreateAccount($providerUser, $driver)
@@ -196,7 +194,7 @@ class SocialAuthController extends Controller
     /**
      * Check for provider allowed and services configured
      *
-     * @param $driver
+     * @param string $driver
      * @return bool
      */
     private function isProviderAllowed($driver)

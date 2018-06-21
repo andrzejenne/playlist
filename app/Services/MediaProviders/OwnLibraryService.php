@@ -66,23 +66,14 @@ class OwnLibraryService extends MediaProviderContract
     {
         $sid = $medium->provider_sid;
         $libHash = Str::substr($sid, 6, 6);
-//        $fileName = $file->filename;
         $libPath = rtrim($this->getLib($libHash), DIRECTORY_SEPARATOR);
-
-//        echo "$sid, $libHash, $fileName";
 
         /** @var LibraryAlbum $libraryAlbum */
         foreach ($medium->album->libraries as $libraryAlbum) {
             if ($libraryAlbum->sid == $libHash) {
                 $possibleDir = $libPath . DIRECTORY_SEPARATOR . $libraryAlbum->path;
-//                $possiblePath = $possibleDir . DIRECTORY_SEPARATOR . $fileName;
-//                echo $possibleDir;
                 if (\File::exists($possibleDir)) {
-
                     return $possibleDir;
-                }
-                else {
-//                    echo ' !';
                 }
             }
         }
@@ -129,7 +120,6 @@ class OwnLibraryService extends MediaProviderContract
     {
         return Str::substr(md5($pathInLib), 0, 6)
             . Str::substr(md5($libPath), 0, 6);
-//            . $dirInLib;
     }
 
     /**
@@ -155,8 +145,6 @@ class OwnLibraryService extends MediaProviderContract
         if (isset($this->libs[$md5])) {
             return $this->libs[$md5];
         }
-
-//        print_r($this->libs);
 
         return null;
     }

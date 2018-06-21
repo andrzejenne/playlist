@@ -23,7 +23,7 @@ return [
     ],
 
     'library' => [
-        'ext' => 'mp3,aac,ogg',
+        'ext' => 'mp3,aac,ogg,m4a',
         'path' => env('MEDIA_LIBRARY_PATH', null)
     ],
 

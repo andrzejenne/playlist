@@ -24,14 +24,14 @@ abstract class YoutubeDLWampProcessReporterContract extends WampProcessReporterC
         EVENT_STATUS = 'download.status',
         EVENT_FILENAME = 'download.filename';
 
-    /** @var string */
+    /** @var string|null */
     private $url;
 
     /**
-     * @param $url
+     * @param string|null $url
      * @return YoutubeDLWampProcessReporterContract
      */
-    final public function setUrl($url)
+    final public function setUrl(?string $url = null)
     {
         $this->url = $url;
 
@@ -39,9 +39,9 @@ abstract class YoutubeDLWampProcessReporterContract extends WampProcessReporterC
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getUrl()
+    public function getUrl(): ?string
     {
         return $this->url;
     }
@@ -52,7 +52,8 @@ abstract class YoutubeDLWampProcessReporterContract extends WampProcessReporterC
     public function restart()
     {
         parent::restart();
-        $this->setUrl(null);
+
+        $this->setUrl();
     }
 
 }

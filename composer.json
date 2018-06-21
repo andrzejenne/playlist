@@ -71,7 +71,8 @@
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover"
-        ]
+        ],
+        "stan": "phpstan analyse app --level 7"
     },
     "config": {
         "preferred-install": "dist",

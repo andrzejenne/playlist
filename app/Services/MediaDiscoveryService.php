@@ -69,9 +69,6 @@ class MediaDiscoveryService
                 ->first();
 
             if ($file instanceof MediaFile) {
-                /*                    $path = $this->getMediumDir($medium->provider->slug,
-                                            $medium->provider_sid) . DIRECTORY_SEPARATOR . $file->filename;*/
-
                 $path = $providerLibrary->getMediumFilePath($medium, $file);
 
                 if (\File::exists($path)) {
@@ -135,7 +132,7 @@ class MediaDiscoveryService
         $dir = $provider->getMediumDir($medium);
 
         $files = \File::allFiles($dir);
-//        $unknown = MediaType::whereSlug('unknown')->first();
+
         $types = MediaFileType::all()
             ->mapWithKeys(
                 function (MediaFileType $type) {

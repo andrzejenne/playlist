@@ -51,10 +51,10 @@ abstract class WampProcessReporterContract extends ProcessReporterContract
     }
 
     /**
-     * @param $event
-     * @param null $args
+     * @param string $event
+     * @param null|mixed $args
      */
-    final protected function reportEvent($event, $args = null)
+    final protected function reportEvent(string $event, $args = null)
     {
         $this->session->publish('sub.' . $event, [$args]); //, [], ["acknowledge" => true])
 //        $this->session->getLoop()->tick();

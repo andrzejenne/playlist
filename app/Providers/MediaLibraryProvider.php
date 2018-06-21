@@ -11,7 +11,6 @@ namespace BBIT\Playlist\Providers;
 use BBIT\Playlist\Contracts\MediaProviderContract;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use Vimeo\Vimeo;
 
 
 /**
@@ -49,11 +48,7 @@ class MediaLibraryProvider extends ServiceProvider
     {
         foreach ($this->bindings as $slug => $binding) {
             $this->app->bind($binding, $binding);
-//            $this->app->bind(static::getAlias($slug), $binding);
-//            $this->app->alias(static::getAlias($slug), $binding);
         }
-
-//        $this->app->bind(Vimeo::class, Vimeo::class);
     }
 
 
@@ -69,7 +64,6 @@ class MediaLibraryProvider extends ServiceProvider
 
         if (!isset($this->services[$alias])) {
             $this->services[$alias] = $this->app->make(
-//                static::getAlias($alias)
                 $this->bindings[$alias]
             );
         }
@@ -106,16 +100,12 @@ class MediaLibraryProvider extends ServiceProvider
         $aliases = [];
 
         foreach ($this->bindings as $key => $binding) {
-            $aliases[] = $binding; //static::getAlias($key);
-//            $aliases[] = static::getAlias($key);
+            $aliases[] = $binding;
         }
 
         return array_merge(
             parent::provides(),
             $aliases
-//            [
-//                Vimeo::class
-//            ]
         );
 
     }

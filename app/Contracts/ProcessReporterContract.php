@@ -30,7 +30,7 @@ abstract class ProcessReporterContract
     private $error;
 
     /**
-     * @param $pipes
+     * @param mixed $pipes
      * @deprecated
      */
     final public function report($pipes) {
@@ -57,7 +57,7 @@ abstract class ProcessReporterContract
     }
 
     /**
-     * @return
+     * @return string
      * @deprecated
      */
     final public function info() {
