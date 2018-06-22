@@ -4,7 +4,16 @@ namespace BBIT\Playlist\Models;
 
 /**
  * Class Genre
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property string $name
+ * @property-read \Illuminate\Database\Eloquent\Collection|\BBIT\Playlist\Models\Album[] $albums
+ * @property-read array $count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\BBIT\Playlist\Models\Medium[] $media
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Genre whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Genre whereName($value)
+ * @mixin \Eloquent
  */
 class Genre extends BaseModel
 {

@@ -61,11 +61,11 @@ class YouTubeDownloader extends DownloaderContract
     }
 
     /**
-     * @param $url
-     * @param $sid
+     * @param string $url
+     * @param string $sid
      * @return string
      */
-    public function getName($url, $sid)
+    public function getName(string $url, string  $sid)
     {
         $info = $this->getInfo($url, $sid);
 
@@ -74,12 +74,12 @@ class YouTubeDownloader extends DownloaderContract
 
 
     /**
-     * @param $url
-     * @param $sid
-     * @param $outDir
-     * @return string
+     * @param string $url
+     * @param string $sid
+     * @param string $outDir
+     * @return Process|null
      */
-    public function download($url, $sid, $outDir)
+    public function download(string $url, string $sid, string $outDir)
     {
         $videos = $this->getVideos($url, $sid);
         $audios = $this->getAudios($url, $sid);
@@ -117,14 +117,14 @@ class YouTubeDownloader extends DownloaderContract
     }
 
     /**
-     * @param $url
-     * @param $sid
-     * @param $outDir
+     * @param string $url
+     * @param string $sid
+     * @param string $outDir
      * @param string $format
-     * @return string
+     * @return Process|null
      * @throws \Exception
      */
-    public function downloadAudio($url, $sid, $outDir, $format = 'mp3')
+    public function downloadAudio(string $url, string $sid, string $outDir, string $format = 'mp3')
     {
         if (!static::isAudioFormatValid($format)) {
             throw new \Exception("Invalid audio format $format");
@@ -154,11 +154,11 @@ class YouTubeDownloader extends DownloaderContract
     }
 
     /**
-     * @param $url
-     * @param $sid
+     * @param string $url
+     * @param string $sid
      * @return Collection
      */
-    public function getVideos($url, $sid)
+    public function getVideos(string $url, string $sid)
     {
         $info = $this->getInfo($url, $sid);
 
@@ -176,11 +176,11 @@ class YouTubeDownloader extends DownloaderContract
     }
 
     /**
-     * @param $url
-     * @param $sid
+     * @param string $url
+     * @param string $sid
      * @return Collection
      */
-    public function getAudios($url, $sid)
+    public function getAudios(string $url, string $sid)
     {
         $info = $this->getInfo($url, $sid);
 
@@ -219,11 +219,11 @@ class YouTubeDownloader extends DownloaderContract
 
 
     /**
-     * @param $url
-     * @param $sid
+     * @param string $url
+     * @param string $sid
      * @return bool|mixed
      */
-    protected function getInfo($url, $sid)
+    protected function getInfo(string $url, string $sid)
     {
         if (!isset($this->_infoCache[$sid])) {
             try {
@@ -245,7 +245,7 @@ class YouTubeDownloader extends DownloaderContract
     }
 
     /**
-     * @param $args
+     * @param mixed $args
      * @return Process
      */
     protected static function getProcess($args)
@@ -258,10 +258,10 @@ class YouTubeDownloader extends DownloaderContract
     }
 
     /**
-     * @param $format
+     * @param string $format
      * @return bool
      */
-    protected static function isAudioFormatValid($format)
+    protected static function isAudioFormatValid(string $format)
     {
         return in_array($format, static::$audioTranscodeFormats);
     }

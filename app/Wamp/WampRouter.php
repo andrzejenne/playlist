@@ -25,7 +25,7 @@ class WampRouter extends Client
      */
     protected $session;
 
-    private $ns = [];
+    private $namespacePath = [];
 
     private $namespace = 'BBIT\Playlist\Wamp\Controllers';
 
@@ -63,36 +63,36 @@ class WampRouter extends Client
 
 
     /**
-     * @param $ns
+     * @param string $namespace
      * @return WampRouter
      */
-    public function namespace($ns)
+    public function namespace($namespace)
     {
-        $this->ns[] = $ns;
+        $this->namespacePath[] = $namespace;
 
         return $this;
     }
 
     /**
-     * @param $callback
+     * @param callable $callback
      * @return WampRouter
      */
-    public function group($callback)
+    public function group(callable $callback)
     {
         $callback();
 
-        array_pop($this->ns);
+        array_pop($this->namespacePath);
 
         return $this;
     }
 
     /**
-     * @param $cmd
-     * @param $callback
+     * @param string $cmd
+     * @param callable|string $callback
      * @return WampRouter
      * @throws \Exception
      */
-    public function command($cmd, $callback)
+    public function command(string $cmd, $callback)
     {
         $this->session->register($this->getFullNamespace($cmd), $this->getCallback($callback));
 
@@ -100,17 +100,17 @@ class WampRouter extends Client
     }
 
     /**
-     * @param $topic
-     * @param $callback
+     * @param string $topic
+     * @param callable|string $callback
      * @throws \Exception
      */
-    public function subscribe($topic, $callback)
+    public function subscribe(string $topic, $callback)
     {
         $this->session->subscribe($this->getFullNamespace($topic), $this->getCallback($callback));
     }
 
     /**
-     * @param $callback
+     * @param callable|string $callback
      * @return mixed
      * @throws \Exception
      */
@@ -134,7 +134,7 @@ class WampRouter extends Client
     private function prepareCallback(string $callback)
     {
         list($cls, $method) = explode('@', $callback);
-        $cls = $this->namespace . '\\' . implode('\\', array_merge($this->ns, [$cls]));
+        $cls = $this->namespace . '\\' . implode('\\', array_merge($this->namespacePath, [$cls]));
 
         return function (...$args) use ($cls, $method) {
             $instance = $this->getController($cls);
@@ -161,18 +161,18 @@ class WampRouter extends Client
     }
 
     /**
-     * @param $cmd
+     * @param string $cmd
      * @return string
      */
     private function getFullNamespace($cmd)
     {
-        $full = array_merge($this->ns, [$cmd]);
+        $full = array_merge($this->namespacePath, [$cmd]);
 
         return implode('.', $full);
     }
 
     /**
-     * @param $cls
+     * @param string $cls
      * @return Controller
      */
     private function getController($cls) {

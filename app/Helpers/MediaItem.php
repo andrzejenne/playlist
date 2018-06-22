@@ -36,9 +36,9 @@ class MediaItem implements Arrayable, \JsonSerializable
      * @param string $description
      * @param string $thumbnail
      * @param string $previewUrl
-     * @param string $duration
+     * @param mixed $duration
      */
-    public function __construct(string $sid, string $title, string $description, string $thumbnail, string $previewUrl, string $duration)
+    public function __construct(string $sid, string $title, string $description, string $thumbnail, string $previewUrl, $duration)
     {
         $this->sid = $sid;
         $this->title = $title;
@@ -54,10 +54,10 @@ class MediaItem implements Arrayable, \JsonSerializable
      * @param string $description
      * @param string $thumbnail
      * @param string $previewUrl
-     * @param string $duration
+     * @param mixed $duration
      * @return MediaItem
      */
-    public static function create(string $sid, string $title, string $description, string $thumbnail, string $previewUrl, string $duration)
+    public static function create(string $sid, string $title, string $description, string $thumbnail, string $previewUrl, $duration)
     {
         return new static($sid, $title, $description, $thumbnail, $previewUrl, $duration);
     }

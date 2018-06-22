@@ -156,13 +156,13 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $stub
+     * @param string $stub
      * @return mixed
      * @throws \Exception
      */
     protected function prepareStub($stub)
     {
-        $this->modelName = $this->argument('name');
+        $this->modelName = (string)$this->argument('name');
 
         $table = Str::plural(Str::snake($this->modelName));
 
@@ -190,8 +190,8 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $columns
-     * @param $table
+     * @param mixed $columns
+     * @param string $table
      * @return Column[]
      */
     protected function getColumnTypes($columns, $table)
@@ -206,8 +206,8 @@ class ModelMakeCommand extends GeneratorCommand
 
 
     /**
-     * @param $stub
-     * @param $table
+     * @param string $stub
+     * @param string $table
      * @param Column[] $columnTypes
      * @return mixed
      */
@@ -229,25 +229,21 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $stub
-     * @param $columns
+     * @param string $stub
+     * @param mixed $columns
      * @return string
      */
     protected function fillCols($stub, $columns)
     {
-//        $unchanged = [BaseModel::COL_ID, BaseModel::COL_CREATED_AT, BaseModel::COL_UPDATED_AT, BaseModel::COL_DELETED_AT];
-
         $cols = "const ";
         $tcols = "\tconst ";
 
         $i = 0;
         foreach ($columns as $columnName) {
-//            if (!in_array($columnName, $unchanged)) {
-                $upper = Str::upper($columnName);
-                $cols .= ($i ? "\t\t  " : "") . "COL_$upper = '$columnName',\n";
-                $tcols .= ($i ? "\t\t  " : "") . "TCOL_$upper = self::TABLE . '.' . self::COL_$upper,\n";
-                $i++;
-//            }
+            $upper = Str::upper($columnName);
+            $cols .= ($i ? "\t\t  " : "") . "COL_$upper = '$columnName',\n";
+            $tcols .= ($i ? "\t\t  " : "") . "TCOL_$upper = self::TABLE . '.' . self::COL_$upper,\n";
+            $i++;
         }
 
         $replacement = Str::substr($cols, 0, -2) . ";\n\n"
@@ -258,8 +254,8 @@ class ModelMakeCommand extends GeneratorCommand
 
 
     /**
-     * @param $stub
-     * @param $table
+     * @param string $stub
+     * @param string $table
      * @return string
      */
     protected function fillTable($stub, $table)
@@ -268,8 +264,8 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $stub
-     * @param $columns
+     * @param string $stub
+     * @param string[] $columns
      * @return string
      */
     protected function fillTimestamps($stub, $columns)
@@ -292,8 +288,8 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $stub
-     * @param $columns
+     * @param string $stub
+     * @param string[] $columns
      * @return string
      */
     protected function fillFillables($stub, $columns)
@@ -310,8 +306,8 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $stub
-     * @param $columns
+     * @param string $stub
+     * @param string[] $columns
      * @return string
      */
     protected function fillFields($stub, $columns)
@@ -327,7 +323,7 @@ class ModelMakeCommand extends GeneratorCommand
 
 
     /**
-     * @param $stub
+     * @param string $stub
      * @param Column[] $columns
      * @return string
      */
@@ -367,9 +363,9 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $stub
-     * @param $table
-     * @param $columns
+     * @param string $stub
+     * @param string $table
+     * @param mixed $columns
      * @param Column[] $columnTypes
      * @return string
      */
@@ -463,7 +459,7 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $columName
+     * @param string $columName
      * @return bool
      */
     protected function isRelationColumn($columName)
@@ -472,7 +468,7 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $table
+     * @param string $table
      * @return string
      */
     public static function getTableModelName($table)
@@ -481,8 +477,8 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $cols
-     * @param $foreignKey
+     * @param mixed $cols
+     * @param string $foreignKey
      * @return array
      */
     protected function getRelationColumnsWithout($cols, $foreignKey)
@@ -499,9 +495,9 @@ class ModelMakeCommand extends GeneratorCommand
 
 
     /**
-     * @param $columns
-     * @param $type
-     * @param $relatedTable
+     * @param mixed $columns
+     * @param string $type
+     * @param string $relatedTable
      * @return array
      */
     protected function getRelatedTablesConfigFromColumns($columns, $type, $relatedTable = null)
@@ -526,8 +522,8 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $columns
-     * @param $name
+     * @param mixed $columns
+     * @param string $name
      * @return array
      */
     protected function getBelongsToTablesConfigFromColumns($columns, $name)
@@ -553,10 +549,10 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $columns
-     * @param $relatedTable
-     * @param $name
-     * @param $hasId
+     * @param mixed $columns
+     * @param string $relatedTable
+     * @param string $name
+     * @param bool $hasId
      * @return array
      */
     protected function getBelongsToManyTablesConfigFromColumns($columns, $relatedTable, $name, $hasId)
@@ -582,6 +578,10 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
 
+    /**
+     * @param string[] $relatedTables
+     * @return string
+     */
     protected function getRelationImplementations($relatedTables)
     {
         $implementations = "";
@@ -604,7 +604,7 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $relation
+     * @param string $relation
      * @return string
      */
     protected function getBelongsToImplementation($relation)
@@ -624,7 +624,7 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $relation
+     * @param string $relation
      * @return string
      */
     protected function getHasManyImplementation($relation)
@@ -642,7 +642,7 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $relation
+     * @param string $relation
      * @return string
      */
     protected function getBelongsToManyImplementation($relation)
@@ -662,8 +662,8 @@ class ModelMakeCommand extends GeneratorCommand
     }
 
     /**
-     * @param $name
-     * @param $without
+     * @param string $name
+     * @param string $without
      * @return string
      */
     protected function getShortName($name, $without)

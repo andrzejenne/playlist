@@ -42,8 +42,7 @@ class SearchController extends Controller
                 $search->fill(['query' => $query]);
                 $search->user_id = 1;
                 $search->save();
-            }
-            else {
+            } else {
                 $search->save(); // updates updated at
             }
         }
@@ -62,17 +61,18 @@ class SearchController extends Controller
             Search::whereUserId(1)
                 ->orderBy(Search::COL_UPDATED_AT, 'DESC')
                 ->get()
+                ->toArray()
         );
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function delete($id)
     {
         $result = Search::whereId($id)->delete();
 
-        return response()->json($result);
+        return response()->json(['status' => $result]);
     }
 }

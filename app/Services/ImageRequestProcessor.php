@@ -32,13 +32,13 @@ class ImageRequestProcessor
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @todo - refactor, optimize, now bad coding
      */
-    public function process($path, Request $request)
+    public function process(string $path, Request $request)
     {
         $image = $this->imageManager->make($path);
 
@@ -106,10 +106,10 @@ class ImageRequestProcessor
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @return array
      */
-    private function getHeadersForPath($path)
+    private function getHeadersForPath(string $path)
     {
         return [
             'Content-Type' => \File::mimeType($path),

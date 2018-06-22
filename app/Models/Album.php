@@ -4,7 +4,27 @@ namespace BBIT\Playlist\Models;
 
 /**
  * Class Album
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property string $name
+ * @property \Carbon\Carbon $released
+ * @property int|null $duration
+ * @property int|null $genre_id
+ * @property int|null $artist_id
+ * @property-read \BBIT\Playlist\Models\Artist|null $artist
+ * @property-read \Illuminate\Database\Eloquent\Collection|\BBIT\Playlist\Models\Cover[] $covers
+ * @property-read \BBIT\Playlist\Models\Genre|null $genre
+ * @property-read int $count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\BBIT\Playlist\Models\LibraryAlbum[] $libraries
+ * @property-read \Illuminate\Database\Eloquent\Collection|\BBIT\Playlist\Models\Medium[] $media
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Album whereArtistId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Album whereDuration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Album whereGenreId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Album whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Album whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Album whereReleased($value)
+ * @mixin \Eloquent
  */
 class Album extends BaseModel
 {

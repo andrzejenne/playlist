@@ -35,7 +35,7 @@ class ArtistCollection extends AbstractCollection
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      * @throws \Exception
      */
     protected function getBuilder()
@@ -44,7 +44,9 @@ class ArtistCollection extends AbstractCollection
             $this->builder = Artist::with([
 //                Artist::REL_MEDIA . '.' . Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
                 Artist::REL_ALBUMS
-            ])->orderBy(Album::COL_NAME, 'ASC');
+            ])
+                ->getQuery()
+                ->orderBy(Album::COL_NAME, 'ASC');
         }
 
         return parent::getBuilder();

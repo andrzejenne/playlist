@@ -2,9 +2,25 @@
 
 namespace BBIT\Playlist\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+
 /**
  * Class Search
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property string $query
+ * @property int $user_id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\BBIT\Playlist\Models\Medium[] $media
+ * @property-read \BBIT\Playlist\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Search whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Search whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Search whereQuery($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Search whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Search whereUserId($value)
+ * @mixin \Eloquent
  */
 class Search extends BaseModel
 {

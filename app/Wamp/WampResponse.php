@@ -20,7 +20,7 @@ class WampResponse implements Arrayable
     private $data;
 
     /**
-     * @param $json
+     * @param mixed|null $json
      * @return $this
      */
     public function withJson($json = null)

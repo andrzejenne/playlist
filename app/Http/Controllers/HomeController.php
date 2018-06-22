@@ -2,6 +2,8 @@
 
 namespace BBIT\Playlist\Http\Controllers;
 
+use Illuminate\View\View;
+
 /**
  * Class HomeController
  * @package BBIT\Playlist\Http\Controllers
@@ -21,7 +23,7 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function index()
     {

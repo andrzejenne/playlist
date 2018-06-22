@@ -83,7 +83,7 @@ class CloudController extends Controller
         $provider = $medium->provider->getService();
 
         if ($provider->canDelete()) {
-            $outDir = $this->mediaDiscovery->getMediumDir($provider, $medium, null);
+            $outDir = $this->mediaDiscovery->getMediumDir($provider, $medium);
             if (true === \File::deleteDirectory($outDir)) {
                 if (!\File::exists($outDir)) {
                     return $response->withJson($medium->delete());

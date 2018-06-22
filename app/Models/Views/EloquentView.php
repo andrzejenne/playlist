@@ -54,23 +54,13 @@ abstract class EloquentView
 
 
     /**
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param mixed $arguments
      * @return mixed
      */
     public function __call($name, $arguments)
     {
-//        $result = $this->getQuery()->{$name}(...$arguments);
-
         $result = $this->model->{$name}(...$arguments);
-
-//        if (in_array($name, self::$finishing)) {
-//            $this->finished = true;
-//
-//        }
-
-//        $this->mangle($result);
-
         return $result;
     }
 
@@ -80,8 +70,6 @@ abstract class EloquentView
     protected function getQuery()
     {
         if ($this->finished || !$this->query) {
-//            $this->query = $this->model->query();
-
             $this->finished = false;
 
             $this->onNewQuery($this->query);

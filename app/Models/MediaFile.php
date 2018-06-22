@@ -4,7 +4,25 @@ namespace BBIT\Playlist\Models;
 
 /**
  * Class MediaFile
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property int $media_id
+ * @property int $type_id
+ * @property string $filename
+ * @property int $size
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \BBIT\Playlist\Models\Medium $media
+ * @property-read \BBIT\Playlist\Models\MediaFileType $type
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaFile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaFile whereFilename($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaFile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaFile whereMediaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaFile whereSize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaFile whereTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaFile whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class MediaFile extends BaseModel
 {

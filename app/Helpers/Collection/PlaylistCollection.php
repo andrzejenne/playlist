@@ -17,6 +17,13 @@ use BBIT\Playlist\Models\Playlist;
 /**
  * Class PlaylistCollection
  * @package BBIT\Playlist\Helpers\Collection
+ * @method static PlaylistCollection whereCreatedAt($value)
+ * @method static PlaylistCollection whereDescription($value)
+ * @method static PlaylistCollection whereId($value)
+ * @method static PlaylistCollection whereName($value)
+ * @method static PlaylistCollection whereUpdatedAt($value)
+ * @method static PlaylistCollection whereUserId($value)
+ * @mixin Playlist
  */
 class PlaylistCollection extends AbstractCollection
 {
@@ -45,7 +52,7 @@ class PlaylistCollection extends AbstractCollection
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      * @throws \Exception
      */
     protected function getBuilder()
@@ -57,7 +64,7 @@ class PlaylistCollection extends AbstractCollection
                 Playlist::REL_MEDIA . '.' . Medium::REL_ALBUM,
                 Playlist::REL_MEDIA . '.' . Medium::REL_GENRE,
                 Playlist::REL_MEDIA . '.' . Medium::REL_ARTIST
-            ]);
+            ])->getQuery();
         }
 
         return parent::getBuilder();

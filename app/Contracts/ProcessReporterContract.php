@@ -72,9 +72,9 @@ abstract class ProcessReporterContract
         return $this->error;
     }
 
-    abstract function readOutput($line);
+    abstract function readOutput(string $line);
 
-    abstract function readErrorOutput($line);
+    abstract function readErrorOutput(string $line);
 
     abstract function finish();
 }

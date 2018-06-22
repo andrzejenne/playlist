@@ -40,13 +40,13 @@ class VimeoService extends MediaProviderContract
 
 
     /**
-     * @param $q
+     * @param string $q
      * @param int $perPage
-     * @param null $pageToken
+     * @param string|null $pageToken
      * @return MediaItemCollection
      * @throws \Exception
      */
-    public function search($q, $perPage = 16, $pageToken = null)
+    public function search(string $q, int $perPage = 16, string $pageToken = null)
     {
         if (!$pageToken) {
             $pageToken = 1;
@@ -116,7 +116,11 @@ class VimeoService extends MediaProviderContract
             . DIRECTORY_SEPARATOR . $sid[2] . $sid[3];
     }
 
-    public function getMediumOriginUrl($sid)
+    /**
+     * @param string $sid
+     * @return string
+     */
+    public function getMediumOriginUrl(string $sid)
     {
         return 'https://vimeo.com/' . $sid;
     }
@@ -132,13 +136,35 @@ class VimeoService extends MediaProviderContract
     }
 
     /**
-     * @param $results
-     * @param $prevPageToken
-     * @param $nextPageToken
+     * @param string $sid
+     * @param bool $immediately
+     * @return mixed
+     * @throws \Exception
+     */
+    public function info(string $sid, $immediately = true)
+    {
+        throw new \Exception('not implemented');
+    }
+
+    /**
+     * @param string $pathInLib
+     * @param string $libPath
+     * @return string
+     * @throws \Exception
+     */
+    public static function genSid(string $pathInLib, string $libPath) //, $dirInLib)
+    {
+        throw new \Exception('not implemented');
+    }
+
+    /**
+     * @param mixed[] $results
+     * @param string $prevPageToken
+     * @param string $nextPageToken
      * @return MediaItemCollection
      * @throws \Exception
      */
-    private function transformResults($results, $prevPageToken, $nextPageToken)
+    private function transformResults($results, string $prevPageToken, string $nextPageToken)
     {
         $collection = new MediaItemPaginatedCollection($prevPageToken, $nextPageToken, [], $this);
 
@@ -155,7 +181,7 @@ class VimeoService extends MediaProviderContract
                         !empty($result['description']) ? $result['description'] : '',
                         static::getClosestToWidth($result['pictures']['sizes'], $result['width']),
                         $result['link'],
-                        $result['duration']
+                        (int)$result['duration']
                     )
                 );
             }
@@ -165,9 +191,9 @@ class VimeoService extends MediaProviderContract
     }
 
     /**
-     * @param $links
-     * @param $width
-     * @return null
+     * @param mixed[] $links
+     * @param int $width
+     * @return string
      */
     private static function getClosestToWidth($links, $width)
     {
@@ -180,7 +206,12 @@ class VimeoService extends MediaProviderContract
             }
         }
 
-        return $closest['link'];
+        if ($closest) {
+            return $closest['link'];
+        }
+        else {
+            return '';
+        }
     }
 
 

@@ -33,10 +33,10 @@ class YouTubeDownloadProgressReporter extends YoutubeDLWampProcessReporterContra
 
 
     /**
-     * @param $buffer
+     * @param string $buffer
      * @throws \Exception
      */
-    public function readOutput($buffer)
+    public function readOutput(string $buffer)
     {
         $lines = explode("\n", $buffer);
 
@@ -79,9 +79,9 @@ class YouTubeDownloadProgressReporter extends YoutubeDLWampProcessReporterContra
     }
 
     /**
-     * @param $line
+     * @param string $line
      */
-    public function readErrorOutput($line)
+    public function readErrorOutput(string $line)
     {
         $this->reportEvent(static::EVENT_ERROR, ['line' => $line, 'url' => $this->getUrl()]);
     }

@@ -30,7 +30,7 @@ class WampClientService
     /** @var Client */
     private $client;
 
-    /** @var */
+    /** @var callable */
     private $onOpenCallback;
 
     /**
@@ -60,7 +60,10 @@ class WampClientService
     }
 
 
-    public function onOpen($callback) {
+    /**
+     * @param callable $callback
+     */
+    public function onOpen(callable $callback) {
         $this->onOpenCallback = $callback;
     }
 

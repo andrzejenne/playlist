@@ -79,11 +79,11 @@ class DownloadProcess
     }
 
     /**
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param mixed[] $arguments
      * @return mixed
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, $arguments)
     {
         return $this->proc->$name(...$arguments);
     }

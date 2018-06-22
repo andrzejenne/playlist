@@ -15,9 +15,9 @@ namespace BBIT\Playlist\Helpers;
 class Str extends \Illuminate\Support\Str
 {
     /**
-     * @param $stub
-     * @param $placeholder
-     * @param $content
+     * @param string $stub
+     * @param string $placeholder
+     * @param string $content
      * @return string
      */
     public static function replacePlaceholder($stub, $placeholder, $content)
@@ -25,6 +25,10 @@ class Str extends \Illuminate\Support\Str
         return Str::replaceFirst("%$placeholder", $content, $stub);
     }
 
+    /**
+     * @param string $size
+     * @return float|int
+     */
     public static function toBytes($size)
     {
         switch (substr($size, -1)) {
@@ -38,7 +42,7 @@ class Str extends \Illuminate\Support\Str
             case 'g':
                 return (int)$size * 1073741824;
             default:
-                return $size;
+                return (int)$size;
         }
     }
 }

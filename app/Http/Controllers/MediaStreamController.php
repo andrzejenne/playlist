@@ -11,6 +11,8 @@ namespace BBIT\Playlist\Http\Controllers;
 use BBIT\Playlist\Helpers\Str;
 use BBIT\Playlist\Services\MediaDiscoveryService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\ResponseFactory;
 
 /**
  * Class MediaStreamController
@@ -34,14 +36,14 @@ class MediaStreamController
 
 
     /**
-     * @param $id
-     * @param $fid
+     * @param string $id
+     * @param string $fid
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public function stream($id, $fid, Request $request)
+    public function stream(string $id, string $fid, Request $request)
     {
-        $path = $this->mediaDiscoveryService->getFilePath($id, $fid);
+        $path = $this->mediaDiscoveryService->getFilePath((int)$id, (int)$fid);
         if ($path) {
 //            echo $path;
             $type = \File::mimeType($path);
@@ -62,7 +64,7 @@ class MediaStreamController
                     $headers += ["Content-Range" => "bytes $start-$end/$size"];
 
                     if (strpos($range, ',') !== false) {
-                        return response(null, 416, $headers);
+                        return response('', 416, $headers);
                     }
 
                     $cEnd = $end;
@@ -88,7 +90,7 @@ class MediaStreamController
                     }
                     $cEnd = ($cEnd > $end) ? $end : $cEnd;
                     if ($cStart > $cEnd || $cStart > $end || $cEnd >= $size) {
-                        return response(null, 416, $headers);
+                        return response('', 416, $headers);
                     }
 
                     $length = $cEnd - $cStart + 1;
@@ -132,7 +134,10 @@ class MediaStreamController
 //                        'Expires' => gmdate('D, d M Y H:i:s', time() + 2592000) . ' GMT',
 //                        'Last-Modified' => gmdate('D, d M Y H:i:s', \File::lastModified($path)) . ' GMT',
 //                    ]);
-                    return response()->file($path);
+                    /** @var ResponseFactory $response */
+                    $response = response();
+
+                    return $response->file($path);
                 }
             } else {
                 return response('Unknown file type for ' . $path);

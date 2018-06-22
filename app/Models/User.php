@@ -15,7 +15,40 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
 /**
  * Class User
+ *
  * @package BBIT\Playlist\Models
+ * @method getEmail()
+ * @method getName()
+ * @method getAvatar()
+ * @property string $name
+ * @property string $avatar
+ * @property string $email
+ * @property string $token
+ * @property int $id
+ * @property string $password
+ * @property string|null $provider
+ * @property string|null $provider_id
+ * @property string|null $access_token
+ * @property string|null $remember_token
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $oauthAccessTokens
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\AuthCode[] $oauthAuthCodes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $oauthClients
+ * @property-read \Illuminate\Database\Eloquent\Collection|\BBIT\Playlist\Models\Playlist[] $playlists
+ * @property-read \Illuminate\Database\Eloquent\Collection|\BBIT\Playlist\Models\Search[] $searches
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\User whereAccessToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\User whereAvatar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\User whereProvider($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\User whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\User whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class User extends BaseModel implements
     AuthenticatableContract,

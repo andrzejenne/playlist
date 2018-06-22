@@ -13,7 +13,10 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class BaseModel
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @mixin \Eloquent
  */
 class BaseModel extends Model
 {

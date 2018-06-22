@@ -33,10 +33,10 @@ class Process
     /** @var array */
     private $fifo = [];
 
-    /** @var */
+    /** @var string|null */
     private $cwd;
 
-    /** @var */
+    /** @var mixed[] */
     private $env = [];
 
     /** @var resource */
@@ -48,7 +48,7 @@ class Process
     /** @var string */
     private $info;
 
-    /** @var string */
+    /** @var bool */
     private $executed;
 
     /** @var int */
@@ -59,7 +59,7 @@ class Process
 
     /**
      * Process constructor.
-     * @param $cmd
+     * @param string $cmd
      */
     public function __construct($cmd)
     {
@@ -67,7 +67,7 @@ class Process
     }
 
     /**
-     * @param $cmd
+     * @param string $cmd
      * @return Process
      */
     public static function prepare($cmd)
@@ -76,8 +76,8 @@ class Process
     }
 
     /**
-     * @param $cmdWithArgs
-     * @param null $cwd
+     * @param string $cmdWithArgs
+     * @param string|null $cwd
      * @return bool|Process
      */
     public static function run($cmdWithArgs, $cwd = null)
@@ -97,7 +97,7 @@ class Process
     }
 
     /**
-     * @param array ...$args
+     * @param string[] ...$args
      * @return Process
      * @throws \Exception
      */
@@ -141,7 +141,7 @@ class Process
     }
 
     /**
-     * @param $path
+     * @param string|null $path
      * @return Process
      */
     public function enableInput($path = null)
@@ -152,7 +152,7 @@ class Process
     }
 
     /**
-     * @param $path
+     * @param string|null $path
      * @return $this
      */
     public function enableOutput($path = null)
@@ -163,7 +163,7 @@ class Process
     }
 
     /**
-     * @param $path
+     * @param string|null $path
      * @param string $mode
      * @return $this
      */
@@ -175,10 +175,10 @@ class Process
     }
 
     /**
-     * @param $cwd
+     * @param string|null $cwd
      * @return $this
      */
-    public function setWorkingDir($cwd)
+    public function setWorkingDir(?string $cwd = null)
     {
         $this->cwd = $cwd;
 
@@ -245,11 +245,11 @@ class Process
     }
 
     /**
-     * @param $path
-     * @param $mode
+     * @param string|null $path
+     * @param string $mode
      * @return array
      */
-    private static function createDescriptor($path, $mode)
+    private static function createDescriptor(?string $path = null, string $mode)
     {
         if (!$path) {
             return ['pipe', $mode];

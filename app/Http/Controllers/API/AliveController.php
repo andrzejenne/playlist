@@ -8,6 +8,9 @@
 
 namespace BBIT\Playlist\Http\Controllers\API;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+
 
 /**
  * Class AliveController
@@ -16,24 +19,27 @@ namespace BBIT\Playlist\Http\Controllers\API;
 class AliveController extends Controller
 {
     /**
-     * @return bool
+     * @return JsonResponse
      */
-    public function alive() {
-        return response()->json(true);
+    public function alive()
+    {
+        return response()->json([
+            'status' => true
+        ]);
     }
 
     /**
-     * @return array
+     * @return JsonResponse
      */
-    public function discover() {
+    public function discover()
+    {
         $host = parse_url(
             config('app.url')
         );
 
         if ($host['scheme'] === 'https') {
             $defPort = 443;
-        }
-        else {
+        } else {
             $defPort = 80;
         }
 

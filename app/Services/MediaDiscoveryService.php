@@ -52,8 +52,8 @@ class MediaDiscoveryService
     }
 
     /**
-     * @param $id
-     * @param $fid
+     * @param int $id
+     * @param int $fid
      * @return string|null
      */
     public function getFilePath($id, $fid)
@@ -65,7 +65,7 @@ class MediaDiscoveryService
 
             /** @var MediaFile $file */
             $file = $medium->files()
-                ->whereId($fid)
+                ->where(MediaFile::COL_ID, '=', $fid)
                 ->first();
 
             if ($file instanceof MediaFile) {
@@ -97,17 +97,17 @@ class MediaDiscoveryService
     }
 
     /**
-     * @param $id
-     * @param $name
+     * @param string $sid
+     * @param string $name
      * @param MediaProviderContract $provider
      * @param MediaProvider $mediaProvider
      */
-    public function discoverMedia($id, $name, MediaProviderContract $provider, MediaProvider $mediaProvider)
+    public function discoverMedia($sid, $name, MediaProviderContract $provider, MediaProvider $mediaProvider)
     {
 
         /** @var Medium $medium */
         $medium = Medium::whereProviderId($mediaProvider->id)
-            ->whereProviderSid($id)
+            ->where(Medium::COL_PROVIDER_SID, '=', $sid)
             ->first();
 
         $duration = null;
@@ -116,7 +116,7 @@ class MediaDiscoveryService
             $medium = new Medium([
                 Medium::COL_NAME => $name,
 //                Medium::COL_DURATION => $duration,
-                Medium::COL_PROVIDER_SID => $id
+                Medium::COL_PROVIDER_SID => $sid
             ]);
             $medium->provider()
                 ->associate($mediaProvider);
@@ -195,12 +195,12 @@ class MediaDiscoveryService
     }
 
     /**
-     * @param $slug
+     * @param string $slug
      * @return MediaProvider
      *
      * @todo - MediaProvider Repository
      */
-    private function getMediaProvider($slug)
+    private function getMediaProvider(string $slug)
     {
         if (!isset($this->mediaProviderEntities[$slug])) {
             $this->mediaProviderEntities[$slug] = MediaProvider::whereSlug($slug)->first();

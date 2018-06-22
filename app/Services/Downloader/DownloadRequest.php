@@ -20,22 +20,25 @@ class DownloadRequest
 {
     /** @var MediaProviderContract  */
     private $provider;
+    /** @var string */
     private $sid;
+    /** @var string */
     private $type;
+    /** @var string */
     private $format;
 
     /**
      * DownloadRequest constructor.
      * @param MediaProviderContract $provider
-     * @param $sid
-     * @param $type
-     * @param $format
+     * @param string $sid
+     * @param string $type
+     * @param string $format
      */
     public function __construct(
         MediaProviderContract $provider,
-        $sid,
-        $type,
-        $format
+        string $sid,
+        string $type,
+        string $format
     ) {
         $this->provider = $provider;
         $this->sid = $sid;
@@ -45,16 +48,16 @@ class DownloadRequest
 
     /**
      * @param MediaProviderContract $provider
-     * @param $sid
-     * @param $type
-     * @param $format
+     * @param string $sid
+     * @param string $type
+     * @param string $format
      * @return static
      */
     public static function create(
         MediaProviderContract $provider,
-        $sid,
-        $type,
-        $format
+        string $sid,
+        string $type,
+        string $format
     ) {
         return new static($provider, $sid, $type, $format);
     }

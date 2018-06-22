@@ -4,7 +4,38 @@ namespace BBIT\Playlist\Models;
 
 /**
  * Class Medium
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property string $name
+ * @property int|null $artist_id
+ * @property int|null $album_id
+ * @property int|null $album_track
+ * @property int|null $genre_id
+ * @property \Carbon\Carbon $released
+ * @property float|null $duration
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property int $provider_id
+ * @property string $provider_sid
+ * @property-read \BBIT\Playlist\Models\Album|null $album
+ * @property-read \BBIT\Playlist\Models\Artist|null $artist
+ * @property-read \Illuminate\Database\Eloquent\Collection|\BBIT\Playlist\Models\MediaFile[] $files
+ * @property-read \BBIT\Playlist\Models\Genre|null $genre
+ * @property-read \BBIT\Playlist\Models\MediaProvider $provider
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereAlbumId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereAlbumTrack($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereArtistId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereDuration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereGenreId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereProviderSid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereReleased($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Medium whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Medium extends BaseModel
 {

@@ -1,2 +1,7 @@
 includes:
     - ../vendor/weebly/phpstan-laravel/extension.neon
+parameters:
+    ignoreErrors:
+        - '#Call to private method count\(\) of parent class\s*Illuminate\\Database\\Eloquent\\Relations\\Relation\.#'
+        - '#Call to private method where\(\) of parent class\s*Illuminate\\Database\\Eloquent\\Relations\\Relation\.#'
+        - '#should return \$this but returns new static\(\$args\)\.#'

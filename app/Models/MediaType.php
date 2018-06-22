@@ -4,7 +4,15 @@ namespace BBIT\Playlist\Models;
 
 /**
  * Class MediaType
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaType whereSlug($value)
+ * @mixin \Eloquent
  */
 class MediaType extends BaseModel
 {

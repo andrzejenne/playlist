@@ -41,10 +41,9 @@ class ScaffoldModelsCommand extends Command
 
     /**
      * ModelMakeCommand constructor.
-     * @param Filesystem $files
      * @param Connection $connection
      */
-    public function __construct(Filesystem $files, Connection $connection)
+    public function __construct(Connection $connection)
     {
         parent::__construct();
         $this->connection = $connection;
@@ -173,7 +172,7 @@ class ScaffoldModelsCommand extends Command
 
 
     /**
-     * @param $file
+     * @param string $file
      * @return mixed
      */
     private static function detectNamespace($file)

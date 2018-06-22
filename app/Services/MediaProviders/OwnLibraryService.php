@@ -24,12 +24,12 @@ class OwnLibraryService extends MediaProviderContract
     private $libs;
 
     /**
-     * @param $q
+     * @param string $q
      * @param int $perPage
-     * @param null $pageToken
+     * @param string|null $pageToken
      * @return array
      */
-    public function search($q, $perPage = 16, $pageToken = null)
+    public function search(string $q, int $perPage = 16, string $pageToken = null)
     {
         return [];
     }
@@ -69,11 +69,13 @@ class OwnLibraryService extends MediaProviderContract
         $libPath = rtrim($this->getLib($libHash), DIRECTORY_SEPARATOR);
 
         /** @var LibraryAlbum $libraryAlbum */
-        foreach ($medium->album->libraries as $libraryAlbum) {
-            if ($libraryAlbum->sid == $libHash) {
-                $possibleDir = $libPath . DIRECTORY_SEPARATOR . $libraryAlbum->path;
-                if (\File::exists($possibleDir)) {
-                    return $possibleDir;
+        if ($medium->album && $medium->album->libraries) {
+            foreach ($medium->album->libraries as $libraryAlbum) {
+                if ($libraryAlbum->sid == $libHash) {
+                    $possibleDir = $libPath . DIRECTORY_SEPARATOR . $libraryAlbum->path;
+                    if (\File::exists($possibleDir)) {
+                        return $possibleDir;
+                    }
                 }
             }
         }
@@ -102,31 +104,50 @@ class OwnLibraryService extends MediaProviderContract
     }
 
     /**
-     * @param $sid
+     * @param string $sid
      * @throws \Exception
      */
-    public function getMediumOriginUrl($sid)
+    public function getMediumOriginUrl(string $sid)
     {
         throw new \Exception('Own Library has no origin');
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function getBasePath()
+    {
+        throw new \Exception('Own Library has no base path');
+    }
 
     /**
-     * @param $pathInLib
-     * @param $libPath
+     * @param string $sid
+     * @param bool $immediately
+     * @return mixed
+     * @throws \Exception
+     */
+    public function info(string $sid, $immediately = true)
+    {
+        throw new \Exception('not implemented');
+    }
+
+
+    /**
+     * @param string $pathInLib
+     * @param string $libPath
      * @return string
      */
-    public static function genSid($pathInLib, $libPath) //, $dirInLib)
+    public static function genSid(string $pathInLib, string $libPath) //, $dirInLib)
     {
         return Str::substr(md5($pathInLib), 0, 6)
             . Str::substr(md5($libPath), 0, 6);
     }
 
     /**
-     * @param $md5
+     * @param string $md5
      * @return array|mixed|string
      */
-    private function getLib($md5)
+    private function getLib(string $md5)
     {
         if (!$this->libs) {
             $this->libs = [];

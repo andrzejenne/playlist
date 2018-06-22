@@ -4,10 +4,17 @@ namespace BBIT\Playlist\Http\Controllers\Auth;
 
 use BBIT\Playlist\Models\User;
 use BBIT\Playlist\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\View\View;
 
+/**
+ * Class RegisterController
+ * @package BBIT\Playlist\Http\Controllers\Auth
+ */
 class RegisterController extends Controller
 {
   /*
@@ -48,7 +55,7 @@ class RegisterController extends Controller
   /**
    * Show the application registration form.
    *
-   * @return \Illuminate\Http\Response
+   * @return RedirectResponse|View
    */
   public function showRegistrationForm()
   {
@@ -80,7 +87,7 @@ class RegisterController extends Controller
    * Create a new user instance after a valid registration.
    *
    * @param  array $data
-   * @return \BBIT\Playlist\Models\User
+   * @return \BBIT\Playlist\Models\User|Model
    */
   protected function create(array $data)
   {

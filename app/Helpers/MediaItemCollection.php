@@ -26,7 +26,7 @@ class MediaItemCollection implements Arrayable, \JsonSerializable
 
     /**
      * MediaListCollection constructor.
-     * @param $items
+     * @param mixed[] $items
      * @param MediaProviderContract $provider
      */
     public function __construct($items, MediaProviderContract $provider)

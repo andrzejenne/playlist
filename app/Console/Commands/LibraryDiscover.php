@@ -2,6 +2,7 @@
 
 namespace BBIT\Playlist\Console\Commands;
 
+use BBIT\Playlist\Contracts\MediaProviderContract;
 use BBIT\Playlist\Helpers\Str;
 use BBIT\Playlist\Models\Album;
 use BBIT\Playlist\Models\Artist;
@@ -15,8 +16,8 @@ use BBIT\Playlist\Providers\MediaLibraryProvider;
 use BBIT\Playlist\Services\CoversService;
 use BBIT\Playlist\Services\MediaProviders\OwnLibraryService;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Collection;
-use PharIo\Manifest\Library;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;
@@ -45,14 +46,14 @@ class LibraryDiscover extends Command
      */
     protected $description = 'Discovers media in library';
 
-    /** @var Collection|Album[] */
+    /** @var EloquentCollection|Collection|Album[] */
     private $albums;
-    /** @var Collection|Artist[] */
+    /** @var EloquentCollection|Collection|Artist[] */
     private $artists;
-    /** @var Collection|Genre[] */
+    /** @var EloquentCollection|Collection|Genre[] */
     private $genres;
 
-    /** @var OwnLibraryService */
+    /** @var MediaProviderContract */
     private $provider;
 
     /**
@@ -94,7 +95,6 @@ class LibraryDiscover extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
      * @throws \getid3_exception
      */
     public function handle()
@@ -220,8 +220,8 @@ class LibraryDiscover extends Command
     }
 
     /**
-     * @param $path
-     * @param $ext
+     * @param string $path
+     * @param string[] $ext
      * @return array
      */
     private function getMediaInPath($path, $ext)
@@ -241,7 +241,7 @@ class LibraryDiscover extends Command
     }
 
     /**
-     * @param $file
+     * @param mixed $file
      * @param getID3 $id3
      * @return array
      */
@@ -278,10 +278,6 @@ class LibraryDiscover extends Command
         $dirInLib = Str::substr($filePath, Str::length($file[0]) + 1);
         $pathInLib = $dirInLib . DIRECTORY_SEPARATOR . $filename;
 
-        if (!isset($dir[$album])) {
-            $dir[$album] = [];
-        }
-
         return [
             'name' => $name,
             'artist' => $artist,
@@ -302,29 +298,27 @@ class LibraryDiscover extends Command
     }
 
     /**
-     * @param $fileData
-     * @param $albumName
+     * @param mixed $fileData
+     * @param string $albumName
      * @param bool $isFolderAlbum
      * @throws \Exception
      */
     private function importMedia($fileData, $albumName, $isFolderAlbum = false)
     {
-        /** @var $genre */
-        /** @var $artist */
-        /** @var $album */
-        /** @var $year */
-        /** @var $thumbnail */
-        /** @var $pathInLib */
-        /** @var $file */
-        /** @var $dirInLib */
-        /** @var $duration */
-        /** @var $name */
-        /** @var $track */
-        /** @var $filename */
-        /** @var $filePath */
-        /** @var $filenamepath */
-        /** @var $mimeType */
-        extract($fileData);
+        $genre = $fileData['genre'];
+        $artist = $fileData['artist'];
+        $year = $fileData['year'];
+        $pathInLib = $fileData['pathInLib'];
+        $thumbnail = $fileData['thumbnail'];
+        $file = $fileData['file'];
+        $dirInLib = $fileData['dirInLib'];
+        $duration = $fileData['duration'];
+        $name = $fileData['name'];
+        $track = $fileData['track'];
+        $filename = $fileData['filename'];
+        $filePath = $fileData['filePath'];
+        $filenamepath = $fileData['filenamepath'];
+        $mimeType = $fileData['mimeType'];
 
         if ($genre) {
             $lGenre = Str::lower($genre);
@@ -469,29 +463,29 @@ class LibraryDiscover extends Command
             }
         }
 
-        if (isset($thumbInLib) && isset($thumbPath) && isset($coverFilename)) {
-            $thumb = $files->filter(function (MediaFile $file) {
-                return $file->type->slug === 'thumbnail';
-            })->first();
-
-            if (!$thumb) {
-                /** @var MediaFile $file */
-                $file = $medium->files()->make([
-                    'filename' => $coverFilename,
-                    'size' => \File::size($thumbPath),
-                ]);
-                $mediaFileType = $this->getMediaFileType('thumbnail');
-
-                $file->type()->associate($mediaFileType);
-                $file->save();
-
-                $files->push($file);
-            }
-        }
+//        if (isset($thumbInLib) && isset($thumbPath) && isset($coverFilename)) {
+//            $thumb = $files->filter(function (MediaFile $file) {
+//                return $file->type->slug === 'thumbnail';
+//            })->first();
+//
+//            if (!$thumb) {
+//                /** @var MediaFile $file */
+//                $file = $medium->files()->make([
+//                    'filename' => $coverFilename,
+//                    'size' => \File::size($thumbPath),
+//                ]);
+//                $mediaFileType = $this->getMediaFileType('thumbnail');
+//
+//                $file->type()->associate($mediaFileType);
+//                $file->save();
+//
+//                $files->push($file);
+//            }
+//        }
     }
 
     /**
-     * @param $mime
+     * @param string $mime
      * @todo - repo
      * @return MediaFileType
      */
@@ -507,7 +501,7 @@ class LibraryDiscover extends Command
             list($type,) = explode('/', $mime);
         }
 
-        if (!isset($this->mediaFileTypes[$type])) {
+        if (!isset($this->mediaFileType[$type])) {
             $this->mediaFileType[$type] = MediaFileType::whereSlug($type)->first();
         }
 
@@ -515,9 +509,9 @@ class LibraryDiscover extends Command
     }
 
     /**
-     * @param $key
-     * @param $analyze
-     * @return string
+     * @param string $key
+     * @param mixed $analyze
+     * @return string|null
      */
     private static function getID3String($key, $analyze)
     {
@@ -529,7 +523,7 @@ class LibraryDiscover extends Command
     }
 
     /**
-     * @param $type
+     * @param string $type
      * @return null|string
      */
     private static function getExtFromMime($type)

@@ -38,13 +38,13 @@ class YouTubeService extends MediaProviderContract
 
 
     /**
-     * @param $q
+     * @param string $q
      * @param int $perPage
-     * @param null $pageToken
+     * @param string|null $pageToken
      * @return MediaItemCollection
      * @throws \Exception
      */
-    public function search($q, $perPage = 16, $pageToken = null)
+    public function search(string $q, int $perPage = 16, string $pageToken = null)
     {
         $args = ['q' => $q, 'part' => 'id', 'maxResults' => $perPage, 'type' => 'video'];
         if ($pageToken) {
@@ -114,10 +114,10 @@ class YouTubeService extends MediaProviderContract
     }
 
     /**
-     * @param $sid
+     * @param string $sid
      * @return string
      */
-    public function getMediumOriginUrl($sid)
+    public function getMediumOriginUrl(string $sid)
     {
         return 'https://youtube.com/watch?v=' . $sid;
     }
@@ -134,11 +134,11 @@ class YouTubeService extends MediaProviderContract
     }
 
     /**
-     * @param $sid
+     * @param string $sid
      * @param bool $immediately
      * @return mixed
      */
-    public function info($sid, $immediately = true)
+    public function info(string $sid, $immediately = true)
     {
         $info = \Cache::get('info.youtube.' . $sid);
         if (!$info && $immediately) {
@@ -155,10 +155,21 @@ class YouTubeService extends MediaProviderContract
         return $info;
     }
 
+    /**
+     * @param string $pathInLib
+     * @param string $libPath
+     * @return string
+     * @throws \Exception
+     */
+    public static function genSid(string $pathInLib, string $libPath) //, $dirInLib)
+    {
+        throw new \Exception('not implemented');
+    }
+
 
     /**
-     * @param $results
-     * @return \StdClass
+     * @param mixed $results
+     * @return \stdClass
      * @throws \Exception
      */
     private function getDetails($results)
@@ -179,7 +190,7 @@ class YouTubeService extends MediaProviderContract
         }
 
         if (count($ids)) {
-            $retrieved = $this->service->getVideoInfo($ids);
+            $retrieved = (array)$this->service->getVideoInfo($ids);
             foreach ($retrieved as $item) {
                 \Cache::forever('info.youtube.' . $item->id, $item);
             }
@@ -189,13 +200,13 @@ class YouTubeService extends MediaProviderContract
     }
 
     /**
-     * @param $results
-     * @param $prevPageToken
-     * @param $nextPageToken
+     * @param mixed $results
+     * @param string $prevPageToken
+     * @param string $nextPageToken
      * @return MediaItemCollection
      * @throws \Exception
      */
-    private function transformResults($results, $prevPageToken, $nextPageToken)
+    private function transformResults($results, string $prevPageToken, string $nextPageToken)
     {
         $collection = new MediaItemPaginatedCollection($prevPageToken, $nextPageToken, [], $this);
 
@@ -224,7 +235,7 @@ class YouTubeService extends MediaProviderContract
     }
 
     /**
-     * @param $duration
+     * @param string $duration
      * @return float|int
      * @throws \Exception
      */

@@ -4,7 +4,14 @@ namespace BBIT\Playlist\Models;
 
 /**
  * Class CoverType
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property string $slug
+ * @property-read \Illuminate\Database\Eloquent\Collection|\BBIT\Playlist\Models\Cover[] $covers
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\CoverType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\CoverType whereSlug($value)
+ * @mixin \Eloquent
  */
 class CoverType extends BaseModel
 {

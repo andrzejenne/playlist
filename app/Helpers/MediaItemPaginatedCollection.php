@@ -24,9 +24,9 @@ class MediaItemPaginatedCollection extends MediaItemCollection
 
     /**
      * MediaListCollection constructor.
-     * @param $next
-     * @param $prev
-     * @param $items
+     * @param mixed $next
+     * @param mixed $prev
+     * @param mixed[] $items
      * @param MediaProviderContract $provider
      */
     public function __construct($prev, $next, $items, MediaProviderContract $provider)

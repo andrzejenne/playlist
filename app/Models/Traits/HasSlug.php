@@ -16,7 +16,7 @@ namespace BBIT\Playlist\Models\Traits;
 trait HasSlug
 {
     /**
-     * @param $slug
+     * @param string $slug
      * @return mixed
      */
     public static function getBySlug($slug)

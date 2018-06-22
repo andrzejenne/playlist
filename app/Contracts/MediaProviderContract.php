@@ -24,7 +24,7 @@ abstract class MediaProviderContract
 
     abstract public function getSlug();
 
-    abstract public function search($q, $perPage = 24, $pageToken = null);
+    abstract public function search(string $q, int $perPage = 24, string $pageToken = null);
 
     public final function getConfig()
     {
@@ -45,7 +45,13 @@ abstract class MediaProviderContract
 
     abstract public function getOutDir(string $sid);
 
-    abstract public function getMediumOriginUrl($sid);
+    abstract public function getMediumOriginUrl(string $sid);
+
+    abstract public function getBasePath();
+
+    abstract public function info(string $sid, $immediately = true);
+
+    abstract public static function genSid(string $pathInLib, string $libPath);
 
     /**
      * @return mixed

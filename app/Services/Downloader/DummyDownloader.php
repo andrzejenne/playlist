@@ -40,11 +40,11 @@ class DummyDownloader extends DownloaderContract
     }
 
     /**
-     * @param $url
-     * @param $sid
+     * @param string $url
+     * @param string $sid
      * @return string
      */
-    public function getName($url, $sid) {
+    public function getName(string $url, string $sid) {
         return 'dummy.mkv';
     }
 
@@ -58,12 +58,12 @@ class DummyDownloader extends DownloaderContract
 
 
     /**
-     * @param $url
-     * @param $sid
-     * @param $outDir
+     * @param string $url
+     * @param string $sid
+     * @param string $outDir
      * @return Process
      */
-    public function download($url, $sid, $outDir)
+    public function download(string $url, string $sid, string $outDir)
     {
         if ($this->reporter) {
             $this->reporter->restart();
@@ -79,34 +79,34 @@ class DummyDownloader extends DownloaderContract
     }
 
     /**
-     * @param $url
-     * @param $sid
-     * @param $outDir
+     * @param string $url
+     * @param string $sid
+     * @param string $outDir
      * @param string $format
      * @return string
      * @throws \Exception
      */
-    public function downloadAudio($url, $sid, $outDir, $format = 'mp3')
+    public function downloadAudio(string $url, string $sid, string $outDir, string $format = 'mp3')
     {
         throw new \Exception('not implemented');
     }
 
     /**
-     * @param $url
-     * @param $sid
+     * @param string $url
+     * @param string $sid
      * @return Collection
      */
-    public function getVideos($url, $sid)
+    public function getVideos(string $url, string $sid)
     {
         return Collection::make([]);
     }
 
     /**
-     * @param $url
-     * @param $sid
+     * @param string $url
+     * @param string $sid
      * @return Collection
      */
-    public function getAudios($url, $sid)
+    public function getAudios(string $url, string $sid)
     {
         return Collection::make([]);
     }
@@ -122,10 +122,10 @@ class DummyDownloader extends DownloaderContract
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @return null|string
      */
-    public function getOutDir($id)
+    public function getOutDir(string $id)
     {
         return null;
     }

@@ -51,12 +51,12 @@ class CoversController
 
 
     /**
-     * @param $cid
+     * @param string $cid
      * @param Request $request
-     * @return bool|string
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function get($cid, Request $request)
+    public function get(string $cid, Request $request)
     {
         $cover = Cover::whereId($cid)->first();
         if (!$cover) {
@@ -76,13 +76,13 @@ class CoversController
     }
 
     /**
-     * @param $mid
-     * @param $fid
+     * @param string $mid
+     * @param string $fid
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function getThumbnail($mid, $fid, Request $request)
+    public function getThumbnail(string $mid, string $fid, Request $request)
     {
         $medium = Medium::whereId($mid)->first();
         if (!$medium) {
@@ -97,9 +97,9 @@ class CoversController
             return response('Thumbnail not found', 404);
         }
 
-        $path = $this->discoverService->getFilePath($mid, $fid);
+        $path = $this->discoverService->getFilePath((int)$mid, (int)$fid);
 
-        if (\File::exists($path)) {
+        if ($path && \File::exists($path)) {
             return $this->imageRequestProcessor->process($path, $request);
 //            return response(\File::get($path), 200, $this->getHeadersForPath($path));
         }

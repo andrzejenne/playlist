@@ -36,7 +36,7 @@ class GenreCollection extends AbstractCollection
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      * @throws \Exception
      */
     protected function getBuilder()
@@ -45,7 +45,9 @@ class GenreCollection extends AbstractCollection
             $this->builder = Genre::with([
 //                Genre::REL_MEDIA . '.' . Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
                 Genre::REL_ALBUMS
-            ])->orderBy(Genre::COL_NAME, 'ASC');
+            ])
+                ->getQuery()
+                ->orderBy(Genre::COL_NAME, 'ASC');
         }
 
         return parent::getBuilder();

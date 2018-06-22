@@ -2,6 +2,8 @@
 
 namespace BBIT\Playlist\Http\Controllers;
 
+use Illuminate\View\View;
+
 /**
  * Class PlaylistController
  * @package BBIT\Playlist\Http\Controllers
@@ -12,7 +14,7 @@ class PlaylistController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function index()
     {

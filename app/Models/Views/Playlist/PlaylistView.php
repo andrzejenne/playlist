@@ -12,7 +12,6 @@ namespace BBIT\Playlist\Models\Views\Playlist;
 use BBIT\Playlist\Models\BaseModel;
 use BBIT\Playlist\Models\Playlist;
 use BBIT\Playlist\Models\Views\EloquentView;
-use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class PlaylistView
@@ -39,7 +38,7 @@ class PlaylistView extends EloquentView
     {
         parent::mangleRecord($record);
 
-        $record->append(Playlist::A_COUNT, Playlist::A_DURATION);
+        $record->append([Playlist::A_COUNT, Playlist::A_DURATION]);
     }
 //
 //    /**

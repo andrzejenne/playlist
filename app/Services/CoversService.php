@@ -31,14 +31,14 @@ class CoversService
 
     /**
      * @param Album $album
-     * @param $data
+     * @param string $data
      * @param string $type
      * @param string $ext
      * @param bool $overwrite
      * @return Cover
      * @throws \Exception
      */
-    public function setCover(Album $album, $data, $type = 'front', $ext = 'jpg', $overwrite = false)
+    public function setCover(Album $album, string $data, $type = 'front', $ext = 'jpg', $overwrite = false)
     {
         $cover = $album->covers()
             ->get()
@@ -98,10 +98,10 @@ class CoversService
     /**
      * @param Album $album
      * @param CoverType $type
-     * @param $ext
+     * @param string $ext
      * @return string
      */
-    private function getCoverFileName(Album $album, CoverType $type, $ext)
+    private function getCoverFileName(Album $album, CoverType $type, string $ext)
     {
         return $album->id . '-' . $type->slug . '.' . $ext;
     }

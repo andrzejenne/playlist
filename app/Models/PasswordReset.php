@@ -4,7 +4,15 @@ namespace BBIT\Playlist\Models;
 
 /**
  * Class PasswordReset
+ *
  * @package BBIT\Playlist\Models
+ * @property string $email
+ * @property string $token
+ * @property \Carbon\Carbon|null $created_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\PasswordReset whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\PasswordReset whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\PasswordReset whereToken($value)
+ * @mixin \Eloquent
  */
 class PasswordReset extends BaseModel
 {

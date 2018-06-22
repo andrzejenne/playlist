@@ -40,39 +40,39 @@ abstract class DownloaderContract
      * @param string $url
      * @param string $sid
      * @param string $outDir
-     * @return Process
+     * @return Process|null
      */
-    abstract public function download($url, $sid, $outDir);
+    abstract public function download(string $url, string $sid, string $outDir);
 
     /**
      * @param string $url
      * @param string $sid
      * @param string $outDir
      * @param string $format
-     * @return string
+     * @return Process|null
      */
-    abstract public function downloadAudio($url, $sid, $outDir, $format = 'mp3');
+    abstract public function downloadAudio(string $url, string $sid, string $outDir, string $format = 'mp3');
 
     /**
      * @param string $url
      * @param string $sid
      * @return Collection
      */
-    abstract public function getVideos($url, $sid);
+    abstract public function getVideos(string $url, string $sid);
 
     /**
      * @param string $url
      * @param string $sid
      * @return Collection
      */
-    abstract public function getAudios($url, $sid);
+    abstract public function getAudios(string $url, string $sid);
 
     /**
      * @param string $url
      * @param string $sid
      * @return string
      */
-    abstract public function getName($url, $sid);
+    abstract public function getName(string $url, string $sid);
 
     /**
      * @return void
@@ -88,7 +88,8 @@ abstract class DownloaderContract
     /**
      * @return MediaProviderContract
      */
-    final public function getProvider() {
+    final public function getProvider()
+    {
         if (!$this->provider) {
             $this->provider = $this->libraryProvider->getService($this->getProviderSlug());
         }
@@ -105,11 +106,10 @@ abstract class DownloaderContract
     {
         $callback = null;
         if ($reporter) {
-            $callback = function($type, $buffer) use ($reporter) {
+            $callback = function ($type, $buffer) use ($reporter) {
                 if (Process::ERR == $type) {
                     $reporter->readErrorOutput($buffer);
-                }
-                else {
+                } else {
                     $reporter->readOutput($buffer);
                 }
             };

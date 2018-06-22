@@ -8,7 +8,15 @@ use BBIT\Playlist\Providers\MediaLibraryProvider;
 
 /**
  * Class MediaProvider
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaProvider whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaProvider whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaProvider whereSlug($value)
+ * @mixin \Eloquent
  */
 class MediaProvider extends BaseModel
 {

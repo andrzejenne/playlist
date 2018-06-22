@@ -23,11 +23,11 @@ class VimeoDownloader extends YouTubeDownloader
 {
 
     /**
-     * @param $url
-     * @param $sid
+     * @param string $url
+     * @param string $sid
      * @return string
      */
-    public function getName($url, $sid)
+    public function getName(string $url, string $sid)
     {
         $info = $this->getInfo($url, $sid);
 

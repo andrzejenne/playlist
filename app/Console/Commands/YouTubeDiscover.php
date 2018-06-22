@@ -2,26 +2,18 @@
 
 namespace BBIT\Playlist\Console\Commands;
 
-use BBIT\Playlist\Helpers\Str;
-use BBIT\Playlist\Models\Album;
-use BBIT\Playlist\Models\Artist;
-use BBIT\Playlist\Models\Genre;
-use BBIT\Playlist\Models\MediaFile;
-use BBIT\Playlist\Models\MediaFileType;
+use BBIT\Playlist\Contracts\MediaProviderContract;
 use BBIT\Playlist\Models\MediaProvider;
 use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Providers\MediaLibraryProvider;
 use BBIT\Playlist\Services\MediaDiscoveryService;
-use BBIT\Playlist\Services\MediaProviders\OwnLibraryService;
-use BBIT\Playlist\Services\MediaProviders\YouTubeService;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;
 use RegexIterator;
-use getID3;
-use getid3_lib;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -44,7 +36,7 @@ class YouTubeDiscover extends Command
      */
     protected $description = 'Discovers media in youtube library';
 
-    /** @var YouTubeService */
+    /** @var MediaProviderContract */
     private $provider;
 
     /**
@@ -58,14 +50,10 @@ class YouTubeDiscover extends Command
     private $libraryProvider;
 
     /**
-     * @var Collection|Medium[]
+     * @var EloquentCollection|Collection|Medium[]
      */
     private $media;
 
-    /**
-     * @var MediaFileType[];
-     */
-    private $mediaFileType;
     /**
      * @var MediaDiscoveryService
      */
@@ -86,8 +74,6 @@ class YouTubeDiscover extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return mixed
      */
     public function handle()
     {
@@ -103,7 +89,7 @@ class YouTubeDiscover extends Command
             return;
         }
 
-        $this->providerEntity = MediaProvider::whereSlug($this->provider->getName())->first();
+        $this->providerEntity = MediaProvider::whereSlug($this->provider->getSlug())->first();
 
         if (!$this->provider) {
             $this->error('ProviderEntity `youtube` not found');
@@ -132,12 +118,11 @@ class YouTubeDiscover extends Command
         $ui->progressFinish();
 
         $this->info('Finished');
-
     }
 
     /**
-     * @param $path
-     * @param $ext
+     * @param string $path
+     * @param string[] $ext
      * @return array
      */
     private function getMediaInPath($path, $ext)
@@ -157,7 +142,7 @@ class YouTubeDiscover extends Command
     }
 
     /**
-     * @param $file
+     * @param mixed $file
      */
     private function identifyMedia($file)
     {

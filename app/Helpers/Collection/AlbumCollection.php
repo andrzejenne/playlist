@@ -35,7 +35,7 @@ class AlbumCollection extends AbstractCollection
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      * @throws \Exception
      */
     protected function getBuilder()
@@ -45,7 +45,9 @@ class AlbumCollection extends AbstractCollection
 //                Album::REL_MEDIA . '.' . Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
                 Album::REL_GENRE,
                 Album::REL_ARTIST
-            ])->orderBy(Album::COL_NAME, 'ASC');
+            ])
+                ->getQuery()
+                ->orderBy(Album::COL_NAME, 'ASC');
         }
 
         return parent::getBuilder();

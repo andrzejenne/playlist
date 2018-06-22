@@ -4,7 +4,18 @@ namespace BBIT\Playlist\Models;
 
 /**
  * Class LibraryAlbum
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property string $sid
+ * @property string $path
+ * @property int|null $album_id
+ * @property-read \BBIT\Playlist\Models\Album|null $album
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\LibraryAlbum whereAlbumId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\LibraryAlbum whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\LibraryAlbum wherePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\LibraryAlbum whereSid($value)
+ * @mixin \Eloquent
  */
 class LibraryAlbum extends BaseModel
 {

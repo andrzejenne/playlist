@@ -10,12 +10,16 @@ namespace BBIT\Playlist\Helpers\Collection;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
 
 
 /**
  * Class AbstractCollection
  * @package BBIT\Playlist\Helpers\Collection
+ * @method \Eloquent first()
+ * @method AbstractCollection orderBy($arg1, $arg2)
+ * @mixin \Eloquent
  */
 abstract class AbstractCollection implements Arrayable
 {
@@ -23,7 +27,7 @@ abstract class AbstractCollection implements Arrayable
 
     protected $limit = 100;
 
-    /** @var Builder */
+    /** @var Builder|EloquentBuilder */
     protected $builder;
 
     protected $search;
@@ -38,7 +42,7 @@ abstract class AbstractCollection implements Arrayable
 
     /**
      * MediaCollection constructor.
-     * @param $args
+     * @param mixed[] $args
      */
     public function __construct(array $args)
     {
@@ -48,7 +52,7 @@ abstract class AbstractCollection implements Arrayable
     }
 
     /**
-     * @param $args
+     * @param mixed $args
      * @return $this
      */
     public static function create($args)
@@ -85,7 +89,7 @@ abstract class AbstractCollection implements Arrayable
     }
 
     /**
-     * @return LengthAwarePaginator|Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @return array|LengthAwarePaginator|EloquentBuilder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection
      * @throws \Exception
      */
     public function toArray()
@@ -100,7 +104,7 @@ abstract class AbstractCollection implements Arrayable
 
     /**
      * @param array $columns
-     * @return array|Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @return array|EloquentBuilder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection
      * @throws \Exception
      */
     public function get($columns = ['*']) {
@@ -114,8 +118,8 @@ abstract class AbstractCollection implements Arrayable
     }
 
     /**
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param mixed[] $arguments
      * @return $this|mixed
      * @throws \Exception
      */
@@ -131,7 +135,7 @@ abstract class AbstractCollection implements Arrayable
     }
 
     /**
-     * @return Builder
+     * @return Builder|EloquentBuilder
      * @throws \Exception
      */
     protected function getBuilder()

@@ -19,21 +19,21 @@ use BBIT\Playlist\Helpers\Process;
 class InfoController
 {
     /**
-     * @param $sid
+     * @param string $sid
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    public function info($sid)
+    public function info(string $sid)
     {
         return response()->json(['message' => static::getInfo($sid)]);
     }
 
     /**
-     * @param $sid
+     * @param string $sid
      * @return mixed
      * @throws \Exception
      */
-    public static function getInfo($sid)
+    public static function getInfo(string $sid)
     {
         try {
             $cmd = Process::prepare('youtube-dl')

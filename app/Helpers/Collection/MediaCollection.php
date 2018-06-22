@@ -13,10 +13,23 @@ use BBIT\Playlist\Models\Artist;
 use BBIT\Playlist\Models\MediaFile;
 use BBIT\Playlist\Models\MediaProvider;
 use BBIT\Playlist\Models\Medium;
+use Illuminate\Database\Query\Builder;
 
 /**
  * Class MediaCollection
  * @package BBIT\Playlist\Helpers\Collection
+ * @method static MediaCollection whereAlbumId($value)
+ * @method static MediaCollection whereAlbumTrack($value)
+ * @method static MediaCollection whereArtistId($value)
+ * @method static MediaCollection whereCreatedAt($value)
+ * @method static MediaCollection whereDuration($value)
+ * @method static MediaCollection whereGenreId($value)
+ * @method static MediaCollection whereId($value)
+ * @method static MediaCollection whereName($value)
+ * @method static MediaCollection whereProviderId($value)
+ * @method static MediaCollection whereProviderSid($value)
+ * @method static MediaCollection whereReleased($value)
+ * @method static MediaCollection whereUpdatedAt($value)
  */
 class MediaCollection extends AbstractCollection
 {
@@ -25,7 +38,7 @@ class MediaCollection extends AbstractCollection
 
     /**
      * MediaCollection constructor.
-     * @param $args
+     * @param mixed[] $args
      */
     public function __construct(array $args)
     {
@@ -73,19 +86,22 @@ class MediaCollection extends AbstractCollection
     }
 
     /**
-     * @param $sid
+     * @param string $sid
      * @return Medium|null
      * @throws \Exception
      */
     public function find($sid)
     {
-        return $this->getBuilder()
-            ->whereProviderSid($sid)
+        /** @var Medium $result */
+        $result = $this->getBuilder()
+            ->where(Medium::COL_PROVIDER_SID, '=', $sid)
             ->first();
+
+        return $result;
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder|Builder
      * @throws \Exception
      */
     protected function getBuilder()
@@ -97,7 +113,7 @@ class MediaCollection extends AbstractCollection
                 Medium::REL_ALBUM,
                 Medium::REL_GENRE,
                 Medium::REL_ARTIST
-            ]);
+            ])->getQuery();
         }
 
         return parent::getBuilder();

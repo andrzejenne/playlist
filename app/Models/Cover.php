@@ -4,7 +4,17 @@ namespace BBIT\Playlist\Models;
 
 /**
  * Class Cover
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property int $album_id
+ * @property int $cover_type_id
+ * @property-read \BBIT\Playlist\Models\Album $album
+ * @property-read \BBIT\Playlist\Models\CoverType $type
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Cover whereAlbumId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Cover whereCoverTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Cover whereId($value)
+ * @mixin \Eloquent
  */
 class Cover extends BaseModel
 {

@@ -15,7 +15,6 @@ return [
     'downloaders' => [
         'youtube' => \BBIT\Playlist\Service\Downloader\YouTubeDownloader::class,
         'vimeo' => \BBIT\Playlist\Service\Downloader\VimeoDownloader::class
-//    'youtube' => \BBIT\Playlist\Service\Downloader\DummyDownloader::class
     ],
 
     'covers' => [

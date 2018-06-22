@@ -72,7 +72,7 @@
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover"
         ],
-        "stan": "phpstan analyse app --level 7"
+        "stan": "phpstan analyse app --level 7 -c tests/phpstan.neon"
     },
     "config": {
         "preferred-install": "dist",

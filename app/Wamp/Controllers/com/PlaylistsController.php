@@ -36,6 +36,7 @@ class PlaylistsController extends Controller
      * @param WampRequest $request
      * @param WampResponse $response
      * @return WampResponse
+     * @throws \Exception
      */
     public function list(WampRequest $request, WampResponse $response)
     {
@@ -56,13 +57,15 @@ class PlaylistsController extends Controller
      */
     public function media(WampRequest $request, WampResponse $response)
     {
+        /** @var Playlist $playlist */
+        $playlist = PlaylistCollection::create($request->getArguments())
+            ->whereId(
+                $request->getArgument('pid')
+            )
+            ->first();
+
         return $response->withJson(
-            PlaylistCollection::create($request->getArguments())
-                ->whereId(
-                    $request->getArgument('pid')
-                )
-                ->first()
-                ->media()
+                $playlist->media()
                 ->get()
         );
 
@@ -121,6 +124,7 @@ class PlaylistsController extends Controller
      * @param WampRequest $request
      * @param WampResponse $response
      * @return WampResponse
+     * @throws \Exception
      */
     public function addMedium(WampRequest $request, WampResponse $response)
     {
@@ -132,7 +136,7 @@ class PlaylistsController extends Controller
             ->attach(
                 $request->getArgument('mid'),
                 [
-                    'ordering' => isset($args[0]->ordering) ? $request->getArgument('ordering') : 0
+                    'ordering' => $request->hasArgument('ordering') ? $request->getArgument('ordering') : 0
                 ]);
 
         return $response->withJson(
@@ -140,7 +144,6 @@ class PlaylistsController extends Controller
                 ->whereId(
                     $request->getArgument('mid')
                 )
-                ->get()
                 ->first()
         );
         // @todo - reorder

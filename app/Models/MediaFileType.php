@@ -6,7 +6,13 @@ use BBIT\Playlist\Models\Traits\HasSlug;
 
 /**
  * Class MediaFileType
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property string $slug
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaFileType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\MediaFileType whereSlug($value)
+ * @mixin \Eloquent
  */
 class MediaFileType extends BaseModel
 {

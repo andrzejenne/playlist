@@ -28,22 +28,14 @@ class YoutubeDownloadController
     ];
 
     /**
-     * @param $sid
+     * @param string $sid
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    public function download($sid)
+    public function download(string $sid)
     {
         // @todo - to command
-//        try {
-//            $response = $this->call('service:download', ['sid' => $sid]);
-//
-//            return response()->json(['message' => 'downloaded', 'report' => $response]);
-//        }
-//        catch (\Throwable $t) {
-//            return response()->json(['error' => true, 'message' => $t->getMessage()]);
-//        }
-//
+
         $info = InfoController::getInfo($sid);
         if ($info) {
             $collection = collect($info['formats']);
@@ -76,9 +68,7 @@ class YoutubeDownloadController
                 $lines = [];
                 $cmd = Process::prepare('youtube-dl')
                     ->enableErrorOutput()
-                    ->enableOutput(null, function($line) use (&$lines) {
-                        $lines[] = $line;
-                    })
+                    ->enableOutput()
                     ->setWorkingDir(storage_path('temp'))
                     ->execute($arg);
 

@@ -20,8 +20,8 @@ class WampRequest
 
     /**
      * WampRequest constructor.
-     * @param $args
-     * @param $argsKW
+     * @param mixed $args
+     * @param mixed $argsKW
      */
     public function __construct($args, $argsKW)
     {

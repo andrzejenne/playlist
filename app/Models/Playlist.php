@@ -4,7 +4,25 @@ namespace BBIT\Playlist\Models;
 
 /**
  * Class Playlist
+ *
  * @package BBIT\Playlist\Models
+ * @property int $id
+ * @property int $user_id
+ * @property string $name
+ * @property string|null $description
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read mixed $count
+ * @property-read mixed $duration
+ * @property-read \Illuminate\Database\Eloquent\Collection|\BBIT\Playlist\Models\Medium[] $media
+ * @property-read \BBIT\Playlist\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Playlist whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Playlist whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Playlist whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Playlist whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Playlist whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\BBIT\Playlist\Models\Playlist whereUserId($value)
+ * @mixin \Eloquent
  */
 class Playlist extends BaseModel
 {

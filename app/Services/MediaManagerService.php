@@ -18,6 +18,7 @@ use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Providers\MediaLibraryProvider;
 use BBIT\Playlist\Services\Downloader\DownloadProcess;
 use BBIT\Playlist\Services\Downloader\DownloadRequest;
+use BBIT\Playlist\Wamp\WampRequest;
 use Illuminate\Foundation\Application;
 use Thruway\ClientSession;
 
@@ -41,7 +42,7 @@ class MediaManagerService
     /** @var DownloadRequest[] */
     private $queue = [];
 
-    /** @var DownloadProcess */
+    /** @var DownloadProcess|null */
     private $proc;
 
     /**
@@ -108,17 +109,17 @@ class MediaManagerService
     }
 
     /**
-     * @param $args
+     * @param WampRequest $request
      * @throws \Exception
      */
-    public function download($args)
+    public function download(WampRequest $request)
     {
         $provider = $this->libraryProvider->getService(
-            getValue($args[0]->provider)
+            $request->getArgument('provider')
         );
-        $sid = getValue($args[0]->sid);
-        $type = getValue($args[0]->type, 'video');
-        $format = getValue($args[0]->format, 'mp3'); // @todo configurable default download format
+        $sid = $request->getArgument('sid');
+        $type = $request->getArgument('type', 'video');
+        $format = $request->getArgument('format', 'mp3'); // @todo configurable default download format
 
         if ($provider && $sid) {
             $this->queue[] = DownloadRequest::create(
@@ -131,20 +132,18 @@ class MediaManagerService
     }
 
     /**
-     * @param $request
+     * @param DownloadRequest $request
      * @return DownloadProcess|null
      */
     private function process(DownloadRequest $request)
     {
-        $this->proc = $request;
-
         $provider = $request->getProvider();
         $downloader = null;
         try {
             $downloader = $this->getDownloader($provider);
 
-        } catch (\Exception $e) {
-            $this->reportThrowable($e);
+        } catch (\Throwable $t) {
+            $this->reportThrowable($t);
         }
 
         if ($downloader) {
@@ -180,7 +179,7 @@ class MediaManagerService
     }
 
     /**
-     * @param $msg
+     * @param string $msg
      */
     private function reportError($msg)
     {
