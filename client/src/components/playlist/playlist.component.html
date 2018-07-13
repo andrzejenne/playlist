@@ -1,9 +1,9 @@
 <ion-header #header class="mode-color">
-  <ion-navbar (click)="toggleShow()">
+  <ion-navbar>
     <!--<button ion-button menuToggle="menu">-->
       <!--<ion-icon name="menu"></ion-icon>-->
     <!--</button>-->
-    <ion-title>
+    <ion-title (click)="toggleShow()">
       <div class="close-down" clear>
         <ion-icon [name]="arrowIcon"></ion-icon>
       </div>

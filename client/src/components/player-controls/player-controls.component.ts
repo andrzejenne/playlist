@@ -29,10 +29,11 @@ export class PlayerControlsComponent {
 
   onSliderBlur(event) {
     if (this.player.medium) {
-      if (event.value != this.player.videoElement.currentTime) {
-        this.player.videoElement.currentTime = +event.value;
+      let playerContainer = this.player.getPlayerContainer();
+      if (event.value != playerContainer.currentTime) {
+        playerContainer.currentTime = +event.value;
       }
-      this.player.videoElement.play();
+      this.player.play();
     }
   }
 }

@@ -219,7 +219,7 @@ export class PlayerService {
   togglePlay() {
     this.status.playing = !this.status.playing;
 
-    let player = this.getPlayer();
+    let player = this.getPlayerContainer();
 
     if (!player || !player.src || !this.medium) {
       this.getNext();
@@ -315,15 +315,15 @@ export class PlayerService {
   }
 
   private setCurrent(medium: Medium = null, seek = 0) {
-    if (this.status.playing && this.getPlayer()) {
-      this.getPlayer().pause();
+    if (this.status.playing && this.getPlayerContainer()) {
+      this.getPlayerContainer().pause();
     }
 
     this.medium = medium;
     if (medium) {
       this.file = this.mediaManager.getFileOrDefault(medium, this.mediaType);
 
-      let player = this.getPlayer();
+      let player = this.getPlayerContainer();
       player.src = this.getOfflineUrlIfFound(this.medium, this.file);
 
       player.currentTime = seek;
@@ -416,7 +416,7 @@ export class PlayerService {
     clearInterval(this.interval);
 
     this.status.playing = false;
-    this.getPlayer().pause();
+    this.getPlayerContainer().pause();
 
     this.playStatus();
   }
@@ -437,7 +437,7 @@ export class PlayerService {
     }
     this.status.playing = true;
 
-    let player = this.getPlayer();
+    let player = this.getPlayerContainer();
 
     if (this.medium && this.status.video && !this.mediaManager.hasVideo(this.medium)) {
       this.playAudio();
@@ -452,7 +452,7 @@ export class PlayerService {
     this.storage.set('currentMedium', this.medium.id);
   }
 
-  private getPlayer(file: MediaFile = this.file) {
+  public getPlayerContainer(file: MediaFile = this.file) {
     if (file) {
       if ('audio' === file.type.slug) {
         return this.audioEl;
@@ -500,7 +500,7 @@ export class PlayerService {
   };
 
   private onPlayerMetadata = (ev: MediaStreamErrorEvent) => {
-    let player = this.getPlayer();
+    let player = this.getPlayerContainer();
     if (player instanceof HTMLVideoElement) {
       let aspect = player.videoWidth / player.videoHeight;
       this.video.width = Math.min(player.videoWidth, this.contentContainer.contentWidth);
@@ -523,7 +523,7 @@ export class PlayerService {
   };
 
   private onPlayerProgress = () => {
-    let player = this.getPlayer();
+    let player = this.getPlayerContainer();
 
     if (player) {
       this.mediumTime = player.currentTime;
