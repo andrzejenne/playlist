@@ -118,6 +118,16 @@ export class OfflineManagerService {
     return null;
   }
 
+  public clearAll() {
+    this.file.checkDir(this.rootDir, this.dir)
+      .then(result => {
+        return this.file.removeRecursively(this.rootDir, this.dir);
+      })
+      .catch(error => {
+        console.info('nothing for delete');
+      });
+  }
+
   private preparePlaylistDir(playlist: Playlist) {
     let slug = this.slug.slugify(playlist.name);
 
