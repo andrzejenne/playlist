@@ -163,7 +163,7 @@ class PlaylistsController extends Controller
             ->first();
 
         return $response->withJson(
-            $playlist->media()->detach($request->getArgument('pid'))
+            $playlist->media()->detach($request->getArgument('mid'))
         );
 
         // @todo - reorder
