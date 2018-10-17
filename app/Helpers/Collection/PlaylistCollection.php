@@ -64,7 +64,7 @@ class PlaylistCollection extends AbstractCollection
                 Playlist::REL_MEDIA . '.' . Medium::REL_ALBUM,
                 Playlist::REL_MEDIA . '.' . Medium::REL_GENRE,
                 Playlist::REL_MEDIA . '.' . Medium::REL_ARTIST
-            ])->getQuery();
+            ]);
         }
 
         return parent::getBuilder();

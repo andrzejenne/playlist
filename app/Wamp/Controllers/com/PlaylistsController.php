@@ -40,11 +40,13 @@ class PlaylistsController extends Controller
      */
     public function list(WampRequest $request, WampResponse $response)
     {
+        $playlists = PlaylistCollection::create($request->getArguments())
+            ->whereUserId($request->getArgument('uid'))
+            ->orderBy(Playlist::COL_NAME, 'ASC')
+            ->get();
+
         return $response->withJson(
-            PlaylistCollection::create($request->getArguments())
-                ->whereUserId($request->getArgument('uid'))
-                ->orderBy(Playlist::COL_NAME, 'ASC')
-                ->get()
+            $playlists
         );
 
     }
