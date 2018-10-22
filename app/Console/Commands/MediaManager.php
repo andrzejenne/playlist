@@ -67,7 +67,7 @@ class MediaManager extends Command
 
         $this->service->onOpen(function (ClientSession $session) use ($manager) {
             $this->session = $session;
-           $manager->attachToWampSession($session);
+            $manager->attachToWampSession($session);
         });
 
         $this->service->run();

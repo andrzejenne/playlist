@@ -201,12 +201,12 @@ class YouTubeService extends MediaProviderContract
 
     /**
      * @param mixed $results
-     * @param string $prevPageToken
-     * @param string $nextPageToken
+     * @param string|null $prevPageToken
+     * @param string|null $nextPageToken
      * @return MediaItemCollection
      * @throws \Exception
      */
-    private function transformResults($results, string $prevPageToken, string $nextPageToken)
+    private function transformResults($results, ?string $prevPageToken = null, ?string $nextPageToken = null)
     {
         $collection = new MediaItemPaginatedCollection($prevPageToken, $nextPageToken, [], $this);
 

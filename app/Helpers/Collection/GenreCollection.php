@@ -45,8 +45,9 @@ class GenreCollection extends AbstractCollection
             $this->builder = Genre::with([
 //                Genre::REL_MEDIA . '.' . Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
                 Genre::REL_ALBUMS
-            ])
-                ->getQuery()
+            ]);
+
+            $this->builder->getQuery()
                 ->orderBy(Genre::COL_NAME, 'ASC');
         }
 

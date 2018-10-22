@@ -113,7 +113,7 @@ class MediaCollection extends AbstractCollection
                 Medium::REL_ALBUM,
                 Medium::REL_GENRE,
                 Medium::REL_ARTIST
-            ])->getQuery();
+            ]);
         }
 
         return parent::getBuilder();

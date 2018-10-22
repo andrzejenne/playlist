@@ -32,10 +32,10 @@
           <h2>{{item.name}}</h2>
           <p>
             <ion-icon name="person"></ion-icon>
-            {{item.artist.name}}
+            {{item.artist?.name}}
             <br>
             <ion-icon name="disc"></ion-icon>
-            {{item.album.name}}
+            {{item.album?.name}}
             {{description}}
           </p>
         </ion-label>

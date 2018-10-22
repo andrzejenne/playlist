@@ -12,6 +12,7 @@ use BBIT\Playlist\Contracts\DownloaderContract;
 use BBIT\Playlist\Providers\MediaLibraryProvider;
 use BBIT\Playlist\Services\Downloader\Progress\YouTubeDownloadProgressReporter;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 
 
@@ -53,8 +54,7 @@ class YouTubeDownloader extends DownloaderContract
     public function __construct(
         YouTubeDownloadProgressReporter $reporter,
         MediaLibraryProvider $libraryProvider
-    )
-    {
+    ) {
         parent::__construct($libraryProvider);
 
         $this->reporter = $reporter;
@@ -65,7 +65,7 @@ class YouTubeDownloader extends DownloaderContract
      * @param string $sid
      * @return string
      */
-    public function getName(string $url, string  $sid)
+    public function getName(string $url, string $sid)
     {
         $info = $this->getInfo($url, $sid);
 
@@ -89,8 +89,7 @@ class YouTubeDownloader extends DownloaderContract
             if ($audios->count()) {
                 $acode = $audios->first()->format_id;
                 $fCode = "$vcode+$acode";
-            }
-            else {
+            } else {
                 $fCode = $vcode;
             }
             if ($this->reporter) {
@@ -228,14 +227,18 @@ class YouTubeDownloader extends DownloaderContract
         if (!isset($this->_infoCache[$sid])) {
             try {
                 $cmd = static::run(
-                    static::getProcess("-J $url")
+                    static::getProcess("-J \"$url\"")
                 );
 
                 $cmd->wait(); // @todo - make async, we have to return Promise
 
                 $output = $cmd->getOutput();
-                $info = json_decode($output);
-                $this->_infoCache[$sid] = $info;
+                if ($cmd->isSuccessful()) {
+                    $info = json_decode($output);
+                    $this->_infoCache[$sid] = $info;
+                } else {
+                    Log::error('youtube-dl not working properly', ['stderr' => $cmd->getErrorOutput()]);
+                }
             } catch (\Exception $e) {
                 $this->_infoCache[$sid] = false;
             }

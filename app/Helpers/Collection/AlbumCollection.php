@@ -45,7 +45,9 @@ class AlbumCollection extends AbstractCollection
 //                Album::REL_MEDIA . '.' . Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
                 Album::REL_GENRE,
                 Album::REL_ARTIST
-            ])
+            ]);
+
+            $this->builder
                 ->getQuery()
                 ->orderBy(Album::COL_NAME, 'ASC');
         }

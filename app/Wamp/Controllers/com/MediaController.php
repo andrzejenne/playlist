@@ -56,6 +56,7 @@ class MediaController extends Controller
      * @param WampRequest $request
      * @param WampResponse $response
      * @return WampResponse
+     * @throws \Exception
      */
     public function getByArtist(WampRequest $request, WampResponse $response)
     {
@@ -72,6 +73,7 @@ class MediaController extends Controller
      * @param WampRequest $request
      * @param WampResponse $response
      * @return WampResponse
+     * @throws \Exception
      */
     public function getByAlbum(WampRequest $request, WampResponse $response)
     {
@@ -89,6 +91,7 @@ class MediaController extends Controller
      * @param WampRequest $request
      * @param WampResponse $response
      * @return WampResponse
+     * @throws \Exception
      */
     public function getByGenre(WampRequest $request, WampResponse $response)
     {
@@ -105,6 +108,7 @@ class MediaController extends Controller
      * @param WampRequest $request
      * @param WampResponse $response
      * @return mixed
+     * @throws \Exception
      */
     public function getByProvider(WampRequest $request, WampResponse $response)
     {

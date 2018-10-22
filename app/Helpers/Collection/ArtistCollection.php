@@ -44,7 +44,9 @@ class ArtistCollection extends AbstractCollection
             $this->builder = Artist::with([
 //                Artist::REL_MEDIA . '.' . Medium::REL_FILES . '.' . MediaFile::REL_TYPE,
                 Artist::REL_ALBUMS
-            ])
+            ]);
+
+            $this->builder
                 ->getQuery()
                 ->orderBy(Album::COL_NAME, 'ASC');
         }

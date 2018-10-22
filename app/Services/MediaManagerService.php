@@ -10,11 +10,6 @@ namespace BBIT\Playlist\Services;
 
 use BBIT\Playlist\Contracts\DownloaderContract;
 use BBIT\Playlist\Contracts\MediaProviderContract;
-use BBIT\Playlist\Models\MediaFile;
-use BBIT\Playlist\Models\MediaFileType;
-use BBIT\Playlist\Models\MediaProvider;
-use BBIT\Playlist\Models\MediaType;
-use BBIT\Playlist\Models\Medium;
 use BBIT\Playlist\Providers\MediaLibraryProvider;
 use BBIT\Playlist\Services\Downloader\DownloadProcess;
 use BBIT\Playlist\Services\Downloader\DownloadRequest;
@@ -83,7 +78,9 @@ class MediaManagerService
     {
         $this->session = $session;
 
-        $session->register('com.mediaManager.download', [$this, 'download']);
+        $session->register('com.mediaManager.download', function(...$args){
+            $this->download(WampRequest::create(...$args));
+        });
 
         $session->getLoop()->addPeriodicTimer(.01, function () {
             if ($this->proc && !$this->proc->isRunning()) {
