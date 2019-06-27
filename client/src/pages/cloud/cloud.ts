@@ -219,7 +219,6 @@ export class CloudPage implements OnDestroy {
           this.list = [].concat(data);
         }
         loader && loader.dismiss();
-
         this.ref.detectChanges();
       });
   }

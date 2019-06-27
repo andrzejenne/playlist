@@ -153,7 +153,7 @@ class WampRouter extends Client
             } catch (\Throwable $t) {
                 // @todo - display error
                 Log::error('WampRouterError: ' . $t->getMessage());
-                $this->session->publish('wamp.error', $response->withJson(['message' => $t->getMessage()]));
+                $this->session->publish('wamp.error', [['message' => $t->getMessage()]]);
 
                 return false;
             }

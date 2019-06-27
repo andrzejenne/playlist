@@ -74,7 +74,7 @@ abstract class ProcessReporterContract
 
     abstract function readOutput(string $line);
 
-    abstract function readErrorOutput(string $line);
+    abstract function readErrorOutput(string $message);
 
     abstract function finish();
 }
