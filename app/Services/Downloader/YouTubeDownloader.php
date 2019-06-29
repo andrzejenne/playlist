@@ -84,7 +84,7 @@ class YouTubeDownloader extends DownloaderContract
         $videos = $this->getVideos($url, $sid);
         $audios = $this->getAudios($url, $sid);
 
-        if ($videos->count()) {
+        if ($videos && $audios && $videos->count() && $audios->count()) {
             $vcode = $videos->first()->format_id;
             if ($audios->count()) {
                 $acode = $audios->first()->format_id;
@@ -155,46 +155,54 @@ class YouTubeDownloader extends DownloaderContract
     /**
      * @param string $url
      * @param string $sid
-     * @return Collection
+     * @return bool|Collection
      */
     public function getVideos(string $url, string $sid)
     {
         $info = $this->getInfo($url, $sid);
 
-        $collection = collect($info->formats);
+        if ($info !== false && isset($info->formats)) {
+            $collection = collect($info->formats);
 
-        return $collection->filter(function ($item) {
-            if (in_array($item->ext, static::$possibleVideos)) {
-                return $item;
-            }
+            return $collection->filter(function ($item) {
+                if (in_array($item->ext, static::$possibleVideos)) {
+                    return $item;
+                }
 
-            return false;
-        })->sortByDesc(function ($item) {
-            return $item->width;
-        });
+                return false;
+            })->sortByDesc(function ($item) {
+                return $item->width;
+            });
+        }
+
+        return false;
     }
 
     /**
      * @param string $url
      * @param string $sid
-     * @return Collection
+     * @return bool|Collection
      */
     public function getAudios(string $url, string $sid)
     {
         $info = $this->getInfo($url, $sid);
 
-        $collection = collect($info->formats);
+        if ($info !== false && isset($info->formats)) {
+            $collection = collect($info->formats);
 
-        return $collection->filter(function ($item) {
-            if (in_array($item->ext, static::$possibleAudios)) {
-                return $item;
-            }
+            return $collection->filter(function ($item) {
+                if (in_array($item->ext, static::$possibleAudios)) {
+                    return $item;
+                }
 
-            return false;
-        })->sortByDesc(function ($item) {
-            return isset($item->abr) ? $item->abr : 0;
-            // @todo - vimeo differs
-        }, SORT_NUMERIC);
+                return false;
+            })->sortByDesc(function ($item) {
+                return isset($item->abr) ? $item->abr : 0;
+                // @todo - vimeo differs
+            }, SORT_NUMERIC);
+        }
+
+        return false;
     }
 
     /**
@@ -238,6 +246,7 @@ class YouTubeDownloader extends DownloaderContract
                     $this->_infoCache[$sid] = $info;
                 } else {
                     Log::error('youtube-dl not working properly', ['stderr' => $cmd->getErrorOutput()]);
+                    $this->_infoCache[$sid] = false;
                 }
             } catch (\Exception $e) {
                 $this->_infoCache[$sid] = false;

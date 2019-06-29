@@ -12,10 +12,10 @@ return [
     */
 
     'class'           => \BBIT\Playlist\Services\WampServerService::class,
-    'host'            => '0.0.0.0',
+    'host'            => env('WAMP_HOST', '0.0.0.0'),
     'serverHost' => 'localhost',
     'port'            => '9090',
-    'scheme' => 'ws',
+    'scheme' => env('WAMP_SCHEME', 'ws'),
     'connectionLimit' => false,
     'throttle'        => [
         'onOpen'    => '5:1',
