@@ -81,6 +81,8 @@ class YouTubeDownloader extends DownloaderContract
      */
     public function download(string $url, string $sid, string $outDir)
     {
+        $this->reporter->setUrl($sid);
+
         $videos = $this->getVideos($url, $sid);
         $audios = $this->getAudios($url, $sid);
 
@@ -125,6 +127,8 @@ class YouTubeDownloader extends DownloaderContract
      */
     public function downloadAudio(string $url, string $sid, string $outDir, string $format = 'mp3')
     {
+        $this->reporter->setUrl($sid);
+
         if (!static::isAudioFormatValid($format)) {
             throw new \Exception("Invalid audio format $format");
         }

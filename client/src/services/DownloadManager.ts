@@ -67,6 +67,10 @@ export class DownloadManager {
   }
 
   private subscribeWamp() {
+    console.info('DownloadManager@subscribeWamp', this.wamp.connected);
+    if (this.wamp.connected) {
+      this.wamp.register(this.wampCommands);
+    }
     this.wamp.onOpen.subscribe(() => {
       console.debug('wamp.onOpen', this.wamp);
       this.iwamp = this.wamp.register(this.wampCommands);
@@ -80,21 +84,21 @@ export class DownloadManager {
   private wampCommands = {
     subs: {
       'sub.download.started': (data) => {
-        let item = this.getDownloading(data[0].url);
+        const item = this.getDownloading(data[0].url);
 
         item.started = true;
         this.change$.next(this.downloads);
         console.info('Download started:', data);
       },
       'sub.download.progress': (data) => {
-        let file = this.getDownloadingFile(data[0].url, data[0].filename);
+        const file = this.getDownloadingFile(data[0].url, data[0].filename);
 
         file.progress = data[0].progress;
         this.change$.next(this.downloads);
         console.info('Download progress:', data);
       },
       'sub.download.finished': (data) => {
-        let item = this.getDownloading(data[0].url);
+        const item = this.getDownloading(data[0].url);
 
         item.finished = true;
         this.change$.next(this.downloads);
@@ -103,20 +107,20 @@ export class DownloadManager {
         console.info('Download finished:', data);
       },
       'sub.download.error': (data) => {
-        let item = this.getDownloading(data[0].url);
+        const item = this.getDownloading(data[0].url);
         this.change$.next(this.downloads);
         this.finished.push(item);
         console.info('Download error:', data);
       },
       'sub.download.status': (data) => {
-        let item = this.getDownloading(data[0].url);
+        const item = this.getDownloading(data[0].url);
 
         item.status.push(data[0].status);
         this.change$.next(this.downloads);
         console.info('Download status:', data);
       },
       'sub.download.filename': (data) => {
-        let item = this.getDownloading(data[0].url);
+        const item = this.getDownloading(data[0].url);
         item.files.push({
           name: data[0].filename,
           progress: 0

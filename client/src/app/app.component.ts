@@ -131,6 +131,7 @@ export class ThePlaylist {
   }
 
   setPage(code: string, params?: any) {
+    console.info('App@setPage', code, params);
     let page = this.pages.get(code);
     let view = this.nav.getActive();
     if (page !== view.component) {

@@ -3,8 +3,11 @@
     <button ion-button menuToggle="menu" *ngIf="!playlist">
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title left>{{title}}</ion-title>
-
+<!--    <ion-title left>-->
+<!--      {{title}}-->
+<!--    </ion-title>-->
+    <ion-searchbar [(ngModel)]="search" (ionInput)="filter()" color="primary">
+    </ion-searchbar>
     <ion-buttons end>
       <button *ngIf="download" ion-button clear icon-only (click)="toDownload()">
         <ion-icon name="cloud-download" color="primary"></ion-icon>
@@ -36,7 +39,7 @@
             <br>
             <ion-icon name="disc"></ion-icon>
             {{item.album?.name}}
-            {{description}}
+            {{item.description}}
           </p>
         </ion-label>
         <ion-buttons item-end>
@@ -78,6 +81,15 @@
 
   </ion-list>
 
+<!--  <ion-item class="clear">-->
+<!--    <ion-icon item-start name="search"></ion-icon>-->
+<!--    <ion-input icon-left type="text" placeholder="search" [(ngModel)]="search" (ionChange)="filter()">-->
+<!--    </ion-input>-->
+<!--    <button item-end ion-button clear *ngIf="search" (click)="search=''">-->
+<!--      <ion-icon name="close"></ion-icon>-->
+<!--    </button>-->
+<!--  </ion-item>-->
+
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
   </ion-infinite-scroll>
@@ -88,16 +100,3 @@
     </button>
   </ion-fab>
 </ion-content>
-
-<ion-footer class="mode-color">
-  <ion-toolbar>
-    <ion-item class="clear">
-      <ion-icon item-start name="search"></ion-icon>
-      <ion-input icon-left type="text" placeholder="search" [(ngModel)]="search" (ionChange)="filter()">
-      </ion-input>
-      <button item-end ion-button clear *ngIf="search" (click)="search=''">
-        <ion-icon name="close"></ion-icon>
-      </button>
-    </ion-item>
-  </ion-toolbar>
-</ion-footer>

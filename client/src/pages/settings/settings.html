@@ -7,41 +7,48 @@
 </ion-header>
 
 <ion-content class="mode-color">
-  <ion-label padding>
-    Server Settings
-  </ion-label>
-  <server-manager-component></server-manager-component>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12 col-sm-6 col-md-4 col-lg-3>
+        <ion-label padding>
+          Server Settings
+        </ion-label>
+        <server-manager-component></server-manager-component>
 
-  <ion-label padding>
-    App Settings
-  </ion-label>
-  <ng-template [ngIf]="settings">
-    <ion-list>
-      <ion-list-header>Player</ion-list-header>
-      <ion-item>
-        <ion-label>Auto play from last known position</ion-label>
-        <ion-checkbox [(ngModel)]="settings.player.autoplay.lastPosition">
-        </ion-checkbox>
-      </ion-item>
-    </ion-list>
-    <ion-list>
-      <ion-list-header>Playlist</ion-list-header>
-      <ion-item>
-        <ion-label>Make playlist available offline</ion-label>
-        <ion-checkbox [(ngModel)]="settings.playlists.offline">
-        </ion-checkbox>
-      </ion-item>
-    </ion-list>
-    <ion-list>
-      <ion-list-header>Ui</ion-list-header>
-      <ion-item>
-        <ion-label>Scroll overflowed titles</ion-label>
-        <ion-checkbox [(ngModel)]="settings.ui.scrollOverflowed">
-        </ion-checkbox>
-      </ion-item>
-    </ion-list>
+        <ion-label padding>
+          App Settings
+        </ion-label>
+        <ng-template [ngIf]="settings">
+          <ion-list>
+            <ion-list-header>Player</ion-list-header>
+            <ion-item>
+              <ion-label>Auto play from last known position</ion-label>
+              <ion-checkbox [(ngModel)]="settings.player.autoplay.lastPosition">
+              </ion-checkbox>
+            </ion-item>
+          </ion-list>
+          <ion-list>
+            <ion-list-header>Playlist</ion-list-header>
+            <ion-item>
+              <ion-label>Make playlist available offline</ion-label>
+              <ion-checkbox [(ngModel)]="settings.playlists.offline">
+              </ion-checkbox>
+            </ion-item>
+          </ion-list>
+          <ion-list>
+            <ion-list-header>Ui</ion-list-header>
+            <ion-item>
+              <ion-label>Scroll overflowed titles</ion-label>
+              <ion-checkbox [(ngModel)]="settings.ui.scrollOverflowed">
+              </ion-checkbox>
+            </ion-item>
+          </ion-list>
 
-  </ng-template>
+        </ng-template>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
 </ion-content>
 
